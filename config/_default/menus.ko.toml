@@ -1,0 +1,49 @@
+[[main]]
+  identifier = "posts"
+  name = "블로그"
+  pageRef = "posts"
+  weight = 10
+
+[[main]]
+  identifier = "categories"
+  name = "카테고리"
+  pageRef = "categories"
+  weight = 20
+
+[[main]]
+  identifier = "tags"
+  name = "태그"
+  pageRef = "tags"
+  weight = 30
+
+[[main]]
+  identifier = "series"
+  name = "시리즈"
+  pageRef = "series"
+  weight = 40
+
+  [[main]]
+  pre = "github"
+  name = "GitHub"
+  url = "https://github.com/0AndWild"
+  weight = 50
+
+
+  # -- Footer Menu --
+# The footer menu is displayed at the bottom of the page, just before
+# the copyright notice. Configure as per the main menu above.
+
+[[footer]]
+  name = "카테고리"
+  pageRef = "categories"
+  weight = 10
+
+[[footer]]
+  name = "태그"
+  pageRef = "tags"
+  weight = 20
+
+[[footer]]
+  name = "시리즈"
+  pageRef = "series"
+  weight = 30

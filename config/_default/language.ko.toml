@@ -1,0 +1,10 @@
+disabled = false
+languageCode = "ko-KR"
+languageName = "한국어"
+weight = 1
+
+[params]
+  displayName = "🇰🇷 KO"
+  isoCode = "ko-KR"
+  rtl = false
+  dateFormat = "2025-10-12"

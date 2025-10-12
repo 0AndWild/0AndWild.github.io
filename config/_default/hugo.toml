@@ -3,10 +3,27 @@
 # https://blowfish.page/docs/getting-started/
 
 theme = "blowfish" # UNCOMMENT THIS LINE
-# baseURL = "https://your_domain.com/"
-defaultContentLanguage = "en"
+baseURL = 'https://0AndWild.github.io/'
+defaultContentLanguage = "ko"
+title = '0AW Tech Blog'
 
-# pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
+[languages]
+  [languages.ko]
+  [languages.en]
+
+[params.author]
+name = "0AndWild"
+image = "img/profile1.jpg"
+imageQuality = 96
+headline = "Deep Dive into Software Engineering"
+bio = "Always curious, always exploring new tech"
+links = [
+  { github = "https://github.com/0AndWild" },
+  { linkedin = "https://linkedin.com/in/건영-박-158861275" },
+  { email = "parkky3563@gmail.com" }
+]
+
+pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
 enableRobotsTXT = true
 summaryLength = 0
@@ -19,7 +36,7 @@ enableEmoji = true
 # googleAnalytics = "G-XXXXXXXXX"
 
 [pagination]
-  pagerSize = 100
+  pagerSize = 10
 
 [imaging]
   anchor = 'Center'
