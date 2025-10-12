@@ -2,9 +2,14 @@ disabled = false
 languageCode = "ko-KR"
 languageName = "한국어"
 weight = 1
+title = '0AndWild_log'
 
 [params]
   displayName = "🇰🇷 KO"
   isoCode = "ko-KR"
+  logo = "img/logo.svg"
   rtl = false
   dateFormat = "2025-10-12"
+
+[params.author]
+  name = "박건영"

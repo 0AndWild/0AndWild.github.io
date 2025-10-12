@@ -2,12 +2,17 @@ disabled = false
 languageCode = "en"
 languageName = "English"
 weight = 1
+title = "0AndWild_log"
 
 [params]
   displayName = "🇺🇸 EN"
   isoCode = "en"
+  logo = "img/logo.svg"
   rtl = false
   dateFormat = "12 October 2025"
+
+[params.author]
+  name = "gunyoung.Park"
   # logo = "img/logo.png"
   # secondaryLogo = "img/secondary-logo.png"
   # description = "My awesome website"

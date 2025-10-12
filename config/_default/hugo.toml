@@ -5,17 +5,18 @@
 theme = "blowfish" # UNCOMMENT THIS LINE
 baseURL = 'https://0AndWild.github.io/'
 defaultContentLanguage = "ko"
-title = '0AW Tech Blog'
+# title = '0AW Tech Blog'
 
 [languages]
   [languages.ko]
   [languages.en]
 
+
 [params.author]
 name = "0AndWild"
 image = "img/profile1.jpg"
 imageQuality = 96
-headline = "Deep Dive into Software Engineering"
+headline = "Deep Dive into Backend"
 bio = "Always curious, always exploring new tech"
 links = [
   { github = "https://github.com/0AndWild" },

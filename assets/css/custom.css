@@ -1,0 +1,33 @@
+/* Google Fonts 임포트 - Archivo Black */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+/* 해당 텍스트에 적용 */
+nav a.text-base.font-medium {
+  font-family: 'Archivo Black', sans-serif !important;
+  font-size: 1.4rem !important;
+  font-weight: 800;
+}
+
+
+/* headline 슬라이드 애니메이션 */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+body {
+  font-family: 'Archivo Black', sans-serif !important;
+}
+
+/* 정확한 h2 타겟팅 */
+#main-content h2.mt-0.mb-0.text-xl {
+  position: relative !important;
+  min-height: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  color: white !important;
+  font-size: 1.875rem !important;
+  font-family: 'Archivo Black', sans-serif !important;
+  transition: opacity 0.5s ease, transform 0.5s ease !important;
+}
+
+/* 다크 모드 */
+html.dark #main-content h2.mt-0.mb-0.text-xl {
+  color: burlywood !important;
+}

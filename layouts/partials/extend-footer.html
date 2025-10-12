@@ -1,0 +1,41 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const h2 = document.querySelector('#main-content h2.mt-0.mb-0.text-xl');
+      
+      if (!h2) return;
+      
+      const words = ['Backend', 'Infra', 'CS', 'AI'];
+      let currentIndex = 0;
+      
+      function changeText() {
+        // 위로 슬라이드하며 사라지기
+        h2.style.opacity = '0';
+        h2.style.transform = 'translateY(-30px)';
+        
+        setTimeout(() => {
+          // 텍스트 변경
+          currentIndex = (currentIndex + 1) % words.length;
+          h2.textContent = 'Deep Dive into ' + words[currentIndex];
+          
+          // 아래쪽에 위치시키기 (투명)
+          h2.style.opacity = '0';
+          h2.style.transform = 'translateY(30px)';
+          
+        }, 500);
+        
+        // 약간의 딜레이 후 아래에서 위로 올라오기
+        setTimeout(() => {
+          h2.style.opacity = '1';
+          h2.style.transform = 'translateY(0)';
+        }, 550);
+      }
+      
+      // 초기 텍스트 설정
+      h2.textContent = 'Deep Dive into ' + words[0];
+      h2.style.opacity = '1';
+      h2.style.transform = 'translateY(0)';
+      
+      // 3초마다 변경
+      setInterval(changeText, 3000);
+    });
+    </script>
