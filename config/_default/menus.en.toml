@@ -12,7 +12,7 @@
 
 [[main]]
   identifier = "posts"
-  name = "Blog"
+  name = "Posts"
   pageRef = "posts"
   weight = 10
 

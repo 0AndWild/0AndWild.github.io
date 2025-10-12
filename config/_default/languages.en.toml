@@ -13,6 +13,13 @@ title = "0AndWild_log"
 
 [params.author]
   name = "gunyoung.Park"
+
+[taxonomies]
+  post = "posts"
+  tag = "tags"
+  category = "categories"
+  author = "authors"
+  series = "series"
   # logo = "img/logo.png"
   # secondaryLogo = "img/secondary-logo.png"
   # description = "My awesome website"

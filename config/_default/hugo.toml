@@ -43,6 +43,7 @@ enableEmoji = true
   anchor = 'Center'
 
 [taxonomies]
+  post = "posts"
   tag = "tags"
   category = "categories"
   author = "authors"
