@@ -1,4 +1,4 @@
-# 0AndWild Tech Blog
+# 0AndWild Tech Blog (GithubPage repo)
 
 ## Hugo란?
 
