@@ -1,1 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0AndWild.github.io/en/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Thu, 09 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/en/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Post</title><link>https://0AndWild.github.io/en/posts/test1/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/en/posts/test1/</guid><description>This is summary of test post English</description></item><item><title>Test Post2</title><link>https://0AndWild.github.io/en/posts/test2/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/en/posts/test2/</guid><description>This is summary of test post English</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0AndWild.github.io/en/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Thu, 16 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/en/index.xml" rel="self" type="application/rss+xml"/><item><title>About</title><link>https://0AndWild.github.io/en/about/</link><pubDate>Thu, 16 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/en/about/</guid><description>&lt;h1 class="relative group"&gt;About This Blog
+&lt;div id="about-this-blog" class="anchor"&gt;&lt;/div&gt;
+&lt;/h1&gt;
+&lt;p&gt;Welcome to &lt;strong&gt;0AndWild Tech Blog&lt;/strong&gt;! This is a space where I share my thoughts, experiences, and learnings about backend development, infrastructure, and various technologies.&lt;/p&gt;
+&lt;h2 class="relative group"&gt;Who Am I?
+&lt;div id="who-am-i" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;p&gt;A backend developer with 3 years of experience, passionate about exploring new technologies and solving complex problems.&lt;/p&gt;
+&lt;h3 class="relative group"&gt;My Values
+&lt;div id="my-values" class="anchor"&gt;&lt;/div&gt;
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;I feel a sense of achievement when I solve problems, even if it takes time.&lt;/li&gt;
+&lt;li&gt;I enjoy communicating and sharing what I&amp;rsquo;ve learned with others.&lt;/li&gt;
+&lt;li&gt;I prefer pioneering new paths rather than pursuing only stability.&lt;/li&gt;
+&lt;li&gt;I don&amp;rsquo;t fear failure; I see it as an experience.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 class="relative group"&gt;What You&amp;rsquo;ll Find Here
+&lt;div id="what-youll-find-here" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Backend Development&lt;/strong&gt;: Deep dives into backend architectures, patterns, and best practices&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Infrastructure&lt;/strong&gt;: DevOps, Docker, Kubernetes, and cloud technologies&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tech Explorations&lt;/strong&gt;: Hands-on experiences with new tools and frameworks&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 class="relative group"&gt;Get In Touch
+&lt;div id="get-in-touch" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;GitHub: &lt;a
+href="https://github.com/0AndWild"
+target="_blank"
+&gt;0AndWild&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LinkedIn: &lt;a
+href="https://linkedin.com/in/%ea%b1%b4%ec%98%81-%eb%b0%95-158861275"
+target="_blank"
+&gt;gunyoung.Park&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Email: &lt;a
+href="mailto:parkky3563@gmail.com"&gt;parkky3563@gmail.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;Thanks for visiting! 🚀&lt;/p&gt;</description></item><item><title>Test Post</title><link>https://0AndWild.github.io/en/posts/test1/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/en/posts/test1/</guid><description>This is summary of test post English</description></item><item><title>Test Post2</title><link>https://0AndWild.github.io/en/posts/test2/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/en/posts/test2/</guid><description>This is summary of test post English</description></item></channel></rss>

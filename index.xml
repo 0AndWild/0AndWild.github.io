@@ -1,1 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0AndWild.github.io/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Thu, 09 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Post</title><link>https://0AndWild.github.io/posts/test1/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/posts/test1/</guid><description>This is summary of test post korean</description></item><item><title>Test Post2</title><link>https://0AndWild.github.io/posts/test2/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/posts/test2/</guid><description>This is summary of test post korean</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0AndWild.github.io/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Thu, 16 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>소개</title><link>https://0AndWild.github.io/about/</link><pubDate>Thu, 16 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/about/</guid><description>&lt;h1 class="relative group"&gt;블로그 소개
+&lt;div id="블로그-소개" class="anchor"&gt;&lt;/div&gt;
+&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;0AndWild Tech Blog&lt;/strong&gt;에 오신 것을 환영합니다! 이곳은 백엔드 개발, 인프라, 그리고 다양한 기술에 대한 생각과 경험, 배움을 공유하는 공간입니다.&lt;/p&gt;
+&lt;h2 class="relative group"&gt;저는 누구인가요?
+&lt;div id="저는-누구인가요" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;p&gt;3년차 백엔드 개발자로, 새로운 기술을 탐구하고 복잡한 문제를 해결하는 것을 좋아합니다.&lt;/p&gt;
+&lt;h3 class="relative group"&gt;저의 가치관
+&lt;div id="저의-가치관" class="anchor"&gt;&lt;/div&gt;
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;시간이 걸려도 문제점을 해결했을 때 성취감을 느낍니다.&lt;/li&gt;
+&lt;li&gt;소통하는 것을 좋아하고 배운 것을 공유할 때 즐거움을 느낍니다.&lt;/li&gt;
+&lt;li&gt;너무 안정적인 것을 추구하기보다 새로운 길을 개척해나가는 것을 좋아합니다.&lt;/li&gt;
+&lt;li&gt;실패를 두려워하지 않고 경험이라 생각합니다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 class="relative group"&gt;이 블로그에서 다루는 내용
+&lt;div id="이-블로그에서-다루는-내용" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;백엔드 개발&lt;/strong&gt;: 백엔드 아키텍처, 패턴, 모범 사례에 대한 심층 탐구&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;인프라&lt;/strong&gt;: DevOps, Docker, Kubernetes, 클라우드 기술&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;기술 탐험&lt;/strong&gt;: 새로운 도구와 프레임워크에 대한 실습 경험&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 class="relative group"&gt;연락하기
+&lt;div id="연락하기" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;GitHub: &lt;a
+href="https://github.com/0AndWild"
+target="_blank"
+&gt;0AndWild&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LinkedIn: &lt;a
+href="https://linkedin.com/in/%ea%b1%b4%ec%98%81-%eb%b0%95-158861275"
+target="_blank"
+&gt;박건영&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Email: &lt;a
+href="mailto:parkky3563@gmail.com"&gt;parkky3563@gmail.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;방문해 주셔서 감사합니다! 🚀&lt;/p&gt;</description></item><item><title>Test Post</title><link>https://0AndWild.github.io/posts/test1/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/posts/test1/</guid><description>This is summary of test post korean</description></item><item><title>Test Post2</title><link>https://0AndWild.github.io/posts/test2/</link><pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate><guid>https://0AndWild.github.io/posts/test2/</guid><description>This is summary of test post korean</description></item></channel></rss>
