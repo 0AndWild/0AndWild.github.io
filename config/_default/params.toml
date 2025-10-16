@@ -9,7 +9,7 @@ colorScheme = "atumn" # blowfish (default), avocado, fire, ocean, forest, prince
 defaultAppearance = "light" # valid options: light or dark
 autoSwitchAppearance = true
 
-enableA11y = true
+enableA11y = false
 enableSearch = true
 enableCodeCopy = false
 
@@ -112,7 +112,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   groupByYear = true
   cardView = true
   cardViewScreenWidth = false
-  constrainItemsWidth = true
+  constrainItemsWidth = false
 
 [sitemap]
   excludedKinds = []

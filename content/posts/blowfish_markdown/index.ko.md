@@ -1,11 +1,11 @@
 +++
-title = '{{ replace .File.ContentBaseName "-" " " | title }}'
-date = '{{ .Date }}'
-description = ""
-summary = ""
-categories = []
-tags = []
-series = []
+title = 'Hugo markdown 설명서'
+date = '2025-10-16T18:36:52+09:00'
+description = "Blowfish 마크다운 문법 설명서"
+summary = "Blowfish 마크다운 문법 설명서"
+categories = ["Blowfish"]
+tags = ["Blowfish", "Hugo", "Markdown"]
+series = ["Blowfish"]
 series_order = 1
 
 draft = false
@@ -41,10 +41,11 @@ draft = false
 
 ### 캐러셀 이미지 (슬라이드 효과)
 ### 16:9
-{{< carousel images="{https://cdn.pixabay.com/photo/2016/12/11/12/02/mountains-1899264_960_720.jpg, test1.jpeg, test2.jpeg, test3.jpeg}" >}}
+{{< carousel images="img/*" >}}
 
+---
 21:9
-{{< carousel images="gallery/*" aspectRatio="21-9" interval="2500" >}}
+{{< carousel images="img/*" aspectRatio="21-9" interval="1000" >}}
 ---
 
 ## 코드 삽입

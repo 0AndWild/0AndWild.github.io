@@ -11,7 +11,6 @@ defaultContentLanguage = "ko"
   [languages.ko]
   [languages.en]
 
-
 [params.author]
 name = "0AndWild"
 image = "img/profile1.jpg"
