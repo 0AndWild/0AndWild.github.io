@@ -7,7 +7,27 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© 2025 gunyoung.Park</copyright>
-    <atom:link href="https://0AndWild.github.io/en/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 09 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/en/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Docker</title>
+      <link>https://0AndWild.github.io/en/categories/docker/</link>
+      <pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://0AndWild.github.io/en/categories/docker/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Infra</title>
+      <link>https://0AndWild.github.io/en/categories/infra/</link>
+      <pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://0AndWild.github.io/en/categories/infra/</guid>
+      <description></description>
+      
+    </item>
     
   </channel>
 </rss>

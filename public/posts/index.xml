@@ -7,7 +7,27 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-KR</language>
     <copyright>© 2025 gunyoung.Park</copyright>
-    <atom:link href="https://0AndWild.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 09 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0AndWild.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Test Post</title>
+      <link>https://0AndWild.github.io/posts/test1/</link>
+      <pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://0AndWild.github.io/posts/test1/</guid>
+      <description>This is summary of test post korean</description>
+      
+    </item>
+    
+    <item>
+      <title>Test Post2</title>
+      <link>https://0AndWild.github.io/posts/test2/</link>
+      <pubDate>Thu, 09 Oct 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://0AndWild.github.io/posts/test2/</guid>
+      <description>This is summary of test post korean</description>
+      
+    </item>
     
   </channel>
 </rss>

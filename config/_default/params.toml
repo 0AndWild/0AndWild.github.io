@@ -124,8 +124,8 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showBreadcrumbs = false
   showViews = false
   showLikes = false
-  showTableOfContents = true
-  cardView = true
+  showTableOfContents = false
+  cardView = false
 
 [term]
   showHero = true

@@ -4,6 +4,7 @@
 
   <url>
     <loc>https://0AndWild.github.io/en/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -18,22 +19,8 @@
     />
   </url>
   <url>
-    <loc>https://0AndWild.github.io/en/authors/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-      rel="alternate"
-      hreflang="ko-KR"
-      href="https://0AndWild.github.io/authors/"
-    />
-    <xhtml:link
-      rel="alternate"
-      hreflang="en"
-      href="https://0AndWild.github.io/en/authors/"
-    />
-  </url>
-  <url>
     <loc>https://0AndWild.github.io/en/categories/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -48,7 +35,56 @@
     />
   </url>
   <url>
+    <loc>https://0AndWild.github.io/en/categories/docker/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/categories/docker/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/categories/docker/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/tags/docker/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/tags/docker/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/tags/docker/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/categories/infra/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/categories/infra/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/categories/infra/"
+    />
+  </url>
+  <url>
     <loc>https://0AndWild.github.io/en/posts/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -64,6 +100,7 @@
   </url>
   <url>
     <loc>https://0AndWild.github.io/en/series/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -78,7 +115,40 @@
     />
   </url>
   <url>
+    <loc>https://0AndWild.github.io/en/series/series-example1/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/series/series-example1/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/series/series-example1/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/tags/tag-test1/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/tags/tag-test1/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/tags/tag-test1/"
+    />
+  </url>
+  <url>
     <loc>https://0AndWild.github.io/en/tags/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -90,6 +160,53 @@
       rel="alternate"
       hreflang="en"
       href="https://0AndWild.github.io/en/tags/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/posts/test1/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/posts/test1/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/posts/test1/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/posts/test2/</loc>
+    <lastmod>2025-10-09T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/posts/test2/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/posts/test2/"
+    />
+  </url>
+  <url>
+    <loc>https://0AndWild.github.io/en/authors/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+      rel="alternate"
+      hreflang="ko-KR"
+      href="https://0AndWild.github.io/authors/"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="en"
+      href="https://0AndWild.github.io/en/authors/"
     />
   </url>
 </urlset>
