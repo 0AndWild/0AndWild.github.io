@@ -1,28 +1,44 @@
 [[main]]
+  identifier = "about"
+  name = "소개"
+  pageRef = "about"
+  weight = 10
+
+[[main]]
   identifier = "posts"
   name = "포스트"
   pageRef = "posts"
-  weight = 10
+  weight = 20
+
+[[main]]
+  identifier = "posts-all"
+  name = "전체"
+  parent = "posts"
+  pageRef = "posts"
+  weight = 5
 
 [[main]]
   identifier = "categories"
   name = "카테고리"
+  parent = "posts"
   pageRef = "categories"
-  weight = 20
+  weight = 10
 
 [[main]]
   identifier = "tags"
   name = "태그"
+  parent = "posts"
   pageRef = "tags"
-  weight = 30
+  weight = 20
 
 [[main]]
   identifier = "series"
   name = "시리즈"
+  parent = "posts"
   pageRef = "series"
-  weight = 40
+  weight = 30
 
-  # -- Footer Menu --
+# -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
 # the copyright notice. Configure as per the main menu above.
 

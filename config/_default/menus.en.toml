@@ -11,28 +11,44 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
+  identifier = "about"
+  name = "About"
+  pageRef = "about"
+  weight = 10
+
+[[main]]
   identifier = "posts"
   name = "Posts"
   pageRef = "posts"
-  weight = 10
+  weight = 20
+
+[[main]]
+identifier = "posts-all"
+name = "All"
+parent = "posts"
+pageRef = "posts"
+weight = 5
 
 [[main]]
   identifier = "categories"
   name = "Categories"
+  parent = "posts"
   pageRef = "categories"
-  weight = 20
+  weight = 10
 
 [[main]]
   identifier = "tags"
   name = "Tags"
+  parent = "posts"
   pageRef = "tags"
-  weight = 30
+  weight = 20
 
 [[main]]
   identifier = "series"
   name = "Series"
+  parent = "posts"
   pageRef = "series"
-  weight = 40
+  weight = 30
 
 #[[main]]
 #  name = "Parent"

@@ -1,11 +1,11 @@
 /* Google Fonts 임포트 - Archivo Black */
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 
-/* 해당 텍스트에 적용 */
-nav a.text-base.font-medium {
+/* 메인 네비게이션 메뉴에만 적용 */
+body > div.fixed.inset-x-0.z-100 > div.relative.m-auto.leading-7.max-w-7xl.px-6.sm\:px-14.md\:px-24.lg\:px-32 > div > div.flex.flex-1.items-center.justify-between > nav.flex.space-x-3 > a {
   font-family: 'Archivo Black', sans-serif !important;
   font-size: 1.4rem !important;
-  font-weight: 800;
+  font-weight: 800 !important;
 }
 
 
@@ -29,4 +29,9 @@ body {
 /* 다크 모드 */
 html.dark #main-content h2.mt-0.mb-0.text-xl {
   color: turquoise !important;
+}
+
+/* 저자 프로필 아래 본문 콘텐츠 간격 조정 */
+article .prose {
+  margin-top: 3rem !important;
 }
