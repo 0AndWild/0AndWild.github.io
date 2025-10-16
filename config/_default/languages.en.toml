@@ -9,13 +9,12 @@ title = "0AndWild_log"
   isoCode = "en"
   logo = "img/logo.svg"
   rtl = false
-  dateFormat = "12 October 2025"
+  dateFormat = "2006-01-02"
 
 [params.author]
   name = "gunyoung.Park"
 
 [taxonomies]
-  post = "posts"
   tag = "tags"
   category = "categories"
   author = "authors"

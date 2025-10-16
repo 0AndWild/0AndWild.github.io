@@ -11,7 +11,6 @@ nav a.text-base.font-medium {
 
 /* headline 슬라이드 애니메이션 */
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
-
 body {
   font-family: 'Archivo Black', sans-serif !important;
 }
@@ -21,7 +20,7 @@ body {
   position: relative !important;
   min-height: 1rem !important;
   margin-bottom: 0.5rem !important;
-  color: white !important;
+  color: grey !important;
   font-size: 1.875rem !important;
   font-family: 'Archivo Black', sans-serif !important;
   transition: opacity 0.5s ease, transform 0.5s ease !important;
@@ -29,5 +28,5 @@ body {
 
 /* 다크 모드 */
 html.dark #main-content h2.mt-0.mb-0.text-xl {
-  color: burlywood !important;
+  color: turquoise !important;
 }

@@ -1,0 +1,16 @@
+# Hugo build files
+public/
+resources/
+
+# Mac OS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Editor files
+.vscode/
+.idea/
+*.code-workspace

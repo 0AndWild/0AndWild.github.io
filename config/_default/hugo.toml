@@ -43,7 +43,7 @@ enableEmoji = true
   anchor = 'Center'
 
 [taxonomies]
-  post = "posts"
+  # post = "posts"
   tag = "tags"
   category = "categories"
   author = "authors"
@@ -59,30 +59,20 @@ enableEmoji = true
 
 [related]
   threshold = 0
-  toLower = false
+  toLower = true
 
     [[related.indices]]
         name = "tags"
-        weight = 100
+        weight = 60
 
     [[related.indices]]
         name = "categories"
-        weight = 100
+        weight = 70
 
     [[related.indices]]
         name = "series"
-        weight = 50
+        weight = 90
 
     [[related.indices]]
         name = "authors"
         weight = 20
-
-    [[related.indices]]
-        name = "date"
-        weight = 10
-
-    [[related.indices]]
-      applyFilter = false
-      name = 'fragmentrefs'
-      type = 'fragments'
-      weight = 10

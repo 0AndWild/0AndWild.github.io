@@ -9,7 +9,7 @@ title = '0AndWild_log'
   isoCode = "ko-KR"
   logo = "img/logo.svg"
   rtl = false
-  dateFormat = "2025-10-12"
+  dateFormat = "2006-01-02"
 
 [params.author]
   name = "gunyoung.Park"
