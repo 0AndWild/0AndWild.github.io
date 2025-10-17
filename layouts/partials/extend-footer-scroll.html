@@ -1,0 +1,147 @@
+<!-- Custom Scroll Buttons (Top & Bottom) -->
+<style>
+  .scroll-buttons {
+    position: fixed;
+    bottom: 3rem;
+    right: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 100;
+  }
+
+  .scroll-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Light mode - darker colors */
+  .scroll-btn {
+    background-color: rgba(100, 100, 100, 0.9);
+    color: white;
+  }
+
+  .scroll-btn:hover {
+    background-color: rgba(60, 60, 60, 1);
+  }
+
+  /* Dark mode - lighter colors */
+  .dark .scroll-btn {
+    background-color: rgba(220, 220, 220, 0.9);
+    color: #1a1a1a;
+  }
+
+  .dark .scroll-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .scroll-btn.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .scroll-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .scroll-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .scroll-buttons {
+      bottom: 3rem;
+      right: 1rem;
+    }
+
+    .scroll-btn {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .scroll-btn svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+</style>
+
+<div class="scroll-buttons">
+  <!-- Scroll to Top Button -->
+  <div id="scroll-to-top" class="scroll-btn" title="Scroll to top">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </div>
+
+  <!-- Scroll to Bottom Button -->
+  <div id="scroll-to-bottom" class="scroll-btn" title="Scroll to bottom">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+    </svg>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+    const scrollToBottomBtn = document.getElementById('scroll-to-bottom');
+
+    // Smooth scroll function
+    function scrollToPosition(position) {
+      window.scrollTo({
+        top: position,
+        behavior: 'smooth'
+      });
+    }
+
+    // Show/hide buttons based on scroll position
+    function updateButtonVisibility() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollBottom = scrollHeight - scrollTop - clientHeight;
+
+      // Show "scroll to top" when scrolled down more than 300px
+      if (scrollTop > 300) {
+        scrollToTopBtn.classList.add('visible');
+      } else {
+        scrollToTopBtn.classList.remove('visible');
+      }
+
+      // Show "scroll to bottom" when not at bottom (more than 300px from bottom)
+      if (scrollBottom > 300) {
+        scrollToBottomBtn.classList.add('visible');
+      } else {
+        scrollToBottomBtn.classList.remove('visible');
+      }
+    }
+
+    // Event listeners
+    scrollToTopBtn.addEventListener('click', function() {
+      scrollToPosition(0);
+    });
+
+    scrollToBottomBtn.addEventListener('click', function() {
+      scrollToPosition(document.documentElement.scrollHeight);
+    });
+
+    // Update on scroll
+    window.addEventListener('scroll', updateButtonVisibility);
+
+    // Initial check
+    updateButtonVisibility();
+  })();
+</script>
