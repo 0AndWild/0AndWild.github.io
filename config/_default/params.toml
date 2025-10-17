@@ -96,6 +96,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showWordCount = false
   sharingLinks = [ "linkedin", "twitter", "bluesky", "mastodon", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram", "line"]
   showZenMode = false
+  showComments = true
 
 [list]
   showHero = true
@@ -139,13 +140,13 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   cardViewScreenWidth = false
 
 [firebase]
-  # apiKey = "XXXXXX"
-  # authDomain = "XXXXXX"
-  # projectId = "XXXXXX"
-  # storageBucket = "XXXXXX"
-  # messagingSenderId = "XXXXXX"
-  # appId = "XXXXXX"
-  # measurementId = "XXXXXX"
+  apiKey = "AIzaSyDBnzInOvtVBk6IVd8ThqReMSRZvE2p3dY"
+  authDomain = "andwild-blog.firebaseapp.com"
+  projectId = "andwild-blog"
+  storageBucket = "andwild-blog.firebasestorage.app"
+  messagingSenderId = "361077393311"
+  appId = "1:361077393311:web:66db466c2ea63f9c861faa"
+  measurementId = "G-QL6FY3F6WJ"
 
 [fathomAnalytics]
   # site = "ABC12345"

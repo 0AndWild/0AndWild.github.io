@@ -1,0 +1,123 @@
+<!-- Giscus Comments with Dynamic Theme and Language -->
+{{ $lang := .Site.Language.Lang }}
+{{ $translationKey := .File.TranslationBaseName }}
+<script>
+  (function() {
+    // Get current theme (dark/light)
+    function getGiscusTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      return isDark ? 'catppuccin_frappe' : 'catppuccin_latte';
+    }
+
+    // Get language from Hugo template
+    const currentLang = '{{ $lang }}';
+
+    // Use file directory path for unified comments across languages
+    // Example: "posts/subscription_alert" for both index.ko.md and index.en.md
+    const discussionId = '{{ .File.Dir | replaceRE "^content/" "" | replaceRE "/$" "" }}';
+
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGiscus);
+    } else {
+      initGiscus();
+    }
+
+    function initGiscus() {
+      // Create and insert Giscus script with dynamic settings
+      const script = document.createElement('script');
+      script.src = 'https://giscus.app/client.js';
+      script.setAttribute('data-repo', '0AndWild/0AndWild.github.io');
+      script.setAttribute('data-repo-id', 'R_kgDOQAqZFA');
+      script.setAttribute('data-category', 'General');
+      script.setAttribute('data-category-id', 'DIC_kwDOQAqZFM4CwwRg');  // General 카테고리 ID로 변경 필요
+      script.setAttribute('data-mapping', 'specific');
+      script.setAttribute('data-term', discussionId);
+      script.setAttribute('data-strict', '0');
+      script.setAttribute('data-reactions-enabled', '1');
+      script.setAttribute('data-emit-metadata', '0');
+      script.setAttribute('data-input-position', 'top');
+      script.setAttribute('data-theme', getGiscusTheme());
+      script.setAttribute('data-lang', currentLang);
+    //   script.setAttribute('data-loading', 'lazy');
+      script.setAttribute('crossorigin', 'anonymous');
+      script.async = true;
+
+      // Find giscus container or create one
+      const container = document.querySelector('.giscus-container') || document.currentScript?.parentElement;
+      if (container) {
+        container.appendChild(script);
+      }
+    }
+
+    // Monitor theme changes and update Giscus
+    function updateGiscusTheme() {
+      const iframe = document.querySelector('iframe.giscus-frame');
+      if (!iframe) return;
+
+      const theme = getGiscusTheme();
+
+      try {
+        iframe.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: theme
+              }
+            }
+          },
+          'https://giscus.app'
+        );
+      } catch (error) {
+        console.log('Giscus theme update delayed, will retry...');
+      }
+    }
+
+    // Watch for theme changes using MutationObserver
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          // Delay update to ensure iframe is ready
+          setTimeout(updateGiscusTheme, 100);
+        }
+      });
+    });
+
+    // Start observing after a short delay
+    setTimeout(() => {
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }, 500);
+
+    // Update theme when Giscus iframe loads
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'https://giscus.app') return;
+      if (event.data.giscus) {
+        // Giscus is ready, update theme
+        setTimeout(updateGiscusTheme, 200);
+      }
+    });
+  })();
+</script>
+
+<style>
+  /* Ensure Giscus iframe has proper height and displays all content */
+  .giscus-container {
+    min-height: 300px;
+  }
+
+  .giscus-container iframe.giscus-frame {
+    width: 100%;
+    border: none;
+    min-height: 300px;
+  }
+
+  /* Make sure comment actions are visible */
+  .giscus {
+    overflow: visible !important;
+  }
+</style>
+
+<div class="giscus-container"></div>
