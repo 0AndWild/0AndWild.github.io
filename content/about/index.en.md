@@ -44,9 +44,17 @@ A backend developer with 3 years of experience, passionate about exploring new t
 
 ## Get In Touch
 
-- GitHub: [0AndWild](https://github.com/0AndWild)
-- LinkedIn: [gunyoung.Park](https://linkedin.com/in/건영-박-158861275)
-- Email: parkky3563@gmail.com
+{{< colorbutton href="https://github.com/0AndWild" target="_blank" color="github" >}}
+{{< icon "github" >}} GitHub
+{{< /colorbutton >}}
+
+{{< colorbutton href="https://linkedin.com/in/건영-박-158861275" target="_blank" color="linkedin" >}}
+{{< icon "linkedin" >}} LinkedIn
+{{< /colorbutton >}}
+
+{{< colorbutton href="mailto:parkky3563@gmail.com" color="email" >}}
+{{< icon "email" >}} Email
+{{< /colorbutton >}}
 
 ---
 
