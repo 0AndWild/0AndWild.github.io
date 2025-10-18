@@ -1,6 +1,6 @@
 +++
 title = 'Understanding Object-Oriented and Procedural Programming'
-date = '2025-10-18T20:02:58+09:00'
+date = '2022-08-31T20:02:58+09:00'
 description = "Comparing the differences, pros and cons of OOP and Procedural Programming"
 summary = "Learn about the concepts, differences, and advantages/disadvantages of Object-Oriented Programming and Procedural Programming, and understand when to use each approach."
 categories = ["Programming"]
