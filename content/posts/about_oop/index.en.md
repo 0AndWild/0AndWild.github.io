@@ -93,7 +93,7 @@ In the past, we didn't need hardware and software on the scale we do today. Old 
 
 As we entered the modern era, software development accelerated and code became increasingly complex.
 
-This led to tangled algorithms, and code became difficult or impossible for humans to understand - resulting in **'spaghetti code'**.
+This led to tangled algorithms, and code became difficult or impossible for humans to understand - resulting in **spaghetti code**.
 
 **Object-oriented programming** emerged as an alternative to address these issues.
 
