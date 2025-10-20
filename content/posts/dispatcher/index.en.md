@@ -5,7 +5,7 @@ description = "Learn about the core component of Spring MVC, Dispatcher Servlet,
 summary = "Explains the Front Controller pattern and the complete request processing flow of how Dispatcher Servlet receives client requests and delegates them to appropriate controllers"
 categories = ["Spring"]
 tags = ["Spring", "Spring MVC", "Dispatcher Servlet", "Servlet", "Web"]
-series = []
+series = ["Deep Dive into SpringBoot"]
 series_order = 1
 
 draft = false

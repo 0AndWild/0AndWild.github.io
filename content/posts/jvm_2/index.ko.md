@@ -5,7 +5,7 @@ description = "JVM의 핵심 구성요소인 Class Loader, Execution Engine, Gar
 summary = "JVM의 4가지 핵심 구성요소와 Runtime Data Areas의 5가지 메모리 영역(Method, Heap, Stack, PC Register, Native Method Stack)을 깊이 있게 분석합니다."
 categories = ["Java", "Programming"]
 tags = ["JVM", "Java", "Class Loader", "Garbage Collector", "Memory Management", "Runtime Data Areas"]
-series = ["JVM 파헤치기"]
+series = ["Deep Dive into JVM"]
 series_order = 2
 
 draft = false
