@@ -3,7 +3,7 @@
 # https://blowfish.page/docs/getting-started/
 
 theme = "blowfish" # UNCOMMENT THIS LINE
-baseURL = 'https://0AndWild.github.io/'
+baseURL = 'https://0andwild.github.io/'
 defaultContentLanguage = "ko"
 # title = '0AW Tech Blog'
 
