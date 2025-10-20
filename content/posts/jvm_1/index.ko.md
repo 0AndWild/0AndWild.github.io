@@ -5,7 +5,7 @@ description = "JVM의 동작 원리와 역할을 알아보고, Java 코드가 �
 summary = "Java Virtual Machine의 핵심 개념과 동작 원리를 파헤칩니다. 소스코드가 바이트코드로 변환되고 JIT 컴파일러를 통해 기계어로 실행되는 전체 과정을 이해해봅니다."
 categories = ["Java", "Programming"]
 tags = ["JVM", "Java"]
-series = ["JVM 파헤치기"]
+series = ["Deep Dive into JVM"]
 series_order = 1
 
 draft = false

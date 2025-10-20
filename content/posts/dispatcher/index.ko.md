@@ -5,7 +5,7 @@ description = "Spring MVC의 핵심 컴포넌트인 Dispatcher Servlet의 개념
 summary = "Dispatcher Servlet이 클라이언트 요청을 받아 적절한 컨트롤러로 위임하는 Front Controller 패턴의 동작 원리와 전체 요청 처리 과정을 설명합니다"
 categories = ["Spring"]
 tags = ["Spring", "Spring MVC", "Dispatcher Servlet", "Servlet", "Web"]
-series = []
+series = ["Deep Dive into SpringBoot"]
 series_order = 1
 
 draft = false

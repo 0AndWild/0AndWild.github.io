@@ -16,7 +16,7 @@ body {
 }
 
 /* 정확한 h2 타겟팅 */
-#main-content h2.mt-0.mb-0.text-xl {
+#main-content > article > div > div.mx-auto.max-w-7xl.p-0 > div > div.relative.flex.flex-col.items-center.justify-center.px-1.py-1.text-center > h2 {
   position: relative !important;
   min-height: 1rem !important;
   margin-bottom: 0.5rem !important;
@@ -27,11 +27,17 @@ body {
 }
 
 /* 다크 모드 */
-html.dark #main-content h2.mt-0.mb-0.text-xl {
+html.dark #main-content > article > div > div.mx-auto.max-w-7xl.p-0 > div > div.relative.flex.flex-col.items-center.justify-center.px-1.py-1.text-center > h2 {
   color: turquoise !important;
 }
 
 /* 저자 프로필 아래 본문 콘텐츠 간격 조정 */
 article .prose {
   margin-top: 3rem !important;
+}
+
+/* 배경 이미지 위치 조정 */
+#background-image {
+  object-fit: cover !important;
+  object-position: center 25% !important; /* 10% 아래로 이동 */
 }
