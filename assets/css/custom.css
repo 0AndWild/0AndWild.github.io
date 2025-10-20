@@ -35,3 +35,9 @@ html.dark #main-content > article > div > div.mx-auto.max-w-7xl.p-0 > div > div.
 article .prose {
   margin-top: 3rem !important;
 }
+
+/* 배경 이미지 위치 조정 */
+#background-image {
+  object-fit: cover !important;
+  object-position: center 25% !important; /* 10% 아래로 이동 */
+}
