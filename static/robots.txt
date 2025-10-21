@@ -2,3 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://0andwild.github.io/sitemap.xml
+Sitemap: https://0andwild.github.io/ko/sitemap.xml
+Sitemap: https://0andwild.github.io/en/sitemap.xml
+Sitemap: https://0andwild.github.io/index.xml
+
