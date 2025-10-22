@@ -19,7 +19,6 @@ showViews: false
 showLikes: false
 showAuthor: true
 layoutBackgroundHeaderSpace: false
-draft: false
 ---
 
 # 블로그 소개
