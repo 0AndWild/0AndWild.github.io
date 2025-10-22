@@ -5,6 +5,7 @@
 theme = "blowfish" # UNCOMMENT THIS LINE
 baseURL = 'https://0andwild.github.io/'
 defaultContentLanguage = "ko"
+canonifyURLs = true
 # title = '0AW Tech Blog'
 
 [languages]

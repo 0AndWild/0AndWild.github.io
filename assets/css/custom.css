@@ -41,3 +41,49 @@ article .prose {
   object-fit: cover !important;
   object-position: center 25% !important; /* 10% 아래로 이동 */
 }
+
+/* 본문 글자 크기 조정 */
+article .prose {
+  font-size: 1.125rem !important; /* 18px - 기본보다 크게 */
+  line-height: 1.8 !important; /* 줄 간격도 함께 조정 */
+}
+
+/* 본문 단락 간격 */
+article .prose p {
+  margin-bottom: 1.5rem !important;
+}
+
+/* 본문 제목 크기 조정 */
+article .prose h2 {
+  font-size: 1.875rem !important; /* 30px */
+  margin-top: 2.5rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+article .prose h3 {
+  font-size: 1.5rem !important; /* 24px */
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+}
+
+article .prose h4 {
+  font-size: 1.25rem !important; /* 20px */
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* 리스트 아이템 크기 */
+article .prose li {
+  font-size: 1.125rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* 코드 블록 글자 크기 */
+article .prose pre {
+  font-size: 0.95rem !important; /* 코드는 약간 작게 */
+}
+
+/* 인라인 코드 크기 */
+article .prose code {
+  font-size: 1rem !important;
+}
