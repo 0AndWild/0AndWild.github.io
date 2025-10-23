@@ -5,6 +5,9 @@ description = "Comprehensive analysis of various methods to implement subscripti
 summary = "Everything about blog subscription systems - from RSS Feed and Mailchimp to custom solutions"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Email", "Subscription", "RSS", "Automation"]
+series = ["Hugo"]
+series_order = 5
+
 draft = false
 +++
 

@@ -5,6 +5,9 @@ description = "Complete guide to integrating Giscus, a GitHub Discussions-based 
 summary = "How to add a free, Markdown-supporting comment system in 10 minutes"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Giscus", "GitHub", "Blowfish", "Comments"]
+series = ["Hugo"]
+series_order = 3
+
 draft = false
 +++
 

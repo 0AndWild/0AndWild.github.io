@@ -5,8 +5,8 @@ description = "Blowfish 마크다운 문법 설명서"
 summary = "Blowfish 마크다운 문법 설명서"
 categories = ["Blowfish"]
 tags = ["Blowfish", "Hugo", "Markdown"]
-series = ["Blowfish"]
-series_order = 1
+series = ["Hugo"]
+series_order = 2
 
 draft = false
 +++

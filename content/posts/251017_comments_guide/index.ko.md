@@ -5,6 +5,9 @@ description = "Hugo/GitHub Pages에서 사용 가능한 모든 댓글 시스템 
 summary = "Giscus, Utterances, Remark42, Disqus 등 모든 댓글 시스템의 장단점과 구현 방법"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Comments", "GitHub Pages", "Giscus", "Static Site"]
+series = ["Hugo"]
+series_order = 4
+
 draft = false
 +++
 

@@ -5,6 +5,9 @@ description = "Hugo 정적 블로그에서 구독 및 키워드 기반 이메일
 summary = "RSS Feed, Mailchimp, Buttondown, 커스텀 솔루션까지 - 블로그 구독 시스템의 모든 것"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Email", "Subscription", "RSS", "Automation"]
+series = ["Hugo"]
+series_order = 5
+
 draft = false
 +++
 

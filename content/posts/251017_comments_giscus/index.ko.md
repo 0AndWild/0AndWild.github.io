@@ -5,6 +5,9 @@ description = "GitHub Discussions 기반 댓글 시스템 Giscus를 Blowfish 테
 summary = "무료로 Markdown 지원하는 댓글 시스템을 10분 만에 추가하는 방법"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Giscus", "GitHub", "Blowfish", "Comments"]
+series = ["Hugo"]
+series_order = 3
+
 draft = false
 +++
 
