@@ -1,4 +1,126 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0andwild.github.io/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Fri, 17 Oct 2025 12:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Giscus로 Hugo 블로그에 댓글 기능 추가하기</title><link>https://0andwild.github.io/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_comments_giscus/</guid><description>무료로 Markdown 지원하는 댓글 시스템을 10분 만에 추가하는 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_comments_giscus/featured.png"/></item><item><title>Hugo &amp; GithubPages 블로그 댓글 시스템 구현 가이드</title><link>https://0andwild.github.io/posts/251017_comments_guide/</link><pubDate>Fri, 17 Oct 2025 11:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_comments_guide/</guid><description>Giscus, Utterances, Remark42, Disqus 등 모든 댓글 시스템의 장단점과 구현 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_comments_guide/featured.png"/></item><item><title>Hugo &amp; GithubPages 블로그 구독 및 이메일 알림 시스템 구현 가이드</title><link>https://0andwild.github.io/posts/251017_subscription_alert/</link><pubDate>Fri, 17 Oct 2025 10:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_subscription_alert/</guid><description>RSS Feed, Mailchimp, Buttondown, 커스텀 솔루션까지 - 블로그 구독 시스템의 모든 것</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_subscription_alert/featured.jpg"/></item><item><title>Hugo markdown 설명서</title><link>https://0andwild.github.io/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.github.io/posts/251016_blowfish_markdown/</guid><description>Blowfish 마크다운 문법 설명서</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251016_blowfish_markdown/featured.png"/></item><item><title>소개</title><link>https://0andwild.github.io/about/</link><pubDate>Thu, 16 Oct 2025 00:00:00 +0000</pubDate><guid>https://0andwild.github.io/about/</guid><description>&lt;h1 class="relative group"&gt;블로그 소개
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0andwild.github.io/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2025 gunyoung.Park</copyright><lastBuildDate>Sat, 22 Nov 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://0andwild.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>My Life log</title><link>https://0andwild.github.io/life_log/</link><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate><guid>https://0andwild.github.io/life_log/</guid><description>&lt;p&gt;힘든시간이 많았지만 이겨내고 다시 일어나 열심히 달려온 나의 인생 이야기를 적어보려 한다.&lt;/p&gt;
+&lt;h2 class="relative group"&gt;EP1. 내 꿈은 국가대표
+&lt;div id="ep1-내-꿈은-국가대표" class="anchor"&gt;&lt;/div&gt;
+&lt;/h2&gt;
+&lt;p&gt;어렸을적부터 운동을 너무 좋아해 운동선수의 꿈을 가지고 &lt;code&gt;태극기 마크를 가슴에 달고 올림픽에 나가는 것&lt;/code&gt; 이 꿈이었다.&lt;/p&gt;
+&lt;p&gt;초등학교 시절부터 육상선수로 활동하였으나 부모님께서 운동선수가 되는 것에 대한 반대가 심하셨다.&lt;/p&gt;
+&lt;div
+id="carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+class="relative"
+data-twe-carousel-init
+data-twe-ride="carousel"
+data-twe-interval="2000"&gt;
+&lt;div
+class="absolute right-0 bottom-0 left-0 z-2 mx-[15%] mb-10 flex list-none justify-center p-0"
+data-twe-carousel-indicators&gt;
+&lt;button
+type="button"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-slide-to="0"
+data-twe-carousel-active aria-current="true"
+class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
+aria-label="Slide 0"&gt;&lt;/button&gt;
+&lt;button
+type="button"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-slide-to="1"
+class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
+aria-label="Slide 1"&gt;&lt;/button&gt;
+&lt;button
+type="button"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-slide-to="2"
+class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
+aria-label="Slide 2"&gt;&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="relative w-full overflow-hidden after:clear-both after:block after:content-['']"&gt;
+&lt;div
+class="relative float-left -mr-[100%] w-full transition-transform ease-in-out motion-reduce:transition-none"
+data-twe-carousel-item
+style="transition-duration: 2000ms;"
+data-twe-carousel-active&gt;
+&lt;div
+class="single_hero_background"
+style="aspect-ratio: 16 / 9;"&gt;
+&lt;img
+src="https://0andwild.github.io/life_log/image1.jpg"
+class="block absolute top-0 object-cover w-full h-full not-prose nozoom"
+alt="carousel image 1"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div
+class="relative float-left -mr-[100%] hidden w-full transition-transform ease-in-out motion-reduce:transition-none"
+data-twe-carousel-item
+style="transition-duration: 2000ms;"
+&gt;
+&lt;div
+class="single_hero_background"
+style="aspect-ratio: 16 / 9;"&gt;
+&lt;img
+src="https://0andwild.github.io/life_log/image2.jpg"
+class="block absolute top-0 object-cover w-full h-full not-prose nozoom"
+alt="carousel image 2"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div
+class="relative float-left -mr-[100%] hidden w-full transition-transform ease-in-out motion-reduce:transition-none"
+data-twe-carousel-item
+style="transition-duration: 2000ms;"
+&gt;
+&lt;div
+class="single_hero_background"
+style="aspect-ratio: 16 / 9;"&gt;
+&lt;img
+src="https://0andwild.github.io/life_log/image3.jpg"
+class="block absolute top-0 object-cover w-full h-full not-prose nozoom"
+alt="carousel image 3"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;button
+class="absolute top-0 bottom-0 left-0 z-2 flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:no-underline hover:opacity-90 hover:outline-none focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+type="button"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-slide="prev"&gt;
+&lt;span class="inline-block h-8 w-8"&gt;
+&lt;svg
+xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24"
+stroke-width="4.5"
+stroke="currentColor"
+class="h-6 w-6"&gt;
+&lt;path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /&gt;
+&lt;/svg&gt;
+&lt;/span&gt;
+&lt;span
+class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+&gt;Previous&lt;/span
+&gt;
+&lt;/button&gt;
+&lt;button
+class="absolute top-0 bottom-0 right-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:no-underline hover:opacity-90 hover:outline-none focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+type="button"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-slide="next"&gt;
+&lt;span class="inline-block h-8 w-8"&gt;
+&lt;svg
+xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24"
+stroke-width="4.5"
+stroke="currentColor"
+class="h-6 w-6"&gt;
+&lt;path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /&gt;
+&lt;/svg&gt;
+&lt;/span&gt;
+&lt;span
+class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+&gt;Next&lt;/span
+&gt;
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;p&gt;그러던중 럭비선수이셨던 외삼촌의 부모님 설득과 권유로 중학교부터 럭비 선수를 하며 국가대표의 꿈을 꿀 수 있게 되었다.&lt;/p&gt;</description></item><item><title>Giscus로 Hugo 블로그에 댓글 기능 추가하기</title><link>https://0andwild.github.io/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_comments_giscus/</guid><description>무료로 Markdown 지원하는 댓글 시스템을 10분 만에 추가하는 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_comments_giscus/featured.png"/></item><item><title>Hugo &amp; GithubPages 블로그 댓글 시스템 구현 가이드</title><link>https://0andwild.github.io/posts/251017_comments_guide/</link><pubDate>Fri, 17 Oct 2025 11:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_comments_guide/</guid><description>Giscus, Utterances, Remark42, Disqus 등 모든 댓글 시스템의 장단점과 구현 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_comments_guide/featured.png"/></item><item><title>Hugo &amp; GithubPages 블로그 구독 및 이메일 알림 시스템 구현 가이드</title><link>https://0andwild.github.io/posts/251017_subscription_alert/</link><pubDate>Fri, 17 Oct 2025 10:00:00 +0900</pubDate><guid>https://0andwild.github.io/posts/251017_subscription_alert/</guid><description>RSS Feed, Mailchimp, Buttondown, 커스텀 솔루션까지 - 블로그 구독 시스템의 모든 것</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251017_subscription_alert/featured.jpg"/></item><item><title>Hugo markdown 설명서</title><link>https://0andwild.github.io/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.github.io/posts/251016_blowfish_markdown/</guid><description>Blowfish 마크다운 문법 설명서</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.github.io/posts/251016_blowfish_markdown/featured.png"/></item><item><title>소개</title><link>https://0andwild.github.io/about/</link><pubDate>Thu, 16 Oct 2025 00:00:00 +0000</pubDate><guid>https://0andwild.github.io/about/</guid><description>&lt;h1 class="relative group"&gt;블로그 소개
 &lt;div id="블로그-소개" class="anchor"&gt;&lt;/div&gt;
 &lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;0AndWild Tech Blog&lt;/strong&gt;에 오신 것을 환영합니다! 이곳은 백엔드 개발, 인프라, 그리고 다양한 기술에 대한 생각과 경험, 배움을 공유하는 공간입니다.&lt;/p&gt;
