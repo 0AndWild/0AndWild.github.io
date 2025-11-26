@@ -33,8 +33,8 @@ highlightCurrentMenuArea = true
 
 fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384", "sha256"
 
-giteaDefaultServer = "https://git.fsfe.org"
-forgejoDefaultServer = "https://v11.next.forgejo.org"
+# giteaDefaultServer = "https://git.fsfe.org"
+# forgejoDefaultServer = "https://v11.next.forgejo.org"
 
 [fonts]
   # 폰트 선택 (Blowfish 내장 폰트)

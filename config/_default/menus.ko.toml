@@ -1,4 +1,10 @@
 [[main]]
+  identifier = "life_log"
+  name = "Life_Log"
+  pageRef = "life_log"
+  weight = 15
+
+[[main]]
   identifier = "about"
   name = "소개"
   pageRef = "about"
