@@ -5,7 +5,7 @@
 &lt;p&gt;어렸을적부터 운동을 너무 좋아해 운동선수의 꿈을 가지고 &lt;code&gt;태극기 마크를 가슴에 달고 올림픽에 나가는 것&lt;/code&gt; 이 꿈이었다.&lt;/p&gt;
 &lt;p&gt;초등학교 시절부터 육상선수로 활동하였으나 부모님께서 운동선수가 되는 것에 대한 반대가 심하셨다.&lt;/p&gt;
 &lt;div
-id="carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+id="carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 class="relative"
 data-twe-carousel-init
 data-twe-ride="carousel"
@@ -15,20 +15,20 @@ class="absolute right-0 bottom-0 left-0 z-2 mx-[15%] mb-10 flex list-none justif
 data-twe-carousel-indicators&gt;
 &lt;button
 type="button"
-data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 data-twe-slide-to="0"
 data-twe-carousel-active aria-current="true"
 class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
 aria-label="Slide 0"&gt;&lt;/button&gt;
 &lt;button
 type="button"
-data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 data-twe-slide-to="1"
 class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
 aria-label="Slide 1"&gt;&lt;/button&gt;
 &lt;button
 type="button"
-data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 data-twe-slide-to="2"
 class="mx-[3px] box-content h-[3px] w-[30px] flex-initial cursor-pointer border-0 border-y-[10px] border-solid border-transparent bg-neutral bg-clip-padding p-0 -indent-[999px] opacity-50 transition-opacity duration-[600ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] motion-reduce:transition-none"
 aria-label="Slide 2"&gt;&lt;/button&gt;
@@ -80,7 +80,7 @@ alt="carousel image 3"&gt;
 &lt;button
 class="absolute top-0 bottom-0 left-0 z-2 flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:no-underline hover:opacity-90 hover:outline-none focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
 type="button"
-data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 data-twe-slide="prev"&gt;
 &lt;span class="inline-block h-8 w-8"&gt;
 &lt;svg
@@ -101,7 +101,7 @@ class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-
 &lt;button
 class="absolute top-0 bottom-0 right-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:no-underline hover:opacity-90 hover:outline-none focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
 type="button"
-data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764197526420467574"
+data-twe-target="#carousel-a86d1171c340750194531700b3f3b3d4-1764229708512310959"
 data-twe-slide="next"&gt;
 &lt;span class="inline-block h-8 w-8"&gt;
 &lt;svg
