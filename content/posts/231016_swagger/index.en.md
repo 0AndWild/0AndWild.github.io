@@ -1,5 +1,5 @@
 +++
-title = 'Mastering OpenAPI Generator 1'
+title = 'Mastering OpenAPI Generator'
 date = '2023-10-16T16:56:35+09:00'
 description = "Learn about the differences between Swagger and OpenAPI Generator, and compare tools for API documentation automation."
 summary = "API documentation automation and code generation using OpenAPI Generator"
