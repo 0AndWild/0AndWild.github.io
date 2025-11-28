@@ -1,11 +1,11 @@
 +++
-title = 'Mastering OpenAPI Generator'
+title = 'Mastering OpenAPI Generator 1'
 date = '2023-10-16T16:56:35+09:00'
 description = "Learn about the differences between Swagger and OpenAPI Generator, and compare tools for API documentation automation."
 summary = "API documentation automation and code generation using OpenAPI Generator"
 categories = ["Backend"]
 tags = ["Swagger", "OpenAPI", "API", "Documentation", "Code Generation"]
-series = []
+series = ["Swagger OAS(Open API Specification)"]
 series_order = 1
 
 draft = false

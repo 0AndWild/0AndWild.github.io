@@ -1,12 +1,12 @@
 +++
-title = 'Springdoc and OpenAPI - ParameterObject and Annotation Usage Guide'
+title = 'Springdoc and OpenAPI (Annotation Usage Guide)'
 date = '2023-10-17T17:12:52+09:00'
 description = "A comprehensive guide on ParameterObject handling with Springdoc in Spring Boot and annotation migration from Swagger2 to Swagger3"
 summary = "Complete guide to Springdoc's @ParameterObject usage and Swagger annotation reference"
 categories = ["Backend"]
 tags = ["Spring", "Springdoc", "Swagger", "OpenAPI", "API Documentation"]
-series = []
-series_order = 1
+series = ["Swagger OAS(Open API Specification)"]
+series_order = 2
 
 draft = false
 +++

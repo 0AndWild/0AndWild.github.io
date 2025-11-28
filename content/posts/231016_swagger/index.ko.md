@@ -1,11 +1,11 @@
 +++
-title = 'OpenAPI Generator 정복하기'
+title = 'OpenAPI Generator 정복하기 1'
 date = '2023-10-16T16:56:35+09:00'
 description = "Swagger와 OpenAPI Generator의 차이점과 활용법을 알아보고, API 문서 자동화를 위한 도구들을 비교 분석합니다."
 summary = "OpenAPI Generator를 활용한 API 문서 자동화와 코드 생성 방법"
 categories = ["Backend"]
 tags = ["Swagger", "OpenAPI", "API", "Documentation", "Code Generation"]
-series = []
+series = ["Swagger OAS(Open API Specification)"]
 series_order = 1
 
 draft = false

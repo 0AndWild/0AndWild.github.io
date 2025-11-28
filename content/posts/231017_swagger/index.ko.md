@@ -1,12 +1,12 @@
 +++
-title = 'Springdoc과 OpenAPI - ParameterObject와 어노테이션 활용법'
+title = 'Springdoc과 OpenAPI (어노테이션 활용법)'
 date = '2023-10-17T17:12:52+09:00'
 description = "Spring Boot에서 Springdoc을 활용한 ParameterObject 처리와 Swagger2에서 Swagger3로의 어노테이션 마이그레이션 가이드"
 summary = "Springdoc의 @ParameterObject 활용법과 Swagger 어노테이션 완벽 정리"
 categories = ["Backend"]
 tags = ["Spring", "Springdoc", "Swagger", "OpenAPI", "API Documentation"]
-series = []
-series_order = 1
+series = ["Swagger OAS(Open API Specification)"]
+series_order = 2
 
 draft = false
 +++
