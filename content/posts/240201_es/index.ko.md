@@ -27,8 +27,8 @@ ElasticeSearch 는 검색을 위해 단독으로 사용되기도 하며, **ELK(E
 
 ## Elasticsearch 와 RDB 의 명칭 비교
 
-{{< figure src="es1.png" alt="docker" class="mx-auto" >}}
-{{< figure src="es2.png" alt="docker" class="mx-auto" >}}
+{{< figure src="es1.png" class="mx-auto" >}}
+{{< figure src="es2.png" class="mx-auto" >}}
 
 ### Elasticsearch 7.0 부터는 하나의 인덱스에 하나의 타입만 가질 수 있음
 
@@ -44,7 +44,7 @@ ElasticeSearch 는 검색을 위해 단독으로 사용되기도 하며, **ELK(E
 
 ## Elasticsearch 구조
 
-{{< figure src="es3.png" alt="docker" class="mx-auto" >}}
+{{< figure src="es3.png" class="mx-auto" >}}
 
 ### 클러스터 (Cluster)
 

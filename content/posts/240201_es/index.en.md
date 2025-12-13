@@ -27,8 +27,8 @@ Elasticsearch can be used standalone for search purposes, or as part of the **EL
 
 ## Elasticsearch and RDB Terminology Comparison
 
-{{< figure src="es1.png" alt="docker" class="mx-auto" >}}
-{{< figure src="es2.png" alt="docker" class="mx-auto" >}}
+{{< figure src="es1.png" class="mx-auto" >}}
+{{< figure src="es2.png" class="mx-auto" >}}
 
 ### Elasticsearch 7.0+ Allows Only One Type Per Index
 
@@ -44,7 +44,7 @@ The reason is that Elasticsearch uses the same Lucene fields for types within a 
 
 ## Elasticsearch Architecture
 
-{{< figure src="es3.png" alt="docker" class="mx-auto" >}}
+{{< figure src="es3.png" class="mx-auto" >}}
 
 ### Cluster
 
