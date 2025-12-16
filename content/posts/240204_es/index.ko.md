@@ -1,12 +1,12 @@
 +++
 title = 'Elasticsearch 자동완성 검색 처리 방법'
-date = '2025-02-04T20:59:35+09:00'
-description = "Elasticsearch에서 자동완성 검색을 구현하는 다양한 방법과 각 방법의 특징 및 적용 사례"
+date = '2024-02-04T20:59:35+09:00'
+description = "Elasticsearch에서 자동완성 검색을 구현하는 다양한 방법과 각 방법의 특징"
 summary = "Edge N-Gram, Search-as-you-type, Completion Suggester 등 Elasticsearch의 자동완성 구현 방법을 비교하고 상황별 최적의 선택 가이드"
 categories = ["Backend"]
 tags = ["Elasticsearch", "검색", "자동완성", "N-gram", "Suggester"]
-series = []
-series_order = 1
+series = ["ElasticSearch"]
+series_order = 6
 
 draft = false
 +++
