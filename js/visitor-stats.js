@@ -2,20 +2,15 @@
 (function() {
   'use strict';
 
-  // 홈페이지가 아니면 실행하지 않음
-  const totalElement = document.getElementById('total-visitors-count');
-  const todayElement = document.getElementById('today-visitors-count');
-
-  if (!totalElement && !todayElement) {
-    // 방문자 통계 위젯이 없으면 (홈페이지가 아님) 종료
-    return;
-  }
-
   // Firebase 초기화 확인
   if (typeof firebase === 'undefined' || typeof db === 'undefined' || typeof auth === 'undefined') {
     console.warn('Firebase not initialized for visitor stats');
     return;
   }
+
+  // 방문자 통계 위젯 요소 (홈페이지에만 존재)
+  const totalElement = document.getElementById('total-visitors-count');
+  const todayElement = document.getElementById('today-visitors-count');
 
   const STATS_DOC_ID = 'global-stats';
   const VISITED_KEY = 'site_visited';
@@ -121,10 +116,16 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       updateVisitorStats();
-      displayVisitorStats();
+      // 위젯이 있는 페이지에서만 통계 표시
+      if (totalElement || todayElement) {
+        displayVisitorStats();
+      }
     });
   } else {
     updateVisitorStats();
-    displayVisitorStats();
+    // 위젯이 있는 페이지에서만 통계 표시
+    if (totalElement || todayElement) {
+      displayVisitorStats();
+    }
   }
 })();
