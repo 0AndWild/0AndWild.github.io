@@ -13,7 +13,6 @@
   const todayElement = document.getElementById('today-visitors-count');
 
   const STATS_DOC_ID = 'global-stats';
-  const VISITED_KEY = 'site_visited';
   const LAST_VISIT_KEY = 'last_visit_date';
 
   // 오늘 날짜 (YYYY-MM-DD 형식)
@@ -24,7 +23,6 @@
 
   // 방문자 통계 업데이트
   function updateVisitorStats() {
-    const hasVisited = localStorage.getItem(VISITED_KEY);
     const lastVisitDate = localStorage.getItem(LAST_VISIT_KEY);
     const todayKey = getTodayKey();
 
@@ -33,25 +31,9 @@
         const statsRef = db.collection('site-stats').doc(STATS_DOC_ID);
         const dailyStatsRef = db.collection('daily-stats').doc(todayKey);
 
-        // 전체 방문자 수 업데이트 (최초 방문자만)
-        if (!hasVisited) {
-          statsRef.get().then((doc) => {
-            if (doc.exists) {
-              statsRef.update({
-                totalVisitors: firebase.firestore.FieldValue.increment(1)
-              });
-            } else {
-              statsRef.set({ totalVisitors: 1 });
-            }
-          }).catch((error) => {
-            console.error('Error updating total visitors:', error);
-          });
-
-          localStorage.setItem(VISITED_KEY, 'true');
-        }
-
         // 오늘 방문자 수 업데이트 (하루에 한 번만)
         if (lastVisitDate !== todayKey) {
+          // 일일 방문자 수 증가
           dailyStatsRef.get().then((doc) => {
             if (doc.exists) {
               dailyStatsRef.update({
@@ -65,6 +47,19 @@
             }
           }).catch((error) => {
             console.error('Error updating daily visitors:', error);
+          });
+
+          // 전체 방문자 수도 함께 증가 (일일 방문자의 누적)
+          statsRef.get().then((doc) => {
+            if (doc.exists) {
+              statsRef.update({
+                totalVisitors: firebase.firestore.FieldValue.increment(1)
+              });
+            } else {
+              statsRef.set({ totalVisitors: 1 });
+            }
+          }).catch((error) => {
+            console.error('Error updating total visitors:', error);
           });
 
           localStorage.setItem(LAST_VISIT_KEY, todayKey);
