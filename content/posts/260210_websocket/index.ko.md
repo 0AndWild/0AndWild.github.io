@@ -1,19 +1,20 @@
 +++
-title = 'Websocket 이란?(RFC 6455)'
+title = 'Websocket 이란? (RFC 6455)'
 date = '2026-01-21T15:38:26+09:00'
 description = ""
-summary = ""
+summary = "웹소켓이 무엇인지와 웹소켓 프로토콜은 어떻게 동작을 하는지 RFC 6455 문서를 살펴보며 알아가보자"
 categories = ["Websocket", "RFC6455"]
 tags = []
 series = ["Websocket"]
-series_order = 1
+series_order = 2
 
 draft = false
 +++
 
 ## 서론
 이전 포스트인 웹소켓 이전의 양방향 통신에 이어서 Websocket 프로토콜 문서인 RFC 6455 를 읽어보며 Websocket 에 대해 상세하게 다뤄보고자 함.
-*내용 중 자세한 설명을 위한 예시들은 AI를 이용햐여 생성하였음.*
+
+*내용 중 자세한 설명을 위한 예시들은 AI를 이용하여 생성하였음.*
 
 ---
 
@@ -175,6 +176,7 @@ payload 가 완전한 message 인 이유는 Spring 이 내부적으로 Frame 1 �
 - Websocket 에 정의된 프레임은 data frame 3개, controle frame 3개 그리고 각각 예약 프레임 5개 씩 총 16개로 구성 됨
 
 다음으로는 Opening Handshake 가 어떻게 일어나는지 살펴보겠음.
+
 ---
 
 ## Opening Handshake
@@ -249,6 +251,7 @@ HTTP/1.1 101 Switching Protocols
 - 서버의 연결 응답에는 Sec-Websocket-Key 를 이용해 Sec-Websocket-Accept 의 값을 계산하고 이와 함께 101 상태값을 내려주어야 함
 
 다음으로는 Websocket 종료는 어떻게 일어나는지 살펴보겠음.
+
 ---
 
 ## Closing HandShake
@@ -400,11 +403,321 @@ Client                    Proxy                    Server
 
 ---
 
-## Websocket Design Philosophy
+## WebSocket 설계 철학: 최소한의 프레이밍
 
+### 핵심 원칙
 
+RFC 6455에서 WebSocket의 설계 원칙을 이렇게 명시하고 있음:
 
+> "The WebSocket Protocol is designed on the principle that there should be minimal framing"
 
---- 
+WebSocket이 제공하는 프레이밍은 딱 두 가지 목적만을 위한 것임:
+
+1. **스트림 → 메시지 단위 변환**: TCP는 연속적인 바이트 스트림인데, 애플리케이션은 "메시지" 단위로 생각함
+2. **텍스트 vs 바이너리 구분**: UTF-8 텍스트인지 임의의 바이너리 데이터인지 구분
+
+그 외의 모든 메타데이터(메시지 타입, 라우팅, 인증 등)는 **애플리케이션 레이어에서 알아서 처리하라**는 철학임.
+
+---
+
+### TCP의 문제: 메시지 경계가 없음
+
+TCP는 바이트 스트림 프로토콜임. 데이터가 파이프를 타고 흐르듯 연속적으로 전달될 뿐, "여기서 메시지 끝"이라는 구분이 없음.
+
+```
+보내는 쪽:
+  send("Hello")
+  send("World")
+
+TCP 파이프 안:
+  [H][e][l][l][o][W][o][r][l][d]  ← 전부 붙어있음
+
+받는 쪽이 실제로 받을 수 있는 것:
+  recv() → "Hel"
+  recv() → "loWor"
+  recv() → "ld"
+```
+
+받는 쪽은 "Hello"가 어디서 끝나고 "World"가 어디서 시작하는지 알 수 없음.
+
+---
+
+### WebSocket의 해결: 프레임으로 경계 복원
+
+WebSocket은 각 메시지를 프레임으로 감싸서 경계를 만들어줌:
+
+```
+보내는 쪽:
+  ws.send("Hello")
+  ws.send("World")
+
+WebSocket 프레이밍 후:
+  [FIN=1, len=5, "Hello"][FIN=1, len=5, "World"]
+   ├─── 프레임 1 ───────┤├─── 프레임 2 ────────┤
+
+받는 쪽:
+  onMessage("Hello")  ← 정확히 원본 메시지 단위로 받음
+  onMessage("World")
+```
+
+---
+
+### "최소한"의 의미
+
+WebSocket 프레임 헤더에 들어있는 정보는 이게 전부임:
+
+| 필드 | 용도 |
+|------|------|
+| FIN | 메시지의 마지막 프레임인지 |
+| Opcode | 텍스트(0x1) vs 바이너리(0x2) vs 컨트롤(0x8, 0x9, 0xA) |
+| Length | 페이로드 길이 |
+| Mask | 마스킹 여부 (보안용) |
+
+HTTP 헤더와 비교해보면 차이가 확연함:
+
+```
+HTTP 헤더 (수백 바이트):
+  Content-Type: application/json
+  Content-Length: 42
+  Authorization: Bearer xxx
+  X-Request-ID: abc123
+  Cache-Control: no-cache
+  ... 등등
+
+WebSocket 프레임 헤더 (2~14 바이트):
+  [FIN + opcode][MASK + length]
+  끝.
+```
+
+---
+
+### WebSocket이 해주지 않는 것들
+
+"최소한의 프레이밍" 철학은 곧 **나머지는 알아서 하라**는 뜻임:
+
+```json
+클라이언트가 보내는 실제 메시지:
+{
+  "type": "SUBSCRIBE",
+  "channel": "stock.005930",
+  "userId": "gun0",
+  "token": "abc123"
+}
+```
+
+WebSocket이 아는 것:
+- "이건 텍스트 프레임이고, 길이는 120바이트다"
+
+WebSocket이 모르는 것:
+- `type`이 뭔지
+- `channel`로 어디에 라우팅해야 하는지
+- `userId`와 `token`으로 인증을 어떻게 처리할지
+
+이런 것들은 전부 애플리케이션 레이어가 직접 구현해야 함.
+
+---
+
+### 그래서 STOMP 같은 서브프로토콜을 사용하는 것
+
+**WebSocket만 사용하면:**
+
+```java
+@OnMessage
+public void onMessage(String message) {
+    // message = 그냥 문자열
+    // 이게 뭔지, 누구한테 보낼지 직접 파싱해야 함
+    
+    JSONObject json = new JSONObject(message);
+    String type = json.getString("type");
+    
+    if (type.equals("SUBSCRIBE")) {
+        // 구독 로직 직접 구현
+    } else if (type.equals("UNSUBSCRIBE")) {
+        // 구독 해제 로직 직접 구현
+    } else if (type.equals("SEND")) {
+        // 메시지 전송 로직 직접 구현
+    }
+}
+```
+
+**STOMP를 얹으면:**
+
+```java
+@MessageMapping("/stock/{stockCode}")
+public void handleStock(@DestinationVariable String stockCode, 
+                        StockRequest request) {
+    // 메시지 타입, 라우팅이 이미 처리되어 있음
+}
+```
+
+---
+
+### TCP 위에 WebSocket이 추가하는 것들
+
+RFC 6455에서 WebSocket의 역할을 명확히 정의하고 있음:
+
+#### 1. 웹 Origin 기반 보안 모델
+
+```
+Origin: http://example.com
+```
+
+브라우저 환경에서 "이 스크립트가 어디서 왔는지"를 서버에 알려줌. 서버가 cross-origin 요청을 거부할 수 있는 근거를 제공함.
+
+#### 2. 주소 지정 및 프로토콜 네이밍
+
+```http
+GET /chat HTTP/1.1
+Host: server.example.com
+Sec-WebSocket-Protocol: stomp, mqtt
+```
+
+하나의 IP + 하나의 포트에서 여러 서비스를 제공할 수 있음:
+- Path로 엔드포인트 구분 (`/chat`, `/notifications`)
+- Host 헤더로 가상 호스팅
+- `Sec-WebSocket-Protocol`로 서브프로토콜 협상
+
+#### 3. 프레이밍 메커니즘
+
+RFC에서 흥미로운 표현을 쓰고 있음:
+
+> "layers a framing mechanism on top of TCP to get back to the IP packet mechanism that TCP is built on, but without length limits"
+
+| 레이어 | 특성 |
+|--------|------|
+| IP | 패킷 기반, 경계 명확, 크기 제한 있음 (~1500 bytes) |
+| TCP | 스트림 기반, 경계 없음, 크기 제한 없음 |
+| WebSocket | 프레임 기반, 경계 명확, 크기 제한 없음 |
+
+TCP가 IP 패킷들을 이어붙여서 "연속적인 스트림"으로 만들어버렸는데, WebSocket이 다시 "메시지 단위"를 복원해주는 것임.
+
+#### 4. 프록시 친화적 Closing Handshake
+
+TCP FIN/ACK만으로는 중간에 프록시가 있을 때 데이터 손실이 발생할 수 있음:
+
+```
+[Client] ----data----> [Proxy] ----data----> [Server]
+[Client] <---FIN------ [Proxy]               [Server]  ← 프록시가 임의로 끊을 수 있음
+```
+
+WebSocket Close 프레임은 애플리케이션 레이어에서 종료를 협상하기 때문에 더 안전함:
+
+```
+[Client] ---Close Frame---> [Proxy] ---Close Frame---> [Server]
+[Client] <--Close Frame---- [Proxy] <--Close Frame---- [Server]
+[Client] -------TCP FIN-------> ... -------TCP FIN-------> [Server]
+```
+
+---
+
+### "Raw TCP에 최대한 가깝게"
+
+RFC의 핵심 문장:
+
+> "Basically it is intended to be as close to just exposing raw TCP to script as possible given the constraints of the Web."
+
+브라우저에서 JavaScript로 raw TCP 소켓을 직접 열 수는 없음 (보안상 이유). WebSocket은 그 제약 내에서 **최대한 TCP에 가까운 경험**을 제공하려는 것임.
+
+**WebSocket이 추가하지 않는 것들:**
+
+| 기능 | 이유 |
+|------|------|
+| 메시지 ID | 애플리케이션이 알아서 |
+| 요청-응답 매핑 | 양방향 스트림일 뿐 |
+| 재전송/순서 보장 | TCP가 이미 제공 |
+| 메시지 압축 | 기본은 raw (확장으로 가능) |
+| 인증 | HTTP 핸드셰이크에서 처리 |
+| 라우팅 | 서브프로토콜이 처리 |
+
+---
+
+### HTTP 인프라와의 공존
+
+> "It's also designed in such a way that its servers can share a port with HTTP servers"
+
+이건 실용적으로 매우 중요한 설계 결정임:
+
+```
+Port 80/443
+    │
+    ├── GET /api/users HTTP/1.1     → 일반 HTTP 처리
+    ├── GET /index.html HTTP/1.1    → 일반 HTTP 처리
+    └── GET /ws HTTP/1.1            → WebSocket 업그레이드
+        Upgrade: websocket
+```
+
+**장점:**
+- 기존 로드밸런서, 프록시, 방화벽 통과 가능
+- 추가 포트 오픈 불필요
+- SSL 인증서 공유 가능
+
+핸드셰이크가 HTTP Upgrade 형태인 이유도 이것 때문임. RFC에서 이렇게 언급하고 있음:
+
+> "the design does not limit WebSocket to HTTP, and future implementations could use a simpler handshake over a dedicated port without reinventing the entire protocol"
+
+HTTP 호환은 현재 웹 인프라를 위해 선택한 것이지, 프로토콜의 본질은 아니라는 뜻임.
+
+---
+
+### 확장성
+
+> "The protocol is intended to be extensible; future versions will likely introduce additional concepts such as multiplexing."
+
+확장을 위해 예약해둔 것들:
+
+| 예약 항목 | 용도 |
+|-----------|------|
+| RSV1, RSV2, RSV3 비트 | 프레임별 확장 플래그 |
+| Opcode 0x3-0x7 | 추가 데이터 프레임 타입 |
+| Opcode 0xB-0xF | 추가 컨트롤 프레임 타입 |
+| `Sec-WebSocket-Extensions` 헤더 | 확장 협상 |
+
+**실제 확장 예시 - permessage-deflate:**
+
+```
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+```
+
+메시지 압축 확장인데, RSV1 비트를 사용해서 "이 프레임은 압축됨"을 표시함.
+
+---
+
+### 비유로 정리
+
+**TCP = 고속도로**
+- 차(바이트)들이 줄줄이 달림
+- 어디서 한 무리가 끝나고 다음 무리가 시작하는지 구분선 없음
+
+**WebSocket = 컨테이너 트럭**
+- 화물(메시지)을 컨테이너(프레임)에 담아서 운송
+- "컨테이너 안에 뭐가 들었는지"는 컨테이너 자체는 모름
+- 그냥 "컨테이너 크기가 얼마다" 정도만 표시
+
+**STOMP = 물류 시스템**
+- 컨테이너 안에 송장을 붙여서 "이건 A에게, 저건 B에게"
+- 화물 종류별로 분류
+- 배송 추적
+
+WebSocket은 컨테이너 트럭처럼 **안전하게 덩어리째 전달**만 해주고, 그 안의 내용물 관리는 STOMP 같은 상위 프로토콜이 담당하는 구조임.
+
+---
+
+### 정리
+
+WebSocket의 설계 철학은 *"최소한만 하고, 나머지는 위임한다"* 로 요약할 수 있음:
+
+| WebSocket이 하는 것 | WebSocket이 안 하는 것 |
+|---------------------|------------------------|
+| 메시지 경계 구분 | 메시지 타입/라우팅 |
+| 텍스트/바이너리 구분 | 인증/권한 |
+| 연결 유지 | 재연결 로직 |
+| Ping/Pong heartbeat | 비즈니스 로직 |
+| Origin 기반 보안 | 애플리케이션 레벨 보안 |
+
+이런 철학 덕분에 WebSocket은 가볍고 범용적임. 그 위에 STOMP, Socket.IO, 또는 직접 만든 프로토콜을 얹어서 각자의 요구사항에 맞게 확장할 수 있음.
+
+---
+
+이렇게 RFC 6455 문서를 살펴보면서 Websocket 에 대해 알아 보았음. 다음 포스트 에서는 SpringBoot 에서 Websocket 이 어떻게 어떻게 구현되어져 있는지 살펴보는 시간을 가져볼까함.
 
 
