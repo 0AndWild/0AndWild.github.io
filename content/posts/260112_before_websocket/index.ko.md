@@ -23,8 +23,6 @@ Websocket 기술 문서인 RFC 6455 를 읽어보다 더 과거의 처리방식�
 
 ## [RFC 6202]("https://datatracker.ietf.org/doc/html/rfc6202") (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)
 
-
-
 2011년 4월 작성된 문서로 이 문서에서는 그 당시의 양방향 HTTP 통신의 잘 알려진 문제점과 best practice 로 HTTP long polling 과 HTTP streaming 에 대해 다룸. 또한 HTTP long polling과 HTTP streaming 모두 HTTP 를 확장한 것이며 HTTP 프로토콜이 양방향 통신을 위해 설계되지 않았음을 인정함.
 문서의 저자들은 이 문서가 위 두가지 방식의 사용을 권장하지도 사용하지 말라는 것도 아니며 그저 좋은 사용사례와 문제점들을 얘기하는 것에 중점을 둔다고 표기함.
 
