@@ -30,6 +30,22 @@ body.article-page.inline-toc .article-toc {
   gap: 0.7rem !important;
 }
 
+.article-page .main-article .article-header .article-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 1.2rem 0;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.article-page .main-article .article-header .article-image img {
+  width: 100%;
+  height: auto;
+  max-height: 32rem;
+  object-fit: contain;
+  object-position: center;
+}
+
 @media (min-width: 768px) {
   .article-list article.has-image {
     height: auto;
@@ -319,6 +335,14 @@ body.article-page.inline-toc .article-toc {
   .stack-scroll-buttons {
     right: 0.9rem;
     bottom: 1rem;
+  }
+
+  .article-page .main-article .article-header .article-image {
+    padding: 0.8rem 0.8rem 0;
+  }
+
+  .article-page .main-article .article-header .article-image img {
+    max-height: 22rem;
   }
 
   .article-content {
