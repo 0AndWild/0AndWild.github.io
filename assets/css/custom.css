@@ -1,89 +1,327 @@
-/* Google Fonts 임포트 - Archivo Black */
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
-
-/* 메인 네비게이션 메뉴에만 적용 */
-body > div.fixed.inset-x-0.z-100 > div.relative.m-auto.leading-7.max-w-7xl.px-6.sm\:px-14.md\:px-24.lg\:px-32 > div > div.flex.flex-1.items-center.justify-between > nav.flex.space-x-3 > a {
-  font-family: 'Archivo Black', sans-serif !important;
-  font-size: 1.4rem !important;
-  font-weight: 800 !important;
+:root {
+  --brand-accent: #0f766e;
+  --brand-border: rgba(15, 23, 42, 0.08);
 }
 
+[data-scheme="dark"] {
+  --brand-accent: #5eead4;
+  --brand-border: rgba(148, 163, 184, 0.16);
+}
 
-/* headline 슬라이드 애니메이션 */
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 body {
-  font-family: 'Archivo Black', sans-serif !important;
+  font-family: "Lato", "Noto Sans KR", sans-serif;
 }
 
-/* 정확한 h2 타겟팅 */
-#main-content > article > div > div.mx-auto.max-w-7xl.p-0 > div > div.relative.flex.flex-col.items-center.justify-center.px-1.py-1.text-center > h2 {
-  position: relative !important;
-  min-height: 1rem !important;
-  margin-bottom: 0.5rem !important;
-  color: grey !important;
-  font-size: 1.875rem !important;
-  font-family: 'Archivo Black', sans-serif !important;
-  transition: opacity 0.5s ease, transform 0.5s ease !important;
+.site-description {
+  min-height: 1.6em;
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-/* 다크 모드 */
-html.dark #main-content > article > div > div.mx-auto.max-w-7xl.p-0 > div > div.relative.flex.flex-col.items-center.justify-center.px-1.py-1.text-center > h2 {
-  color: turquoise !important;
+.article-content {
+  font-size: 1.7rem;
+  line-height: 1.85;
 }
 
-/* 저자 프로필 아래 본문 콘텐츠 간격 조정 */
-article .prose {
-  margin-top: 3rem !important;
+body.article-page.inline-toc .article-toc {
+  display: flex;
 }
 
-/* 배경 이미지 위치 조정 */
-#background-image {
-  object-fit: cover !important;
-  object-position: center 25% !important; /* 10% 아래로 이동 */
+.article-reading-meta {
+  gap: 0.7rem !important;
 }
 
-/* 본문 글자 크기 조정 */
-article .prose {
-  font-size: 1.125rem !important; /* 18px - 기본보다 크게 */
-  line-height: 1.8 !important; /* 줄 간격도 함께 조정 */
+@media (min-width: 768px) {
+  .article-list article.has-image {
+    height: auto;
+  }
+
+  .article-list article.has-image > .article-header {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: stretch;
+    height: auto;
+  }
+
+  .article-list article.has-image > .article-header > .article-image {
+    flex: 0 0 38%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1.2rem;
+  }
+
+  .article-list article.has-image > .article-header > .article-image a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .article-list article.has-image > .article-header > .article-image img {
+    width: 100%;
+    height: auto;
+    max-height: 22rem;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .article-list article.has-image > .article-header > .article-details {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: space-between;
+  }
+
+  .article-list article.has-image .article-subtitle {
+    font-size: 1.45rem;
+    line-height: 1.55;
+  }
 }
 
-/* 본문 단락 간격 */
-article .prose p {
-  margin-bottom: 1.5rem !important;
+.article-content p,
+.article-content ul,
+.article-content ol {
+  margin-bottom: 1rem;
 }
 
-/* 본문 제목 크기 조정 */
-article .prose h2 {
-  font-size: 1.875rem !important; /* 30px */
-  margin-top: 2.5rem !important;
-  margin-bottom: 1.25rem !important;
+.article-content h2,
+.article-content h3,
+.article-content h4 {
+  font-family: "Lato", "Noto Sans KR", sans-serif;
 }
 
-article .prose h3 {
-  font-size: 1.5rem !important; /* 24px */
-  margin-top: 2rem !important;
-  margin-bottom: 1rem !important;
+.article-content h2 {
+  margin-top: 2.5rem;
+  font-size: 2rem;
 }
 
-article .prose h4 {
-  font-size: 1.25rem !important; /* 20px */
-  margin-top: 1.5rem !important;
-  margin-bottom: 0.75rem !important;
+.article-content h3 {
+  margin-top: 2rem;
+  font-size: 1.55rem;
 }
 
-/* 리스트 아이템 크기 */
-article .prose li {
-  font-size: 1.125rem !important;
-  margin-bottom: 0.5rem !important;
+.article-content h4 {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
 }
 
-/* 코드 블록 글자 크기 */
-article .prose pre {
-  font-size: 0.95rem !important; /* 코드는 약간 작게 */
+.article-content code {
+  font-family: "JetBrains Mono", monospace;
 }
 
-/* 인라인 코드 크기 */
-article .prose code {
-  font-size: 1rem !important;
+.stack-alert,
+.stack-carousel,
+.stack-chart,
+.stack-swatch-grid,
+.stack-article-card,
+.stack-youtube-lite {
+  border: 1px solid var(--brand-border);
+}
+
+.stack-alert {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 1rem;
+}
+
+.stack-alert__icon {
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+.stack-alert__content > :first-child {
+  margin-top: 0;
+}
+
+.stack-alert__content > :last-child {
+  margin-bottom: 0;
+}
+
+.stack-alert--tip {
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.stack-alert--warning,
+.stack-alert--caution {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.stack-alert--important {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.stack-alert--note {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.stack-lead {
+  margin: 1.5rem 0 2rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--brand-accent);
+  font-size: 1.18rem;
+  font-weight: 600;
+}
+
+.stack-carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 1fr);
+  gap: 0.85rem;
+  overflow-x: auto;
+  padding: 0.75rem;
+  margin: 1.5rem 0;
+  border-radius: 1rem;
+  scroll-snap-type: x mandatory;
+}
+
+.stack-carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.9rem;
+  scroll-snap-align: start;
+  aspect-ratio: var(--stack-carousel-ratio, 16 / 9);
+}
+
+.stack-article-card {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 1rem;
+}
+
+.stack-article-card__title {
+  font-weight: 700;
+}
+
+.stack-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.15em;
+  vertical-align: -0.15em;
+}
+
+.stack-icon--emoji {
+  font-size: 1em;
+}
+
+.stack-chart {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.stack-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.85rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 1rem;
+}
+
+.stack-swatch {
+  min-height: 110px;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.stack-swatch span {
+  display: block;
+  padding: 0.75rem;
+  font-size: 0.84rem;
+  font-family: "JetBrains Mono", monospace;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+[data-scheme="dark"] .stack-swatch span {
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.stack-typeit {
+  display: block;
+  margin: 1rem 0;
+  min-height: 1.6em;
+}
+
+.stack-typeit-cursor::after {
+  content: "|";
+  margin-left: 0.08em;
+  animation: stack-blink 0.8s infinite;
+}
+
+@keyframes stack-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.stack-youtube-lite {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.stack-youtube-lite iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.stack-scroll-buttons {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 40;
+}
+
+.stack-scroll-btn {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 0;
+  border-radius: 999px;
+  color: var(--card-text-color-main);
+  background: var(--card-background);
+  box-shadow: var(--shadow-l1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+}
+
+.stack-scroll-btn.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.stack-scroll-btn:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .stack-scroll-buttons {
+    right: 0.9rem;
+    bottom: 1rem;
+  }
+
+  .article-content {
+    font-size: 1.6rem;
+  }
 }

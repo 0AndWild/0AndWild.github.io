@@ -1,0 +1,25 @@
+[[social]]
+    identifier = "github"
+    name = "GitHub"
+    url = "https://github.com/0AndWild"
+
+    [social.params]
+        icon = "brand-github"
+        newTab = true
+
+[[social]]
+    identifier = "linkedin"
+    name = "LinkedIn"
+    url = "https://linkedin.com/in/건영-박-158861275"
+
+    [social.params]
+        icon = "user"
+        newTab = true
+
+[[social]]
+    identifier = "email"
+    name = "Email"
+    url = "mailto:parkky3563@gmail.com"
+
+    [social.params]
+        icon = "messages"

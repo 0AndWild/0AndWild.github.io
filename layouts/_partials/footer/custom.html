@@ -1,0 +1,32 @@
+<div class="stack-scroll-buttons" aria-hidden="true">
+  <button id="stack-scroll-top" class="stack-scroll-btn" type="button" title="Scroll to top">↑</button>
+  <button id="stack-scroll-bottom" class="stack-scroll-btn" type="button" title="Scroll to bottom">↓</button>
+</div>
+
+<script src="/js/visitor-stats.js"></script>
+<script>
+  (function () {
+    const topBtn = document.getElementById("stack-scroll-top");
+    const bottomBtn = document.getElementById("stack-scroll-bottom");
+    if (!topBtn || !bottomBtn) return;
+
+    function updateVisibility() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollBottom = document.documentElement.scrollHeight - scrollTop - document.documentElement.clientHeight;
+
+      topBtn.classList.toggle("visible", scrollTop > 320);
+      bottomBtn.classList.toggle("visible", scrollBottom > 320);
+    }
+
+    topBtn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    bottomBtn.addEventListener("click", function () {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    updateVisibility();
+  })();
+</script>

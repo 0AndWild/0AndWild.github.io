@@ -1,185 +1,108 @@
-# -- Theme Options --
-# These options control how the theme functions and allow you to
-# customise the display of your website.
-#
-# Refer to the theme docs for more details about each of these parameters.
-# https://blowfish.page/docs/configuration/#theme-parameters
-
-colorScheme = "atumn" # blowfish (default), avocado, fire, ocean, forest, princess, neon, bloody, terminal, marvel, noir, autumn, congo, and slate.
-defaultAppearance = "light" # valid options: light or dark
-autoSwitchAppearance = true
-
-enableA11y = false
-enableSearch = true
-enableCodeCopy = true
-
-replyByEmail = false
-
-# mainSections = ["post"]
-# robots = ""
-
-disableImageOptimization = false
-disableImageOptimizationMD = false
-disableTextInHeader = false
-# backgroundImageWidth = 1200
-
-defaultBackgroundImage = "img/background.png" # used as default for background images
-defaultFeaturedImage = "img/background.png" # used as default for featured images in all articles
-defaultSocialImage = "img/background.png" # used as default for social media sharing (Open Graph and Twitter)
-
-highlightCurrentMenuArea = true
-# smartTOC = true
-# smartTOCHideUnfocusedChildren = true
-
-fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384", "sha256"
-
-# giteaDefaultServer = "https://git.fsfe.org"
-# forgejoDefaultServer = "https://v11.next.forgejo.org"
-
-[fonts]
-  # 폰트 선택 (Blowfish 내장 폰트)
-  # serif, sans-serif, monospace
-  heading = "sans-serif"  # 헤더/타이틀용
-  body = "sans-serif"     # 본문용
-  code = "monospace"      # 코드용
-
-[header]
-  layout = "fixed-fill-blur" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur
+mainSections = ["posts"]
+rssFullContent = true
+favicon = ""
+SortBy = "default"
 
 [footer]
-  showMenu = true
-  showCopyright = true
-  showThemeAttribution = true
-  showAppearanceSwitcher = true
-  showScrollToTop = false
+    since = 2022
+    customText = "Backend, infra, and long-form technical notes."
 
-[homepage]
-  layout = "background" # valid options: page, profile, hero, card, background, custom
-  # homepageImage = "img/background.jpg" # used in: hero, and card
-  showRecent = true
-  showRecentItems = 12
-  showMoreLink = false
-  showMoreLinkDest = "/posts/"
-  cardView = true
-  cardViewScreenWidth = false
-  layoutBackgroundBlur = false # only used when layout equals background
-  disableHeroImageFilter = false # only used when layout equals hero
+[dateFormat]
+    published = "2006-01-02"
+    lastUpdated = "2006-01-02"
+
+[sidebar]
+    compact = false
+    emoji = ""
+    subtitle = "Deep Dive into Backend"
+    avatar = "img/profile1.jpg"
 
 [article]
-  showDate = true
-  showViews = true
-  showLikes = true
-  showDateOnlyInArticle = false
-  showDateUpdated = false
-  showAuthor = true
-  # showAuthorBottom = true
-  showHero = true
-  heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
-  layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
-  layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
-  showBreadcrumbs = false
-  showDraftLabel = true
-  showEdit = false
-  # editURL = "https://github.com/username/repo/"
-  editAppendPath = true
-  seriesOpened = true
-  showHeadingAnchors = true
-  showPagination = true
-  invertPagination = false
-  showReadingTime = false
-  showTableOfContents = true
-  showRelatedContent = true
-  relatedContentLimit = 6
-  showTaxonomies = true # use showTaxonomies OR showCategoryOnly, not both
-  showCategoryOnly = false # use showTaxonomies OR showCategoryOnly, not both
-  showAuthorsBadges = false
-  showWordCount = false
-  sharingLinks = [ "linkedin", "twitter", "reddit", "pinterest", "facebook", "whatsapp", "line", "email"]
-  showZenMode = false
-  showComments = true
+    headingAnchor = true
+    math = false
+    toc = true
+    readingTime = true
 
-[list]
-  showHero = true
-  heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
-  layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
-  layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
-  showBreadcrumbs = true
-  showSummary = true
-  showViews = false
-  showLikes = false
-  showTableOfContents = false
-  showCards = false
-  orderByWeight = false
-  groupByYear = true
-  cardView = true
-  cardViewScreenWidth = false
-  constrainItemsWidth = false
+    [article.list]
+        showTags = false
 
-[sitemap]
-  excludedKinds = []
+    [article.license]
+        enabled = false
+        default = "Licensed under CC BY-NC-SA 4.0"
 
-[taxonomy]
-  showTermCount = true
-  showHero = true
-  heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
-  showBreadcrumbs = false
-  showViews = false
-  showLikes = false
-  showTableOfContents = false
-  cardView = false
+    [article.mermaid]
+        look = "classic"
+        lightTheme = "default"
+        darkTheme = "dark"
+        securityLevel = "loose"
+        htmlLabels = true
+        transparentBackground = false
 
-[term]
-  showHero = true
-  heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
-  showBreadcrumbs = false
-  showViews = false
-  showLikes = false
-  showTableOfContents = true
-  groupByYear = false
-  cardView = false
-  cardViewScreenWidth = false
+[widgets]
+    homepage = [
+        { type = "search" },
+        { type = "archives", params = { limit = 5 } },
+        { type = "categories", params = { limit = 10 } },
+        { type = "tag-cloud", params = { limit = 10 } },
+    ]
+    page = []
+
+[opengraph.twitter]
+    site = ""
+    card = "summary_large_image"
+
+[colorScheme]
+    toggle = true
+    default = "auto"
+
+[imageProcessing]
+    autoOrient = false
+
+    [imageProcessing.external]
+        timeout = "5s"
+
+    [imageProcessing.content]
+        widths = [800, 1600, 2400]
+        enabled = true
+
+    [imageProcessing.thumbnail]
+        enabled = true
+
+[cookies]
+    enabled = false
+    showSettings = true
+
+    [cookies.categories]
+        analytics = true
+        functional = true
+
+[comments]
+    enabled = true
+    provider = "giscus"
+
+    [comments.giscus]
+        repo = "0AndWild/0AndWild.github.io"
+        repoID = "R_kgDOQAqZFA"
+        category = "General"
+        categoryID = "DIC_kwDOQAqZFM4CwwRg"
+        mapping = "specific"
+        lightTheme = "catppuccin_latte"
+        darkTheme = "catppuccin_frappe"
+        reactionsEnabled = 1
+        emitMetadata = 0
+        inputPosition = "top"
+        lang = "ko"
+        strict = 0
+        loading = "lazy"
 
 [firebase]
-  apiKey = "AIzaSyDBnzInOvtVBk6IVd8ThqReMSRZvE2p3dY"
-  authDomain = "andwild-blog.firebaseapp.com"
-  projectId = "andwild-blog"
-  storageBucket = "andwild-blog.firebasestorage.app"
-  messagingSenderId = "361077393311"
-  appId = "1:361077393311:web:66db466c2ea63f9c861faa"
-  measurementId = "G-QL6FY3F6WJ"
-
-[fathomAnalytics]
-  # site = "ABC12345"
-  # domain = "llama.yoursite.com"
-
-[umamiAnalytics]
-  # websiteid = "ABC12345"
-  # domain = "llama.yoursite.com"
-  # dataDomains = "yoursite.com,yoursite2.com"
-  # scriptName = ""
-  # enableTrackEvent = true
-
-[selineAnalytics]
-  # token = "XXXXXX"
-  # enableTrackEvent = true
-
-[buymeacoffee]
-  # identifier = ""
-  # globalWidget = true
-  # globalWidgetMessage = "Hello"
-  # globalWidgetColor = "#FFDD00"
-  # globalWidgetPosition = "Right"
+    apiKey = "AIzaSyDBnzInOvtVBk6IVd8ThqReMSRZvE2p3dY"
+    authDomain = "andwild-blog.firebaseapp.com"
+    projectId = "andwild-blog"
+    storageBucket = "andwild-blog.firebasestorage.app"
+    messagingSenderId = "361077393311"
+    appId = "1:361077393311:web:66db466c2ea63f9c861faa"
+    measurementId = "G-QL6FY3F6WJ"
 
 [verification]
-  google = "rNSaN8E4ISr3DbU2YIDT5KdYEGh_RJ6wCjD7Jzpzrv4"
-  # bing = ""
-  # pinterest = ""
-  # yandex = ""
-  # fediverse = ""
-  
-[rssnext]
-  # feedId = ""
-  # userId = ""
-
-[advertisement]
-  # adsense = ""
+    google = "rNSaN8E4ISr3DbU2YIDT5KdYEGh_RJ6wCjD7Jzpzrv4"

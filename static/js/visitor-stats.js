@@ -2,6 +2,10 @@
 (function() {
   'use strict';
 
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    return;
+  }
+
   // Firebase 초기화 확인
   if (typeof firebase === 'undefined' || typeof db === 'undefined' || typeof auth === 'undefined') {
     console.warn('Firebase not initialized for visitor stats');

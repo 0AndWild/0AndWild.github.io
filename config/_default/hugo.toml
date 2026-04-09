@@ -1,67 +1,41 @@
-# -- Site Configuration --
-# Refer to the theme docs for more details about each of these parameters.
-# https://blowfish.page/docs/getting-started/
-
-theme = "blowfish" # UNCOMMENT THIS LINE
-baseURL = 'https://0andwild.com/'
+theme = "hugo-theme-stack"
+baseURL = "https://0andwild.com/"
+title = "0AndWild_log"
 defaultContentLanguage = "ko"
-canonifyURLs = true
-# title = '0AW Tech Blog'
-
-[languages]
-  [languages.ko]
-  [languages.en]
-
-[params.author]
-name = "0AndWild"
-image = "img/profile1.jpg"
-imageQuality = 96
-headline = "Deep Dive into Backend"
-bio = "Always curious, always exploring new tech"
-links = [
-  { github = "https://github.com/0AndWild" },
-  { linkedin = "https://linkedin.com/in/건영-박-158861275" },
-  { email = "parkky3563@gmail.com" }
-]
-
-pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
-
+hasCJKLanguage = true
+languageCode = "ko-KR"
+canonifyURLs = false
 enableRobotsTXT = true
+enableEmoji = true
 summaryLength = 0
 
-buildDrafts = false
-buildFuture = false
-
-enableEmoji = true
-
 [pagination]
-  pagerSize = 12
+    pagerSize = 12
 
 [imaging]
-  anchor = 'Center'
+    anchor = "Center"
 
 [taxonomies]
-  # post = "posts"
-  tag = "tags"
-  category = "categories"
-  author = "authors"
-  series = "series"
+    tag = "tags"
+    category = "categories"
+    author = "authors"
+    series = "series"
 
 [sitemap]
-  changefreq = 'daily'
-  filename = 'sitemap.xml'
-  priority = 0.5
+    changefreq = "daily"
+    filename = "sitemap.xml"
+    priority = 0.5
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+    home = ["HTML", "RSS"]
 
 [services]
-  [services.googleAnalytics]
-    ID = "G-QL6FY3F6WJ"
+    [services.googleAnalytics]
+        ID = "G-QL6FY3F6WJ"
 
 [related]
-  threshold = 0
-  toLower = true
+    threshold = 0
+    toLower = true
 
     [[related.indices]]
         name = "tags"

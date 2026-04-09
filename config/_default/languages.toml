@@ -1,0 +1,17 @@
+[ko]
+    languageCode = "ko-KR"
+    languageName = "한국어"
+    title = "0AndWild_log"
+    weight = 1
+
+    [ko.params.sidebar]
+        subtitle = "Deep Dive into Backend"
+
+[en]
+    languageCode = "en-US"
+    languageName = "English"
+    title = "0AndWild_log"
+    weight = 2
+
+    [en.params.sidebar]
+        subtitle = "Deep Dive into Backend"

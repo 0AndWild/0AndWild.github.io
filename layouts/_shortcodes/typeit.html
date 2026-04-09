@@ -1,0 +1,47 @@
+{{- $id := printf "stack-typeit-%d" .Ordinal -}}
+{{- $tag := .Get "tag" | default "p" -}}
+{{- $speed := .Get "speed" | default "65" -}}
+{{- $loop := eq (.Get "loop") "true" -}}
+{{- $lines := split (.Inner | strings.TrimSpace) "\n" -}}
+<{{ $tag }} id="{{ $id }}" class="stack-typeit stack-typeit-cursor"></{{ $tag }}>
+<script>
+  (function () {
+    const target = document.getElementById("{{ $id }}");
+    if (!target) return;
+
+    const lines = {{ $lines | jsonify }};
+    const speed = {{ $speed }};
+    const shouldLoop = {{ if $loop }}true{{ else }}false{{ end }};
+    let lineIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    function tick() {
+      const line = lines[lineIndex] || "";
+      if (!deleting) {
+        target.textContent = line.slice(0, charIndex + 1);
+        charIndex += 1;
+        if (charIndex === line.length) {
+          deleting = true;
+          setTimeout(tick, 1200);
+          return;
+        }
+      } else {
+        target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+        charIndex -= 1;
+        if (charIndex <= 0) {
+          deleting = false;
+          lineIndex = (lineIndex + 1) % lines.length;
+          if (!shouldLoop && lineIndex === 0) {
+            target.textContent = lines[lines.length - 1] || "";
+            target.classList.remove("stack-typeit-cursor");
+            return;
+          }
+        }
+      }
+      setTimeout(tick, deleting ? speed / 2 : speed);
+    }
+
+    tick();
+  })();
+</script>

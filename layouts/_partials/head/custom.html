@@ -1,0 +1,60 @@
+{{ $custom := resources.Get "css/custom.css" | resources.Minify }}
+<link rel="stylesheet" href="{{ $custom.RelPermalink }}">
+<link rel="icon" href="/favicon.ico">
+
+{{ with .Site.Params.verification.google }}
+<meta name="google-site-verification" content="{{ . }}">
+{{ end }}
+
+{{ with .Site.Params.firebase }}
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "{{ .apiKey }}",
+    authDomain: "{{ .authDomain }}",
+    projectId: "{{ .projectId }}",
+    storageBucket: "{{ .storageBucket }}",
+    messagingSenderId: "{{ .messagingSenderId }}",
+    appId: "{{ .appId }}",
+    measurementId: "{{ .measurementId }}"
+  };
+
+  if (typeof firebase !== "undefined" && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.auth = firebase.auth();
+  }
+</script>
+{{ end }}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const subtitle = document.querySelector(".site-description");
+    if (!subtitle) return;
+
+    const words = ["Backend", "Infra", "CS", "AI"];
+    let index = 0;
+
+    function swap() {
+      subtitle.style.opacity = "0";
+      subtitle.style.transform = "translateY(-10px)";
+
+      setTimeout(function () {
+        subtitle.textContent = "Deep Dive into " + words[index];
+        subtitle.style.transform = "translateY(10px)";
+        index = (index + 1) % words.length;
+      }, 220);
+
+      setTimeout(function () {
+        subtitle.style.opacity = "1";
+        subtitle.style.transform = "translateY(0)";
+      }, 260);
+    }
+
+    subtitle.textContent = "Deep Dive into " + words[0];
+    index = 1;
+    setInterval(swap, 2600);
+  });
+</script>

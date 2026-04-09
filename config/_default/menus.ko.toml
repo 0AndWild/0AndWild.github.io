@@ -1,69 +1,47 @@
 [[main]]
-  identifier = "life_log"
-  name = "Life_Log"
-  pageRef = "life_log"
-  weight = 15
+  identifier = "posts"
+  name = "포스트"
+  pageRef = "posts"
+  weight = 10
 
 [[main]]
   identifier = "about"
   name = "소개"
   pageRef = "about"
-  weight = 10
-
-[[main]]
-  identifier = "posts"
-  name = "포스트"
-  pageRef = "posts"
   weight = 20
 
 [[main]]
-  identifier = "posts-all"
-  name = "전체"
-  parent = "posts"
-  pageRef = "posts"
-  weight = 5
+  identifier = "life_log"
+  name = "Life Log"
+  pageRef = "life_log"
+  weight = 30
 
 [[main]]
   identifier = "categories"
   name = "카테고리"
-  parent = "posts"
   pageRef = "categories"
-  weight = 10
+  weight = 40
 
 [[main]]
   identifier = "tags"
   name = "태그"
-  parent = "posts"
   pageRef = "tags"
-  weight = 20
+  weight = 50
 
 [[main]]
   identifier = "series"
   name = "시리즈"
-  parent = "posts"
   pageRef = "series"
-  weight = 30
+  weight = 60
 
-# -- Footer Menu --
-# The footer menu is displayed at the bottom of the page, just before
-# the copyright notice. Configure as per the main menu above.
+[[main]]
+  identifier = "archives"
+  name = "아카이브"
+  pageRef = "page/archives"
+  weight = 70
 
-[[footer]]
-  name = "카테고리"
-  pageRef = "categories"
-  weight = 10
-
-[[footer]]
-  name = "태그"
-  pageRef = "tags"
-  weight = 20
-
-[[footer]]
-  name = "시리즈"
-  pageRef = "series"
-  weight = 30
-
-[[footer]]
-  name = "RSS"
-  url = "/index.xml"
-  weight = 40
+[[main]]
+  identifier = "search"
+  name = "검색"
+  pageRef = "page/search"
+  weight = 80

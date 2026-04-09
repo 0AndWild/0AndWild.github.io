@@ -1,6 +1,7 @@
 # Hugo build files
 public/
 resources/
+assets/jsconfig.json
 
 # Mac OS
 .DS_Store
