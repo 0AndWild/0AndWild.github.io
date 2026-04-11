@@ -1,0 +1,62 @@
+{{- with .Site.Params.comments.giscus -}}
+{{- $lang := $.Site.Language.Lang -}}
+{{- $discussionID := "" -}}
+{{- with $.File -}}
+    {{- $discussionID = .Dir | replaceRE "^content/" "" | replaceRE "/$" "" -}}
+{{- else -}}
+    {{- $discussionID = $.RelPermalink -}}
+{{- end -}}
+<div class="giscus-container"></div>
+<script
+    src="https://giscus.app/client.js"
+    data-repo="{{ .repo }}"
+    data-repo-id="{{ .repoID }}"
+    data-category="{{ .category }}"
+    data-category-id="{{ .categoryID }}"
+    data-mapping="specific"
+    data-term="{{ $discussionID }}"
+    data-strict="{{ .strict }}"
+    data-reactions-enabled="{{ .reactionsEnabled }}"
+    data-emit-metadata="{{ .emitMetadata }}"
+    data-input-position="{{ .inputPosition }}"
+    data-theme="{{ .lightTheme }}"
+    data-lang="{{ $lang }}"
+    data-loading="{{ .loading }}"
+    crossorigin="anonymous"
+    async
+></script>
+<script>
+  function setGiscusTheme(theme) {
+    const frame = document.querySelector("iframe.giscus-frame");
+    if (!frame) return;
+
+    frame.contentWindow.postMessage(
+      {
+        giscus: {
+          setConfig: {
+            theme: theme
+          }
+        }
+      },
+      "https://giscus.app"
+    );
+  }
+
+  (function () {
+    function currentTheme() {
+      return document.documentElement.dataset.scheme === "dark" ? "{{ .darkTheme }}" : "{{ .lightTheme }}";
+    }
+
+    function handleTheme() {
+      setGiscusTheme(currentTheme());
+    }
+
+    window.addEventListener("message", function (event) {
+      if (event.origin !== "https://giscus.app") return;
+      handleTheme();
+    });
+
+    window.addEventListener("onColorSchemeChange", handleTheme);
+  })();
+</script>
+{{- end -}}

@@ -1,109 +1,104 @@
-# -- Main Menu --
-# The main menu is displayed in the header at the top of the page.
-# Acceptable parameters are name, pageRef, page, url, title, weight.
-# 
-# The simplest menu configuration is to provide:
-#   name = The name to be displayed for this menu link
-#   pageRef = The identifier of the page or section to link to
-#
-# By default the menu is ordered alphabetically. This can be
-# overridden by providing a weight value. The menu will then be
-# ordered by weight from lowest to highest.
 [[main]]
-  identifier = "life_log"
-  name = "Life_Log"
-  pageRef = "life_log"
-  weight = 15
+  identifier = "posts"
+  name = "Posts"
+  weight = 10
+
+  [main.params]
+    icon = "pencil"
+
+[[main]]
+  identifier = "posts_all"
+  parent = "posts"
+  name = "All"
+  pageRef = "posts"
+  weight = 11
+
+[[main]]
+  identifier = "categories"
+  parent = "posts"
+  name = "Categories"
+  pageRef = "categories"
+  weight = 12
+
+[[main]]
+  identifier = "tags"
+  parent = "posts"
+  name = "Tags"
+  pageRef = "tags"
+  weight = 13
+
+[[main]]
+  identifier = "series"
+  parent = "posts"
+  name = "Series"
+  pageRef = "series"
+  weight = 14
+
+[[main]]
+  identifier = "archives"
+  name = "Archives"
+  pageRef = "page/archives"
+  weight = 20
+
+  [main.params]
+    icon = "archives"
 
 [[main]]
   identifier = "about"
   name = "About"
+  weight = 30
+
+  [main.params]
+    icon = "user"
+
+[[main]]
+  identifier = "about_me"
+  parent = "about"
+  name = "About me"
   pageRef = "about"
-  weight = 10
+  weight = 31
 
 [[main]]
-  identifier = "posts"
-  name = "Posts"
-  pageRef = "posts"
-  weight = 20
+  identifier = "life_log"
+  parent = "about"
+  name = "Life Log"
+  pageRef = "life_log"
+  weight = 32
 
 [[main]]
-identifier = "posts-all"
-name = "All"
-parent = "posts"
-pageRef = "posts"
-weight = 5
-
-[[main]]
-  identifier = "categories"
-  name = "Categories"
-  parent = "posts"
-  pageRef = "categories"
-  weight = 10
-
-[[main]]
-  identifier = "tags"
-  name = "Tags"
-  parent = "posts"
-  pageRef = "tags"
-  weight = 20
-
-[[main]]
-  identifier = "series"
-  name = "Series"
-  parent = "posts"
-  pageRef = "series"
-  weight = 30
-
-#[[main]]
-#  name = "Parent"
-#  weight = 20
-
-#[[main]]
-#  name = "example sub-menu 1"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
-
-#[[main]]
-#  name = "example sub-menu 2"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
-
-#[[subnavigation]]
-#  name = "An interesting topic"
-#  pageRef = "tags/interesting-topic"
-#  weight = 10
-
-#[[subnavigation]]
-#  name = "My Awesome Category"
-#  pre = "github"
-#  pageRef = "categories/awesome"
-#  weight = 20
-
-
-# -- Footer Menu --
-# The footer menu is displayed at the bottom of the page, just before
-# the copyright notice. Configure as per the main menu above.
-
-[[footer]]
-  name = "Categories"
-  pageRef = "categories"
-  weight = 10
-
-[[footer]]
-  name = "Tags"
-  pageRef = "tags"
-  weight = 20
-
-[[footer]]
-  name = "Series"
-  pageRef = "series"
-  weight = 30
-
-[[footer]]
-  name = "RSS"
-  url = "/index.xml"
+  identifier = "search"
+  name = "Search"
+  pageRef = "page/search"
   weight = 40
 
+  [main.params]
+    icon = "search"
+
+[[social]]
+  identifier = "github"
+  name = "GitHub"
+  url = "https://github.com/0AndWild"
+  weight = 10
+
+  [social.params]
+    icon = "brand-github"
+    newTab = true
+
+[[social]]
+  identifier = "linkedin"
+  name = "LinkedIn"
+  url = "https://linkedin.com/in/건영-박-158861275"
+  weight = 20
+
+  [social.params]
+    icon = "brand-linkedin"
+    newTab = true
+
+[[social]]
+  identifier = "email"
+  name = "Email"
+  url = "mailto:parkky3563@gmail.com"
+  weight = 30
+
+  [social.params]
+    icon = "mail"

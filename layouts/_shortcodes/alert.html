@@ -1,0 +1,23 @@
+{{- $name := lower (.Get 0 | default "note") -}}
+{{- $variant := "note" -}}
+{{- $icon := "📝" -}}
+{{- if or (eq $name "lightbulb") (eq $name "tip") -}}
+  {{- $variant = "tip" -}}
+  {{- $icon = "💡" -}}
+{{- else if or (eq $name "triangle-exclamation") (eq $name "exclamation-triangle") (eq $name "warning") (eq $name "question-circle") -}}
+  {{- $variant = "warning" -}}
+  {{- $icon = "⚠️" -}}
+{{- else if or (eq $name "fire") (eq $name "important") -}}
+  {{- $variant = "important" -}}
+  {{- $icon = "🔥" -}}
+{{- else if or (eq $name "check") (eq $name "star") (eq $name "tag") -}}
+  {{- $variant = "caution" -}}
+  {{- $icon = "✅" -}}
+{{- else if or (eq $name "circle-info") (eq $name "pencil") -}}
+  {{- $variant = "note" -}}
+  {{- $icon = "ℹ️" -}}
+{{- end -}}
+<div class="stack-alert stack-alert--{{ $variant }}">
+  <div class="stack-alert__icon">{{ $icon }}</div>
+  <div class="stack-alert__content">{{ .Inner | markdownify }}</div>
+</div>

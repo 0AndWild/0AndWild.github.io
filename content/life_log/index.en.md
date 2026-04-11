@@ -2,6 +2,9 @@
 title: "My Life log"
 date: 2025-11-22
 draft: false
+comments: false
+readingTime: false
+toc: true
 
 showDate : false
 showDateOnlyInArticle : false

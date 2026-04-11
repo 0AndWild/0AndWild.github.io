@@ -1,0 +1,12 @@
+{{- $id := printf "stack-chart-%d" .Ordinal -}}
+<div class="stack-chart">
+  <canvas id="{{ $id }}"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  (function () {
+    const ctx = document.getElementById("{{ $id }}");
+    if (!ctx || typeof Chart === "undefined") return;
+    new Chart(ctx, { {{ .Inner | safeJS }} });
+  })();
+</script>

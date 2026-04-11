@@ -1,0 +1,20 @@
+{{- $imagesParam := .Get "images" | default "" -}}
+{{- $resources := slice -}}
+{{- if hasPrefix $imagesParam "{" -}}
+  {{- $clean := replaceRE "[{}]" "" $imagesParam -}}
+  {{- range (split $clean ",") -}}
+    {{- $path := strings.TrimSpace . -}}
+    {{- with $.Page.Resources.GetMatch $path -}}
+      {{- $resources = $resources | append . -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- $resources = .Page.Resources.Match $imagesParam -}}
+{{- end -}}
+{{- $ratio := .Get "aspectRatio" | default "16-9" -}}
+{{- $ratio = replace $ratio "-" " / " -}}
+<div class="stack-carousel" style="--stack-carousel-ratio: {{ $ratio }};">
+  {{- range $resources -}}
+    <img src="{{ .RelPermalink }}" alt="{{ .Name }}" loading="lazy">
+  {{- end -}}
+</div>

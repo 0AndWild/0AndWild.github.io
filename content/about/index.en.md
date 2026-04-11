@@ -2,6 +2,9 @@
 title: "About"
 date: 2025-10-16
 draft: false
+comments: false
+readingTime: false
+toc: true
 
 showDate : false
 showDateOnlyInArticle : false

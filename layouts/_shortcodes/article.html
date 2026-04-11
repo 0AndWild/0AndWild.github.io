@@ -1,0 +1,18 @@
+{{- $link := .Get "link" | default "" -}}
+{{- $page := site.GetPage $link -}}
+<a class="stack-article-card" href="{{ $link }}">
+  <span class="stack-article-card__title">
+    {{- with $page -}}
+      {{ .Title }}
+    {{- else -}}
+      {{ $link }}
+    {{- end -}}
+  </span>
+  {{- if and $page (ne (.Get "showSummary") "false") -}}
+    <span>{{ $page.Summary | plainify | truncate 160 }}</span>
+  {{- else if $page -}}
+    <span>{{ $page.RelPermalink }}</span>
+  {{- else -}}
+    <span>Open linked article</span>
+  {{- end -}}
+</a>

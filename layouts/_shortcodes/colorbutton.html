@@ -1,0 +1,24 @@
+{{ $color := .Get "color" | default "primary" }}
+{{ $style := "" }}
+
+{{ if eq $color "github" }}
+  {{ $style = "color:#24292e;border-color:#24292e;" }}
+{{ else if eq $color "linkedin" }}
+  {{ $style = "color:#0077b5;border-color:#0077b5;" }}
+{{ else if eq $color "email" }}
+  {{ $style = "color:#ea4335;border-color:#ea4335;" }}
+{{ else if eq $color "green" }}
+  {{ $style = "color:#16a34a;border-color:#16a34a;" }}
+{{ else }}
+  {{ $style = "color:var(--brand-accent);border-color:var(--brand-accent);" }}
+{{ end }}
+
+<a
+  class="stack-color-button"
+  style="display:inline-block;padding:0.7rem 1rem;border:2px solid;border-radius:999px;text-decoration:none;margin:0 0.5rem 0.5rem 0;{{ $style }}"
+  {{ with .Get "href" }}href="{{ . }}"{{ end }}
+  {{ with .Get "target" }}target="{{ . }}"{{ end }}
+  {{ with .Get "rel" }}rel="{{ . }}"{{ end }}
+  role="button">
+  {{ .Inner | markdownify }}
+</a>

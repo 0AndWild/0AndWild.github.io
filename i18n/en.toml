@@ -1,0 +1,10 @@
+[article]
+    [article.estimatedReadingTime]
+        one = "Estimated reading time: {{ .Count }} minute"
+        other = "Estimated reading time: {{ .Count }} minutes"
+
+[tocButton]
+    other = "Index"
+
+[backgroundToggle]
+    other = "Background"

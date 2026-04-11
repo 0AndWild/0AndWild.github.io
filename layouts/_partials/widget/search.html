@@ -1,0 +1,118 @@
+{{- $query := first 1 (where .Context.Site.Pages "Layout" "==" "search") -}}
+{{- if $query -}}
+    {{- $searchPage := index $query 0 -}}
+    <div class="sidebar-search-widget">
+        <form action="{{ $searchPage.RelPermalink }}" class="search-form widget sidebar-live-search" {{ with $searchPage.OutputFormats.Get "json" -}}data-json="{{ .RelPermalink }}" {{- end }}>
+            <p>
+                <label>{{ T "search.title" }}</label>
+                <input name="keyword" required placeholder="{{ T `search.placeholder` }}" autocomplete="off" />
+
+                <button title="{{ T `search.title` }}">
+                    {{ partial "helper/icon" "search" }}
+                </button>
+            </p>
+        </form>
+
+        <div class="sidebar-search-result hidden" aria-live="polite">
+            <div class="sidebar-search-result-list"></div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const widget = document.currentScript?.previousElementSibling;
+            if (!widget || widget.dataset.liveSearchBound === 'true') return;
+            widget.dataset.liveSearchBound = 'true';
+
+            const form = widget.querySelector('.sidebar-live-search');
+            const input = form?.querySelector('input[name="keyword"]');
+            const result = widget.querySelector('.sidebar-search-result');
+            const list = widget.querySelector('.sidebar-search-result-list');
+            const jsonURL = form?.dataset.json;
+
+            if (!form || !input || !result || !list || !jsonURL) return;
+
+            let dataPromise;
+
+            const getData = async () => {
+                if (!dataPromise) {
+                    dataPromise = fetch(jsonURL)
+                        .then(res => res.json())
+                        .then(items => items.map(item => ({
+                            title: item.title || '',
+                            permalink: item.permalink || '#',
+                            date: item.date || '',
+                            haystack: `${item.title || ''} ${(item.content || '')}`.toLowerCase()
+                        })));
+                }
+
+                return dataPromise;
+            };
+
+            const hide = () => {
+                list.innerHTML = '';
+                result.classList.add('hidden');
+            };
+
+            const render = items => {
+                list.innerHTML = '';
+
+                items.forEach(item => {
+                    const link = document.createElement('a');
+                    link.className = 'sidebar-search-result-item';
+                    link.href = item.permalink;
+                    link.textContent = item.title;
+                    list.appendChild(link);
+                });
+
+                result.classList.toggle('hidden', items.length === 0);
+            };
+
+            const search = async () => {
+                const keyword = input.value.trim().toLowerCase();
+                if (!keyword) {
+                    hide();
+                    return;
+                }
+
+                const tokens = keyword.split(/\s+/).filter(Boolean);
+                if (tokens.length === 0) {
+                    hide();
+                    return;
+                }
+
+                const data = await getData();
+                const items = data
+                    .map(item => {
+                        const titleLower = item.title.toLowerCase();
+                        const matchesAll = tokens.every(token => item.haystack.includes(token));
+                        if (!matchesAll) return null;
+
+                        const titleMatches = tokens.reduce((count, token) => count + (titleLower.includes(token) ? 1 : 0), 0);
+                        return { ...item, titleMatches };
+                    })
+                    .filter(Boolean)
+                    .sort((a, b) => {
+                        if (b.titleMatches !== a.titleMatches) return b.titleMatches - a.titleMatches;
+                        return (b.date || '').localeCompare(a.date || '');
+                    })
+                    .slice(0, 6);
+
+                render(items);
+            };
+
+            input.addEventListener('input', search);
+            input.addEventListener('compositionend', search);
+
+            document.addEventListener('click', event => {
+                if (!widget.contains(event.target)) hide();
+            });
+
+            input.addEventListener('focus', () => {
+                if (input.value.trim()) search();
+            });
+        })();
+    </script>
+{{- else -}}
+    {{- warnf "Search page not found. Create a page with layout: search." -}}
+{{- end -}}
