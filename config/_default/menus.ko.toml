@@ -1,47 +1,104 @@
 [[main]]
   identifier = "posts"
   name = "포스트"
-  pageRef = "posts"
   weight = 10
 
-[[main]]
-  identifier = "about"
-  name = "소개"
-  pageRef = "about"
-  weight = 20
+  [main.params]
+    icon = "pencil"
 
 [[main]]
-  identifier = "life_log"
-  name = "Life Log"
-  pageRef = "life_log"
-  weight = 30
+  identifier = "posts_all"
+  parent = "posts"
+  name = "전체"
+  pageRef = "posts"
+  weight = 11
 
 [[main]]
   identifier = "categories"
+  parent = "posts"
   name = "카테고리"
   pageRef = "categories"
-  weight = 40
+  weight = 12
 
 [[main]]
   identifier = "tags"
+  parent = "posts"
   name = "태그"
   pageRef = "tags"
-  weight = 50
+  weight = 13
 
 [[main]]
   identifier = "series"
+  parent = "posts"
   name = "시리즈"
   pageRef = "series"
-  weight = 60
+  weight = 14
 
 [[main]]
   identifier = "archives"
   name = "아카이브"
   pageRef = "page/archives"
-  weight = 70
+  weight = 20
+
+  [main.params]
+    icon = "archives"
+
+[[main]]
+  identifier = "about"
+  name = "소개"
+  weight = 30
+
+  [main.params]
+    icon = "user"
+
+[[main]]
+  identifier = "about_me"
+  parent = "about"
+  name = "About me"
+  pageRef = "about"
+  weight = 31
+
+[[main]]
+  identifier = "life_log"
+  parent = "about"
+  name = "Life Log"
+  pageRef = "life_log"
+  weight = 32
 
 [[main]]
   identifier = "search"
   name = "검색"
   pageRef = "page/search"
-  weight = 80
+  weight = 40
+
+  [main.params]
+    icon = "search"
+
+[[social]]
+  identifier = "github"
+  name = "GitHub"
+  url = "https://github.com/0AndWild"
+  weight = 10
+
+  [social.params]
+    icon = "brand-github"
+    newTab = true
+
+[[social]]
+  identifier = "linkedin"
+  name = "LinkedIn"
+  url = "https://linkedin.com/in/건영-박-158861275"
+  weight = 20
+
+  [social.params]
+    icon = "brand-linkedin"
+    newTab = true
+
+[[social]]
+  identifier = "email"
+  name = "Email"
+  url = "mailto:parkky3563@gmail.com"
+  weight = 30
+
+  [social.params]
+    icon = "messages"

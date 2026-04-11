@@ -12,6 +12,96 @@ body {
   font-family: "Lato", "Noto Sans KR", sans-serif;
 }
 
+.left-sidebar {
+  --sidebar-avatar-size: 132px;
+}
+
+.left-sidebar > header {
+  align-items: center;
+  text-align: center;
+}
+
+.left-sidebar > header .site-avatar {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.left-sidebar > header .site-meta {
+  align-items: center;
+  text-align: center;
+}
+
+.left-sidebar .site-name,
+.left-sidebar .site-description {
+  text-align: center;
+}
+
+.menu-social {
+  justify-content: center;
+  margin-top: 0.6rem;
+  margin-bottom: 3.6rem;
+}
+
+@media (min-width: 1536px) {
+  .left-sidebar {
+    --sidebar-avatar-size: 144px;
+  }
+}
+
+#main-menu .menu-group details {
+  width: 100%;
+}
+
+#main-menu .menu-group-toggle {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  color: var(--body-text-color);
+  gap: var(--menu-icon-separation);
+  cursor: pointer;
+  list-style: none;
+}
+
+#main-menu .menu-group-toggle::-webkit-details-marker {
+  display: none;
+}
+
+#main-menu .menu-group-toggle svg:last-child {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+#main-menu .menu-group details[open] > .menu-group-toggle svg:last-child {
+  transform: rotate(90deg);
+}
+
+#main-menu .menu-group.current > details > .menu-group-toggle {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+#main-menu .menu-submenu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin: 1rem 0 0 calc(20px + var(--menu-icon-separation));
+  padding: 0 0 0 1.2rem;
+  border-left: 1px solid var(--card-separator-color);
+}
+
+#main-menu .menu-submenu li a {
+  gap: 0;
+  color: var(--body-text-color);
+}
+
+#main-menu .menu-submenu li.current a {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
 .site-footer--spacer {
   min-height: 12rem;
 }
