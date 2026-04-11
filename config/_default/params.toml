@@ -55,7 +55,7 @@ SortBy = "default"
 
 [colorScheme]
     toggle = true
-    default = "auto"
+    default = "light"
 
 [imageProcessing]
     autoOrient = false
