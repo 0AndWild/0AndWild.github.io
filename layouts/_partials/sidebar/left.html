@@ -5,6 +5,11 @@
         </span>
     </button>
 
+    <a class="sidebar-home-link" href="{{ .Site.Home.RelPermalink }}">
+        <img src="/favicon.ico" alt="" aria-hidden="true">
+        <span>0AndWild_log</span>
+    </a>
+
     <header>
         {{ with .Site.Params.sidebar.avatar }}
             {{- $avatar := partial "helper/image" (dict "Image" . "Resources" resources "Context" $) -}}

@@ -16,9 +16,42 @@ body {
   --sidebar-avatar-size: 132px;
 }
 
+@media (min-width: 768px) {
+  .left-sidebar {
+    padding-top: 2rem;
+  }
+}
+
+.left-sidebar .sidebar-home-link {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--accent-color);
+  font-size: 2.35rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  margin-top: 0.8rem;
+  margin-left: 0;
+}
+
+.left-sidebar .sidebar-home-link img {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: block;
+  border-radius: 0.45rem;
+}
+
+.left-sidebar .sidebar-home-link:hover {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
 .left-sidebar > header {
   align-items: center;
   text-align: center;
+  margin-top: 1.2rem;
 }
 
 .left-sidebar > header .site-avatar {
@@ -40,6 +73,10 @@ body {
   justify-content: center;
   margin-top: 0.6rem;
   margin-bottom: 3.6rem;
+}
+
+#main-menu {
+  margin-top: 1.8rem;
 }
 
 @media (min-width: 1536px) {
