@@ -30,3 +30,21 @@
     updateVisibility();
   })();
 </script>
+<script>
+  (function () {
+    const toggle = document.getElementById("background-style-toggle");
+    if (!toggle) return;
+
+    const storageKey = "StackLegacyBackground";
+
+    const apply = (enabled) => {
+      document.documentElement.classList.toggle("legacy-background-enabled", enabled);
+    };
+
+    toggle.addEventListener("click", function () {
+      const enabled = !document.documentElement.classList.contains("legacy-background-enabled");
+      localStorage.setItem(storageKey, enabled ? "on" : "off");
+      apply(enabled);
+    });
+  })();
+</script>

@@ -5,3 +5,6 @@
 
 [tocButton]
     other = "Index"
+
+[backgroundToggle]
+    other = "배경"

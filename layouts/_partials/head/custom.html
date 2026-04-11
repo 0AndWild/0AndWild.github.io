@@ -1,6 +1,26 @@
 {{ $custom := resources.Get "css/custom.css" | resources.Minify }}
 <link rel="stylesheet" href="{{ $custom.RelPermalink }}">
 <link rel="icon" href="/favicon.ico">
+{{ with resources.Get "img/background.png" }}
+<style>
+  :root {
+    --legacy-background-image: url('{{ .RelPermalink }}');
+  }
+</style>
+<script>
+  (function () {
+    const backgroundKey = "StackLegacyBackground";
+    let backgroundValue = localStorage.getItem(backgroundKey);
+
+    if (!backgroundValue) {
+      backgroundValue = "on";
+      localStorage.setItem(backgroundKey, backgroundValue);
+    }
+
+    document.documentElement.classList.toggle("legacy-background-enabled", backgroundValue === "on");
+  })();
+</script>
+{{ end }}
 
 {{ with .Site.Params.verification.google }}
 <meta name="google-site-verification" content="{{ . }}">
