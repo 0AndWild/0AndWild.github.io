@@ -1,11 +1,48 @@
 {{ if (.Context.Scratch.Get "TOCEnabled") }}
-    <section class="widget archives">
-        <h2 class="widget-title section-title">{{ T "article.tableOfContents" }}</h2>
+    <section class="widget archives toc-drawer-widget">
+        <details class="toc-drawer">
+            <summary class="toc-drawer-toggle">{{ T "tocButton" }}</summary>
 
-        <div class="widget--toc">
-            <nav class="toc-nav" id="TableOfContents">
-                {{ partial "article/components/toc" .Context | safeHTML }}
-            </nav>
-        </div>
+            <div class="toc-drawer-panel">
+                <h2 class="widget-title section-title">{{ T "tocButton" }}</h2>
+
+                <div class="widget--toc">
+                    <nav class="toc-nav" id="TableOfContents">
+                        {{ partial "article/components/toc" .Context | safeHTML }}
+                    </nav>
+                </div>
+            </div>
+        </details>
     </section>
+
+    <script>
+        (() => {
+            if (window.__stackTocDrawerBound) return;
+            window.__stackTocDrawerBound = true;
+
+            document.addEventListener("click", (event) => {
+                const drawers = document.querySelectorAll(".toc-drawer[open]");
+                const article = document.querySelector(".article-page .main-article");
+
+                drawers.forEach((drawer) => {
+                    const toggle = drawer.querySelector(".toc-drawer-toggle");
+                    const panel = drawer.querySelector(".toc-drawer-panel");
+
+                    if (toggle && toggle.contains(event.target)) return;
+                    if (panel && panel.contains(event.target)) return;
+                    if (article && article.contains(event.target)) return;
+
+                    drawer.open = false;
+                });
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key !== "Escape") return;
+
+                document.querySelectorAll(".toc-drawer[open]").forEach((drawer) => {
+                    drawer.open = false;
+                });
+            });
+        })();
+    </script>
 {{ end }}
