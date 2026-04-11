@@ -20,6 +20,7 @@
     {{- .Scratch.Set "showInlineTOC" $showInlineTOC -}}
     {{- .Scratch.Set "hasWidget" (or $HasWidgetNotTOC (and $TOCWidgetEnabled $showTOC)) -}}
     {{- if $showInlineTOC }} inline-toc{{ end -}}
+    {{- if or (eq .RelPermalink "/life_log/") (eq .RelPermalink "/en/life_log/") }} template-life-log{{ end -}}
 {{ end }}
 
 {{ define "main" }}
