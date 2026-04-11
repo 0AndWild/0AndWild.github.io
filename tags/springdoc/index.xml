@@ -1,1 +1,232 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Springdoc on 0AndWild_log</title><link>https://0andwild.com/tags/springdoc/</link><description>Recent content in Springdoc on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 17 Oct 2023 17:12:52 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/springdoc/index.xml" rel="self" type="application/rss+xml"/><item><title>Springdoc과 OpenAPI (어노테이션 활용법)</title><link>https://0andwild.com/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/posts/231017_swagger/</guid><description>Springdoc의 @ParameterObject 활용법과 Swagger 어노테이션 완벽 정리</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231017_swagger/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Springdoc on 0AndWild_log</title><link>https://0andwild.com/tags/springdoc/</link><description>Recent content in Springdoc on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Tue, 17 Oct 2023 17:12:52 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/springdoc/index.xml" rel="self" type="application/rss+xml"/><item><title>Springdoc과 OpenAPI (어노테이션 활용법)</title><link>https://0andwild.com/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/posts/231017_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Springdoc과 OpenAPI (어노테이션 활용법)" /&gt;&lt;h2 id="querystring-처리-방식-비교"&gt;&lt;a href="#querystring-%ec%b2%98%eb%a6%ac-%eb%b0%a9%ec%8b%9d-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;QueryString 처리 방식 비교
+&lt;/h2&gt;&lt;p&gt;Spring에서 QueryString을 처리하는 두 가지 방식을 비교해보겠습니다.&lt;/p&gt;
+&lt;h3 id="방식-1-object로-받기-parameterobject"&gt;&lt;a href="#%eb%b0%a9%ec%8b%9d-1-object%eb%a1%9c-%eb%b0%9b%ea%b8%b0-parameterobject" class="header-anchor"&gt;&lt;/a&gt;방식 1: Object로 받기 (ParameterObject)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;email&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;password&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;occupation&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="방식-2-개별-파라미터로-받기-requestparam"&gt;&lt;a href="#%eb%b0%a9%ec%8b%9d-2-%ea%b0%9c%eb%b3%84-%ed%8c%8c%eb%9d%bc%eb%af%b8%ed%84%b0%eb%a1%9c-%eb%b0%9b%ea%b8%b0-requestparam" class="header-anchor"&gt;&lt;/a&gt;방식 2: 개별 파라미터로 받기 (@RequestParam)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pw&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;oq&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="모델-정의"&gt;&lt;a href="#%eb%aa%a8%eb%8d%b8-%ec%a0%95%ec%9d%98" class="header-anchor"&gt;&lt;/a&gt;모델 정의
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;ParameterObjectReq (Request DTO)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;OccupationStatus (Enum)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;enum&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STUDENT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;EMPLOYEE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;UNEMPLOYED&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="두-방식의-차이점"&gt;&lt;a href="#%eb%91%90-%eb%b0%a9%ec%8b%9d%ec%9d%98-%ec%b0%a8%ec%9d%b4%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;두 방식의 차이점
+&lt;/h3&gt;&lt;p&gt;일반적으로 request를 QueryString으로 받을 경우 &lt;code&gt;@RequestParam&lt;/code&gt;을 사용하지만, 받는 인자가 많을 경우 첫 번째 방식처럼 QueryString을 Object 형태로 받을 수 있습니다.&lt;/p&gt;
+&lt;h4 id="requestparam-vs-parameterobject"&gt;&lt;a href="#requestparam-vs-parameterobject" class="header-anchor"&gt;&lt;/a&gt;@RequestParam vs ParameterObject
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;@RequestParam&lt;/strong&gt;: 기본적으로 &lt;code&gt;required = true&lt;/code&gt;로 설정되어 있어 request value를 필수로 받습니다.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ParameterObject&lt;/strong&gt;: Spring에서 별도의 어노테이션 없이도 QueryString을 객체의 필드값에 자동으로 바인딩합니다. 하지만 &lt;code&gt;required&lt;/code&gt;가 기본 설정되지 않아 &lt;code&gt;null&lt;/code&gt; 값이 들어올 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="springdoc에서의-parameterobject-vs-requestparam-변환-비교"&gt;&lt;a href="#springdoc%ec%97%90%ec%84%9c%ec%9d%98-parameterobject-vs-requestparam-%eb%b3%80%ed%99%98-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;Springdoc에서의 ParameterObject vs @RequestParam 변환 비교
+&lt;/h2&gt;&lt;h3 id="parameterobject-사용-시"&gt;&lt;a href="#parameterobject-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;ParameterObject 사용 시
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="ParameterObject 변환 결과" class="gallery-image" data-flex-basis="273px" data-flex-grow="114" height="817" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image1.png" srcset="https://0andwild.com/posts/231017_swagger/image1_hu_cf1157316278237d.png 800w, https://0andwild.com/posts/231017_swagger/image1.png 932w" width="932"&gt;&lt;/p&gt;
+&lt;h3 id="requestparam-사용-시"&gt;&lt;a href="#requestparam-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;@RequestParam 사용 시
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="RequestParam 변환 결과" class="gallery-image" data-flex-basis="286px" data-flex-grow="119" height="776" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image2.png" srcset="https://0andwild.com/posts/231017_swagger/image2_hu_885e9d03410a6c49.png 800w, https://0andwild.com/posts/231017_swagger/image2.png 927w" width="927"&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="parameterobject-어노테이션-활용"&gt;&lt;a href="#parameterobject-%ec%96%b4%eb%85%b8%ed%85%8c%ec%9d%b4%ec%85%98-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;@ParameterObject 어노테이션 활용
+&lt;/h2&gt;&lt;p&gt;ParameterObject를 Springdoc이 &lt;code&gt;@RequestParam&lt;/code&gt;을 사용했을 때처럼 변환해주고 Required 여부를 표시하려면 다음과 같이 설정합니다.&lt;/p&gt;
+&lt;h3 id="코드-예제"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%ec%98%88%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;코드 예제
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@ParameterObject&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;@ParameterObject&lt;/code&gt;는 Springdoc 어노테이션으로, 여러 개의 QueryString을 Object 형태로 받을 경우 해당 클래스 위에 명시하면 &lt;code&gt;@RequestParam&lt;/code&gt;처럼 인식하고 변환해줍니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI에서의 변환 결과" class="gallery-image" data-flex-basis="306px" data-flex-grow="127" height="356" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image3.png" width="454"&gt;&lt;/p&gt;
+&lt;h3 id="jsr-303-지원"&gt;&lt;a href="#jsr-303-%ec%a7%80%ec%9b%90" class="header-anchor"&gt;&lt;/a&gt;JSR-303 지원
+&lt;/h3&gt;&lt;p&gt;Springdoc은 JSR-303을 지원하며, 다음과 같은 validation 어노테이션을 사용할 수 있습니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@NotNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Min&lt;/code&gt;, &lt;code&gt;@Max&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Size&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;기타 validation 어노테이션&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Springdoc 공식 문서에 따르면&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;This library supports&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenAPI 3&lt;/li&gt;
+&lt;li&gt;Spring-boot (v1, v2 and v3)&lt;/li&gt;
+&lt;li&gt;JSR-303, specifically for @NotNull, @Min, @Max, and @Size&lt;/li&gt;
+&lt;li&gt;Swagger-ui&lt;/li&gt;
+&lt;li&gt;OAuth 2&lt;/li&gt;
+&lt;li&gt;GraalVM native images&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="변환-결과"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;변환 결과
+&lt;/h3&gt;&lt;p&gt;ParameterObject도 &lt;code&gt;@RequestParam&lt;/code&gt;으로 인식되도록 spec 파일이 작성되었고, &lt;code&gt;@NotNull&lt;/code&gt;을 붙이지 않은 &lt;code&gt;occupation&lt;/code&gt;에는 Required가 optional 형태로 표시됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spec 파일 변환 결과" class="gallery-image" data-flex-basis="276px" data-flex-grow="115" height="796" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image4.png" srcset="https://0andwild.com/posts/231017_swagger/image4_hu_88db034e3bd78cc8.png 800w, https://0andwild.com/posts/231017_swagger/image4.png 918w" width="918"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI 표시 결과" class="gallery-image" data-flex-basis="563px" data-flex-grow="234" height="701" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image5.png" srcset="https://0andwild.com/posts/231017_swagger/image5_hu_9ca7d7b267dcf395.png 800w, https://0andwild.com/posts/231017_swagger/image5_hu_f4b70326621470ab.png 1600w, https://0andwild.com/posts/231017_swagger/image5.png 1647w" width="1647"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;좌측 이미지&lt;/strong&gt;: &lt;code&gt;@ParameterObject&lt;/code&gt;를 명시했을 경우 Springdoc이 인식하고 정상적인 spec으로 변환&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger2--swagger3-annotations"&gt;&lt;a href="#swagger2--swagger3-annotations" class="header-anchor"&gt;&lt;/a&gt;Swagger2 → Swagger3 Annotations
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Swagger2&lt;/th&gt;
+ &lt;th&gt;Swagger3&lt;/th&gt;
+ &lt;th&gt;설명&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@Api&lt;/td&gt;
+ &lt;td&gt;@Tag&lt;/td&gt;
+ &lt;td&gt;클래스단에 swagger 리소스 표시(그룹화 시켜줌)&lt;br&gt;&lt;br&gt;&lt;code&gt;name&lt;/code&gt; : 태그의 이름&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : 태그에 대한 설명&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiIgnore&lt;/td&gt;
+ &lt;td&gt;@Parameter(hidden = true)&lt;br&gt;@Operation(hidden = true)&lt;br&gt;@Hidden&lt;/td&gt;
+ &lt;td&gt;해당 어노테이션을 통해 파라미터를 swagger-ui 에서 숨길 수 있음.&lt;br&gt;&lt;br&gt;requestBody 나 ResponseBody 의 경우는&lt;br&gt;@JsonProperty(access = JsonProperty.Access.READ_ONLY) 를 사용&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;단일 RequestParam 에 대한 설정 및 리소스 표시&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParams&lt;/td&gt;
+ &lt;td&gt;@Parameters&lt;/td&gt;
+ &lt;td&gt;여러개의 RequestParam 을 설정&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModel&lt;/td&gt;
+ &lt;td&gt;@Schema&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;description&lt;/code&gt; : 한글명&lt;br&gt;&lt;code&gt;defaultValue&lt;/code&gt; : 기본값&lt;br&gt;&lt;code&gt;allowableValues&lt;/code&gt; : 허용가능한 값(열거형으로 정의가능할 경우 설정합니다)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModelProperty(hidden = true)&lt;/td&gt;
+ &lt;td&gt;@Schema(accessMode = READ_ONLY)&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiOperation(value = &amp;ldquo;foo&amp;rdquo;, notes = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@Operation(summary = &amp;ldquo;foo&amp;rdquo;, description = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;summary&lt;/code&gt; : api에 대한 간략 설명&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : api에 대한 상세 설명&lt;br&gt;&lt;code&gt;responses&lt;/code&gt; : api Response 리스트&lt;br&gt;&lt;code&gt;parameters&lt;/code&gt; : api 파라미터 리스트&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;name&lt;/code&gt; : 파라미터 이름&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : 파라미터 설명&lt;br&gt;&lt;code&gt;in&lt;/code&gt; : 파라미터 위치 (query, header, path, cookie)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiResponse(code = 404, message = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@ApiResponse(responseCode = &amp;ldquo;404&amp;rdquo;, description = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;responseCode&lt;/code&gt; : http 상태코드&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : response에 대한 설명&lt;br&gt;&lt;code&gt;content&lt;/code&gt; : Response payload 구조&lt;br&gt;&lt;code&gt;schema&lt;/code&gt; : payload에서 이용하는 Schema&lt;br&gt;&lt;br&gt;&lt;code&gt;hidden&lt;/code&gt; : Schema 숨김여부&lt;br&gt;&lt;code&gt;implementation&lt;/code&gt; : Schema 대상 클래스&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;여러 개의 request query params를 캡처하기 위해 객체를 사용하는 경우, 해당 메서드 인자에 &lt;code&gt;@ParameterObject&lt;/code&gt; 어노테이션을 사용하세요&lt;/li&gt;
+&lt;li&gt;이 단계는 선택사항입니다: &lt;strong&gt;여러 개의&lt;/strong&gt; &lt;code&gt;Docket&lt;/code&gt; 빈이 있는 경우에만 &lt;code&gt;GroupedOpenApi&lt;/code&gt; 빈으로 교체하세요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="tag-어노테이션-활용"&gt;&lt;a href="#tag-%ec%96%b4%eb%85%b8%ed%85%8c%ec%9d%b4%ec%85%98-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;@Tag 어노테이션 활용
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;@Tag&lt;/code&gt; 어노테이션을 사용하면 다음과 같은 그룹핑이 가능합니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Controller 단위로 그룹핑&lt;/li&gt;
+&lt;li&gt;Controller 내부의 메서드 단위로 그룹핑&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Tag&lt;/code&gt;에 명명한 이름에 따라 spec 파일로 전환 시 그룹핑 수행&lt;/li&gt;
+&lt;li&gt;OpenAPI Generator를 이용한 client code 생성 시 해당 이름으로 파일 생성&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="tag-중복-사용-시-주의사항"&gt;&lt;a href="#tag-%ec%a4%91%eb%b3%b5-%ec%82%ac%ec%9a%a9-%ec%8b%9c-%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;@Tag 중복 사용 시 주의사항
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;질문&lt;/strong&gt;: 최상위 레벨에 &lt;code&gt;@Tag&lt;/code&gt;로 그룹핑하고, 하위 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 다른 이름으로 tag를 설정하면 어떻게 될까요?&lt;/p&gt;
+&lt;h4 id="테스트-결과"&gt;&lt;a href="#%ed%85%8c%ec%8a%a4%ed%8a%b8-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;테스트 결과
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="중복 그룹 생성 결과" class="gallery-image" data-flex-basis="442px" data-flex-grow="184" height="573" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image6.png" srcset="https://0andwild.com/posts/231017_swagger/image6_hu_39ef28f5749fa3a7.png 800w, https://0andwild.com/posts/231017_swagger/image6.png 1056w" width="1056"&gt;&lt;/p&gt;
+&lt;p&gt;최상위에 &lt;code&gt;@Tag(name = &amp;quot;swagger&amp;quot;)&lt;/code&gt;를 설정하고, &lt;code&gt;postHello&lt;/code&gt; 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 &lt;code&gt;tags = {&amp;quot;swagger123&amp;quot;}&lt;/code&gt;을 추가한 경우, 같은 엔드포인트가 다른 그룹으로 중복 생성됩니다.&lt;/p&gt;
+&lt;h4 id="문제점"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;문제점
+&lt;/h4&gt;&lt;p&gt;이 상태에서 OpenAPI Generator를 사용하면 아래와 같이 중복된 client 코드가 생성되는 문제가 발생합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="중복 생성된 API 파일 1" class="gallery-image" data-flex-basis="728px" data-flex-grow="303" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image7.png" srcset="https://0andwild.com/posts/231017_swagger/image7_hu_bc30ff9f9efe9f74.png 800w, https://0andwild.com/posts/231017_swagger/image7.png 1548w" width="1548"&gt;
+&lt;img alt="중복 생성된 API 파일 2" class="gallery-image" data-flex-basis="269px" data-flex-grow="112" height="673" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image8.png" width="757"&gt;
+&lt;img alt="중복 생성된 API 파일 3" class="gallery-image" data-flex-basis="428px" data-flex-grow="178" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image9.png" width="311"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;권장사항&lt;/strong&gt;: 특별한 경우가 아니라면 &lt;code&gt;@Tag&lt;/code&gt;를 이용한 그룹핑은 Controller의 최상위에서만 사용하는 것을 권장합니다.&lt;/p&gt;
+&lt;h3 id="openapi-generator-client-code-생성-시-파일명"&gt;&lt;a href="#openapi-generator-client-code-%ec%83%9d%ec%84%b1-%ec%8b%9c-%ed%8c%8c%ec%9d%bc%eb%aa%85" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator Client Code 생성 시 파일명
+&lt;/h3&gt;&lt;p&gt;Client 코드 생성 시 &lt;code&gt;@Tag&lt;/code&gt;에서 명명한 이름 + &lt;code&gt;-api&lt;/code&gt;가 postfix로 붙습니다. 이 부분을 커스터마이징하려면 Mustache 파일을 수정해야 합니다.&lt;/p&gt;
+&lt;h3 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/templating" target="_blank" rel="noopener"
+ &gt;Using Templates | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/janl/mustache.js" target="_blank" rel="noopener"
+ &gt;Mustache.js GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://hmos.dev/how-to-use-oas-generator" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator 사용법&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://velog.io/@kdeun1/OpenAPI-Generator%eb%a5%bc-%ec%82%ac%ec%9a%a9%ed%95%98%ec%97%ac-API%ec%99%80-%eb%8f%99%ec%9d%bc%ed%95%9c-Model%ea%b3%bc-%ec%a0%95%ed%98%95%ed%99%94%eb%90%9c-API%ec%bd%94%eb%93%9c-%ec%9e%90%eb%8f%99%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator로 API의 안전한 Model과 정형화된 구현코드 자동생성하기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="인증-관련-openapi-스펙"&gt;&lt;a href="#%ec%9d%b8%ec%a6%9d-%ea%b4%80%eb%a0%a8-openapi-%ec%8a%a4%ed%8e%99" class="header-anchor"&gt;&lt;/a&gt;인증 관련 OpenAPI 스펙
+&lt;/h2&gt;&lt;p&gt;OpenAPI는 다양한 인증 방식을 지원합니다. 주요 설정 항목은 다음과 같습니다.&lt;/p&gt;
+&lt;h3 id="type-인증-형식"&gt;&lt;a href="#type-%ec%9d%b8%ec%a6%9d-%ed%98%95%ec%8b%9d" class="header-anchor"&gt;&lt;/a&gt;type (인증 형식)
+&lt;/h3&gt;&lt;p&gt;현재 API Key, HTTP, OAuth2, OpenID Connect 방식을 지원합니다.
+&lt;strong&gt;참고&lt;/strong&gt;: OpenAPI v2 스펙에서는 OpenID Connect 방식을 지원하지 않습니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;지원되는 타입&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;http&lt;/code&gt;: Basic, Bearer 및 기타 HTTP 인증 체계&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apiKey&lt;/code&gt;: API 키 및 쿠키 인증&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;oauth2&lt;/code&gt;: OAuth2 인증&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;openIdConnect&lt;/code&gt;: OpenID Connect 검색&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="주요-설정-항목"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ec%84%a4%ec%a0%95-%ed%95%ad%eb%aa%a9" class="header-anchor"&gt;&lt;/a&gt;주요 설정 항목
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;name&lt;/code&gt;&lt;/strong&gt;: 인증 키 이름 (API Key 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;in&lt;/code&gt;&lt;/strong&gt;: 인증 키의 위치 지정 (&lt;code&gt;query&lt;/code&gt;, &lt;code&gt;header&lt;/code&gt;, &lt;code&gt;cookie&lt;/code&gt; 중 선택, API Key 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;scheme&lt;/code&gt;&lt;/strong&gt;: 인증 방식 지정 (&lt;code&gt;Basic&lt;/code&gt; 또는 &lt;code&gt;Bearer&lt;/code&gt;, HTTP 인증 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;bearerFormat&lt;/code&gt;&lt;/strong&gt;: Bearer 토큰 형식 (일반적으로 &lt;code&gt;JWT&lt;/code&gt; 사용)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;flows&lt;/code&gt;&lt;/strong&gt;: OAuth2 플로우 타입 (&lt;code&gt;implicit&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;clientCredentials&lt;/code&gt;, &lt;code&gt;authorizationCode&lt;/code&gt; 중 선택)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openIdConnectUrl&lt;/code&gt;&lt;/strong&gt;: OpenID Connect URL (OpenAPI v2 스펙에서는 OAuth2나 Bearer 토큰 방식으로 대체 권장)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="deprecated-전략"&gt;&lt;a href="#deprecated-%ec%a0%84%eb%9e%b5" class="header-anchor"&gt;&lt;/a&gt;@Deprecated 전략
+&lt;/h2&gt;&lt;p&gt;API 버전 업데이트로 DTO 스펙에 변경이 있을 경우, 다음과 같은 단계적 전략을 사용합니다.&lt;/p&gt;
+&lt;h3 id="1단계-deprecated-표시"&gt;&lt;a href="#1%eb%8b%a8%ea%b3%84-deprecated-%ed%91%9c%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;1단계: @Deprecated 표시
+&lt;/h3&gt;&lt;p&gt;먼저 변경될 필드에 &lt;code&gt;@Deprecated&lt;/code&gt; 어노테이션을 붙입니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;OpenAPI spec 상에도 해당 스키마의 필드에 &lt;code&gt;deprecated&lt;/code&gt;가 표시되고, 프론트엔드에서 코드 생성 시 해당 필드에 deprecated 표시가 나타납니다. 이를 통해 프론트엔드 팀에게 곧 해당 필드가 제거될 것임을 미리 알립니다.&lt;/p&gt;
+&lt;h3 id="2단계-schemahidden--true-적용"&gt;&lt;a href="#2%eb%8b%a8%ea%b3%84-schemahidden--true-%ec%a0%81%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;2단계: @Schema(hidden = true) 적용
+&lt;/h3&gt;&lt;p&gt;프론트엔드에서 새로운 스펙으로 마이그레이션이 완료되면, 서버에서 해당 &lt;code&gt;@Deprecated&lt;/code&gt; 필드에 &lt;code&gt;@Schema(hidden = true)&lt;/code&gt;를 추가하여 더 이상 OpenAPI spec에 해당 필드가 생성되지 않도록 합니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Schema&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hidden&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// spec에서 제외됨&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="3단계-필드-제거"&gt;&lt;a href="#3%eb%8b%a8%ea%b3%84-%ed%95%84%eb%93%9c-%ec%a0%9c%ea%b1%b0" class="header-anchor"&gt;&lt;/a&gt;3단계: 필드 제거
+&lt;/h3&gt;&lt;p&gt;충분한 시간이 지난 후 해당 필드를 완전히 제거합니다.&lt;/p&gt;
+&lt;p&gt;이러한 단계적 접근 방식을 통해 프론트엔드와 백엔드 간의 안전한 API 버전 관리가 가능합니다.&lt;/p&gt;</description></item></channel></rss>

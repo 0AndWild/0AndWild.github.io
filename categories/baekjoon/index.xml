@@ -1,1 +1,32 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Baekjoon on 0AndWild_log</title><link>https://0andwild.com/categories/baekjoon/</link><description>Recent content in Baekjoon on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/baekjoon/index.xml" rel="self" type="application/rss+xml"/><item><title>Baekjoonhub 크롬 익스텐션 커스텀</title><link>https://0andwild.com/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/posts/260220_baekjoonhub/</guid><description>Base Directory 추가, 티어 경로 세분화, 디렉토리명 정규화, Java Main/package 자동화, 벌크 업로드 기능을 구현했음.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260220_baekjoonhub/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Baekjoon on 0AndWild_log</title><link>https://0andwild.com/categories/baekjoon/</link><description>Recent content in Baekjoon on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/baekjoon/index.xml" rel="self" type="application/rss+xml"/><item><title>Baekjoonhub 크롬 익스텐션 커스텀</title><link>https://0andwild.com/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Baekjoonhub 크롬 익스텐션 커스텀" /&gt;&lt;h1 id="baekjoonhub를-직접-커스텀하게-된-이유"&gt;&lt;a href="#baekjoonhub%eb%a5%bc-%ec%a7%81%ec%a0%91-%ec%bb%a4%ec%8a%a4%ed%85%80%ed%95%98%ea%b2%8c-%eb%90%9c-%ec%9d%b4%ec%9c%a0" class="header-anchor"&gt;&lt;/a&gt;BaekjoonHub를 직접 커스텀하게 된 이유
+&lt;/h1&gt;&lt;p&gt;최근에 백준을 본격적으로 사용하게 되면서 &lt;code&gt;BaekjoonHub&lt;/code&gt; 익스텐션을 알게 됐음.&lt;br&gt;
+처음 써보니 “풀이를 자동으로 GitHub에 올려준다”는 점은 정말 편했지만, 실제로 내 작업 방식에 맞추기엔 몇 가지 불편한 부분이 있었음.&lt;/p&gt;
+&lt;p&gt;그래서 먼저 공식 저장소 이슈를 찾아봤음.&lt;br&gt;
+확인해보니 나와 비슷한 고민을 가진 분들이 이미 있었고, 관련 기능을 추가하려는 PR도 올라와 있었음. 다만 당시 기준으로는 해당 기능을 바로 반영할 계획이 없다는 흐름이 보여서, 기다리기보다 내가 필요한 부분을 직접 커스텀해서 쓰기로 결정함.&lt;/p&gt;
+&lt;p&gt;원본 저장소: &lt;a class="link" href="https://github.com/BaekjoonHub/BaekjoonHub" target="_blank" rel="noopener"
+ &gt;https://github.com/BaekjoonHub/BaekjoonHub&lt;/a&gt;&lt;br&gt;
+커스텀 저장소: &lt;a class="link" href="https://github.com/0AndWild/baekjoonhub_custom" target="_blank" rel="noopener"
+ &gt;https://github.com/0AndWild/baekjoonhub_custom&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="내가-겪은-불편함"&gt;&lt;a href="#%eb%82%b4%ea%b0%80-%ea%b2%aa%ec%9d%80-%eb%b6%88%ed%8e%b8%ed%95%a8" class="header-anchor"&gt;&lt;/a&gt;내가 겪은 불편함
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;업로드 경로가 레포 루트 기준이라 프로젝트 구조에 맞추기 어려움&lt;/li&gt;
+&lt;li&gt;티어 경로가 세분화되지 않아 문제 정리가 아쉬움&lt;/li&gt;
+&lt;li&gt;문제 디렉토리명이 패키지/경로로 쓰기 불편한 형태&lt;/li&gt;
+&lt;li&gt;Java 파일명과 실행 엔트리(&lt;code&gt;Main.java&lt;/code&gt;)를 수동으로 맞춰야 하는 경우 발생&lt;/li&gt;
+&lt;li&gt;기존에 풀어둔 문제를 한 번에 정리해서 올리기 어려움&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="그래서-커스텀에서-바꾼-부분"&gt;&lt;a href="#%ea%b7%b8%eb%9e%98%ec%84%9c-%ec%bb%a4%ec%8a%a4%ed%85%80%ec%97%90%ec%84%9c-%eb%b0%94%ea%be%bc-%eb%b6%80%eb%b6%84" class="header-anchor"&gt;&lt;/a&gt;그래서 커스텀에서 바꾼 부분
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Base Directory&lt;/code&gt; 지정 기능 추가&lt;/li&gt;
+&lt;li&gt;티어 경로를 &lt;code&gt;Bronze/V&lt;/code&gt;처럼 세분화&lt;/li&gt;
+&lt;li&gt;문제 디렉토리명 정규화&lt;/li&gt;
+&lt;li&gt;Java 파일명 &lt;code&gt;Main.java&lt;/code&gt; 고정 + &lt;code&gt;package&lt;/code&gt; 자동 삽입&lt;/li&gt;
+&lt;li&gt;백준 맞은 문제 전체 업로드(벌크 업로드) 기능 추가&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="정리"&gt;&lt;a href="#%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;정리
+&lt;/h2&gt;&lt;p&gt;이번 커스텀은 “기능을 새로 많이 만들자”보다는,&lt;br&gt;
+실제로 문제를 풀고 정리하는 과정에서 반복되는 불편함을 줄이는 데 초점을 맞춤.&lt;/p&gt;
+&lt;p&gt;공식 저장소에서도 이미 비슷한 요구가 있었던 만큼, 같은 고민을 가진 분들에게는 이 커스텀 방향이 참고가 될 수 있다고 생각함.&lt;/p&gt;</description></item></channel></rss>

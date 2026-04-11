@@ -1,1 +1,225 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Migration on 0AndWild_log</title><link>https://0andwild.com/en/tags/migration/</link><description>Recent content in Migration on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 15 Oct 2025 17:21:09 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/migration/index.xml" rel="self" type="application/rss+xml"/><item><title>Why I Switched to Hugo &amp; GitHub Pages</title><link>https://0andwild.com/en/posts/251015_about_hugo/</link><pubDate>Wed, 15 Oct 2025 17:21:09 +0900</pubDate><guid>https://0andwild.com/en/posts/251015_about_hugo/</guid><description>Moving to Hugo for better markdown compatibility, Open API support ended, and improved developer experience</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251015_about_hugo/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Migration on 0AndWild_log</title><link>https://0andwild.com/en/tags/migration/</link><description>Recent content in Migration on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 15 Oct 2025 17:21:09 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/migration/index.xml" rel="self" type="application/rss+xml"/><item><title>Why I Switched to Hugo &amp; GitHub Pages</title><link>https://0andwild.com/en/posts/251015_about_hugo/</link><pubDate>Wed, 15 Oct 2025 17:21:09 +0900</pubDate><guid>https://0andwild.com/en/posts/251015_about_hugo/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Why I Switched to Hugo &amp; GitHub Pages" /&gt;&lt;h2 id="why-i-moved-to-hugo--github-pages"&gt;&lt;a href="#why-i-moved-to-hugo--github-pages" class="header-anchor"&gt;&lt;/a&gt;Why I Moved to Hugo &amp;amp; GitHub Pages
+&lt;/h2&gt;&lt;p&gt;I decided to migrate my tech blog from &lt;a class="link" href="https://0andwild.tistory.com/" target="_blank" rel="noopener"
+ &gt;&lt;strong&gt;Tstory&lt;/strong&gt;&lt;/a&gt; to &lt;strong&gt;Hugo &amp;amp; GitHub Pages&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="1-scattered-content-management"&gt;&lt;a href="#1-scattered-content-management" class="header-anchor"&gt;&lt;/a&gt;1. Scattered Content Management
+&lt;/h3&gt;&lt;p&gt;As I used various note-taking tools, the content I wrote at work or while studying became scattered everywhere. Having to transfer these notes to the blog repeatedly became burdensome, which led me to neglect blog management.&lt;/p&gt;
+&lt;h3 id="2-markdown-compatibility-issues"&gt;&lt;a href="#2-markdown-compatibility-issues" class="header-anchor"&gt;&lt;/a&gt;2. Markdown Compatibility Issues
+&lt;/h3&gt;&lt;p&gt;The markdown syntax used in my note-taking tools wasn&amp;rsquo;t fully compatible with Tstory, requiring frequent modifications when publishing posts. This was also a source of frustration.&lt;/p&gt;
+&lt;p&gt;Specific issues included:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Insufficient syntax highlighting support for code blocks&lt;/li&gt;
+&lt;li&gt;Table rendering errors&lt;/li&gt;
+&lt;li&gt;Image path handling problems&lt;/li&gt;
+&lt;li&gt;Limited mathematical expression support&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="3-tstory-open-api-support-ended"&gt;&lt;a href="#3-tstory-open-api-support-ended" class="header-anchor"&gt;&lt;/a&gt;3. Tstory Open API Support Ended
+&lt;/h3&gt;&lt;p&gt;Recently, I wanted to reorganize my study materials and post them on Tstory while redesigning the blog skin. I also planned to integrate existing note-taking tools using the &lt;strong&gt;Tstory Official Open API&lt;/strong&gt;. However, I discovered that Open API support had been discontinued, and there was no longer a reason to continue using Tstory.&lt;/p&gt;
+&lt;h3 id="blog-platform-selection-criteria"&gt;&lt;a href="#blog-platform-selection-criteria" class="header-anchor"&gt;&lt;/a&gt;Blog Platform Selection Criteria
+&lt;/h3&gt;&lt;p&gt;After researching various blogs and considering what approach would work best, I settled on &lt;strong&gt;Hugo &amp;amp; GitHub Pages&lt;/strong&gt; based on the following criteria:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Is it easy to set up the blog?&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Can it be managed with code?&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Is there high flexibility to add features I want?&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Is the build and deployment speed fast when using GitHub Pages?&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Is it easy to integrate with note-taking tools like Obsidian?&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="what-is-hugo"&gt;&lt;a href="#what-is-hugo" class="header-anchor"&gt;&lt;/a&gt;What is Hugo?
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://gohugo.io/" target="_blank" rel="noopener"
+ &gt;&lt;strong&gt;Hugo&lt;/strong&gt;&lt;/a&gt; is a fast and flexible &lt;strong&gt;Static Site Generator&lt;/strong&gt; written in the &lt;strong&gt;Go language&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Key Features:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fast build speed&lt;/strong&gt;: Thousands of pages can be built in seconds&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Simple structure&lt;/strong&gt;: Write content in Markdown and Hugo converts it to HTML&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Zero dependencies&lt;/strong&gt;: Runs as a single binary without requiring separate runtime or database&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rich theme ecosystem&lt;/strong&gt;: Easy to apply themes for various purposes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="comparing-static-site-generators-used-with-github-pages"&gt;&lt;a href="#comparing-static-site-generators-used-with-github-pages" class="header-anchor"&gt;&lt;/a&gt;Comparing Static Site Generators Used with GitHub Pages
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Feature&lt;/th&gt;
+ &lt;th&gt;Hugo&lt;/th&gt;
+ &lt;th&gt;Jekyll&lt;/th&gt;
+ &lt;th&gt;Gatsby&lt;/th&gt;
+ &lt;th&gt;Next.js (SSG)&lt;/th&gt;
+ &lt;th&gt;VuePress&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Language&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Go&lt;/td&gt;
+ &lt;td&gt;Ruby&lt;/td&gt;
+ &lt;td&gt;React (JavaScript)&lt;/td&gt;
+ &lt;td&gt;React (JavaScript)&lt;/td&gt;
+ &lt;td&gt;Vue.js&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Build Speed&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;⚡ Very Fast (&amp;lt; 1ms/page)&lt;/td&gt;
+ &lt;td&gt;🐢 Slow&lt;/td&gt;
+ &lt;td&gt;🚶 Moderate&lt;/td&gt;
+ &lt;td&gt;🚶 Moderate&lt;/td&gt;
+ &lt;td&gt;🚶 Moderate&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Installation Complexity&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;✅ Single Binary&lt;/td&gt;
+ &lt;td&gt;⚠️ Ruby environment required&lt;/td&gt;
+ &lt;td&gt;⚠️ Node.js + many dependencies&lt;/td&gt;
+ &lt;td&gt;⚠️ Node.js + dependencies&lt;/td&gt;
+ &lt;td&gt;⚠️ Node.js + dependencies&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;GitHub Pages Native Support&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;❌ (Actions required)&lt;/td&gt;
+ &lt;td&gt;✅ Native support&lt;/td&gt;
+ &lt;td&gt;❌ (Actions required)&lt;/td&gt;
+ &lt;td&gt;❌ (Actions required)&lt;/td&gt;
+ &lt;td&gt;❌ (Actions required)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Learning Curve&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Low&lt;/td&gt;
+ &lt;td&gt;Low&lt;/td&gt;
+ &lt;td&gt;High&lt;/td&gt;
+ &lt;td&gt;Medium-High&lt;/td&gt;
+ &lt;td&gt;Medium&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Themes/Plugins&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Rich&lt;/td&gt;
+ &lt;td&gt;Very Rich&lt;/td&gt;
+ &lt;td&gt;Rich (React ecosystem)&lt;/td&gt;
+ &lt;td&gt;Rich (React ecosystem)&lt;/td&gt;
+ &lt;td&gt;Moderate&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Best For&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Blog, Docs, Portfolio&lt;/td&gt;
+ &lt;td&gt;Blog, GitHub default&lt;/td&gt;
+ &lt;td&gt;Complex web apps, Blog&lt;/td&gt;
+ &lt;td&gt;Complex web apps, Hybrid&lt;/td&gt;
+ &lt;td&gt;Technical docs&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Build Time (1000 pages)&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;~1s&lt;/td&gt;
+ &lt;td&gt;~2min&lt;/td&gt;
+ &lt;td&gt;~30s&lt;/td&gt;
+ &lt;td&gt;~30s&lt;/td&gt;
+ &lt;td&gt;~20s&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Why I Chose Hugo:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Overwhelming build speed&lt;/strong&gt;: Build time barely increases even with more content&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Simple setup&lt;/strong&gt;: Focus on Markdown without complex JavaScript frameworks&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Zero dependencies&lt;/strong&gt;: No environment setup issues with a single executable&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Rich themes&lt;/strong&gt;: Easy to apply high-quality themes like Blowfish&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="github-pages-deployment"&gt;&lt;a href="#github-pages-deployment" class="header-anchor"&gt;&lt;/a&gt;GitHub Pages Deployment
+&lt;/h2&gt;&lt;p&gt;Blogs written with Hugo are automatically built and deployed through &lt;strong&gt;GitHub Actions&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="deployment-workflow"&gt;&lt;a href="#deployment-workflow" class="header-anchor"&gt;&lt;/a&gt;Deployment Workflow
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Push changes to the &lt;code&gt;main&lt;/code&gt; branch&lt;/li&gt;
+&lt;li&gt;GitHub Actions automatically triggers&lt;/li&gt;
+&lt;li&gt;Hugo builds the static site&lt;/li&gt;
+&lt;li&gt;Built files are automatically deployed to GitHub Pages&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="benefits"&gt;&lt;a href="#benefits" class="header-anchor"&gt;&lt;/a&gt;Benefits
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Automated deployment&lt;/strong&gt;: Automatically deploys when you push code&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Version control&lt;/strong&gt;: Track all changes through Git&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Free hosting&lt;/strong&gt;: GitHub Pages is provided for free&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Custom domain&lt;/strong&gt;: Can connect your desired domain&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;HTTPS support&lt;/strong&gt;: HTTPS is provided by default&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="obsidian-integration"&gt;&lt;a href="#obsidian-integration" class="header-anchor"&gt;&lt;/a&gt;Obsidian Integration
+&lt;/h2&gt;&lt;p&gt;Hugo is markdown-based, making it perfectly compatible with note-taking tools like &lt;strong&gt;Obsidian&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="integration-method"&gt;&lt;a href="#integration-method" class="header-anchor"&gt;&lt;/a&gt;Integration Method
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Set Hugo blog&amp;rsquo;s &lt;code&gt;content/posts&lt;/code&gt; directory as Obsidian vault&lt;/li&gt;
+&lt;li&gt;Write and edit posts in Obsidian&lt;/li&gt;
+&lt;li&gt;When finished writing, commit &amp;amp; push through Git&lt;/li&gt;
+&lt;li&gt;GitHub Actions automatically builds and deploys&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="benefits-1"&gt;&lt;a href="#benefits-1" class="header-anchor"&gt;&lt;/a&gt;Benefits
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Consistent writing environment&lt;/strong&gt;: Manage all notes and blog posts in the same tool&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Perfect markdown compatibility&lt;/strong&gt;: No additional conversion work needed&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Local-first&lt;/strong&gt;: Can write posts without internet connection&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Powerful linking features&lt;/strong&gt;: Utilize Obsidian&amp;rsquo;s backlinks and graph view&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="terminal-commands"&gt;&lt;a href="#terminal-commands" class="header-anchor"&gt;&lt;/a&gt;Terminal Commands
+&lt;/h2&gt;&lt;h3 id="running-development-server"&gt;&lt;a href="#running-development-server" class="header-anchor"&gt;&lt;/a&gt;Running Development Server
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Starts a local development server. By default, you can view the site at &lt;code&gt;http://localhost:1313&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Key Options:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-D&lt;/code&gt; or &lt;code&gt;--buildDrafts&lt;/code&gt;: Builds draft content as well&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--bind 0.0.0.0&lt;/code&gt;: Makes server accessible from all network interfaces&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--port 8080&lt;/code&gt;: Uses a different port instead of the default (1313)&lt;/li&gt;
+&lt;li&gt;Browser automatically refreshes when files change (Live Reload)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Examples:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server --bind 0.0.0.0 --port &lt;span class="m"&gt;8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="production-build"&gt;&lt;a href="#production-build" class="header-anchor"&gt;&lt;/a&gt;Production Build
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo --cleanDestinationDir
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Builds the static site for production. Output is generated in the &lt;code&gt;public/&lt;/code&gt; directory.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Key Features:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--cleanDestinationDir&lt;/code&gt;: Completely cleans the destination directory (&lt;code&gt;public/&lt;/code&gt;) before building&lt;/li&gt;
+&lt;li&gt;Removes unnecessary files from previous builds for a clean build&lt;/li&gt;
+&lt;li&gt;Ensures no old versions of files remain even when filenames are changed or deleted&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Examples:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo --cleanDestinationDir
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo --cleanDestinationDir --minify &lt;span class="c1"&gt;# Add file minification option&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="theme-information"&gt;&lt;a href="#theme-information" class="header-anchor"&gt;&lt;/a&gt;Theme Information
+&lt;/h2&gt;&lt;h3 id="hugo-blowfish-theme"&gt;&lt;a href="#hugo-blowfish-theme" class="header-anchor"&gt;&lt;/a&gt;Hugo Blowfish Theme
+&lt;/h3&gt;&lt;p&gt;This blog uses the &lt;a class="link" href="https://blowfish.page/" target="_blank" rel="noopener"
+ &gt;&lt;strong&gt;Blowfish&lt;/strong&gt;&lt;/a&gt; theme.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Provides modern and responsive design&lt;/li&gt;
+&lt;li&gt;Supports dark mode&lt;/li&gt;
+&lt;li&gt;Fast loading speed and SEO optimized&lt;/li&gt;
+&lt;li&gt;Multilingual support&lt;/li&gt;
+&lt;li&gt;Rich customization options&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Configuration Files:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;config/_default/hugo.toml&lt;/code&gt; - Basic Hugo configuration&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;config/_default/params.toml&lt;/code&gt; - Blowfish theme parameters&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;config/_default/languages.en.toml&lt;/code&gt; - Language-specific settings&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;config/_default/menus.en.toml&lt;/code&gt; - Menu configuration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;The migration from Tstory to Hugo &amp;amp; GitHub Pages was a choice for a developer-friendly environment. Now I can manage my blog the same way I manage code versions, and with perfect Obsidian integration, I&amp;rsquo;ve unified the workflow from note-taking to blog posting.&lt;/p&gt;
+&lt;p&gt;Above all, Hugo&amp;rsquo;s fast build speed and GitHub Actions&amp;rsquo; automated deployment allow me to focus solely on writing, and I can freely customize without being bound by platform constraints.&lt;/p&gt;
+&lt;p&gt;Going forward, I plan to gradually migrate existing posts from Tstory while steadily adding new content.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Hugo Official Site:&lt;/strong&gt; &lt;a class="link" href="https://gohugo.io/" target="_blank" rel="noopener"
+ &gt;https://gohugo.io/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Blowfish Theme:&lt;/strong&gt; &lt;a class="link" href="https://blowfish.page/" target="_blank" rel="noopener"
+ &gt;https://blowfish.page/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Blowfish Creator:&lt;/strong&gt; &lt;a class="link" href="https://github.com/nunocoracao" target="_blank" rel="noopener"
+ &gt;@nunocoracao&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Creator Blog:&lt;/strong&gt; &lt;a class="link" href="https://n9o.xyz/" target="_blank" rel="noopener"
+ &gt;https://n9o.xyz/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Official Docs:&lt;/strong&gt; &lt;a class="link" href="https://blowfish.page/docs/" target="_blank" rel="noopener"
+ &gt;https://blowfish.page/docs/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;License:&lt;/strong&gt; &lt;a class="link" href="https://en.wikipedia.org/wiki/MIT_License" target="_blank" rel="noopener"
+ &gt;MIT License&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

@@ -1,1 +1,248 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Dive Into JVM on 0AndWild_log</title><link>https://0andwild.com/series/deep-dive-into-jvm/</link><description>Recent content in Deep Dive Into JVM on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 23 Sep 2022 22:27:28 +0900</lastBuildDate><atom:link href="https://0andwild.com/series/deep-dive-into-jvm/index.xml" rel="self" type="application/rss+xml"/><item><title>JVM(JavaVirtualMachine) 파헤치기 (2)</title><link>https://0andwild.com/posts/220923_jvm_2/</link><pubDate>Fri, 23 Sep 2022 22:27:28 +0900</pubDate><guid>https://0andwild.com/posts/220923_jvm_2/</guid><description>JVM의 4가지 핵심 구성요소와 Runtime Data Areas의 5가지 메모리 영역(Method, Heap, Stack, PC Register, Native Method Stack)을 깊이 있게 분석합니다.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/220923_jvm_2/featured.png"/></item><item><title>JVM(JavaVirtualMachine) 파헤치기 (1)</title><link>https://0andwild.com/posts/220922_jvm_1/</link><pubDate>Thu, 22 Sep 2022 22:06:50 +0900</pubDate><guid>https://0andwild.com/posts/220922_jvm_1/</guid><description>Java Virtual Machine의 핵심 개념과 동작 원리를 파헤칩니다. 소스코드가 바이트코드로 변환되고 JIT 컴파일러를 통해 기계어로 실행되는 전체 과정을 이해해봅니다.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/220922_jvm_1/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Dive Into JVM on 0AndWild_log</title><link>https://0andwild.com/series/deep-dive-into-jvm/</link><description>Recent content in Deep Dive Into JVM on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 23 Sep 2022 22:27:28 +0900</lastBuildDate><atom:link href="https://0andwild.com/series/deep-dive-into-jvm/index.xml" rel="self" type="application/rss+xml"/><item><title>JVM(JavaVirtualMachine) 파헤치기 (2)</title><link>https://0andwild.com/posts/220923_jvm_2/</link><pubDate>Fri, 23 Sep 2022 22:27:28 +0900</pubDate><guid>https://0andwild.com/posts/220923_jvm_2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post JVM(JavaVirtualMachine) 파헤치기 (2)" /&gt;&lt;h1 id="jvm의-구성요소"&gt;&lt;a href="#jvm%ec%9d%98-%ea%b5%ac%ec%84%b1%ec%9a%94%ec%86%8c" class="header-anchor"&gt;&lt;/a&gt;JVM의 구성요소
+&lt;/h1&gt;&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="420px" data-flex-grow="175" height="325" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/featured.png" width="569"&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="1-클래스-로더-class-loader"&gt;&lt;a href="#1-%ed%81%b4%eb%9e%98%ec%8a%a4-%eb%a1%9c%eb%8d%94-class-loader" class="header-anchor"&gt;&lt;/a&gt;1. 클래스 로더 (Class Loader)
+&lt;/h2&gt;&lt;p&gt;JVM의 &lt;strong&gt;Class Loader&lt;/strong&gt;는 &lt;code&gt;javac&lt;/code&gt;에 의해 변환된 바이트코드 파일인 &lt;code&gt;*.class&lt;/code&gt; 파일을 &lt;strong&gt;Runtime Data Areas&lt;/strong&gt;에 로딩하여 프로그램을 구동한다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;Class Loader의 로딩은 &lt;strong&gt;런타임&lt;/strong&gt;에 일어나는데, 클래스에 처음 접근될 때 일어난다. 이를 통해 &lt;strong&gt;Lazy Loading Singleton&lt;/strong&gt;이 구현되기도 한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Class Loading 시간엔 &lt;strong&gt;Thread-safe&lt;/strong&gt; 하다.&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="2-실행-엔진-execution-engine"&gt;&lt;a href="#2-%ec%8b%a4%ed%96%89-%ec%97%94%ec%a7%84-execution-engine" class="header-anchor"&gt;&lt;/a&gt;2. 실행 엔진 (Execution Engine)
+&lt;/h2&gt;&lt;p&gt;Class Loader가 Runtime Data Areas에 불러온 &lt;strong&gt;바이트 코드를 실행&lt;/strong&gt;한다. 바이트 코드를 기계어로 변경해 명령어 단위로 실행하는데, 1바이트의 OpCode와 피연산자로 구성이 된다.&lt;/p&gt;
+&lt;h3 id="주요-구성요소"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ea%b5%ac%ec%84%b1%ec%9a%94%ec%86%8c" class="header-anchor"&gt;&lt;/a&gt;주요 구성요소
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;인터프리터 (Interpreter)&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;컴파일러 (Just-in-Time)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3-가비지-콜렉터-garbage-collector"&gt;&lt;a href="#3-%ea%b0%80%eb%b9%84%ec%a7%80-%ec%bd%9c%eb%a0%89%ed%84%b0-garbage-collector" class="header-anchor"&gt;&lt;/a&gt;3. 가비지 콜렉터 (Garbage Collector)
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Heap 영역에 참조되지 않는 오브젝트를 제거&lt;/strong&gt;하는 역할을 한다.&lt;/p&gt;
+&lt;p&gt;자바 이전에는 프로그래머가 모든 프로그램의 메모리를 관리했다. 자바에서는 JVM이 &lt;strong&gt;가비지 컬렉션&lt;/strong&gt;이라는 프로세스를 통해 프로그램 메모리를 관리한다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;가비지 컬렉션은 자바 프로그램에서 사용되지 않는 메모리를 지속적으로 찾아내서 제거하는 역할을 한다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="4-런타임-데이터-영역-runtime-data-areas"&gt;&lt;a href="#4-%eb%9f%b0%ed%83%80%ec%9e%84-%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%98%81%ec%97%ad-runtime-data-areas" class="header-anchor"&gt;&lt;/a&gt;4. 런타임 데이터 영역 (Runtime Data Areas)
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;OS로부터 할당받은 JVM의 메모리 영역&lt;/strong&gt;이다. 자바 어플리케이션을 실행하는데 필요한 데이터를 담는다.&lt;/p&gt;
+&lt;p&gt;Runtime Data Areas는 아래와 같이 &lt;strong&gt;5개의 영역&lt;/strong&gt;으로 나뉘어 진다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;공유 영역&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Method와 Heap 영역은 모든 Thread가 공유&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Thread별 영역&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Stack, PC Register, Native Method 영역은 각 Thread 마다 존재&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_452cc5b05f4a468f.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
+&lt;h3 id="1-method-area"&gt;&lt;a href="#1-method-area" class="header-anchor"&gt;&lt;/a&gt;(1) Method Area
+&lt;/h3&gt;&lt;p&gt;JVM이 시작될 때 생성되고 JVM이 읽은 각각의 클래스와 인터페이스에 대한 런타임 상수 풀, 필드 및 메서드 코드, 정적 변수, 메서드의 바이트 코드 등을 보관한다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Non-Heap 영역으로 Permanent 영역에 저장이된다. JVM 옵션 중 &lt;code&gt;PermSize&lt;/code&gt;(Permanent Generation의 크기)를 지정할 때 고려해야 할 요소이다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h4 id="1-1-type-information"&gt;&lt;a href="#1-1-type-information" class="header-anchor"&gt;&lt;/a&gt;1-1 Type Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Interface 여부&lt;/li&gt;
+&lt;li&gt;패키지 명을 포함한 Type 이름&lt;/li&gt;
+&lt;li&gt;Type의 접근 제어자&lt;/li&gt;
+&lt;li&gt;연관된 Interface 리스트&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-2-runtime-constant-pool"&gt;&lt;a href="#1-2-runtime-constant-pool" class="header-anchor"&gt;&lt;/a&gt;1-2 Runtime Constant Pool
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Type, Field, Method로의 모든 레퍼런스를 저장&lt;/li&gt;
+&lt;li&gt;JVM은 Runtime Contant Pool을 통해 메모리 상 주소를 찾아 참조한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-3-field-information"&gt;&lt;a href="#1-3-field-information" class="header-anchor"&gt;&lt;/a&gt;1-3 Field Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Field의 타입&lt;/li&gt;
+&lt;li&gt;Field의 접근 제어자&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-4-method-information"&gt;&lt;a href="#1-4-method-information" class="header-anchor"&gt;&lt;/a&gt;1-4 Method Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Constructor를 포함한 모든 Method의 메타데이터를 저장&lt;/li&gt;
+&lt;li&gt;Method의 이름, 파라미터 수와 타입, 리턴 타입, 접근 제어자, 바이트코드, 지역 변수 section의 크기 등을 저장&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-5-class-variable"&gt;&lt;a href="#1-5-class-variable" class="header-anchor"&gt;&lt;/a&gt;1-5 Class Variable
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;static&lt;/code&gt; 키워드로 선언된 변수를 저장&lt;/li&gt;
+&lt;li&gt;기본형이 아닌 static 변수의 실제 인스턴스는 Heap 메모리에 저장&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-heap-area"&gt;&lt;a href="#2-heap-area" class="header-anchor"&gt;&lt;/a&gt;(2) Heap Area
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;new&lt;/code&gt; 연산자로 생성된 객체를 저장하는 공간이다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;참조하는 변수나 필드가 존재하지 않으면 **GC(Garbage Collector)**의 대상이 된다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="3-stack-area"&gt;&lt;a href="#3-stack-area" class="header-anchor"&gt;&lt;/a&gt;(3) Stack Area
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Thread마다 별개의 Frame&lt;/strong&gt;으로 저장하며, 저장되는 요소는 아래와 같다.&lt;/p&gt;
+&lt;h4 id="3-1-local-variable-area"&gt;&lt;a href="#3-1-local-variable-area" class="header-anchor"&gt;&lt;/a&gt;3-1 Local Variable Area
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;지역변수, 매개변수, 메소드를 호출한 주소 등 Method 수행 중 발생하는 임시데이터를 저장한다.&lt;/li&gt;
+&lt;li&gt;4바이트 단위로 저장되며, &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;float&lt;/code&gt; 등 4바이트 기본형은 1개의 셀, &lt;code&gt;double&lt;/code&gt; 등 8바이트의 기본형은 2개의 셀을 차지한다.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bool&lt;/code&gt;은 일반적으로 1개의 셀을 차지한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-2-operand-stack"&gt;&lt;a href="#3-2-operand-stack" class="header-anchor"&gt;&lt;/a&gt;3-2 Operand Stack
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Method의 &lt;strong&gt;workspace&lt;/strong&gt; 이다.&lt;/li&gt;
+&lt;li&gt;어떤 명령을 어떤 피연산자로 수행할 지 나타낸다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-3-frame-data"&gt;&lt;a href="#3-3-frame-data" class="header-anchor"&gt;&lt;/a&gt;3-3 Frame Data
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Constant Pool Resolution, Method Return, Exception Dispatch 등을 포함한다.&lt;/li&gt;
+&lt;li&gt;참조된 Exception의 테이블도 가지고 있다.&lt;/li&gt;
+&lt;li&gt;Exception이 발생하면 JVM은 이 테이블을 참고하여 어떻게 Exception을 처리할 지 정한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-pc-register"&gt;&lt;a href="#4-pc-register" class="header-anchor"&gt;&lt;/a&gt;(4) PC Register
+&lt;/h3&gt;&lt;p&gt;Thread가 시작될 때 생성되며 생성될 때마다 생성되는 공간으로, &lt;strong&gt;스레드마다 하나씩 존재&lt;/strong&gt;한다.&lt;/p&gt;
+&lt;p&gt;Thread가 어떤 부분을 어떤 명령으로 실행해야할 지에 대한 기록을 하는 부분으로 Thread가 &lt;strong&gt;현재 실행하고 있는 부분의 주소&lt;/strong&gt;를 갖는다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;OS는 &lt;strong&gt;PC(Program Counter) Register&lt;/strong&gt;를 참고하여 CPU 스케줄링 시 해당 Thread가 다음에 어떤 명령어를 수행해야 하는지 알 수 있다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="5-native-method-stack"&gt;&lt;a href="#5-native-method-stack" class="header-anchor"&gt;&lt;/a&gt;(5) Native Method Stack
+&lt;/h3&gt;&lt;p&gt;자바 프로그램이 컴파일되어 생성되는 바이트 코드가 아닌 &lt;strong&gt;실제 실행할 수 있는 기계어로 작성된 프로그램을 실행시키는 영역&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Java가 아닌 다른 언어로 작성된 코드&lt;/strong&gt;를 위한 공간이다.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Java Native Interface&lt;/strong&gt;를 통해 바이트 코드로 전환하여 저장하게 된다.&lt;/li&gt;
+&lt;li&gt;일반 프로그램처럼 커널이 스택을 잡아 독자적으로 프로그램을 실행시키는 영역이다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="jvm-실행-순서"&gt;&lt;a href="#jvm-%ec%8b%a4%ed%96%89-%ec%88%9c%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;JVM 실행 순서
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;메모리 할당&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;프로그램이 실행되면 JVM은 OS로부터 이 프로그램을 실행하는데 필요한 메모리를 할당받음&lt;/li&gt;
+&lt;li&gt;JVM은 이 메모리를 여러 영역으로 나누어 사용한다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;컴파일&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Java Compiler(&lt;code&gt;javac&lt;/code&gt;)가 &lt;code&gt;*.java&lt;/code&gt; 파일을 컴파일하여 &lt;code&gt;*.class&lt;/code&gt; 인 자바 바이트코드로 변환시킨다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;클래스 로딩&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컴파일된 &lt;code&gt;*.class&lt;/code&gt; 파일들을 &lt;strong&gt;Class Loader&lt;/strong&gt;를 통해 JVM 메모리 위에 로딩을 한다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;바이트코드 해석&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;로딩된 &lt;code&gt;*.class&lt;/code&gt; 파일들은 &lt;strong&gt;Execution Engine&lt;/strong&gt;을 통해 기계어로 해석된다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;실행 및 관리&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;해석된 바이트코드들은 메모리 영역에 배치되어 실질적인 수행을 하게 된다&lt;/li&gt;
+&lt;li&gt;실행과정 속에서 JVM은 필요에 따라 &lt;strong&gt;스레드 동기화&lt;/strong&gt;나 &lt;strong&gt;가비지 컬렉터&lt;/strong&gt;와 같은 메모리 관리 작업을 수행한다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>JVM(JavaVirtualMachine) 파헤치기 (1)</title><link>https://0andwild.com/posts/220922_jvm_1/</link><pubDate>Thu, 22 Sep 2022 22:06:50 +0900</pubDate><guid>https://0andwild.com/posts/220922_jvm_1/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post JVM(JavaVirtualMachine) 파헤치기 (1)" /&gt;&lt;p&gt;문득 Java라는 언어를 공부하면서 &lt;strong&gt;JVM&lt;/strong&gt;에 대한 궁금증이 생겼다.
+단순히 작성한 코드를 실행시켜주는 가상컴퓨터 이다 라고만 알고 있었기에
+어떻게 동작을하고 하는 역할은 무엇인지 궁금해졌기에 파헤쳐보고자 한다.&lt;/p&gt;
+&lt;h2 id="jvm이란"&gt;&lt;a href="#jvm%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;JVM이란?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Java Virtual Machine&lt;/strong&gt;의 줄임말로 Java를 실행시키기 위한 가상컴퓨터 환경을 말한다.&lt;/p&gt;
+&lt;h3 id="그럼-jvm이-하는-역할의-무엇일까"&gt;&lt;a href="#%ea%b7%b8%eb%9f%bc-jvm%ec%9d%b4-%ed%95%98%eb%8a%94-%ec%97%ad%ed%95%a0%ec%9d%98-%eb%ac%b4%ec%97%87%ec%9d%bc%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;그럼 JVM이 하는 역할의 무엇일까?
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;Java는 OS에 종속적이지 않다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;위와 같은 조건을 충족 시키며 작성한 코드가 실행되기 위해선 Java와 OS사이에 무언가가 필요하다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;그게 바로 JVM이다.&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="코드-실행-과정"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%ec%8b%a4%ed%96%89-%ea%b3%bc%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;코드 실행 과정
+&lt;/h2&gt;&lt;p&gt;작성한 소스코드인(원시코드) &lt;code&gt;*.java&lt;/code&gt; 를 CPU가 인식하기 위해선 &lt;strong&gt;기계어&lt;/strong&gt;(010101000101&amp;hellip;)로 변환이 이루어져야 한다.&lt;/p&gt;
+&lt;h3 id="그럼-java-가-바로-기계어로-변환되어-실행이-되는건가"&gt;&lt;a href="#%ea%b7%b8%eb%9f%bc-java-%ea%b0%80-%eb%b0%94%eb%a1%9c-%ea%b8%b0%ea%b3%84%ec%96%b4%eb%a1%9c-%eb%b3%80%ed%99%98%eb%90%98%ec%96%b4-%ec%8b%a4%ed%96%89%ec%9d%b4-%eb%90%98%eb%8a%94%ea%b1%b4%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;그럼 *.java 가 바로 기계어로 변환되어 실행이 되는건가&amp;hellip;?
+&lt;/h3&gt;&lt;p&gt;아니다. &lt;code&gt;*.java&lt;/code&gt; 파일은 우선 JVM이 인식을 할 수 있도록 &lt;strong&gt;java bytecode&lt;/strong&gt;(&lt;code&gt;*.class&lt;/code&gt;)로 변환이 이루어진다.&lt;/p&gt;
+&lt;p&gt;이 변환과정은 &lt;strong&gt;java 컴파일러&lt;/strong&gt;에 의해 수행이 되어진다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;java 컴파일러는 JDK를 설치하면 bin폴더에 존재하는 &lt;code&gt;javac.exe&lt;/code&gt; 이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;javac&lt;/code&gt; 명령어를 통해 &lt;code&gt;.class&lt;/code&gt; 파일을 생성할 수 있고&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;java&lt;/code&gt; 명령어를 통해 이 &lt;code&gt;.class&lt;/code&gt;파일을 실행시킬 수 있다.&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="이제-os에서-실행이-되는건가"&gt;&lt;a href="#%ec%9d%b4%ec%a0%9c-os%ec%97%90%ec%84%9c-%ec%8b%a4%ed%96%89%ec%9d%b4-%eb%90%98%eb%8a%94%ea%b1%b4%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;이제 OS에서 실행이 되는건가..?
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--warning"&gt;
+ &lt;div class="stack-alert__icon"&gt;⚠️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;아니다&amp;hellip;. bytecode는 기계어가 아니므로 OS에서 바로 실행되지 않는다&amp;hellip;!&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;이때 &lt;strong&gt;JVM이 OS가 이 bytecode를 이해할 수 있도록 해석해주는 역할&lt;/strong&gt;을 한다.&lt;/p&gt;
+&lt;p&gt;이러한 JVM의 역할 덕분에 한 번 작성한 Java 코드가 OS에 상관 없이 실행이 될 수 있는 것이다.&lt;/p&gt;
+&lt;h3 id="전체-프로세스"&gt;&lt;a href="#%ec%a0%84%ec%b2%b4-%ed%94%84%eb%a1%9c%ec%84%b8%ec%8a%a4" class="header-anchor"&gt;&lt;/a&gt;전체 프로세스
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;*.java&lt;/code&gt; → &lt;code&gt;*.class&lt;/code&gt; 인 bytecode 형태로 변환 → &lt;strong&gt;JIT(Just In Time) 컴파일러&lt;/strong&gt;를 통해 기계어(binary code)로 변환&lt;/p&gt;
+&lt;h2 id="jvm_"&gt;&lt;a href="#jvm_" class="header-anchor"&gt;&lt;/a&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="846px" data-flex-grow="352" height="152" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220922_jvm_1/jvm_process.png" width="536"&gt;
+&lt;/h2&gt;&lt;h2 id="jit-just-in-time-컴파일러란"&gt;&lt;a href="#jit-just-in-time-%ec%bb%b4%ed%8c%8c%ec%9d%bc%eb%9f%ac%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;JIT (Just In Time) 컴파일러란?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;JIT 컴파일&lt;/strong&gt; 또는 **동적번역(dynamic translation)**이라고 불린다.&lt;/p&gt;
+&lt;p&gt;JIT는 &lt;strong&gt;인터프리터 방식의 단점을 보완&lt;/strong&gt;하기 위해 도입되었다.&lt;/p&gt;
+&lt;p&gt;프로그램이 실제 실행하는 시점에 기계어로 번역을 한다.&lt;/p&gt;
+&lt;h3 id="성능-특징"&gt;&lt;a href="#%ec%84%b1%eb%8a%a5-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;성능 특징
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;기계어는 캐시에 보관하기 때문에 &lt;strong&gt;한 번 컴파일된 코드는 빠르게 수행&lt;/strong&gt;이 된다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;JIT 컴파일러가 기계어로 컴파일 하는 과정은 바이트 코드를 인터프리팅하는 것보다 훨씬 &lt;strong&gt;느리지만&lt;/strong&gt; 한 번 수행되면 그 이후로는 &lt;strong&gt;빠르다&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;그러나 한 번만 실행되는 코드라면 컴파일을 하지 않고 바로 인터프리팅하는 것이 유리하다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;JIT 컴파일러를 사용하는 JVM은 해당 메서드가 얼마나 자주 수행되는지 체크를 하고 일정 정도를 넘을때에만 컴파일을 수행한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="인터프리터-방식이란"&gt;&lt;a href="#%ec%9d%b8%ed%84%b0%ed%94%84%eb%a6%ac%ed%84%b0-%eb%b0%a9%ec%8b%9d%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;인터프리터 방식이란?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;인터프리터&lt;/strong&gt;는 실행 시마다 소스 코드를 한 줄씩 기계어로 번역하는 방식이기 떄문에 실행 속도는 정적 컴파일 언어보다 느리다.&lt;/p&gt;
+&lt;h3 id="대표적인-인터프리터-언어"&gt;&lt;a href="#%eb%8c%80%ed%91%9c%ec%a0%81%ec%9d%b8-%ec%9d%b8%ed%84%b0%ed%94%84%eb%a6%ac%ed%84%b0-%ec%96%b8%ec%96%b4" class="header-anchor"&gt;&lt;/a&gt;대표적인 인터프리터 언어
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;파이썬 (Python)&lt;/li&gt;
+&lt;li&gt;자바스크립트 (JavaScript)&lt;/li&gt;
+&lt;li&gt;데이터베이스 언어인 SQL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="장단점"&gt;&lt;a href="#%ec%9e%a5%eb%8b%a8%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;장단점
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;구분&lt;/th&gt;
+ &lt;th&gt;설명&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;프로그램 수정이 간단하다&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;단점&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;실행 속도가 컴파일 언어보다 느리다&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;컴파일러&lt;/strong&gt;는 소스코드를 번역해서 실행 파일을 만들기 때문에 프로그램에 수정 사항이 발생하면 소스 코드를 다시 컴파일해야 한다.&lt;/p&gt;
+&lt;p&gt;프로그램이 작고 간단하면 문제가 없지만 프로그램 덩치가 커지면 컴파일이 시간 단위가 되는 일이 많아진다.&lt;/p&gt;
+&lt;p&gt;하지만 &lt;strong&gt;인터프리터&lt;/strong&gt;는 소스코드를 수정해서 실행시키면 끝이기에 수정이 빈번히 발생하는 용도의 프로그래밍에서 많이 사용된다.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description></item></channel></rss>

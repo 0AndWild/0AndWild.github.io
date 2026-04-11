@@ -1,1 +1,644 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backend on 0AndWild_log</title><link>https://0andwild.com/categories/backend/</link><description>Recent content in Backend on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/backend/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting 기법</title><link>https://0andwild.com/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/posts/240207_es/</guid><description>Unified, Plain, FVH 등 Elasticsearch의 3가지 하이라이터 방식과 Postings List, Term Vectors를 활용한 효율적인 오프셋 전략</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240207_es/featured.png"/></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>From/Size, Search After, Scroll 등 Elasticsearch의 페이지네이션 방식을 비교하고 PIT(Point In Time)를 활용한 안정적인 페이징 구현 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240206_es/featured.png"/></item><item><title>Elasticsearch 자동완성 검색 처리 방법</title><link>https://0andwild.com/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/posts/240204_es/</guid><description>Edge N-Gram, Search-as-you-type, Completion Suggester 등 Elasticsearch의 자동완성 구현 방법을 비교하고 상황별 최적의 선택 가이드</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240204_es/featured.png"/></item><item><title>BigQuery Clustering 최적화</title><link>https://0andwild.com/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/posts/231220_bigquery/</guid><description>BigQuery 클러스터링의 개념과 파티셔닝과의 조합을 통한 효율적인 데이터 접근 전략</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231220_bigquery/featured.png"/></item><item><title>BigQuery란?</title><link>https://0andwild.com/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/posts/231218_bigquery/</guid><description>컬럼 기반 데이터베이스인 BigQuery의 주요 특징과 Colossus 기반 분산 처리 구조</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231218_bigquery/featured.png"/></item><item><title>Springdoc과 OpenAPI (어노테이션 활용법)</title><link>https://0andwild.com/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/posts/231017_swagger/</guid><description>Springdoc의 @ParameterObject 활용법과 Swagger 어노테이션 완벽 정리</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231017_swagger/featured.png"/></item><item><title>OpenAPI Generator 정복하기</title><link>https://0andwild.com/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/posts/231016_swagger/</guid><description>OpenAPI Generator를 활용한 API 문서 자동화와 코드 생성 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231016_swagger/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backend on 0AndWild_log</title><link>https://0andwild.com/categories/backend/</link><description>Recent content in Backend on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/backend/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting 기법</title><link>https://0andwild.com/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/posts/240207_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Highlighting 기법" /&gt;&lt;h2 id="1-kind-of-highlighter"&gt;&lt;a href="#1-kind-of-highlighter" class="header-anchor"&gt;&lt;/a&gt;1) Kind of Highlighter
+&lt;/h2&gt;&lt;p&gt;ES에서는 검색 결과에 대한 강조 표시를 지원하고 있으며 3가지 방식을 지원을 함.&lt;/p&gt;
+&lt;p&gt;아래 타입은 Highlight 할 필드마다 각각 따로 적용할 수 있음&lt;/p&gt;
+&lt;h3 id="unified-default--기본-하이라이터"&gt;&lt;a href="#unified-default--%ea%b8%b0%eb%b3%b8-%ed%95%98%ec%9d%b4%eb%9d%bc%ec%9d%b4%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Unified (Default : 기본 하이라이터)
+&lt;/h3&gt;&lt;p&gt;통합 형광펜은 Lucene 통합 형광펜을 사용함. 이 하이라이터는 텍스트를 문장으로 나누고 BM25 알고리즘을 사용해 마치 말뭉치에 있는 문서처럼 개별 문장에 점수를 매김. 또한 정확한 구문 및 다중 용어(퍼지, 접두사, 정규식) 하이라이트를 지원함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BM25 알고리즘 기반 문장 점수 매기기&lt;/li&gt;
+&lt;li&gt;정확한 구문 하이라이트 지원&lt;/li&gt;
+&lt;li&gt;다중 용어 쿼리 지원 (퍼지, 접두사, 정규식)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain"&gt;&lt;a href="#plain" class="header-anchor"&gt;&lt;/a&gt;Plain
+&lt;/h3&gt;&lt;p&gt;일반 형광펜은 단일 필드에서 간단한 쿼리 일치 항목을 강조 표시하는 데 가장 적합.&lt;/p&gt;
+&lt;p&gt;쿼리 로직을 정확하게 반영하기 위해 작은 &lt;strong&gt;인메모리 인덱스를 생성&lt;/strong&gt;하고 Lucene의 쿼리 실행 플래너를 통해 &lt;strong&gt;원래 쿼리 기준을 다시 실행&lt;/strong&gt;하여 현재 문서에 대한 낮은 수준의 일치 정보에 액세스함함.&lt;/p&gt;
+&lt;p&gt;이 작업은 &lt;strong&gt;강조 표시해야 하는 모든 필드와 모든 문서에 대해 반복&lt;/strong&gt;됨. 복잡한 쿼리가 있는 많은 문서에서 많은 필드를 강조 표시하려면 게시글 또는 term_vector 필드에 통합 형광펜을 사용하는 것이 좋음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;단일 필드의 간단한 쿼리에 적합&lt;/li&gt;
+&lt;li&gt;인메모리 인덱스 생성&lt;/li&gt;
+&lt;li&gt;모든 필드와 문서에 대해 반복 실행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="fvh-fast-vector-highlighter"&gt;&lt;a href="#fvh-fast-vector-highlighter" class="header-anchor"&gt;&lt;/a&gt;FVH (Fast Vector Highlighter)
+&lt;/h3&gt;&lt;p&gt;fvh 형광펜은 Lucene 고속 벡터 형광펜을 사용함. 이 형광펜은 매핑에서 &lt;code&gt;term_vector&lt;/code&gt;가 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정된 필드에 사용할 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;boundary_scanner&lt;/code&gt;로 사용자 지정 가능&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;term_vector&lt;/code&gt;를 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정해야 하므로 인덱스 크기가 커짐&lt;/li&gt;
+&lt;li&gt;여러 필드에서 일치하는 항목을 하나의 결과로 결합 가능 (&lt;code&gt;matched_fields&lt;/code&gt; 참조)&lt;/li&gt;
+&lt;li&gt;구문 일치를 용어 일치보다 부스팅하는 부스팅 쿼리를 강조 표시할 때 구문 일치가 용어 일치보다 정렬되는 것과 같이 서로 다른 위치의 일치에 서로 다른 가중치를 할당 가능&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;주의&lt;/strong&gt;: fvh 형광펜은 스팬 쿼리를 지원하지 않음. 스팬 쿼리에 대한 지원이 필요한 경우 통합형 하이라이터와 같은 다른 하이라이터를 사용.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="2-offsets-strategy"&gt;&lt;a href="#2-offsets-strategy" class="header-anchor"&gt;&lt;/a&gt;2) Offsets Strategy
+&lt;/h2&gt;&lt;p&gt;검색 중인 용어에서 의미 있는 검색 스니펫을 만들려면 하이라이터가 원본 텍스트에서 각 단어의 시작 및 끝 문자 오프셋을 알아야 함. 이러한 오프셋은 다음에서 얻을 수 있음.&lt;/p&gt;
+&lt;h3 id="postings-list-글-목록"&gt;&lt;a href="#postings-list-%ea%b8%80-%eb%aa%a9%eb%a1%9d" class="header-anchor"&gt;&lt;/a&gt;Postings List (글 목록)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;매핑에서 &lt;code&gt;index_options&lt;/code&gt;가 &lt;code&gt;offsets&lt;/code&gt;로 설정&lt;/strong&gt;되어 있으면 통합 하이라이터는 이 정보를 사용하여 텍스트를 다시 분석하지 않고 문서를 강조 표시함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;원래 쿼리를 글에 대해 직접 다시 실행하고 색인에서 일치하는 오프셋을 추출하여 컬렉션을 강조 표시된 문서로 제한&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;강조 표시할 텍스트를 다시 분석할 필요가 없으므로 큰 필드가 있는 경우에 유용&lt;/strong&gt;. 또한 &lt;strong&gt;&lt;code&gt;term_vectors&lt;/code&gt;를 사용할 때보다 디스크 공간도 덜 필요&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;텍스트 재분석 불필요&lt;/li&gt;
+&lt;li&gt;큰 필드에 유용&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;term_vectors&lt;/code&gt;보다 디스크 공간 절약&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="term-vectors-용어-벡터"&gt;&lt;a href="#term-vectors-%ec%9a%a9%ec%96%b4-%eb%b2%a1%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Term Vectors (용어 벡터)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;매핑에서 &lt;code&gt;term_vector&lt;/code&gt;를 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정&lt;/strong&gt;하여 용어 벡터 정보를 제공하면 &lt;strong&gt;unified 하이라이터가 자동으로 용어 벡터를 사용&lt;/strong&gt;하여 필드를 강조 표시함.&lt;/p&gt;
+&lt;p&gt;각 문서의 용어 사전에 액세스할 수 있기 때문에 &lt;strong&gt;특히 대용량 필드(1MB 초과)나 접두사 또는 와일드카드&lt;/strong&gt;와 같은 다중 용어 쿼리를 강조 표시할 때 빠름.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;fvh 하이라이터는 항상 용어 벡터를 사용&lt;/strong&gt;함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;대용량 필드(1MB 초과)에 빠른 성능&lt;/li&gt;
+&lt;li&gt;다중 용어 쿼리에 효율적 (접두사, 와일드카드)&lt;/li&gt;
+&lt;li&gt;문서의 용어 사전 직접 액세스&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain-highlighting-일반-하이라이팅"&gt;&lt;a href="#plain-highlighting-%ec%9d%bc%eb%b0%98-%ed%95%98%ec%9d%b4%eb%9d%bc%ec%9d%b4%ed%8c%85" class="header-anchor"&gt;&lt;/a&gt;Plain Highlighting (일반 하이라이팅)
+&lt;/h3&gt;&lt;p&gt;이 모드는 &lt;strong&gt;다른 대안이 없을 때 통합에서 사용&lt;/strong&gt;함.&lt;/p&gt;
+&lt;p&gt;작은 인메모리 인덱스를 생성하고 Lucene의 쿼리 실행 플래너를 통해 원래 쿼리 기준을 다시 실행하여 현재 문서에 대한 낮은 수준의 일치 정보에 액세스함함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;이 작업은 강조 표시가 필요한 모든 필드와 모든 문서에 대해 반복&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;plain highlighter은 항상 plain highlighting을 사용&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;다른 옵션이 없을 때 사용&lt;/li&gt;
+&lt;li&gt;인메모리 인덱스 생성&lt;/li&gt;
+&lt;li&gt;모든 필드/문서에 대해 반복 실행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://elastic.co/guide/en/elasticsearch/reference/current/highlighting.html#boundary-scanners" target="_blank" rel="noopener"
+ &gt;Highlighting | Elasticsearch Guide [8.13]&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Pagination Technique" /&gt;&lt;h2 id="elasticsearch-pagination-3가지-옵션"&gt;&lt;a href="#elasticsearch-pagination-3%ea%b0%80%ec%a7%80-%ec%98%b5%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;ElasticSearch Pagination 3가지 옵션
+&lt;/h2&gt;&lt;h3 id="1-fromsize-pagination"&gt;&lt;a href="#1-fromsize-pagination" class="header-anchor"&gt;&lt;/a&gt;1. From/Size Pagination
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;from&lt;/code&gt; + &lt;code&gt;size&lt;/code&gt; = offset 방식으로 그때그때 메모리에 적재하여 검색을 함. 최대 10,000건까지 지원&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-modules.html#index-max-result-window" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;index.max_result_window&lt;/code&gt;&lt;/a&gt; 옵션을 사용하여 10,000건 이상을 로드할 수 있지만 추천하지 않음&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;간단한 구현&lt;/li&gt;
+&lt;li&gt;최대 10,000건 제한&lt;/li&gt;
+&lt;li&gt;Deep pagination 시 성능 저하&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="2-search-after"&gt;&lt;a href="#2-search-after" class="header-anchor"&gt;&lt;/a&gt;2. Search After
+&lt;/h3&gt;&lt;p&gt;Pagination이 최대 10,000건까지 페이징 처리할 수 있는 한계를 극복할 수 있음. 일반적인 커서 방식과 유사함.&lt;/p&gt;
+&lt;p&gt;검색 결과의 &lt;code&gt;sort&lt;/code&gt; 조건 필드를 키 값으로 사용하며 그 다음부터 조회를 함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;단점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;search-after&lt;/code&gt;만 사용할 경우 중간에 인덱싱이 업데이트되거나 하면 응답 결과가 불규칙해질 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PIT(Point In Time)와 함께 사용&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이를 보완하기 위해 PIT(Point In Time)를 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;POST /my-index-000001/_pit?keep_alive&lt;span class="o"&gt;=&lt;/span&gt;1m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 요청을 통해 해당 인덱스의 현재 시점의 스냅샷을 찍어두고 다음과 같이 &lt;code&gt;id&lt;/code&gt; 값으로 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;size&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;desc&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;search_after&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;{{pit_value}}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;중간에 인덱스에 변경사항이 있어도 스냅샷을 기준으로 응답 결과가 반환됨.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keep_alive&lt;/code&gt;는 해당 PIT의 유효기간과 같음. 최신 시점을 기준으로 PIT를 관리하는 것이 권장됨.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;10,000건 이상 페이징 가능&lt;/li&gt;
+&lt;li&gt;커서 기반 방식&lt;/li&gt;
+&lt;li&gt;PIT와 함께 사용 시 일관된 결과 보장&lt;/li&gt;
+&lt;li&gt;Deep pagination에 효율적&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="3-scroll"&gt;&lt;a href="#3-scroll" class="header-anchor"&gt;&lt;/a&gt;3. Scroll
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: ES 공식 문서에 따라 Scroll 방식 대신 Search After 방식을 권장함&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;대량 데이터 추출용&lt;/li&gt;
+&lt;li&gt;실시간 검색에는 부적합&lt;/li&gt;
+&lt;li&gt;현재는 Search After + PIT 조합을 권장&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opster.com/guides/elasticsearch/how-tos/elasticsearch-pagination-techniques/" target="_blank" rel="noopener"
+ &gt;Elasticsearch Pagination Techniques: SearchAfter, Scroll, Pagination &amp;amp; PIT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://danawalab.github.io/elastic/2023/02/13/Search-After.html" target="_blank" rel="noopener"
+ &gt;Elasticsearch Search After 성능 체크&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after" target="_blank" rel="noopener"
+ &gt;Paginate search results | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html" target="_blank" rel="noopener"
+ &gt;Point in time API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
+ &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch 자동완성 검색 처리 방법</title><link>https://0andwild.com/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/posts/240204_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch 자동완성 검색 처리 방법" /&gt;&lt;h2 id="elastic-search-자동완성-처리-방법"&gt;&lt;a href="#elastic-search-%ec%9e%90%eb%8f%99%ec%99%84%ec%84%b1-%ec%b2%98%eb%a6%ac-%eb%b0%a9%eb%b2%95" class="header-anchor"&gt;&lt;/a&gt;Elastic search 자동완성 처리 방법
+&lt;/h2&gt;&lt;h3 id="edge-n-gram-tokenizer"&gt;&lt;a href="#edge-n-gram-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Tokenizer
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;token_chars&lt;/code&gt;: letter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요하지 않은 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점 및 위치가 중요하지 않은 곳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="edge-n-gram-token-filter"&gt;&lt;a href="#edge-n-gram-token-filter" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Token Filter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요하지 않은 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점 및 위치가 중요하지 않은 곳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="index_prefixes-parameter"&gt;&lt;a href="#index_prefixes-parameter" class="header-anchor"&gt;&lt;/a&gt;Index_prefixes Parameter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_chars&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_chars&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;N-gram과 동일함&lt;/p&gt;
+&lt;p&gt;다만 한가지 차이점은 후자의 경우 생성된 토큰을 넣는 추가적인 필드를 넣는다는 것&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="search-as-you-type-data-type"&gt;&lt;a href="#search-as-you-type-data-type" class="header-anchor"&gt;&lt;/a&gt;Search-as-you-type Data Type
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_shingle_size&lt;/code&gt;: 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Generated Tokens (지원하는 서브 필드)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;예시: &amp;ldquo;real panda blog&amp;rdquo;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;._2gram&lt;/code&gt; additional field: real panda, panda blog (shingle token filter 적용됨)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._3gram&lt;/code&gt; additional field: real panda blog (shingle token filter 적용됨)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._index_prefix&lt;/code&gt; additional field: r, re, rea, real, &amp;ldquo;real &amp;ldquo;, real p, real pa, real pan, real pand, real panda, &amp;ldquo;real panda &amp;ldquo;, real panda b, real panda bl, real panda blo, real panda blog, p, pa, pan, pand, panda, &amp;ldquo;panda &amp;ldquo;, panda b, panda bl, panda blo, panda blog, &amp;ldquo;panda blog &amp;ldquo;, b, bl, blo, blog, &amp;ldquo;blog &amp;quot; (&lt;strong&gt;._3gram 필드에 적용이 되고 n gram max 는 3으로 적용된다&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;ES에서 말하는 가장 효율적인 쿼리 방법은 루트 필드와 해당 shingle 하위 필드를 대상으로 하는 bool_prefix 타입의 다중 일치 쿼리이다.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 쿼리는 어떤 순서로든 쿼리 용어와 일치할 수 있지만, 문서에서 shingle 서브 필드에 순서대로 용어가 포함된 경우 더 높은 점수를 부여한다.&lt;/p&gt;
+&lt;p&gt;쿼리 용어와 문서의 용어가 정확하게 순서대로 일치하게 검색을 하거나 구문 쿼리의 다른 속성을 사용하려면 루트 필드에 match_phrase_prefix 쿼리를 사용할 수 있다. 접두사가 아닌 마지막 용어가 정확하게 일치해야 하는 경우도 그렇다. 하지만 match_bool_prefix 쿼리를 사용하는 것 보다 효율성이 떨어질 수 있다.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;shingle token filter 는 default 로 2가 적용됨&lt;/code&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요한 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점과 위치가 중요한 곳&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;인덱싱을 할때 설정된 analyzer 가 없으면 default 로 standard analyzer 가 적용된다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="suggester-api"&gt;&lt;a href="#suggester-api" class="header-anchor"&gt;&lt;/a&gt;Suggester API
+&lt;/h2&gt;&lt;h3 id="in-memory-completion-suggester-context-suggester"&gt;&lt;a href="#in-memory-completion-suggester-context-suggester" class="header-anchor"&gt;&lt;/a&gt;In-memory (Completion Suggester, Context Suggester)
+&lt;/h3&gt;&lt;p&gt;completion suggester는 auto-complete과 search-as-your-type 기능을 제공함. (오타 수정은 지원 x)&lt;/p&gt;
+&lt;p&gt;completion suggester는 속도에 최적화 되어 있어 유저가 타이핑 하는 것에 즉각적으로 반응해줌.&lt;/p&gt;
+&lt;p&gt;하지만 빌드와 인메모리 방식에 저장을 하는데 있어 많은 리소스 비용이 부담됨.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="term-suggester"&gt;&lt;a href="#term-suggester" class="header-anchor"&gt;&lt;/a&gt;Term Suggester
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;사용자가 입력한 텍스트에 대한 결과가 없을경우 추천 단어를 기준으로 검색결과를 제공할때 사용&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;잘못된 철자에 대해 추천 단어 제안&lt;/p&gt;
+&lt;p&gt;편집거리를 사용해 단어를 제안한다. 편집거리 척도란 어떤 문자열이 다른 문자열과 얼마나 비슷한가를 편집거리를 사용해 알아볼 수 있다.&lt;/p&gt;
+&lt;p&gt;편집거리를 측정하는 방식은 대부분 각 단어를 추가, 삭제, 치환을 통해 이루어진다.&lt;/p&gt;
+&lt;p&gt;예를들어 tamming test 문자열을 taming text로 바꾸는데 m을 삭제하는 연산 1회와 s를 x로 바꾸는 연산 1회가 필요하다. 그러므로 편집거리는 2가 된다.&lt;/p&gt;
+&lt;p&gt;만약 색인된 데이터와 일치하는 텀이 존재하지 않을 경우 term suggest 결과로 비슷한 단어를 추천해준다.&lt;/p&gt;
+&lt;p&gt;결과에서 text는 제안한 문자를 나타내고, score는 제안하고자 하는 텍스트가 원본과 얼마나 가까운지를 나타낸다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;알고리즘&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;엘라스틱 서치에서는 편집거리 계산 알고리즘으로 Levenshtein 편집거리 측정 또는 Jaro-Winkler 편집거리 측정을 사용한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;한글 처리&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한글의 경우 term suggest를 이용해도 데이터가 추천되지 않는다. 기본적으로 한글 유니코드 체계가 복잡하기 때문이다.&lt;/li&gt;
+&lt;li&gt;ICU 분석기를 통해 한글 오타를 처리하는 것이 가능. ICU 분석기는 국제화 처리를 위해 특별히 개발된 분석기로 내부에 한글 자소를 분해하는 기능과 합치는 기능을 가지고 있음. 하지만 정교한 오타교정, 한영 변환, 자동완성 등의 전문적인 기능은 별도의 플러그인을 개발해서 사용하는 것이 좋다. (Ex. 자바카페 플러그인)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="phrase-suggester-추천-문장-제안"&gt;&lt;a href="#phrase-suggester-%ec%b6%94%ec%b2%9c-%eb%ac%b8%ec%9e%a5-%ec%a0%9c%ec%95%88" class="header-anchor"&gt;&lt;/a&gt;Phrase Suggester (추천 문장 제안)
+&lt;/h3&gt;&lt;h4 id="completion-suggester"&gt;&lt;a href="#completion-suggester" class="header-anchor"&gt;&lt;/a&gt;Completion Suggester
+&lt;/h4&gt;&lt;p&gt;자동완성 제안, 사용자가 입력을 완료하기 전에 자동완성을 사용해 검색어를 예측해서 보여줌&lt;/p&gt;
+&lt;h4 id="context-suggester"&gt;&lt;a href="#context-suggester" class="header-anchor"&gt;&lt;/a&gt;Context Suggester
+&lt;/h4&gt;&lt;p&gt;추천 문맥 제안&lt;/p&gt;</description></item><item><title>BigQuery Clustering 최적화</title><link>https://0andwild.com/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering 최적화" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_3ecc95e8ba98b1db.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Lebanon&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2023-12-01&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Clustering을 통해 BigQuery가 데이터 접근에 있어 더 적은 일을 수행하게 하여 Query 속도를 올릴 수 있음. 하지만 Clustering을 하기 전에 테이블의 데이터 양을 생각하여 클러스터링을 처리하는 비용이 더 안 좋을 수 있을지를 생각하는 것이 좋음.&lt;/p&gt;
+&lt;p&gt;예를 들어 BigQuery의 column based 테이블이 10 rows밖에 데이터가 없다고 생각을 하면 clustering을 하는 비용이 데이터를 풀스캔하는 비용보다 더 많이 나올 것임을 인지해야 함.&lt;/p&gt;
+&lt;p&gt;전 구글 엔지니어의 말을 인용하면 클러스터링을 하기 위한 데이터 그룹당 100MB 미만이라면 클러스터링을 하는 것보다 풀스캔을 하는 것이 더 나을 수 있다고 함.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;참고&lt;/strong&gt;: &lt;a class="link" href="https://stackoverflow.com/questions/52669725/google-bigquery-clustered-table-not-reducing-query-size-when-running-query-with/52674573#52674573" target="_blank" rel="noopener"
+ &gt;Google BigQuery clustered table not reducing query size&lt;/a&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;중요 사항&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;추가적으로 클러스터링을 한 base 컬럼을 query 시에 필터링하지 않으면 아무런 query performance에 아무런 도움이 되지 않음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="example-of-creating-clustered-tables"&gt;&lt;a href="#example-of-creating-clustered-tables" class="header-anchor"&gt;&lt;/a&gt;Example of Creating Clustered Tables
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;TABLE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="n"&gt;myproject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mydataset&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clustered_table&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;DATE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_e4a55682afde7f7.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Clustering 특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;최대 4개의 column까지 클러스터링 가능&lt;/li&gt;
+&lt;li&gt;Partitioning과 다르게 INT64, DATE 타입만 사용할 수 있지 않음&lt;/li&gt;
+&lt;li&gt;STRING과 GEOGRAPHY와 같은 타입도 사용 가능&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_d68a5613875dfcea.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;p&gt;파티셔닝과 클러스터링을 함께 사용하면 더욱 효율적인 데이터 접근이 가능함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;조합 전략&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Partitioning: 날짜 기반 데이터 분할&lt;/li&gt;
+&lt;li&gt;Clustering: 파티션 내부에서 추가적인 정렬&lt;/li&gt;
+&lt;li&gt;쿼리 성능과 비용 최적화&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://medium.com/towards-data-science/add-one-line-of-sql-to-optimise-your-bigquery-tables-304761b048f0" target="_blank" rel="noopener"
+ &gt;Add One Line of SQL to Optimise Your BigQuery Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://towardsdatascience.com/use-the-partitions-luke-a-simple-and-proven-way-to-optimise-your-sql-queries-43e24ea4c5d0" target="_blank" rel="noopener"
+ &gt;Use the Partitions, Luke! A Simple and Proven Way to Optimise Your SQL Queries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>BigQuery란?</title><link>https://0andwild.com/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/posts/231218_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery란?" /&gt;&lt;h2 id="bigquery-특징"&gt;&lt;a href="#bigquery-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;BigQuery 특징
+&lt;/h2&gt;&lt;h3 id="column-based-database"&gt;&lt;a href="#column-based-database" class="header-anchor"&gt;&lt;/a&gt;Column-based Database
+&lt;/h3&gt;&lt;p&gt;일반적인 로우 단위로 저장이 되는 RDB와 다르게 특정 컬럼의 데이터를 접근할 때 해당 로우를 모두 스캔하지 않고 찾고자 하는 컬럼 파일 하나만 스캔하여 접근.&lt;/p&gt;
+&lt;p&gt;특정 컬럼만을 읽어 개수를 세거나 통계를 내는 분석용 데이터베이스(OLAP) 작업에 유리.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컬럼 단위 스캔으로 빠른 조회&lt;/li&gt;
+&lt;li&gt;분석 쿼리에 최적화&lt;/li&gt;
+&lt;li&gt;스토리지 효율성&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="데이터-처리-구조"&gt;&lt;a href="#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%b2%98%eb%a6%ac-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;데이터 처리 구조
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_fad767db3e02e3de.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Colossus (분산 스토리지)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Google File System(GFS)를 잇는 Google의 클러스터 수준의 파일시스템&lt;/li&gt;
+&lt;li&gt;맨 아래에서 저장소를 제공하고 Jupiter라는 TB급 네트워크 망을 통해 컴퓨터 노드와 통신&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;연산 계층 (Leaf, Mixer1, Mixer0)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;디스크 없이 Colossus에서 읽은 데이터를 처리&lt;/li&gt;
+&lt;li&gt;각각 위의 계층으로 데이터를 올리는 역할&lt;/li&gt;
+&lt;li&gt;분산 병렬 처리를 통한 고속 연산&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-key-no-index"&gt;&lt;a href="#no-key-no-index" class="header-anchor"&gt;&lt;/a&gt;No Key, No Index
+&lt;/h3&gt;&lt;p&gt;키와 인덱스 개념이 존재하지 않음. 풀스캔 only&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱스 관리 불필요&lt;/li&gt;
+&lt;li&gt;컬럼 기반 스캔으로 성능 확보&lt;/li&gt;
+&lt;li&gt;대용량 데이터 분석에 최적화&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-update-delete"&gt;&lt;a href="#no-update-delete" class="header-anchor"&gt;&lt;/a&gt;No Update, Delete
+&lt;/h3&gt;&lt;p&gt;성능을 위해 추가만 가능하며 한번 입력된 데이터는 수정되거나 삭제될 수 없음.&lt;/p&gt;
+&lt;p&gt;데이터가 잘못 입력된 경우 테이블을 삭제하고 다시 만들어야 함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;제약사항&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;INSERT만 지원&lt;/li&gt;
+&lt;li&gt;UPDATE/DELETE 미지원&lt;/li&gt;
+&lt;li&gt;데이터 수정 시 재생성 필요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
+&lt;/h3&gt;&lt;p&gt;데이터를 3개의 데이터 센터에 복제를 하기에 데이터 쓰기 후 바로 조회가 안 될 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_7243d5dea1f40b1f.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;3중 복제를 통한 고가용성&lt;/li&gt;
+&lt;li&gt;최종 일관성 보장&lt;/li&gt;
+&lt;li&gt;쓰기 후 즉시 읽기 불가능할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://burning-dba.tistory.com/137" target="_blank" rel="noopener"
+ &gt;BigQuery 성능/비용 팁&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://zzsza.github.io/gcp/2020/04/12/bigquery-unnest-array-struct/#bigquery-unnest" target="_blank" rel="noopener"
+ &gt;BigQuery UNNEST, ARRAY, STRUCT 사용 방법&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bcho.tistory.com/1117" target="_blank" rel="noopener"
+ &gt;구글 빅데이터 플랫폼 빅쿼리 아키텍처 소개&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Springdoc과 OpenAPI (어노테이션 활용법)</title><link>https://0andwild.com/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/posts/231017_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Springdoc과 OpenAPI (어노테이션 활용법)" /&gt;&lt;h2 id="querystring-처리-방식-비교"&gt;&lt;a href="#querystring-%ec%b2%98%eb%a6%ac-%eb%b0%a9%ec%8b%9d-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;QueryString 처리 방식 비교
+&lt;/h2&gt;&lt;p&gt;Spring에서 QueryString을 처리하는 두 가지 방식을 비교해보겠습니다.&lt;/p&gt;
+&lt;h3 id="방식-1-object로-받기-parameterobject"&gt;&lt;a href="#%eb%b0%a9%ec%8b%9d-1-object%eb%a1%9c-%eb%b0%9b%ea%b8%b0-parameterobject" class="header-anchor"&gt;&lt;/a&gt;방식 1: Object로 받기 (ParameterObject)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;email&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;password&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;occupation&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="방식-2-개별-파라미터로-받기-requestparam"&gt;&lt;a href="#%eb%b0%a9%ec%8b%9d-2-%ea%b0%9c%eb%b3%84-%ed%8c%8c%eb%9d%bc%eb%af%b8%ed%84%b0%eb%a1%9c-%eb%b0%9b%ea%b8%b0-requestparam" class="header-anchor"&gt;&lt;/a&gt;방식 2: 개별 파라미터로 받기 (@RequestParam)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pw&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;oq&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="모델-정의"&gt;&lt;a href="#%eb%aa%a8%eb%8d%b8-%ec%a0%95%ec%9d%98" class="header-anchor"&gt;&lt;/a&gt;모델 정의
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;ParameterObjectReq (Request DTO)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;OccupationStatus (Enum)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;enum&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STUDENT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;EMPLOYEE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;UNEMPLOYED&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="두-방식의-차이점"&gt;&lt;a href="#%eb%91%90-%eb%b0%a9%ec%8b%9d%ec%9d%98-%ec%b0%a8%ec%9d%b4%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;두 방식의 차이점
+&lt;/h3&gt;&lt;p&gt;일반적으로 request를 QueryString으로 받을 경우 &lt;code&gt;@RequestParam&lt;/code&gt;을 사용하지만, 받는 인자가 많을 경우 첫 번째 방식처럼 QueryString을 Object 형태로 받을 수 있습니다.&lt;/p&gt;
+&lt;h4 id="requestparam-vs-parameterobject"&gt;&lt;a href="#requestparam-vs-parameterobject" class="header-anchor"&gt;&lt;/a&gt;@RequestParam vs ParameterObject
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;@RequestParam&lt;/strong&gt;: 기본적으로 &lt;code&gt;required = true&lt;/code&gt;로 설정되어 있어 request value를 필수로 받습니다.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ParameterObject&lt;/strong&gt;: Spring에서 별도의 어노테이션 없이도 QueryString을 객체의 필드값에 자동으로 바인딩합니다. 하지만 &lt;code&gt;required&lt;/code&gt;가 기본 설정되지 않아 &lt;code&gt;null&lt;/code&gt; 값이 들어올 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="springdoc에서의-parameterobject-vs-requestparam-변환-비교"&gt;&lt;a href="#springdoc%ec%97%90%ec%84%9c%ec%9d%98-parameterobject-vs-requestparam-%eb%b3%80%ed%99%98-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;Springdoc에서의 ParameterObject vs @RequestParam 변환 비교
+&lt;/h2&gt;&lt;h3 id="parameterobject-사용-시"&gt;&lt;a href="#parameterobject-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;ParameterObject 사용 시
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="ParameterObject 변환 결과" class="gallery-image" data-flex-basis="273px" data-flex-grow="114" height="817" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image1.png" srcset="https://0andwild.com/posts/231017_swagger/image1_hu_cf1157316278237d.png 800w, https://0andwild.com/posts/231017_swagger/image1.png 932w" width="932"&gt;&lt;/p&gt;
+&lt;h3 id="requestparam-사용-시"&gt;&lt;a href="#requestparam-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;@RequestParam 사용 시
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="RequestParam 변환 결과" class="gallery-image" data-flex-basis="286px" data-flex-grow="119" height="776" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image2.png" srcset="https://0andwild.com/posts/231017_swagger/image2_hu_885e9d03410a6c49.png 800w, https://0andwild.com/posts/231017_swagger/image2.png 927w" width="927"&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="parameterobject-어노테이션-활용"&gt;&lt;a href="#parameterobject-%ec%96%b4%eb%85%b8%ed%85%8c%ec%9d%b4%ec%85%98-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;@ParameterObject 어노테이션 활용
+&lt;/h2&gt;&lt;p&gt;ParameterObject를 Springdoc이 &lt;code&gt;@RequestParam&lt;/code&gt;을 사용했을 때처럼 변환해주고 Required 여부를 표시하려면 다음과 같이 설정합니다.&lt;/p&gt;
+&lt;h3 id="코드-예제"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%ec%98%88%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;코드 예제
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@ParameterObject&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;@ParameterObject&lt;/code&gt;는 Springdoc 어노테이션으로, 여러 개의 QueryString을 Object 형태로 받을 경우 해당 클래스 위에 명시하면 &lt;code&gt;@RequestParam&lt;/code&gt;처럼 인식하고 변환해줍니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI에서의 변환 결과" class="gallery-image" data-flex-basis="306px" data-flex-grow="127" height="356" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image3.png" width="454"&gt;&lt;/p&gt;
+&lt;h3 id="jsr-303-지원"&gt;&lt;a href="#jsr-303-%ec%a7%80%ec%9b%90" class="header-anchor"&gt;&lt;/a&gt;JSR-303 지원
+&lt;/h3&gt;&lt;p&gt;Springdoc은 JSR-303을 지원하며, 다음과 같은 validation 어노테이션을 사용할 수 있습니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@NotNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Min&lt;/code&gt;, &lt;code&gt;@Max&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Size&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;기타 validation 어노테이션&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Springdoc 공식 문서에 따르면&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;This library supports&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenAPI 3&lt;/li&gt;
+&lt;li&gt;Spring-boot (v1, v2 and v3)&lt;/li&gt;
+&lt;li&gt;JSR-303, specifically for @NotNull, @Min, @Max, and @Size&lt;/li&gt;
+&lt;li&gt;Swagger-ui&lt;/li&gt;
+&lt;li&gt;OAuth 2&lt;/li&gt;
+&lt;li&gt;GraalVM native images&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="변환-결과"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;변환 결과
+&lt;/h3&gt;&lt;p&gt;ParameterObject도 &lt;code&gt;@RequestParam&lt;/code&gt;으로 인식되도록 spec 파일이 작성되었고, &lt;code&gt;@NotNull&lt;/code&gt;을 붙이지 않은 &lt;code&gt;occupation&lt;/code&gt;에는 Required가 optional 형태로 표시됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spec 파일 변환 결과" class="gallery-image" data-flex-basis="276px" data-flex-grow="115" height="796" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image4.png" srcset="https://0andwild.com/posts/231017_swagger/image4_hu_88db034e3bd78cc8.png 800w, https://0andwild.com/posts/231017_swagger/image4.png 918w" width="918"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI 표시 결과" class="gallery-image" data-flex-basis="563px" data-flex-grow="234" height="701" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image5.png" srcset="https://0andwild.com/posts/231017_swagger/image5_hu_9ca7d7b267dcf395.png 800w, https://0andwild.com/posts/231017_swagger/image5_hu_f4b70326621470ab.png 1600w, https://0andwild.com/posts/231017_swagger/image5.png 1647w" width="1647"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;좌측 이미지&lt;/strong&gt;: &lt;code&gt;@ParameterObject&lt;/code&gt;를 명시했을 경우 Springdoc이 인식하고 정상적인 spec으로 변환&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger2--swagger3-annotations"&gt;&lt;a href="#swagger2--swagger3-annotations" class="header-anchor"&gt;&lt;/a&gt;Swagger2 → Swagger3 Annotations
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Swagger2&lt;/th&gt;
+ &lt;th&gt;Swagger3&lt;/th&gt;
+ &lt;th&gt;설명&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@Api&lt;/td&gt;
+ &lt;td&gt;@Tag&lt;/td&gt;
+ &lt;td&gt;클래스단에 swagger 리소스 표시(그룹화 시켜줌)&lt;br&gt;&lt;br&gt;&lt;code&gt;name&lt;/code&gt; : 태그의 이름&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : 태그에 대한 설명&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiIgnore&lt;/td&gt;
+ &lt;td&gt;@Parameter(hidden = true)&lt;br&gt;@Operation(hidden = true)&lt;br&gt;@Hidden&lt;/td&gt;
+ &lt;td&gt;해당 어노테이션을 통해 파라미터를 swagger-ui 에서 숨길 수 있음.&lt;br&gt;&lt;br&gt;requestBody 나 ResponseBody 의 경우는&lt;br&gt;@JsonProperty(access = JsonProperty.Access.READ_ONLY) 를 사용&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;단일 RequestParam 에 대한 설정 및 리소스 표시&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParams&lt;/td&gt;
+ &lt;td&gt;@Parameters&lt;/td&gt;
+ &lt;td&gt;여러개의 RequestParam 을 설정&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModel&lt;/td&gt;
+ &lt;td&gt;@Schema&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;description&lt;/code&gt; : 한글명&lt;br&gt;&lt;code&gt;defaultValue&lt;/code&gt; : 기본값&lt;br&gt;&lt;code&gt;allowableValues&lt;/code&gt; : 허용가능한 값(열거형으로 정의가능할 경우 설정합니다)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModelProperty(hidden = true)&lt;/td&gt;
+ &lt;td&gt;@Schema(accessMode = READ_ONLY)&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiOperation(value = &amp;ldquo;foo&amp;rdquo;, notes = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@Operation(summary = &amp;ldquo;foo&amp;rdquo;, description = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;summary&lt;/code&gt; : api에 대한 간략 설명&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : api에 대한 상세 설명&lt;br&gt;&lt;code&gt;responses&lt;/code&gt; : api Response 리스트&lt;br&gt;&lt;code&gt;parameters&lt;/code&gt; : api 파라미터 리스트&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;name&lt;/code&gt; : 파라미터 이름&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : 파라미터 설명&lt;br&gt;&lt;code&gt;in&lt;/code&gt; : 파라미터 위치 (query, header, path, cookie)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiResponse(code = 404, message = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@ApiResponse(responseCode = &amp;ldquo;404&amp;rdquo;, description = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;responseCode&lt;/code&gt; : http 상태코드&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : response에 대한 설명&lt;br&gt;&lt;code&gt;content&lt;/code&gt; : Response payload 구조&lt;br&gt;&lt;code&gt;schema&lt;/code&gt; : payload에서 이용하는 Schema&lt;br&gt;&lt;br&gt;&lt;code&gt;hidden&lt;/code&gt; : Schema 숨김여부&lt;br&gt;&lt;code&gt;implementation&lt;/code&gt; : Schema 대상 클래스&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;여러 개의 request query params를 캡처하기 위해 객체를 사용하는 경우, 해당 메서드 인자에 &lt;code&gt;@ParameterObject&lt;/code&gt; 어노테이션을 사용하세요&lt;/li&gt;
+&lt;li&gt;이 단계는 선택사항입니다: &lt;strong&gt;여러 개의&lt;/strong&gt; &lt;code&gt;Docket&lt;/code&gt; 빈이 있는 경우에만 &lt;code&gt;GroupedOpenApi&lt;/code&gt; 빈으로 교체하세요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="tag-어노테이션-활용"&gt;&lt;a href="#tag-%ec%96%b4%eb%85%b8%ed%85%8c%ec%9d%b4%ec%85%98-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;@Tag 어노테이션 활용
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;@Tag&lt;/code&gt; 어노테이션을 사용하면 다음과 같은 그룹핑이 가능합니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Controller 단위로 그룹핑&lt;/li&gt;
+&lt;li&gt;Controller 내부의 메서드 단위로 그룹핑&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Tag&lt;/code&gt;에 명명한 이름에 따라 spec 파일로 전환 시 그룹핑 수행&lt;/li&gt;
+&lt;li&gt;OpenAPI Generator를 이용한 client code 생성 시 해당 이름으로 파일 생성&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="tag-중복-사용-시-주의사항"&gt;&lt;a href="#tag-%ec%a4%91%eb%b3%b5-%ec%82%ac%ec%9a%a9-%ec%8b%9c-%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;@Tag 중복 사용 시 주의사항
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;질문&lt;/strong&gt;: 최상위 레벨에 &lt;code&gt;@Tag&lt;/code&gt;로 그룹핑하고, 하위 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 다른 이름으로 tag를 설정하면 어떻게 될까요?&lt;/p&gt;
+&lt;h4 id="테스트-결과"&gt;&lt;a href="#%ed%85%8c%ec%8a%a4%ed%8a%b8-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;테스트 결과
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="중복 그룹 생성 결과" class="gallery-image" data-flex-basis="442px" data-flex-grow="184" height="573" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image6.png" srcset="https://0andwild.com/posts/231017_swagger/image6_hu_39ef28f5749fa3a7.png 800w, https://0andwild.com/posts/231017_swagger/image6.png 1056w" width="1056"&gt;&lt;/p&gt;
+&lt;p&gt;최상위에 &lt;code&gt;@Tag(name = &amp;quot;swagger&amp;quot;)&lt;/code&gt;를 설정하고, &lt;code&gt;postHello&lt;/code&gt; 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 &lt;code&gt;tags = {&amp;quot;swagger123&amp;quot;}&lt;/code&gt;을 추가한 경우, 같은 엔드포인트가 다른 그룹으로 중복 생성됩니다.&lt;/p&gt;
+&lt;h4 id="문제점"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;문제점
+&lt;/h4&gt;&lt;p&gt;이 상태에서 OpenAPI Generator를 사용하면 아래와 같이 중복된 client 코드가 생성되는 문제가 발생합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="중복 생성된 API 파일 1" class="gallery-image" data-flex-basis="728px" data-flex-grow="303" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image7.png" srcset="https://0andwild.com/posts/231017_swagger/image7_hu_bc30ff9f9efe9f74.png 800w, https://0andwild.com/posts/231017_swagger/image7.png 1548w" width="1548"&gt;
+&lt;img alt="중복 생성된 API 파일 2" class="gallery-image" data-flex-basis="269px" data-flex-grow="112" height="673" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image8.png" width="757"&gt;
+&lt;img alt="중복 생성된 API 파일 3" class="gallery-image" data-flex-basis="428px" data-flex-grow="178" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image9.png" width="311"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;권장사항&lt;/strong&gt;: 특별한 경우가 아니라면 &lt;code&gt;@Tag&lt;/code&gt;를 이용한 그룹핑은 Controller의 최상위에서만 사용하는 것을 권장합니다.&lt;/p&gt;
+&lt;h3 id="openapi-generator-client-code-생성-시-파일명"&gt;&lt;a href="#openapi-generator-client-code-%ec%83%9d%ec%84%b1-%ec%8b%9c-%ed%8c%8c%ec%9d%bc%eb%aa%85" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator Client Code 생성 시 파일명
+&lt;/h3&gt;&lt;p&gt;Client 코드 생성 시 &lt;code&gt;@Tag&lt;/code&gt;에서 명명한 이름 + &lt;code&gt;-api&lt;/code&gt;가 postfix로 붙습니다. 이 부분을 커스터마이징하려면 Mustache 파일을 수정해야 합니다.&lt;/p&gt;
+&lt;h3 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/templating" target="_blank" rel="noopener"
+ &gt;Using Templates | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/janl/mustache.js" target="_blank" rel="noopener"
+ &gt;Mustache.js GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://hmos.dev/how-to-use-oas-generator" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator 사용법&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://velog.io/@kdeun1/OpenAPI-Generator%eb%a5%bc-%ec%82%ac%ec%9a%a9%ed%95%98%ec%97%ac-API%ec%99%80-%eb%8f%99%ec%9d%bc%ed%95%9c-Model%ea%b3%bc-%ec%a0%95%ed%98%95%ed%99%94%eb%90%9c-API%ec%bd%94%eb%93%9c-%ec%9e%90%eb%8f%99%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator로 API의 안전한 Model과 정형화된 구현코드 자동생성하기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="인증-관련-openapi-스펙"&gt;&lt;a href="#%ec%9d%b8%ec%a6%9d-%ea%b4%80%eb%a0%a8-openapi-%ec%8a%a4%ed%8e%99" class="header-anchor"&gt;&lt;/a&gt;인증 관련 OpenAPI 스펙
+&lt;/h2&gt;&lt;p&gt;OpenAPI는 다양한 인증 방식을 지원합니다. 주요 설정 항목은 다음과 같습니다.&lt;/p&gt;
+&lt;h3 id="type-인증-형식"&gt;&lt;a href="#type-%ec%9d%b8%ec%a6%9d-%ed%98%95%ec%8b%9d" class="header-anchor"&gt;&lt;/a&gt;type (인증 형식)
+&lt;/h3&gt;&lt;p&gt;현재 API Key, HTTP, OAuth2, OpenID Connect 방식을 지원합니다.
+&lt;strong&gt;참고&lt;/strong&gt;: OpenAPI v2 스펙에서는 OpenID Connect 방식을 지원하지 않습니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;지원되는 타입&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;http&lt;/code&gt;: Basic, Bearer 및 기타 HTTP 인증 체계&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apiKey&lt;/code&gt;: API 키 및 쿠키 인증&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;oauth2&lt;/code&gt;: OAuth2 인증&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;openIdConnect&lt;/code&gt;: OpenID Connect 검색&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="주요-설정-항목"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ec%84%a4%ec%a0%95-%ed%95%ad%eb%aa%a9" class="header-anchor"&gt;&lt;/a&gt;주요 설정 항목
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;name&lt;/code&gt;&lt;/strong&gt;: 인증 키 이름 (API Key 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;in&lt;/code&gt;&lt;/strong&gt;: 인증 키의 위치 지정 (&lt;code&gt;query&lt;/code&gt;, &lt;code&gt;header&lt;/code&gt;, &lt;code&gt;cookie&lt;/code&gt; 중 선택, API Key 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;scheme&lt;/code&gt;&lt;/strong&gt;: 인증 방식 지정 (&lt;code&gt;Basic&lt;/code&gt; 또는 &lt;code&gt;Bearer&lt;/code&gt;, HTTP 인증 방식 사용 시 필요)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;bearerFormat&lt;/code&gt;&lt;/strong&gt;: Bearer 토큰 형식 (일반적으로 &lt;code&gt;JWT&lt;/code&gt; 사용)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;flows&lt;/code&gt;&lt;/strong&gt;: OAuth2 플로우 타입 (&lt;code&gt;implicit&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;clientCredentials&lt;/code&gt;, &lt;code&gt;authorizationCode&lt;/code&gt; 중 선택)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openIdConnectUrl&lt;/code&gt;&lt;/strong&gt;: OpenID Connect URL (OpenAPI v2 스펙에서는 OAuth2나 Bearer 토큰 방식으로 대체 권장)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="deprecated-전략"&gt;&lt;a href="#deprecated-%ec%a0%84%eb%9e%b5" class="header-anchor"&gt;&lt;/a&gt;@Deprecated 전략
+&lt;/h2&gt;&lt;p&gt;API 버전 업데이트로 DTO 스펙에 변경이 있을 경우, 다음과 같은 단계적 전략을 사용합니다.&lt;/p&gt;
+&lt;h3 id="1단계-deprecated-표시"&gt;&lt;a href="#1%eb%8b%a8%ea%b3%84-deprecated-%ed%91%9c%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;1단계: @Deprecated 표시
+&lt;/h3&gt;&lt;p&gt;먼저 변경될 필드에 &lt;code&gt;@Deprecated&lt;/code&gt; 어노테이션을 붙입니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;OpenAPI spec 상에도 해당 스키마의 필드에 &lt;code&gt;deprecated&lt;/code&gt;가 표시되고, 프론트엔드에서 코드 생성 시 해당 필드에 deprecated 표시가 나타납니다. 이를 통해 프론트엔드 팀에게 곧 해당 필드가 제거될 것임을 미리 알립니다.&lt;/p&gt;
+&lt;h3 id="2단계-schemahidden--true-적용"&gt;&lt;a href="#2%eb%8b%a8%ea%b3%84-schemahidden--true-%ec%a0%81%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;2단계: @Schema(hidden = true) 적용
+&lt;/h3&gt;&lt;p&gt;프론트엔드에서 새로운 스펙으로 마이그레이션이 완료되면, 서버에서 해당 &lt;code&gt;@Deprecated&lt;/code&gt; 필드에 &lt;code&gt;@Schema(hidden = true)&lt;/code&gt;를 추가하여 더 이상 OpenAPI spec에 해당 필드가 생성되지 않도록 합니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Schema&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hidden&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// spec에서 제외됨&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="3단계-필드-제거"&gt;&lt;a href="#3%eb%8b%a8%ea%b3%84-%ed%95%84%eb%93%9c-%ec%a0%9c%ea%b1%b0" class="header-anchor"&gt;&lt;/a&gt;3단계: 필드 제거
+&lt;/h3&gt;&lt;p&gt;충분한 시간이 지난 후 해당 필드를 완전히 제거합니다.&lt;/p&gt;
+&lt;p&gt;이러한 단계적 접근 방식을 통해 프론트엔드와 백엔드 간의 안전한 API 버전 관리가 가능합니다.&lt;/p&gt;</description></item><item><title>OpenAPI Generator 정복하기</title><link>https://0andwild.com/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/posts/231016_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post OpenAPI Generator 정복하기" /&gt;&lt;h2 id="swagger란"&gt;&lt;a href="#swagger%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;Swagger란?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt;는 OAS(OpenAPI Specification)를 위한 프레임워크로, API들이 가지고 있는 스펙을 명세하고 관리할 수 있는 프로젝트입니다. Swagger를 통해 REST API 서비스를 설계, 빌드, 문서화할 수 있습니다.&lt;/p&gt;
+&lt;h3 id="swagger-tools"&gt;&lt;a href="#swagger-tools" class="header-anchor"&gt;&lt;/a&gt;Swagger Tools
+&lt;/h3&gt;&lt;p&gt;Swagger는 다음과 같은 주요 도구들을 제공합니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Swagger UI&lt;/strong&gt;: Swagger API 명세서를 HTML 형식으로 시각화하여 확인할 수 있도록 해주는 도구&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Codegen&lt;/strong&gt;: Swagger에 정의된 스펙에 따라 클라이언트 및 서버 코드를 자동으로 생성해주는 CLI 툴&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Editor&lt;/strong&gt;: Swagger 표준에 따른 API 설계서 및 명세서를 작성하기 위한 에디터&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="springfox-vs-springdoc"&gt;&lt;a href="#springfox-vs-springdoc" class="header-anchor"&gt;&lt;/a&gt;Springfox vs Springdoc
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Springfox Swagger&lt;/strong&gt;는 Spring 또는 Spring Boot를 사용하는 프로젝트에서 Swagger를 이용해 API 문서를 쉽게 작성할 수 있도록 도와주는 라이브러리입니다.&lt;/p&gt;
+&lt;p&gt;Springfox가 업데이트를 중단하는 시점에 &lt;strong&gt;Springdoc&lt;/strong&gt;이 등장했으며, 활발한 업데이트가 이루어지면서 급부상하게 되었습니다. Springdoc 역시 Swagger 문서 작성을 지원하는 라이브러리로, 현재는 Springfox보다 더 권장되는 선택입니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger-codegen-vs-openapi-generator"&gt;&lt;a href="#swagger-codegen-vs-openapi-generator" class="header-anchor"&gt;&lt;/a&gt;Swagger Codegen vs OpenAPI Generator
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt;는 SmartBear사의 트레이드마크이며, &lt;strong&gt;Swagger Codegen&lt;/strong&gt;은 그 안에 포함되어 있는 프로젝트입니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;OpenAPI Generator&lt;/strong&gt;는 Swagger Codegen 프로젝트를 포크(fork)하여 시작된 커뮤니티 주도 오픈소스 프로젝트입니다. 현재 40명 이상의 상위 프로젝트 기여자와 Swagger Codegen의 창립 멤버들이 함께 참여하고 있습니다.&lt;/p&gt;
+&lt;h3 id="openapi-generator-license"&gt;&lt;a href="#openapi-generator-license" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator License
+&lt;/h3&gt;&lt;p&gt;OpenAPI Generator는 &lt;strong&gt;Apache License 2.0&lt;/strong&gt;을 따르고 있습니다.&lt;/p&gt;
+&lt;h4 id="apache-license-20이란"&gt;&lt;a href="#apache-license-20%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;Apache License 2.0이란?
+&lt;/h4&gt;&lt;p&gt;Apache License 2.0에 따라 다음과 같은 권리가 부여됩니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;누구나 해당 소프트웨어에서 파생된 프로그램을 제작할 수 있음&lt;/li&gt;
+&lt;li&gt;저작권을 양도, 전송할 수 있음&lt;/li&gt;
+&lt;li&gt;부분 또는 전체를 개인적 또는 상업적 목적으로 이용 가능&lt;/li&gt;
+&lt;li&gt;재배포 시 원본 또는 수정한 소스코드를 반드시 포함시키지 않아도 됨&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;단, Apache License 버전 및 표기는 반드시 포함해야 함&lt;/strong&gt; (Apache License로 개발된 소프트웨어임을 명확히 표시)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="openapi-generator의-탄생-배경"&gt;&lt;a href="#openapi-generator%ec%9d%98-%ed%83%84%ec%83%9d-%eb%b0%b0%ea%b2%bd" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator의 탄생 배경
+&lt;/h3&gt;&lt;p&gt;OpenAPI Generator의 공식 Q&amp;amp;A를 보면 프로젝트의 탄생 배경을 확인할 수 있습니다&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;버전 철학의 차이&lt;/strong&gt;
+Swagger Codegen의 창립 멤버들은 Swagger Codegen 3.0.0이 2.x의 철학과 너무 많이 다르다고 느꼈습니다. 두 개의 개별 브랜치(2.x, 3.x)를 유지 관리하는 오버헤드가 Python 커뮤니티에서 겪었던 것과 유사한 문제를 야기할 수 있다고 우려했습니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;빠른 배포 주기&lt;/strong&gt;
+창립 멤버들은 사용자가 원하는 안정적인 배포 버전을 사용하기 위해 몇 달을 기다리지 않도록 더 빠른 배포 주기를 원했습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;주간 패치 배포 (Weekly patch releases)&lt;/li&gt;
+&lt;li&gt;월간 마이너 배포 (Monthly minor releases)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;커뮤니티 주도 개발&lt;/strong&gt;
+커뮤니티가 주도하는 오픈소스 프로젝트 형식으로 진행하면 혁신과 신뢰성, 그리고 커뮤니티가 소유하는 로드맵을 확보할 수 있습니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;위와 같은 이유들로 OpenAPI Generator 프로젝트가 탄생했습니다. OpenAPI Generator는 MySQL과 MariaDB의 관계와 유사한 느낌입니다.&lt;/p&gt;
+&lt;h3 id="swagger-codegen에서-마이그레이션"&gt;&lt;a href="#swagger-codegen%ec%97%90%ec%84%9c-%eb%a7%88%ec%9d%b4%ea%b7%b8%eb%a0%88%ec%9d%b4%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;Swagger Codegen에서 마이그레이션
+&lt;/h3&gt;&lt;p&gt;공식 문서에 따르면, 기존에 Swagger Codegen 2.x 버전을 사용하고 있을 경우 OpenAPI Generator로 편리하게 마이그레이션할 수 있습니다. OpenAPI Generator는 Swagger Codegen 2.4.0-SNAPSHOT 버전을 기반으로 하고 있기 때문입니다.&lt;/p&gt;
+&lt;p&gt;자세한 마이그레이션 방법은 공식 가이드를 참조하세요&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator 공식 사이트&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

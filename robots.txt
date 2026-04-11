@@ -1,8 +1,1 @@
 User-agent: *
-Allow: /
-
-Sitemap: https://0andwild.com/sitemap.xml
-Sitemap: https://0andwild.com/ko/sitemap.xml
-Sitemap: https://0andwild.com/en/sitemap.xml
-Sitemap: https://0andwild.com/index.xml
-

@@ -1,1 +1,63 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>API on 0AndWild_log</title><link>https://0andwild.com/en/tags/api/</link><description>Recent content in API on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Mon, 16 Oct 2023 16:56:35 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/api/index.xml" rel="self" type="application/rss+xml"/><item><title>Mastering OpenAPI Generator</title><link>https://0andwild.com/en/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/en/posts/231016_swagger/</guid><description>API documentation automation and code generation using OpenAPI Generator</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231016_swagger/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>API on 0AndWild_log</title><link>https://0andwild.com/en/tags/api/</link><description>Recent content in API on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 16 Oct 2023 16:56:35 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/api/index.xml" rel="self" type="application/rss+xml"/><item><title>Mastering OpenAPI Generator</title><link>https://0andwild.com/en/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/en/posts/231016_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Mastering OpenAPI Generator" /&gt;&lt;h2 id="what-is-swagger"&gt;&lt;a href="#what-is-swagger" class="header-anchor"&gt;&lt;/a&gt;What is Swagger?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt; is a framework for OAS (OpenAPI Specification) that allows you to specify and manage the specifications of APIs. Through Swagger, you can design, build, and document REST API services.&lt;/p&gt;
+&lt;h3 id="swagger-tools"&gt;&lt;a href="#swagger-tools" class="header-anchor"&gt;&lt;/a&gt;Swagger Tools
+&lt;/h3&gt;&lt;p&gt;Swagger provides the following key tools&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Swagger UI&lt;/strong&gt;: A tool that visualizes Swagger API specifications in HTML format for easy viewing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Codegen&lt;/strong&gt;: A CLI tool that automatically generates client and server code based on Swagger specifications&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Editor&lt;/strong&gt;: An editor for creating API design documents and specifications according to Swagger standards&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="springfox-vs-springdoc"&gt;&lt;a href="#springfox-vs-springdoc" class="header-anchor"&gt;&lt;/a&gt;Springfox vs Springdoc
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Springfox Swagger&lt;/strong&gt; is a library that helps you easily write API documentation using Swagger in projects using Spring or Spring Boot.&lt;/p&gt;
+&lt;p&gt;When Springfox stopped updating, &lt;strong&gt;Springdoc&lt;/strong&gt; emerged and rapidly gained popularity with active updates. Springdoc is also a library that supports Swagger documentation creation and is now the more recommended choice over Springfox.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger-codegen-vs-openapi-generator"&gt;&lt;a href="#swagger-codegen-vs-openapi-generator" class="header-anchor"&gt;&lt;/a&gt;Swagger Codegen vs OpenAPI Generator
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt; is a trademark of SmartBear, and &lt;strong&gt;Swagger Codegen&lt;/strong&gt; is a project included within it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;OpenAPI Generator&lt;/strong&gt; is a community-driven open-source project that started as a fork of the Swagger Codegen project. Currently, more than 40 top project contributors and founding members of Swagger Codegen are participating together.&lt;/p&gt;
+&lt;h3 id="openapi-generator-license"&gt;&lt;a href="#openapi-generator-license" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator License
+&lt;/h3&gt;&lt;p&gt;OpenAPI Generator follows &lt;strong&gt;Apache License 2.0&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="what-is-apache-license-20"&gt;&lt;a href="#what-is-apache-license-20" class="header-anchor"&gt;&lt;/a&gt;What is Apache License 2.0?
+&lt;/h4&gt;&lt;p&gt;Apache License 2.0 grants the following rights&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Anyone can create programs derived from the software&lt;/li&gt;
+&lt;li&gt;Copyright can be transferred and transmitted&lt;/li&gt;
+&lt;li&gt;Parts or the whole can be used for personal or commercial purposes&lt;/li&gt;
+&lt;li&gt;When redistributing, you don&amp;rsquo;t necessarily have to include the original or modified source code&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;However, you must include the Apache License version and notice&lt;/strong&gt; (clearly indicating that the software was developed under Apache License)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="background-of-openapi-generators-birth"&gt;&lt;a href="#background-of-openapi-generators-birth" class="header-anchor"&gt;&lt;/a&gt;Background of OpenAPI Generator&amp;rsquo;s Birth
+&lt;/h3&gt;&lt;p&gt;The official Q&amp;amp;A of OpenAPI Generator reveals the background of the project&amp;rsquo;s creation&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Difference in Version Philosophy&lt;/strong&gt;
+The founding members of Swagger Codegen felt that Swagger Codegen 3.0.0 was too different from the 2.x philosophy. They were concerned that the overhead of maintaining two separate branches (2.x, 3.x) could cause problems similar to those experienced by the Python community.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Faster Release Cycle&lt;/strong&gt;
+The founding members wanted a faster release cycle so users wouldn&amp;rsquo;t have to wait months to use the stable release version they wanted.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Weekly patch releases&lt;/li&gt;
+&lt;li&gt;Monthly minor releases&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Community-Driven Development&lt;/strong&gt;
+Proceeding as a community-driven open-source project ensures innovation, reliability, and a roadmap owned by the community.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For these reasons, the OpenAPI Generator project was born. OpenAPI Generator feels somewhat like the relationship between MySQL and MariaDB.&lt;/p&gt;
+&lt;h3 id="migrating-from-swagger-codegen"&gt;&lt;a href="#migrating-from-swagger-codegen" class="header-anchor"&gt;&lt;/a&gt;Migrating from Swagger Codegen
+&lt;/h3&gt;&lt;p&gt;According to the official documentation, if you&amp;rsquo;re currently using Swagger Codegen 2.x version, you can conveniently migrate to OpenAPI Generator. This is because OpenAPI Generator is based on Swagger Codegen 2.4.0-SNAPSHOT version.&lt;/p&gt;
+&lt;p&gt;For detailed migration instructions, refer to the official guide&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator Official Site&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

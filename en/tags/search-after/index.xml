@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Search After on 0AndWild_log</title><link>https://0andwild.com/en/tags/search-after/</link><description>Recent content in Search After on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 06 Feb 2024 21:16:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/search-after/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/en/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/en/posts/240206_es/</guid><description>Comparing Elasticsearch pagination methods including From/Size, Search After, and Scroll, with stable paging implementation using PIT (Point In Time)</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240206_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Search After on 0AndWild_log</title><link>https://0andwild.com/en/tags/search-after/</link><description>Recent content in Search After on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 06 Feb 2024 21:16:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/search-after/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/en/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/en/posts/240206_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Pagination Technique" /&gt;&lt;h2 id="elasticsearch-pagination-3-options"&gt;&lt;a href="#elasticsearch-pagination-3-options" class="header-anchor"&gt;&lt;/a&gt;ElasticSearch Pagination: 3 Options
+&lt;/h2&gt;&lt;h3 id="1-fromsize-pagination"&gt;&lt;a href="#1-fromsize-pagination" class="header-anchor"&gt;&lt;/a&gt;1. From/Size Pagination
+&lt;/h3&gt;&lt;p&gt;Uses &lt;code&gt;from&lt;/code&gt; + &lt;code&gt;size&lt;/code&gt; = offset method to load data into memory on-demand. Supports up to 10,000 results.&lt;/p&gt;
+&lt;p&gt;The &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-modules.html#index-max-result-window" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;index.max_result_window&lt;/code&gt;&lt;/a&gt; option can be used to load more than 10,000 results, but this is not recommended.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Simple implementation&lt;/li&gt;
+&lt;li&gt;Limited to 10,000 results maximum&lt;/li&gt;
+&lt;li&gt;Performance degradation with deep pagination&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="2-search-after"&gt;&lt;a href="#2-search-after" class="header-anchor"&gt;&lt;/a&gt;2. Search After
+&lt;/h3&gt;&lt;p&gt;Overcomes the pagination limitation of 10,000 results. Similar to typical cursor-based approaches.&lt;/p&gt;
+&lt;p&gt;Uses the &lt;code&gt;sort&lt;/code&gt; condition field of search results as a key value to retrieve subsequent results.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Drawbacks&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;search-after&lt;/code&gt; alone may result in inconsistent responses if indexing is updated during pagination.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Using with PIT (Point In Time)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;To address this, use PIT (Point In Time)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;POST /my-index-000001/_pit?keep_alive&lt;span class="o"&gt;=&lt;/span&gt;1m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above request creates a snapshot of the index at the current point in time, which can then be used with the &lt;code&gt;id&lt;/code&gt; value as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;size&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;desc&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;search_after&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;{{pit_value}}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Even if there are changes to the index, results are returned based on the snapshot.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keep_alive&lt;/code&gt; represents the validity period of the PIT. It&amp;rsquo;s recommended to manage PIT based on the latest point in time.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can paginate more than 10,000 results&lt;/li&gt;
+&lt;li&gt;Cursor-based approach&lt;/li&gt;
+&lt;li&gt;Guarantees consistent results when used with PIT&lt;/li&gt;
+&lt;li&gt;Efficient for deep pagination&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="3-scroll"&gt;&lt;a href="#3-scroll" class="header-anchor"&gt;&lt;/a&gt;3. Scroll
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: According to ES official documentation, Search After method is recommended instead of Scroll method&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For bulk data extraction&lt;/li&gt;
+&lt;li&gt;Not suitable for real-time search&lt;/li&gt;
+&lt;li&gt;Search After + PIT combination is now recommended&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opster.com/guides/elasticsearch/how-tos/elasticsearch-pagination-techniques/" target="_blank" rel="noopener"
+ &gt;Elasticsearch Pagination Techniques: SearchAfter, Scroll, Pagination &amp;amp; PIT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://danawalab.github.io/elastic/2023/02/13/Search-After.html" target="_blank" rel="noopener"
+ &gt;Elasticsearch Search After Performance Check&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after" target="_blank" rel="noopener"
+ &gt;Paginate search results | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html" target="_blank" rel="noopener"
+ &gt;Point in time API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
+ &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

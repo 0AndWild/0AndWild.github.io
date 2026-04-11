@@ -1,1 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>자동화 on 0AndWild_log</title><link>https://0andwild.com/tags/%EC%9E%90%EB%8F%99%ED%99%94/</link><description>Recent content in 자동화 on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/%EC%9E%90%EB%8F%99%ED%99%94/index.xml" rel="self" type="application/rss+xml"/><item><title>Baekjoonhub 크롬 익스텐션 커스텀</title><link>https://0andwild.com/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/posts/260220_baekjoonhub/</guid><description>Base Directory 추가, 티어 경로 세분화, 디렉토리명 정규화, Java Main/package 자동화, 벌크 업로드 기능을 구현했음.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260220_baekjoonhub/featured.png"/></item><item><title>코딩게임 추천 : 농부는 대체되었다</title><link>https://0andwild.com/posts/251215_game/</link><pubDate>Mon, 15 Dec 2025 16:26:41 +0900</pubDate><guid>https://0andwild.com/posts/251215_game/</guid><description>개발자를 위한 스팀 게임 추천글&amp;hellip;.?</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251215_game/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>자동화 on 0AndWild_log</title><link>https://0andwild.com/tags/%EC%9E%90%EB%8F%99%ED%99%94/</link><description>Recent content in 자동화 on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/%EC%9E%90%EB%8F%99%ED%99%94/index.xml" rel="self" type="application/rss+xml"/><item><title>Baekjoonhub 크롬 익스텐션 커스텀</title><link>https://0andwild.com/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Baekjoonhub 크롬 익스텐션 커스텀" /&gt;&lt;h1 id="baekjoonhub를-직접-커스텀하게-된-이유"&gt;&lt;a href="#baekjoonhub%eb%a5%bc-%ec%a7%81%ec%a0%91-%ec%bb%a4%ec%8a%a4%ed%85%80%ed%95%98%ea%b2%8c-%eb%90%9c-%ec%9d%b4%ec%9c%a0" class="header-anchor"&gt;&lt;/a&gt;BaekjoonHub를 직접 커스텀하게 된 이유
+&lt;/h1&gt;&lt;p&gt;최근에 백준을 본격적으로 사용하게 되면서 &lt;code&gt;BaekjoonHub&lt;/code&gt; 익스텐션을 알게 됐음.&lt;br&gt;
+처음 써보니 “풀이를 자동으로 GitHub에 올려준다”는 점은 정말 편했지만, 실제로 내 작업 방식에 맞추기엔 몇 가지 불편한 부분이 있었음.&lt;/p&gt;
+&lt;p&gt;그래서 먼저 공식 저장소 이슈를 찾아봤음.&lt;br&gt;
+확인해보니 나와 비슷한 고민을 가진 분들이 이미 있었고, 관련 기능을 추가하려는 PR도 올라와 있었음. 다만 당시 기준으로는 해당 기능을 바로 반영할 계획이 없다는 흐름이 보여서, 기다리기보다 내가 필요한 부분을 직접 커스텀해서 쓰기로 결정함.&lt;/p&gt;
+&lt;p&gt;원본 저장소: &lt;a class="link" href="https://github.com/BaekjoonHub/BaekjoonHub" target="_blank" rel="noopener"
+ &gt;https://github.com/BaekjoonHub/BaekjoonHub&lt;/a&gt;&lt;br&gt;
+커스텀 저장소: &lt;a class="link" href="https://github.com/0AndWild/baekjoonhub_custom" target="_blank" rel="noopener"
+ &gt;https://github.com/0AndWild/baekjoonhub_custom&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="내가-겪은-불편함"&gt;&lt;a href="#%eb%82%b4%ea%b0%80-%ea%b2%aa%ec%9d%80-%eb%b6%88%ed%8e%b8%ed%95%a8" class="header-anchor"&gt;&lt;/a&gt;내가 겪은 불편함
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;업로드 경로가 레포 루트 기준이라 프로젝트 구조에 맞추기 어려움&lt;/li&gt;
+&lt;li&gt;티어 경로가 세분화되지 않아 문제 정리가 아쉬움&lt;/li&gt;
+&lt;li&gt;문제 디렉토리명이 패키지/경로로 쓰기 불편한 형태&lt;/li&gt;
+&lt;li&gt;Java 파일명과 실행 엔트리(&lt;code&gt;Main.java&lt;/code&gt;)를 수동으로 맞춰야 하는 경우 발생&lt;/li&gt;
+&lt;li&gt;기존에 풀어둔 문제를 한 번에 정리해서 올리기 어려움&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="그래서-커스텀에서-바꾼-부분"&gt;&lt;a href="#%ea%b7%b8%eb%9e%98%ec%84%9c-%ec%bb%a4%ec%8a%a4%ed%85%80%ec%97%90%ec%84%9c-%eb%b0%94%ea%be%bc-%eb%b6%80%eb%b6%84" class="header-anchor"&gt;&lt;/a&gt;그래서 커스텀에서 바꾼 부분
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Base Directory&lt;/code&gt; 지정 기능 추가&lt;/li&gt;
+&lt;li&gt;티어 경로를 &lt;code&gt;Bronze/V&lt;/code&gt;처럼 세분화&lt;/li&gt;
+&lt;li&gt;문제 디렉토리명 정규화&lt;/li&gt;
+&lt;li&gt;Java 파일명 &lt;code&gt;Main.java&lt;/code&gt; 고정 + &lt;code&gt;package&lt;/code&gt; 자동 삽입&lt;/li&gt;
+&lt;li&gt;백준 맞은 문제 전체 업로드(벌크 업로드) 기능 추가&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="정리"&gt;&lt;a href="#%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;정리
+&lt;/h2&gt;&lt;p&gt;이번 커스텀은 “기능을 새로 많이 만들자”보다는,&lt;br&gt;
+실제로 문제를 풀고 정리하는 과정에서 반복되는 불편함을 줄이는 데 초점을 맞춤.&lt;/p&gt;
+&lt;p&gt;공식 저장소에서도 이미 비슷한 요구가 있었던 만큼, 같은 고민을 가진 분들에게는 이 커스텀 방향이 참고가 될 수 있다고 생각함.&lt;/p&gt;</description></item><item><title>코딩게임 추천 : 농부는 대체되었다</title><link>https://0andwild.com/posts/251215_game/</link><pubDate>Mon, 15 Dec 2025 16:26:41 +0900</pubDate><guid>https://0andwild.com/posts/251215_game/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 코딩게임 추천 : 농부는 대체되었다" /&gt;&lt;p&gt;스팀 게임에서 재미난 게임을 발견해서 소개를 해보고자 한다. 😂&lt;/p&gt;
+&lt;p&gt;&lt;img alt="게임 화면" class="gallery-image" data-flex-basis="403px" data-flex-grow="168" data-title-escaped="게임 화면" height="1221" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img1.png" srcset="https://0andwild.com/posts/251215_game/img1_hu_dbaea8ae4567c5eb.png 800w, https://0andwild.com/posts/251215_game/img1_hu_838718a872d3dce7.png 1600w, https://0andwild.com/posts/251215_game/img1.png 2055w" title="게임 화면" width="2055"&gt;
+&lt;img alt="파이썬 for 문 설명" class="gallery-image" data-flex-basis="298px" data-flex-grow="124" data-title-escaped="파이썬 for 문 설명" height="611" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img3.png" title="파이썬 for 문 설명" width="759"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;농부는 대체되었다&lt;/strong&gt; 라는 게임인데 기본적으로 드론이 있고 이 드론을 파이썬 코드를 작성해서 제어하고 농작물 재배를 자동화 하는 게임이다. ㅋㅋㅋㅋㅋ 😂&lt;/p&gt;
+&lt;p&gt;생각보다 파이썬 문법에 대한 설명도 잘 되어 있고 파이썬을 처음 써보시는 분들도 재미있게 공부하면서 연습하기에 나쁘지 않을 수 도 있을 것 같다 ?&lt;/p&gt;
+&lt;p&gt;아직 한글 모드를 적용안해서 영어로 나오지만 한글 모드도 지원하는 것 같다..!&lt;/p&gt;
+&lt;p&gt;&lt;img alt="스킬트리 화면" class="gallery-image" data-flex-basis="405px" data-flex-grow="169" data-title-escaped="스킬트리 화면" height="1213" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img2.png" srcset="https://0andwild.com/posts/251215_game/img2_hu_768712cf7a1c97b4.png 800w, https://0andwild.com/posts/251215_game/img2_hu_29d195d1de8a99d8.png 1600w, https://0andwild.com/posts/251215_game/img2.png 2050w" title="스킬트리 화면" width="2050"&gt;
+&lt;img alt="인게임 Docs" class="gallery-image" data-flex-basis="417px" data-flex-grow="174" data-title-escaped="인게임 Docs" height="592" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img4.png" srcset="https://0andwild.com/posts/251215_game/img4_hu_aeecbe396f321bf0.png 800w, https://0andwild.com/posts/251215_game/img4.png 1031w" title="인게임 Docs" width="1031"&gt;&lt;/p&gt;
+&lt;p&gt;게임을 해보면서 처음에 변수도 선언이 안되어서 뭐지 싶었는데 함수, 변수 등 모두 작물을 재배한 재화로 스킬을 찍어야 사용할 수 있는 그런 게임이다&amp;hellip;&lt;/p&gt;
+&lt;p&gt;나름 중독성 있고 최종적으로 재배지를 늘리고 농작물을 심고 자라나는 속도에 맞추어 수확하는 최적화 움직임을 알고리즘으로 구현 하는 컨텐츠 인 것 같다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;오늘 기준으로 스팀에서 할인도 20% 하고 있으니 관심 있는 분들(개발자 ?)은 한번쯤 해보시는 걸 추천&amp;hellip;.? 😄&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;스팀 링크&lt;/strong&gt;: &lt;a class="link" href="https://store.steampowered.com/app/2060160/_/" target="_blank" rel="noopener"
+ &gt;농부는 대체되었다&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

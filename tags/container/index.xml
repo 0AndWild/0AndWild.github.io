@@ -1,1 +1,482 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Container on 0AndWild_log</title><link>https://0andwild.com/tags/container/</link><description>Recent content in Container on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 25 Oct 2022 17:59:31 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/container/index.xml" rel="self" type="application/rss+xml"/><item><title>도커(Docker) 설치 &amp; 명령어 사용방법 총정리</title><link>https://0andwild.com/posts/221025_docker_command/</link><pubDate>Tue, 25 Oct 2022 17:59:31 +0900</pubDate><guid>https://0andwild.com/posts/221025_docker_command/</guid><description>Docker 설치부터 이미지 관리, 컨테이너 실행까지 필수 명령어와 옵션을 상세히 정리한 실전 가이드</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221025_docker_command/featured.png"/></item><item><title>도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류</title><link>https://0andwild.com/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/posts/221024_about_docker/</guid><description>Docker는 애플리케이션을 컨테이너로 패키징하여 다양한 환경에서 안정적으로 실행할 수 있게 해주는 오픈소스 플랫폼입니다. 호스트 가상화, 하이퍼바이저 가상화, 컨테이너 가상화의 차이점과 각각의 장단점을 비교하고, Docker 컨테이너의 효율성과 활용 방법을 정리합니다.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221024_about_docker/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Container on 0AndWild_log</title><link>https://0andwild.com/tags/container/</link><description>Recent content in Container on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Tue, 25 Oct 2022 17:59:31 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/container/index.xml" rel="self" type="application/rss+xml"/><item><title>도커(Docker) 설치 &amp; 명령어 사용방법 총정리</title><link>https://0andwild.com/posts/221025_docker_command/</link><pubDate>Tue, 25 Oct 2022 17:59:31 +0900</pubDate><guid>https://0andwild.com/posts/221025_docker_command/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 도커(Docker) 설치 &amp; 명령어 사용방법 총정리" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/featured.png"
+ alt="docker"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;지난 글에 이어 도커의 명령어와 사용방법을 정리해볼까 합니다 =)&lt;/p&gt;
+&lt;h2 id="docker-설치하기"&gt;&lt;a href="#docker-%ec%84%a4%ec%b9%98%ed%95%98%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;Docker 설치하기
+&lt;/h2&gt;&lt;p&gt;우선 도커를 사용하려면 설치를 해주어야 겠죠?&lt;/p&gt;
+&lt;p&gt;필자의 경우 AWS EC2 인스턴스로 Ubuntu 환경에서 Docker를 설치하였습니다.&lt;/p&gt;
+&lt;p&gt;Ubuntu 및 다른 환경에서 설치가 필요하신 경우 아래 공식 문서를 참고해주세요!&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/engine/install/ubuntu/" target="_blank" rel="noopener"
+ &gt;Install Docker Engine on Ubuntu - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="docker-구버전-제거-및-신버전-설치"&gt;&lt;a href="#docker-%ea%b5%ac%eb%b2%84%ec%a0%84-%ec%a0%9c%ea%b1%b0-%eb%b0%8f-%ec%8b%a0%eb%b2%84%ec%a0%84-%ec%84%a4%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;Docker 구버전 제거 및 신버전 설치
+&lt;/h3&gt;&lt;p&gt;만약 Docker 구버전을 삭제 후 신버전을 설치하려 한다면 아래 명령어를 통해 구버전을 삭제해주도록 합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Ubuntu 기준&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get remove docker docker-engine docker.io containerd runc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;저장소 업데이트&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;apt가 https를 통해 repository를 사용할 수 있도록 패키지 설치&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Docker 저장소 키를 apt에 등록&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -fsSL https://download.docker.com/linux/ubuntu/gpg &lt;span class="p"&gt;|&lt;/span&gt; sudo apt-key add -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Docker 저장소 등록&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo add-apt-repository &lt;span class="s2"&gt;&amp;#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;lsb_release -cs&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt; stable&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;지금까지 작업 내용 반영을 위해 apt update&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Docker 설치&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위의 명령어를 통해 Docker 설치 작업을 끝냈다면 확인을 해봐야 겠죠?!&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure1.png"
+ alt="docker version 명령어 실행 화면"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;또는&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker run hello-world
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure2.png"
+ alt="docker run hello-world 실행 화면"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure3.png"
+ alt="hello-world 컨테이너 실행 결과"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;위와 같이 run 명령어를 사용하면 hello-world 이미지를 local에서 찾고 만약 없으면 docker hub에서 이미지를 다운받고 실행시켜 컨테이너로 띄워질 것입니다 =)&lt;/p&gt;
+&lt;h3 id="docker-권한-설정"&gt;&lt;a href="#docker-%ea%b6%8c%ed%95%9c-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;Docker 권한 설정
+&lt;/h3&gt;&lt;p&gt;만약 도커 명령어 실행시 다음과 같은 문구가 나온다면 걱정하지 마세요 ㅎㅎ&lt;/p&gt;
+&lt;p&gt;이 메세지는 Docker를 root 외의 사용자가 사용할 수 있는 권한이 없어 그런 것 입니다 =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure4.png"
+ alt="권한 에러 메시지"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;우선 docker의 권한을 확인합니다.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cat /etc/group &lt;span class="p"&gt;|&lt;/span&gt; grep docker
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure5.png"
+ alt="docker 그룹 확인"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;필자의 경우 이미 사용자 권한을 추가하여 뒤에 ubuntu 라는 사용자 이름으로 권한이 추가되어 있습니다.&lt;/p&gt;
+&lt;p&gt;만약 추가가 되어 있지 않다면 &lt;code&gt;docker:x:999:&lt;/code&gt; 와 같은 문구를 확인할 수 있을 겁니다!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Docker 그룹에 사용할 사용자 아이디를 추가해줍니다&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo usermod -aG docker &lt;span class="o"&gt;[&lt;/span&gt;사용자이름&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure6.png"
+ alt="사용자 추가 명령어 실행"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;사용자이름은 예시로 필자는 위의 사진과 같이 ubuntu라는 사용자 이름으로 사용중이기에 ubuntu를 넣어 주었습니다.&lt;/p&gt;
+&lt;p&gt;Linux의 경우 기본유저이름이 ec2-user로 잡혀 있을 겁니다 =)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;시스템 재시작을 해줍니다.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;이제 docker 명령어 앞에 sudo 를 빼고 다시 버전확인을 해보도록 하겠습니다.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure7.png"
+ alt="권한 설정 후 docker version 실행"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure8.png"
+ alt="Client와 Server 정보 확인"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;다음과 같이 Client와 Server 정보가 나오면 정상적으로 권한 부여가 이루어진겁니다. =)&lt;/p&gt;
+&lt;p&gt;만약 &lt;code&gt;Got permission denied ...&lt;/code&gt; 메세지가 다시 나온다면 권한 설정이 잘 이루어지지 않을 것이니 확인을 다시 해보신 후 추가적인 에러메세지를 함께 검색해보시길 바랍니다!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;에러메세지를 댓글에 공유 해주시면 저도 함께 찾아보도록 하겠습니다 ㅎㅎ&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="windows--mac-os-docker-desktop"&gt;&lt;a href="#windows--mac-os-docker-desktop" class="header-anchor"&gt;&lt;/a&gt;Windows &amp;amp; Mac OS Docker Desktop
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;+ 추가적으로 Windows 와 Mac OS의 경우 docker desktop을 지원하여 간편한 설치를 통해 GUI를 사용할 수 있습니다!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;개인 사용자나 250인 이하 또는 $1000만 달러 미만 매출의 회사에서만 무료로 사용할 수 있다니 참고 바랍니다!&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure9.png"
+ alt="Docker Desktop"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;설치방법은 아래 공식문서 링크를 참고하세요 =)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/desktop/install/windows-install/" target="_blank" rel="noopener"
+ &gt;Install Docker Desktop on Windows - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/desktop/install/mac-install/" target="_blank" rel="noopener"
+ &gt;Install Docker Desktop on Mac - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="docker-명령어"&gt;&lt;a href="#docker-%eb%aa%85%eb%a0%b9%ec%96%b4" class="header-anchor"&gt;&lt;/a&gt;Docker 명령어
+&lt;/h2&gt;&lt;h3 id="docker-image-검색"&gt;&lt;a href="#docker-image-%ea%b2%80%ec%83%89" class="header-anchor"&gt;&lt;/a&gt;Docker Image 검색
+&lt;/h3&gt;&lt;p&gt;Docker 공식 registry인 Docker hub에서 이미지를 검색합니다.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure10.png"
+ alt="docker search 실행 화면"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker search &lt;span class="o"&gt;[&lt;/span&gt;검색 할 Image이름&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="이미지-다운받기"&gt;&lt;a href="#%ec%9d%b4%eb%af%b8%ec%a7%80-%eb%8b%a4%ec%9a%b4%eb%b0%9b%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;이미지 다운받기
+&lt;/h3&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure11.png"
+ alt="docker pull 명령어"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure12.png"
+ alt="이미지 다운로드 진행 화면"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker pull &lt;span class="o"&gt;[&lt;/span&gt;이미지이름&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;일반적으로 이미지 생성시 태그명을 따로 지정하지 않으면 default 값으로 latest가 붙습니다 =)&lt;/p&gt;
+&lt;h3 id="이미지를-docker-hub-계정에-push-하기"&gt;&lt;a href="#%ec%9d%b4%eb%af%b8%ec%a7%80%eb%a5%bc-docker-hub-%ea%b3%84%ec%a0%95%ec%97%90-push-%ed%95%98%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;이미지를 docker hub 계정에 push 하기
+&lt;/h3&gt;&lt;p&gt;필자의 경우 좀전에 받은 hello-world 이미지를 필자의 docker-hub 계정에 push 해보도록 하겠습니다.&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure13.png"
+ alt="Docker Hub repository 생성"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure14.png"
+ alt="repository 생성 완료"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;먼저 push를 하기에 앞서 docker-hub에 hello-world 라는 repository를 만들어두도록 하겠습니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker push &lt;span class="o"&gt;[&lt;/span&gt;docker-hub ID&lt;span class="o"&gt;]&lt;/span&gt;/&lt;span class="o"&gt;[&lt;/span&gt;이미지 이름&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure15.png"
+ alt="push 실패 에러 메시지"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;음&amp;hellip; 다음과 같은 메세지와 함께 이미지 push가 실패하였네요. =(&lt;/p&gt;
+&lt;p&gt;이러한 이유는 docker hub의 repository 이름과 로컬의 도커 이미지 repository 이름을 똑같게 해줘야 한다고 합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;해결방법&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure16.png"
+ alt="docker image tag 명령어 실행"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker image tag &lt;span class="o"&gt;[&lt;/span&gt;이미지 repo 이름&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;변경할 이미지 repo이름 지정&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 방식은 해당 이미지의 이름을 바꾸는 것이 아닌 이미지를 복사하여 새로운 이름의 이미지를 생성해줍니다. =)&lt;/p&gt;
+&lt;p&gt;필자의 경우 tag 부분은 변경할 repo 도 default인 latest를 사용할거기 때문에 따로 지정을 해주지 않았습니다.&lt;/p&gt;
+&lt;p&gt;다시 push를 해보도록 하겠습니다 ㅎㅎ.&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure17.png"
+ alt="push 재시도"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure18.png"
+ alt="push 성공"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;이제 정상적으로 이미지가 push 된 것을 확인할 수 있습니다! =)&lt;/p&gt;
+&lt;h3 id="다운받은-이미지-확인"&gt;&lt;a href="#%eb%8b%a4%ec%9a%b4%eb%b0%9b%ec%9d%80-%ec%9d%b4%eb%af%b8%ec%a7%80-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;다운받은 이미지 확인
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure19.png"
+ alt="docker images 명령어 실행 화면"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker images
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="docker-image를-실행하여-container로-띄우기"&gt;&lt;a href="#docker-image%eb%a5%bc-%ec%8b%a4%ed%96%89%ed%95%98%ec%97%ac-container%eb%a1%9c-%eb%9d%84%ec%9a%b0%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;Docker image를 실행하여 container로 띄우기
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure20.png"
+ alt="docker run 명령어 구조"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run -d -i -t --name &lt;span class="o"&gt;[&lt;/span&gt;생성할 컨테이너 name 설정&lt;span class="o"&gt;]&lt;/span&gt; -p &lt;span class="o"&gt;[&lt;/span&gt;host port:container port&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;image name or ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;필자의 경우 이미 springboot project를 docker image로 빌드 해둔 것이 있어 해당 image를 실행시켜 컨테이너로 띄워보도록 하겠습니다. =)&lt;/p&gt;
+&lt;p&gt;일반적으로는 &lt;code&gt;-i&lt;/code&gt; &lt;code&gt;-t&lt;/code&gt; 옵션을 함께 사용하여 &lt;code&gt;-it&lt;/code&gt; 이렇게 옵션을 주기도 합니다 =)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;host port&lt;/strong&gt;는 컨테이너가 띄워진 후 사용자가 접근할 외부 port이고 &lt;strong&gt;container port&lt;/strong&gt;는 다음과 같이 docker file을 이용하여 docker image를 빌드할때 지정해준 port라 생각하시면 될 것 같습니다. =)&lt;/p&gt;
+&lt;p&gt;필자의 경우 이미지를 생성할 때 .yml 파일에 존재하는 local, dev, prod 환경 중 dev환경으로 지정해주었고 해당 dev 환경의 server port는 8081로 지정해주었기 때문에 containerport를 8081로 지정해주었습니다!&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure21.png"
+ alt="Dockerfile 설정"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure22.png"
+ alt="yml 파일 설정"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;image name or ID 는 실행시킬 이미지의 이름 또는 해당 이미지의 아이디 값을 넣어주면 됩니다. =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure23.png"
+ alt="컨테이너 실행"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Docker의 다양한 옵션에 대한 내용은 아래에 정리를 해두었으니 참고 바랍니다 !&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이제 이미지를 실행 시켰으니 컨테이너가 잘 띄워 졌는지 확인을 해봐야 겠죠?&lt;/p&gt;
+&lt;h3 id="실행중인-컨테이너-확인"&gt;&lt;a href="#%ec%8b%a4%ed%96%89%ec%a4%91%ec%9d%b8-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;실행중인 컨테이너 확인
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure24.png"
+ alt="docker ps 명령어"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker ps
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure25.png"
+ alt="브라우저 접속 화면"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;컨테이너가 실행된 후 &lt;code&gt;http://[public ip]:8080&lt;/code&gt; 으로 접속을 하니 서버가 잘 띄워진 것을 확인 할 수 있습니다! =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure26.png"
+ alt="API 응답 확인"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;또한 현재 띄워진 서버의 운영 환경이 dockerfile에서 지정해준 dev1 환경이라는 것을 만들어둔 api를 통해 확인할 수 있었습니다. =)&lt;/p&gt;
+&lt;h3 id="포트-매핑-실험"&gt;&lt;a href="#%ed%8f%ac%ed%8a%b8-%eb%a7%a4%ed%95%91-%ec%8b%a4%ed%97%98" class="header-anchor"&gt;&lt;/a&gt;포트 매핑 실험
+&lt;/h3&gt;&lt;p&gt;그럼 여기서 추가적으로 실험을 하나더 해보도록 하겠습니다. 필자는 아까 말했듯이 docker file에서 dev1으로 운영환경을 지정해주었고 해당 dockerfile을 통해 빌드된 이미지는 내부적으로 server port가 8081 인 이미지 입니다.&lt;/p&gt;
+&lt;p&gt;그럼 이 이미지를 실행시킬 때 &lt;code&gt;-p 8080:8080&lt;/code&gt; 으로 container port를 8081이 아닌 8080으로 주게되면 어떻게 될까요??&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure27.png"
+ alt="잘못된 포트 매핑 실행"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure28.png"
+ alt="컨테이너는 실행됨"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;우선 컨테이너는 정상적으로 띄워졌군요!&lt;/p&gt;
+&lt;p&gt;그럼 해당 서버의 ip와 외부접근 port인 8080으로 접근을 시도해보도록 하겠습니다!&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure29.png"
+ alt="서버 접속 실패"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;이번에는 컨테이너는 정상적으로 띄워 졌지만 서버는 제대로 작동을 하지 않는 것 같군요 =)&lt;/p&gt;
+&lt;p&gt;이렇게 dockerfile에서 설정한 운영환경 지정이 제대로 동작하는 것을 확인 할 수 있습니다!&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="기본적인-docker-명령어"&gt;&lt;a href="#%ea%b8%b0%eb%b3%b8%ec%a0%81%ec%9d%b8-docker-%eb%aa%85%eb%a0%b9%ec%96%b4" class="header-anchor"&gt;&lt;/a&gt;기본적인 Docker 명령어
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker pull &lt;span class="o"&gt;[&lt;/span&gt;다운받을 이미지 이름&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker push &lt;span class="o"&gt;[&lt;/span&gt;docker-hub ID&lt;span class="o"&gt;]&lt;/span&gt;/&lt;span class="o"&gt;[&lt;/span&gt;이미지 이름&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;태그&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker images
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# pull 또는 run을 통해 다운받아 local에 존재하는 image들을 확인할 수 있음&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker run -d -i -t --name &lt;span class="o"&gt;[&lt;/span&gt;생성할 컨테이너 name 설정&lt;span class="o"&gt;]&lt;/span&gt; -p &lt;span class="o"&gt;[&lt;/span&gt;host port:container port&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;image name or ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Docker image를 실행하여 컨테이너로 띄움. 만약 docker hub에 존재하는 공식이미지의 경우&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# pull을 미리 하지 않고도 local에 없으면 자동으로 다운받아 실행시켜줌.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker ps
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 이미지를 실행시켜 컨테이너로 띄워지고 실행중인 컨테이너 항목들을 보여줌&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker ps -a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 실행중인 컨테이너 외에 종료된 컨테이너 항목들을 모두 보여줌&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker stop &lt;span class="o"&gt;[&lt;/span&gt;컨테이너이름 or 컨테이너 ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 현재 실행중인 컨테이너를 중지시킴&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker start &lt;span class="o"&gt;[&lt;/span&gt;컨테이너 이름 or 컨테이너 아이디&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 종료된 컨테이너를 실행시킴&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker restart &lt;span class="o"&gt;[&lt;/span&gt;컨테이너이름 or 컨테이너 ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 실행중인 컨테이너를 재시작함&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker rm &lt;span class="o"&gt;[&lt;/span&gt;컨테이너 이름 or 컨테이너 ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 컨테이너를 삭제시킴&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 컨테이너를 삭제시키기 위해선 먼저 컨테이너를 stop 해주어야 합니다 =)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# +tip 컨테이너 ID를 입력할 경우 모두 적지 않고 2~3글자만 적어도 됩니다.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker rmi &lt;span class="o"&gt;[&lt;/span&gt;이미지이름 or 이미지 ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 이미지를 삭제합니다.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 이또한 마찬가지로 ID를 이용해 삭제할경우 2~3글자만 입력하여도 됩니다 =)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker logs &lt;span class="o"&gt;[&lt;/span&gt;컨테이너이름 or 컨테이너 ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 실행한 컨테이너의 로그를 확인할 수 있습니다&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker &lt;span class="nb"&gt;exec&lt;/span&gt; -it &lt;span class="o"&gt;[&lt;/span&gt;컨테이너ID&lt;span class="o"&gt;]&lt;/span&gt; /bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 컨테이너 내부 접근&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 종료시에는 $ exit&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="docker-명령어-옵션"&gt;&lt;a href="#docker-%eb%aa%85%eb%a0%b9%ec%96%b4-%ec%98%b5%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;Docker 명령어 옵션
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;-i&lt;/strong&gt; : &lt;code&gt;--interactive&lt;/code&gt; : 표준입력을 활성화하며, 컨테이너와 연결(attach)되어 있지 않더라도 표준입력을 유지함. 이 옵션을 통해 Bash 명령어를 입력함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-t&lt;/strong&gt; : &lt;code&gt;--tty&lt;/code&gt; : &lt;strong&gt;TTY(pseudo-TTY)&lt;/strong&gt;를 사용함. Bash를 사용하려면 이 옵션을 설정해야하고 설정하지 않으면 명령어를 입력할 순 있지만 셸이 표시되지 않음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-d&lt;/strong&gt; : &lt;code&gt;--detach&lt;/code&gt; : Detached 모드로 데몬 모드라고 부릅니다. 컨테이너가 백그라운드로 실행됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-p&lt;/strong&gt; : &lt;code&gt;--publish&lt;/code&gt; : 호스트와 컨테이너 포트를 연결합니다. &lt;strong&gt;(포트포워딩)&lt;/strong&gt; ex) &lt;code&gt;-p 80:80&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;privileged&lt;/strong&gt; : 컨테이너 안에서 호스트의 리눅스 커널 기능(Capability)을 모두 사용합니다. 이를통해 호스트의 주요 자원에 접근할 수 있음&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;rm&lt;/strong&gt; : 프로세스 종료시 컨테이너 자동 제거&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;restart&lt;/strong&gt; : 컨테이너 종료 시, 재시작 정책을 설정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-v&lt;/strong&gt; : &lt;code&gt;--volume&lt;/code&gt; : 데이터 볼륨설정으로 호스트와 컨테이너의 디렉토리를 연결하여, 파일 설정등을 호스트에서 변경하면 컨테이너 내부도 동일하게 변경사항이 적용됩니다. 싱크의 개념.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-u&lt;/strong&gt; : &lt;code&gt;--user&lt;/code&gt; : 컨테이너가 실행될 리눅스 사용자 계정 이름 또는 UID를 설정합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ex) &lt;code&gt;--user ubuntu&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;-e&lt;/strong&gt; : &lt;code&gt;--env&lt;/code&gt; : 컨테이너 내부에서 사용할 환경변수를 설정합니다. 일반적으로 설정값이나 비밀번호를 전달할 때 사용합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;link&lt;/strong&gt; : 컨테이너끼리 연결합니다. &lt;code&gt;[컨테이너명:별칭]&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ex) &lt;code&gt;--link &amp;quot;mysql:mysql&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;-h&lt;/strong&gt; : &lt;code&gt;--hostname&lt;/code&gt; : 컨테이너의 호스트 이름을 설정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-w&lt;/strong&gt; : &lt;code&gt;--workdir&lt;/code&gt; : 컨테이너 안의 프로세스가 실행될 디렉토리를 설정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-a&lt;/strong&gt; : &lt;code&gt;--attach&lt;/code&gt; : 컨테이너에 표준입력(stdin), 표준출력(stdout), 표준에러(stderr)를 연결합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-c&lt;/strong&gt; : &lt;code&gt;--cpu-shares&lt;/code&gt; : CPU 자원 분배 설정입니다. 기본값은 1024이고 각 값은 상대적으로 적용됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-m&lt;/strong&gt; : &lt;code&gt;--memory&lt;/code&gt; : 메모리 한계를 설정합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ex) &lt;code&gt;--memory=&amp;quot;100m&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;gpus&lt;/strong&gt; : 컨테이너에서 호스트의 NVIDIA GPU 를 사용할 수 있도록 설정합니다. 이 방식을 사용하기 위해선 호스트는 NVIDIA GPU가 장착된 Linux 서버 + NVIDIA driver 설치 완료 + docker 19.03.5 버전 이상이여야 합니다&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--gpus all&lt;/code&gt; : GPU 모두 사용하기&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--gpus &amp;quot;device=0.1&amp;quot;&lt;/code&gt; : GPU 지정하여 사용&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;security-opt&lt;/strong&gt; : SELinux, AppArmor 옵션을 설정합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--security-opt=&amp;quot;label:level:TopSecret&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류</title><link>https://0andwild.com/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/posts/221024_about_docker/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure1.png"
+ alt="docker"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-lead"&gt;
+ Docker는 &lt;strong&gt;오픈소스 컨테이너화 플랫폼&lt;/strong&gt;으로, 코드와 의존성을 패키징하여 다양한 컴퓨팅 환경에서 애플리케이션을 빠르고 안정적으로 실행할 수 있게 해줍니다.
+&lt;/div&gt;
+
+&lt;h2 id="-docker란"&gt;&lt;a href="#-docker%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;🐳 Docker란?
+&lt;/h2&gt;&lt;p&gt;Docker의 핵심 개념은 크게 두 가지입니다: &lt;strong&gt;컨테이너(Container)&lt;strong/&gt; 와 &lt;strong&gt;이미지(Image)&lt;strong/&gt;&lt;/p&gt;
+&lt;h3 id="docker-image-도커-이미지"&gt;&lt;a href="#docker-image-%eb%8f%84%ec%bb%a4-%ec%9d%b4%eb%af%b8%ec%a7%80" class="header-anchor"&gt;&lt;/a&gt;Docker Image (도커 이미지)
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;Docker Image&lt;/strong&gt;는 애플리케이션 실행에 필요한 코드, 런타임, 시스템 도구, 시스템 라이브러리, 설정 등을 포함하는 &lt;strong&gt;경량의 독립적인 소프트웨어 패키지&lt;/strong&gt;입니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="실제-사용-예시"&gt;&lt;a href="#%ec%8b%a4%ec%a0%9c-%ec%82%ac%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;실제 사용 예시
+&lt;/h3&gt;&lt;p&gt;기존 방식으로 Linux에 Jenkins를 설치한다면:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo apt-get install jenkins
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 명령어를 실행하면 여러 의존성 패키지들을 함께 다운로드해야 합니다.&lt;/p&gt;
+&lt;p&gt;반면 Docker를 사용하면:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker pull jenkins/jenkins:lts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;필요한 모든 구성 요소가 포함된 사전 구성된 이미지를 한 번에 다운로드할 수 있습니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-docker-registry--docker-hub"&gt;&lt;a href="#-docker-registry--docker-hub" class="header-anchor"&gt;&lt;/a&gt;📦 Docker Registry &amp;amp; Docker Hub
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;Docker Registry&lt;/strong&gt;는 Docker 이미지를 공유하는 저장소 역할을 합니다. &amp;ldquo;Docker용 GitHub&amp;quot;라고 생각하면 쉽습니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt;는 공식 Docker 레지스트리로, 벤더가 제공하는 공식 이미지들을 제공합니다.&lt;/p&gt;
+&lt;h3 id="동작-흐름"&gt;&lt;a href="#%eb%8f%99%ec%9e%91-%ed%9d%90%eb%a6%84" class="header-anchor"&gt;&lt;/a&gt;동작 흐름
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;사용자가 레지스트리에서 이미지를 다운로드&lt;/li&gt;
+&lt;li&gt;이미지를 컨테이너로 실행&lt;/li&gt;
+&lt;li&gt;하나의 컴퓨터에서 여러 개의 격리된 환경 구성 가능&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="-container-virtualization-컨테이너-가상화"&gt;&lt;a href="#-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;🔄 Container Virtualization (컨테이너 가상화)
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure2.png"
+ alt="Containerized"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;컨테이너 기술은 &amp;ldquo;하나의 시스템 내에서 여러 개의 격리된 인스턴스를 실행할 수 있게 하는 서버 가상화 방식&amp;quot;으로, 각 컨테이너는 사용자에게 개별 서버처럼 보입니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;중요한 점:&lt;/strong&gt;
+컨테이너는 Docker만의 전유물이 아닙니다. OpenVZ, Libvirt, LXC 등 다양한 컨테이너 기술이 존재합니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-가상화-방식의-종류"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d%ec%9d%98-%ec%a2%85%eb%a5%98" class="header-anchor"&gt;&lt;/a&gt;🖥️ 가상화 방식의 종류
+&lt;/h2&gt;&lt;h3 id="1-host-virtualization-호스트-가상화"&gt;&lt;a href="#1-host-virtualization-%ed%98%b8%ec%8a%a4%ed%8a%b8-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1. Host Virtualization (호스트 가상화)
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure3.png"
+ alt="Hosted Vitualization Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+Guest OS가 Host OS 위에서 가상화 소프트웨어를 통해 실행됩니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;예시: VM Workstation, VMware Player, VirtualBox 등&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;설치 및 구성이 간단함&lt;/li&gt;
+&lt;li&gt;하드웨어 에뮬레이션으로 최소한의 호스트 요구사항&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OS 위에 OS를 실행하므로 리소스 집약적&lt;/li&gt;
+&lt;li&gt;성능 오버헤드가 큼&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="2-hypervisor-virtualization-하이퍼바이저-가상화"&gt;&lt;a href="#2-hypervisor-virtualization-%ed%95%98%ec%9d%b4%ed%8d%bc%eb%b0%94%ec%9d%b4%ec%a0%80-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;2. Hypervisor Virtualization (하이퍼바이저 가상화)
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure4.png"
+ alt="HypervisorVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;하이퍼바이저 가상화의 두 가지 접근 방식:&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id="1-full-virtualization-전가상화"&gt;&lt;a href="#1-full-virtualization-%ec%a0%84%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1) Full Virtualization (전가상화)
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS가 하드웨어에 직접 접근하지 않고 하이퍼바이저를 통해 접근&lt;/li&gt;
+&lt;li&gt;더 안정적이지만 성능 오버헤드 존재&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-paravirtualization-반가상화"&gt;&lt;a href="#2-paravirtualization-%eb%b0%98%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;2) Paravirtualization (반가상화)
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS가 하이퍼바이저를 통해 하드웨어에 직접 접근&lt;/li&gt;
+&lt;li&gt;더 빠르지만 OS 수정 필요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Host OS가 없어 더 효율적&lt;/li&gt;
+&lt;li&gt;리소스를 더 효과적으로 활용&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;시작 시간이 느림&lt;/li&gt;
+&lt;li&gt;각 VM이 독립적인 OS를 실행하므로 여전히 리소스 소모가 큼&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="3-container-virtualization-컨테이너-가상화-"&gt;&lt;a href="#3-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94-" class="header-anchor"&gt;&lt;/a&gt;3. Container Virtualization (컨테이너 가상화) ⭐
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure5.png"
+ alt="ContainerVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+애플리케이션들이 호스트 OS 커널을 공유하면서도 격리된 환경을 유지합니다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;경량&lt;/strong&gt;: 일반적으로 수십 MB (VM은 수십 GB)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;빠른 시작 속도&lt;/strong&gt;: 별도의 OS 부팅이 필요 없음&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;적은 리소스 사용&lt;/strong&gt;: 시스템 리소스를 효율적으로 활용&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;높은 밀도&lt;/strong&gt;: 같은 하드웨어에서 더 많은 컨테이너 실행 가능&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;호스트 시스템과 동일한 OS 환경이 필요함&lt;/li&gt;
+&lt;li&gt;크로스 플랫폼 배포가 어려울 수 있음 (예: Linux 컨테이너는 Linux 호스트 필요)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="-가상화-방식-비교"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;📊 가상화 방식 비교
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;구분&lt;/th&gt;
+ &lt;th&gt;호스트 가상화&lt;/th&gt;
+ &lt;th&gt;하이퍼바이저 가상화&lt;/th&gt;
+ &lt;th&gt;컨테이너 가상화&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;용량&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;수십 GB&lt;/td&gt;
+ &lt;td&gt;수십 GB&lt;/td&gt;
+ &lt;td&gt;수십 MB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;시작 속도&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;느림&lt;/td&gt;
+ &lt;td&gt;느림&lt;/td&gt;
+ &lt;td&gt;매우 빠름&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;리소스 사용&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;td&gt;낮음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;격리 수준&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;이식성&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;낮음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;설정 난이도&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;쉬움&lt;/td&gt;
+ &lt;td&gt;어려움&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-정리"&gt;&lt;a href="#-%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;💡 정리
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Docker 컨테이너 가상화의 핵심 가치:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;효율성&lt;/strong&gt;: 기존 가상화 방식보다 훨씬 적은 리소스로 동일한 기능 제공&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;속도&lt;/strong&gt;: 애플리케이션을 몇 초 안에 시작하고 중지 가능&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;일관성&lt;/strong&gt;: 개발, 테스트, 프로덕션 환경에서 동일하게 실행&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;확장성&lt;/strong&gt;: 필요에 따라 컨테이너를 쉽게 추가하거나 제거&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Docker는 현대적인 애플리케이션 개발과 배포의 핵심 도구로, DevOps와 마이크로서비스 아키텍처의 기반이 되고 있습니다.&lt;/p&gt;</description></item></channel></rss>

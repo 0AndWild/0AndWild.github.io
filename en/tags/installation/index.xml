@@ -1,1 +1,272 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Installation on 0AndWild_log</title><link>https://0andwild.com/en/tags/installation/</link><description>Recent content in Installation on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 25 Oct 2022 17:59:31 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/installation/index.xml" rel="self" type="application/rss+xml"/><item><title>Docker Installation &amp; Command Usage Complete Guide</title><link>https://0andwild.com/en/posts/221025_docker_command/</link><pubDate>Tue, 25 Oct 2022 17:59:31 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_docker_command/</guid><description>A practical guide detailing essential commands and options from Docker installation to image management and container execution</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221025_docker_command/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Installation on 0AndWild_log</title><link>https://0andwild.com/en/tags/installation/</link><description>Recent content in Installation on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 25 Oct 2022 17:59:31 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/installation/index.xml" rel="self" type="application/rss+xml"/><item><title>Docker Installation &amp; Command Usage Complete Guide</title><link>https://0andwild.com/en/posts/221025_docker_command/</link><pubDate>Tue, 25 Oct 2022 17:59:31 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_docker_command/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Docker Installation &amp; Command Usage Complete Guide" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/featured.png"
+ alt="docker"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Following up on the previous post, I&amp;rsquo;d like to organize Docker commands and usage methods =)&lt;/p&gt;
+&lt;h2 id="installing-docker"&gt;&lt;a href="#installing-docker" class="header-anchor"&gt;&lt;/a&gt;Installing Docker
+&lt;/h2&gt;&lt;p&gt;First, we need to install Docker to use it, right?&lt;/p&gt;
+&lt;p&gt;In my case, I installed Docker in an Ubuntu environment using an AWS EC2 instance.&lt;/p&gt;
+&lt;p&gt;If you need installation instructions for Ubuntu or other environments, please refer to the official documentation below!&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/engine/install/ubuntu/" target="_blank" rel="noopener"
+ &gt;Install Docker Engine on Ubuntu - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="removing-old-docker-versions-and-installing-new-version"&gt;&lt;a href="#removing-old-docker-versions-and-installing-new-version" class="header-anchor"&gt;&lt;/a&gt;Removing Old Docker Versions and Installing New Version
+&lt;/h3&gt;&lt;p&gt;If you want to remove the old version of Docker and install the new version, use the following commands to remove the old version.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;For Ubuntu&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get remove docker docker-engine docker.io containerd runc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Update repository&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Install packages to allow apt to use repository over https&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Add Docker&amp;rsquo;s official GPG key to apt&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -fsSL https://download.docker.com/linux/ubuntu/gpg &lt;span class="p"&gt;|&lt;/span&gt; sudo apt-key add -
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Add Docker repository&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo add-apt-repository &lt;span class="s2"&gt;&amp;#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;lsb_release -cs&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt; stable&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Update apt to reflect the changes&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Install Docker&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;After completing the Docker installation with the above commands, we need to verify it!&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure1.png"
+ alt="docker version command execution screen"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker run hello-world
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure2.png"
+ alt="docker run hello-world execution screen"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure3.png"
+ alt="hello-world container execution result"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;When you use the run command as above, it will search for the hello-world image locally, and if it doesn&amp;rsquo;t exist, it will download the image from Docker Hub and run it as a container =)&lt;/p&gt;
+&lt;h3 id="docker-permission-settings"&gt;&lt;a href="#docker-permission-settings" class="header-anchor"&gt;&lt;/a&gt;Docker Permission Settings
+&lt;/h3&gt;&lt;p&gt;If you see the following message when executing Docker commands, don&amp;rsquo;t worry haha&lt;/p&gt;
+&lt;p&gt;This message appears because users other than root don&amp;rsquo;t have permission to use Docker =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure4.png"
+ alt="permission error message"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;First, check Docker permissions.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cat /etc/group &lt;span class="p"&gt;|&lt;/span&gt; grep docker
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure5.png"
+ alt="check docker group"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;In my case, I&amp;rsquo;ve already added user permissions, so you can see the username &amp;ldquo;ubuntu&amp;rdquo; added at the end.&lt;/p&gt;
+&lt;p&gt;If it&amp;rsquo;s not added, you&amp;rsquo;ll see something like &lt;code&gt;docker:x:999:&lt;/code&gt;!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Add your user ID to the Docker group&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo usermod -aG docker &lt;span class="o"&gt;[&lt;/span&gt;username&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure6.png"
+ alt="add user command execution"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;For the username, as shown in the example above, I used &amp;ldquo;ubuntu&amp;rdquo; as my username.&lt;/p&gt;
+&lt;p&gt;For Linux, the default username is typically set to ec2-user =)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Reboot the system.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Now let&amp;rsquo;s check the version again without sudo before the docker command.&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure7.png"
+ alt="docker version execution after permission setup"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure8.png"
+ alt="verify Client and Server information"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;If you see both Client and Server information as shown above, the permissions have been successfully granted. =)&lt;/p&gt;
+&lt;p&gt;If you still see the &lt;code&gt;Got permission denied ...&lt;/code&gt; message, the permission settings were not properly configured, so please check again and search for any additional error messages!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;If you share error messages in the comments, I&amp;rsquo;ll help you troubleshoot them too haha&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="windows--mac-os-docker-desktop"&gt;&lt;a href="#windows--mac-os-docker-desktop" class="header-anchor"&gt;&lt;/a&gt;Windows &amp;amp; Mac OS Docker Desktop
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;+ Additionally, Windows and Mac OS support Docker Desktop, which provides an easy installation with a GUI!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Please note that it&amp;rsquo;s only free for individual users, companies with fewer than 250 employees, or companies with less than $10 million in revenue!&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure9.png"
+ alt="Docker Desktop"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;For installation instructions, please refer to the official documentation links below =)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/desktop/install/windows-install/" target="_blank" rel="noopener"
+ &gt;Install Docker Desktop on Windows - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.docker.com/desktop/install/mac-install/" target="_blank" rel="noopener"
+ &gt;Install Docker Desktop on Mac - docs.docker.com&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="docker-commands"&gt;&lt;a href="#docker-commands" class="header-anchor"&gt;&lt;/a&gt;Docker Commands
+&lt;/h2&gt;&lt;h3 id="docker-image-search"&gt;&lt;a href="#docker-image-search" class="header-anchor"&gt;&lt;/a&gt;Docker Image Search
+&lt;/h3&gt;&lt;p&gt;Search for images in Docker Hub, Docker&amp;rsquo;s official registry.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure10.png"
+ alt="docker search execution screen"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker search &lt;span class="o"&gt;[&lt;/span&gt;Image name to search&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="download-image"&gt;&lt;a href="#download-image" class="header-anchor"&gt;&lt;/a&gt;Download Image
+&lt;/h3&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure11.png"
+ alt="docker pull command"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure12.png"
+ alt="image download progress screen"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker pull &lt;span class="o"&gt;[&lt;/span&gt;image name&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Generally, if you don&amp;rsquo;t specify a tag name when creating an image, the default value &amp;ldquo;latest&amp;rdquo; is attached =)&lt;/p&gt;
+&lt;h3 id="push-image-to-docker-hub-account"&gt;&lt;a href="#push-image-to-docker-hub-account" class="header-anchor"&gt;&lt;/a&gt;Push Image to Docker Hub Account
+&lt;/h3&gt;&lt;p&gt;In my case, I&amp;rsquo;ll push the hello-world image I just downloaded to my docker-hub account.&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure13.png"
+ alt="Docker Hub repository creation"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure14.png"
+ alt="repository creation complete"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;Before pushing, let&amp;rsquo;s create a repository called hello-world on docker-hub.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker push &lt;span class="o"&gt;[&lt;/span&gt;docker-hub ID&lt;span class="o"&gt;]&lt;/span&gt;/&lt;span class="o"&gt;[&lt;/span&gt;image name&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure15.png"
+ alt="push failed error message"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Hmm&amp;hellip; the image push failed with the following message. =(&lt;/p&gt;
+&lt;p&gt;The reason is that the repository name on Docker Hub and the local Docker image repository name must match.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Solution&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure16.png"
+ alt="docker image tag command execution"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker image tag &lt;span class="o"&gt;[&lt;/span&gt;image repo name&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;new image repo name&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This method doesn&amp;rsquo;t rename the image but copies it and creates a new image with a new name. =)&lt;/p&gt;
+&lt;p&gt;In my case, I didn&amp;rsquo;t specify the tag part separately because the changed repo will also use the default &amp;ldquo;latest&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s try pushing again haha.&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure17.png"
+ alt="push retry"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure18.png"
+ alt="push success"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;Now you can see that the image has been pushed successfully! =)&lt;/p&gt;
+&lt;h3 id="check-downloaded-images"&gt;&lt;a href="#check-downloaded-images" class="header-anchor"&gt;&lt;/a&gt;Check Downloaded Images
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure19.png"
+ alt="docker images command execution screen"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker images
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="run-docker-image-as-container"&gt;&lt;a href="#run-docker-image-as-container" class="header-anchor"&gt;&lt;/a&gt;Run Docker Image as Container
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure20.png"
+ alt="docker run command structure"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run -d -i -t --name &lt;span class="o"&gt;[&lt;/span&gt;container name&lt;span class="o"&gt;]&lt;/span&gt; -p &lt;span class="o"&gt;[&lt;/span&gt;host port:container port&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;image name or ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In my case, I already have a Spring Boot project built as a Docker image, so I&amp;rsquo;ll run that image as a container. =)&lt;/p&gt;
+&lt;p&gt;Generally, the &lt;code&gt;-i&lt;/code&gt; and &lt;code&gt;-t&lt;/code&gt; options are used together as &lt;code&gt;-it&lt;/code&gt; =)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;host port&lt;/strong&gt; is the external port that users will access after the container is launched, and &lt;strong&gt;container port&lt;/strong&gt; is the port specified when building the Docker image using a Dockerfile. =)&lt;/p&gt;
+&lt;p&gt;In my case, when creating the image, I specified the dev environment among the local, dev, and prod environments in the .yml file, and the server port for that dev environment was set to 8081, so I specified the containerport as 8081!&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure21.png"
+ alt="Dockerfile configuration"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure22.png"
+ alt="yml file configuration"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;For image name or ID, you can enter the name of the image to run or its ID value. =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure23.png"
+ alt="container execution"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Various Docker options are organized below, so please refer to them!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Now that we&amp;rsquo;ve run the image, we need to check if the container is running properly, right?&lt;/p&gt;
+&lt;h3 id="check-running-containers"&gt;&lt;a href="#check-running-containers" class="header-anchor"&gt;&lt;/a&gt;Check Running Containers
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure24.png"
+ alt="docker ps command"&gt;
+&lt;/figure&gt;
+
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker ps
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure25.png"
+ alt="browser access screen"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;After the container is running, when I access &lt;code&gt;http://[public ip]:8080&lt;/code&gt;, I can confirm that the server is running well! =)&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure26.png"
+ alt="API response confirmation"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;I was also able to confirm through the API I created that the operating environment of the currently running server is the dev1 environment specified in the dockerfile. =)&lt;/p&gt;
+&lt;h3 id="port-mapping-experiment"&gt;&lt;a href="#port-mapping-experiment" class="header-anchor"&gt;&lt;/a&gt;Port Mapping Experiment
+&lt;/h3&gt;&lt;p&gt;Let me do one more experiment here. As I mentioned earlier, I specified dev1 as the operating environment in the Docker file, and the image built through that dockerfile internally has a server port of 8081.&lt;/p&gt;
+&lt;p&gt;So what happens if I run this image with &lt;code&gt;-p 8080:8080&lt;/code&gt;, setting the container port to 8080 instead of 8081??&lt;/p&gt;
+&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure27.png"
+ alt="incorrect port mapping execution"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure28.png"
+ alt="container is running"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;First, the container launched successfully!&lt;/p&gt;
+&lt;p&gt;Now let&amp;rsquo;s try accessing the server&amp;rsquo;s IP and external access port 8080!&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_docker_command/figure29.png"
+ alt="server access failed"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;This time, the container launched successfully, but the server doesn&amp;rsquo;t seem to be working properly =)&lt;/p&gt;
+&lt;p&gt;This confirms that the operating environment settings specified in the dockerfile are working correctly!&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="basic-docker-commands"&gt;&lt;a href="#basic-docker-commands" class="header-anchor"&gt;&lt;/a&gt;Basic Docker Commands
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker pull &lt;span class="o"&gt;[&lt;/span&gt;image name to download&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker push &lt;span class="o"&gt;[&lt;/span&gt;docker-hub ID&lt;span class="o"&gt;]&lt;/span&gt;/&lt;span class="o"&gt;[&lt;/span&gt;image name&lt;span class="o"&gt;]&lt;/span&gt;:&lt;span class="o"&gt;[&lt;/span&gt;tag&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker images
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# View images that exist locally, downloaded via pull or run&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker run -d -i -t --name &lt;span class="o"&gt;[&lt;/span&gt;container name&lt;span class="o"&gt;]&lt;/span&gt; -p &lt;span class="o"&gt;[&lt;/span&gt;host port:container port&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;image name or ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Run Docker image as a container. For official images on Docker Hub,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# it will automatically download and run them if they don&amp;#39;t exist locally.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker ps
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Show running containers that are launched from images&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker ps -a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Show all containers including stopped ones, in addition to running containers&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker stop &lt;span class="o"&gt;[&lt;/span&gt;container name or container ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Stop currently running container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker start &lt;span class="o"&gt;[&lt;/span&gt;container name or container ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Start a stopped container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker restart &lt;span class="o"&gt;[&lt;/span&gt;container name or container ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Restart a running container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker rm &lt;span class="o"&gt;[&lt;/span&gt;container name or container ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Delete a container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# To delete a container, you must first stop the container =)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# +tip: When entering container ID, you only need to type 2-3 characters&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker rmi &lt;span class="o"&gt;[&lt;/span&gt;image name or image ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Delete an image&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Similarly, when using ID to delete, you only need to enter 2-3 characters =)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker logs &lt;span class="o"&gt;[&lt;/span&gt;container name or container ID&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# View logs of the running container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo docker &lt;span class="nb"&gt;exec&lt;/span&gt; -it &lt;span class="o"&gt;[&lt;/span&gt;container ID&lt;span class="o"&gt;]&lt;/span&gt; /bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Access container internally&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# To exit: $ exit&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="docker-command-options"&gt;&lt;a href="#docker-command-options" class="header-anchor"&gt;&lt;/a&gt;Docker Command Options
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s take a look at Docker command options!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-i&lt;/strong&gt; : &lt;code&gt;--interactive&lt;/code&gt; : Activates standard input and keeps standard input open even when not attached to the container. Use this option to enter Bash commands.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-t&lt;/strong&gt; : &lt;code&gt;--tty&lt;/code&gt; : Use &lt;strong&gt;TTY(pseudo-TTY)&lt;/strong&gt;. This option must be set to use Bash; without it, you can enter commands but the shell won&amp;rsquo;t be displayed.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-d&lt;/strong&gt; : &lt;code&gt;--detach&lt;/code&gt; : Detached mode, also called daemon mode. The container runs in the background.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-p&lt;/strong&gt; : &lt;code&gt;--publish&lt;/code&gt; : Connect host and container ports. &lt;strong&gt;(Port forwarding)&lt;/strong&gt; ex) &lt;code&gt;-p 80:80&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;privileged&lt;/strong&gt; : Use all Linux kernel capabilities (Capability) of the host inside the container. This allows access to the host&amp;rsquo;s main resources.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;rm&lt;/strong&gt; : Automatically remove container when process terminates&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;restart&lt;/strong&gt; : Set restart policy when container terminates.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-v&lt;/strong&gt; : &lt;code&gt;--volume&lt;/code&gt; : Data volume setting that connects host and container directories, so changes made on the host are applied identically inside the container. Concept of synchronization.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-u&lt;/strong&gt; : &lt;code&gt;--user&lt;/code&gt; : Set the Linux user account name or UID under which the container will run. ex) &lt;code&gt;--user ubuntu&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-e&lt;/strong&gt; : &lt;code&gt;--env&lt;/code&gt; : Set environment variables to use inside the container. Generally used to pass configuration values or passwords.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;link&lt;/strong&gt; : Connect containers. &lt;code&gt;[container name:alias]&lt;/code&gt; ex) &lt;code&gt;--link &amp;quot;mysql:mysql&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-h&lt;/strong&gt; : &lt;code&gt;--hostname&lt;/code&gt; : Set the hostname of the container.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-w&lt;/strong&gt; : &lt;code&gt;--workdir&lt;/code&gt; : Set the directory where the process inside the container will run.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-a&lt;/strong&gt; : &lt;code&gt;--attach&lt;/code&gt; : Connect standard input (stdin), standard output (stdout), and standard error (stderr) to the container.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-c&lt;/strong&gt; : &lt;code&gt;--cpu-shares&lt;/code&gt; : CPU resource allocation setting. Default is 1024, and each value is applied relatively.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-m&lt;/strong&gt; : &lt;code&gt;--memory&lt;/code&gt; : Set memory limit. ex) &lt;code&gt;--memory=&amp;quot;100m&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;gpus&lt;/strong&gt; : Configure the container to use the host&amp;rsquo;s NVIDIA GPU. To use this method, the host must have: NVIDIA GPU-equipped Linux server + NVIDIA driver installed + Docker version 19.03.5 or higher&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--gpus all&lt;/code&gt; : Use all GPUs&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--gpus &amp;quot;device=0.1&amp;quot;&lt;/code&gt; : Use specified GPU&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&amp;ndash;security-opt&lt;/strong&gt; : Configure SELinux and AppArmor options. ex) &lt;code&gt;--security-opt=&amp;quot;label:level:TopSecret&amp;quot;&lt;/code&gt;&lt;/p&gt;</description></item></channel></rss>

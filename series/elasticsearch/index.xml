@@ -1,1 +1,858 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ElasticSearch on 0AndWild_log</title><link>https://0andwild.com/series/elasticsearch/</link><description>Recent content in ElasticSearch on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/series/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting 기법</title><link>https://0andwild.com/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/posts/240207_es/</guid><description>Unified, Plain, FVH 등 Elasticsearch의 3가지 하이라이터 방식과 Postings List, Term Vectors를 활용한 효율적인 오프셋 전략</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240207_es/featured.png"/></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>From/Size, Search After, Scroll 등 Elasticsearch의 페이지네이션 방식을 비교하고 PIT(Point In Time)를 활용한 안정적인 페이징 구현 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240206_es/featured.png"/></item><item><title>Elasticsearch 자동완성 검색 처리 방법</title><link>https://0andwild.com/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/posts/240204_es/</guid><description>Edge N-Gram, Search-as-you-type, Completion Suggester 등 Elasticsearch의 자동완성 구현 방법을 비교하고 상황별 최적의 선택 가이드</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240204_es/featured.png"/></item><item><title>Elasticsearch Query 처리 순서</title><link>https://0andwild.com/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/posts/240203_es_query/</guid><description>Elasticsearch에서 Query, Filter, PostFilter의 실행 순서와 Aggregation에 미치는 영향</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240203_es_query/featured.png"/></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>Elasticsearch Analyzer를 구성하는 Token Filter의 종류와 설정 방법.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer3/featured.png"/></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>Elasticsearch Analyzer를 구성하는 Tokenizer의 다양한 종류와 설정 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer2/featured.png"/></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer1/</guid><description>Elasticsearch Analyzer를 구성하는 Character Filter의 다양한 종류와 설정 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer1/featured.png"/></item><item><title>ElasticSearch 란?</title><link>https://0andwild.com/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/posts/240201_es/</guid><description>Elasticsearch의 기본 개념, ELK 스택, RDB와의 비교, 그리고 클러스터/노드/샤드 등 핵심 구조.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240201_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ElasticSearch on 0AndWild_log</title><link>https://0andwild.com/series/elasticsearch/</link><description>Recent content in ElasticSearch on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/series/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting 기법</title><link>https://0andwild.com/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/posts/240207_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Highlighting 기법" /&gt;&lt;h2 id="1-kind-of-highlighter"&gt;&lt;a href="#1-kind-of-highlighter" class="header-anchor"&gt;&lt;/a&gt;1) Kind of Highlighter
+&lt;/h2&gt;&lt;p&gt;ES에서는 검색 결과에 대한 강조 표시를 지원하고 있으며 3가지 방식을 지원을 함.&lt;/p&gt;
+&lt;p&gt;아래 타입은 Highlight 할 필드마다 각각 따로 적용할 수 있음&lt;/p&gt;
+&lt;h3 id="unified-default--기본-하이라이터"&gt;&lt;a href="#unified-default--%ea%b8%b0%eb%b3%b8-%ed%95%98%ec%9d%b4%eb%9d%bc%ec%9d%b4%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Unified (Default : 기본 하이라이터)
+&lt;/h3&gt;&lt;p&gt;통합 형광펜은 Lucene 통합 형광펜을 사용함. 이 하이라이터는 텍스트를 문장으로 나누고 BM25 알고리즘을 사용해 마치 말뭉치에 있는 문서처럼 개별 문장에 점수를 매김. 또한 정확한 구문 및 다중 용어(퍼지, 접두사, 정규식) 하이라이트를 지원함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BM25 알고리즘 기반 문장 점수 매기기&lt;/li&gt;
+&lt;li&gt;정확한 구문 하이라이트 지원&lt;/li&gt;
+&lt;li&gt;다중 용어 쿼리 지원 (퍼지, 접두사, 정규식)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain"&gt;&lt;a href="#plain" class="header-anchor"&gt;&lt;/a&gt;Plain
+&lt;/h3&gt;&lt;p&gt;일반 형광펜은 단일 필드에서 간단한 쿼리 일치 항목을 강조 표시하는 데 가장 적합.&lt;/p&gt;
+&lt;p&gt;쿼리 로직을 정확하게 반영하기 위해 작은 &lt;strong&gt;인메모리 인덱스를 생성&lt;/strong&gt;하고 Lucene의 쿼리 실행 플래너를 통해 &lt;strong&gt;원래 쿼리 기준을 다시 실행&lt;/strong&gt;하여 현재 문서에 대한 낮은 수준의 일치 정보에 액세스함함.&lt;/p&gt;
+&lt;p&gt;이 작업은 &lt;strong&gt;강조 표시해야 하는 모든 필드와 모든 문서에 대해 반복&lt;/strong&gt;됨. 복잡한 쿼리가 있는 많은 문서에서 많은 필드를 강조 표시하려면 게시글 또는 term_vector 필드에 통합 형광펜을 사용하는 것이 좋음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;단일 필드의 간단한 쿼리에 적합&lt;/li&gt;
+&lt;li&gt;인메모리 인덱스 생성&lt;/li&gt;
+&lt;li&gt;모든 필드와 문서에 대해 반복 실행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="fvh-fast-vector-highlighter"&gt;&lt;a href="#fvh-fast-vector-highlighter" class="header-anchor"&gt;&lt;/a&gt;FVH (Fast Vector Highlighter)
+&lt;/h3&gt;&lt;p&gt;fvh 형광펜은 Lucene 고속 벡터 형광펜을 사용함. 이 형광펜은 매핑에서 &lt;code&gt;term_vector&lt;/code&gt;가 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정된 필드에 사용할 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;boundary_scanner&lt;/code&gt;로 사용자 지정 가능&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;term_vector&lt;/code&gt;를 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정해야 하므로 인덱스 크기가 커짐&lt;/li&gt;
+&lt;li&gt;여러 필드에서 일치하는 항목을 하나의 결과로 결합 가능 (&lt;code&gt;matched_fields&lt;/code&gt; 참조)&lt;/li&gt;
+&lt;li&gt;구문 일치를 용어 일치보다 부스팅하는 부스팅 쿼리를 강조 표시할 때 구문 일치가 용어 일치보다 정렬되는 것과 같이 서로 다른 위치의 일치에 서로 다른 가중치를 할당 가능&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;주의&lt;/strong&gt;: fvh 형광펜은 스팬 쿼리를 지원하지 않음. 스팬 쿼리에 대한 지원이 필요한 경우 통합형 하이라이터와 같은 다른 하이라이터를 사용.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="2-offsets-strategy"&gt;&lt;a href="#2-offsets-strategy" class="header-anchor"&gt;&lt;/a&gt;2) Offsets Strategy
+&lt;/h2&gt;&lt;p&gt;검색 중인 용어에서 의미 있는 검색 스니펫을 만들려면 하이라이터가 원본 텍스트에서 각 단어의 시작 및 끝 문자 오프셋을 알아야 함. 이러한 오프셋은 다음에서 얻을 수 있음.&lt;/p&gt;
+&lt;h3 id="postings-list-글-목록"&gt;&lt;a href="#postings-list-%ea%b8%80-%eb%aa%a9%eb%a1%9d" class="header-anchor"&gt;&lt;/a&gt;Postings List (글 목록)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;매핑에서 &lt;code&gt;index_options&lt;/code&gt;가 &lt;code&gt;offsets&lt;/code&gt;로 설정&lt;/strong&gt;되어 있으면 통합 하이라이터는 이 정보를 사용하여 텍스트를 다시 분석하지 않고 문서를 강조 표시함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;원래 쿼리를 글에 대해 직접 다시 실행하고 색인에서 일치하는 오프셋을 추출하여 컬렉션을 강조 표시된 문서로 제한&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;강조 표시할 텍스트를 다시 분석할 필요가 없으므로 큰 필드가 있는 경우에 유용&lt;/strong&gt;. 또한 &lt;strong&gt;&lt;code&gt;term_vectors&lt;/code&gt;를 사용할 때보다 디스크 공간도 덜 필요&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;텍스트 재분석 불필요&lt;/li&gt;
+&lt;li&gt;큰 필드에 유용&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;term_vectors&lt;/code&gt;보다 디스크 공간 절약&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="term-vectors-용어-벡터"&gt;&lt;a href="#term-vectors-%ec%9a%a9%ec%96%b4-%eb%b2%a1%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Term Vectors (용어 벡터)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;매핑에서 &lt;code&gt;term_vector&lt;/code&gt;를 &lt;code&gt;with_positions_offsets&lt;/code&gt;로 설정&lt;/strong&gt;하여 용어 벡터 정보를 제공하면 &lt;strong&gt;unified 하이라이터가 자동으로 용어 벡터를 사용&lt;/strong&gt;하여 필드를 강조 표시함.&lt;/p&gt;
+&lt;p&gt;각 문서의 용어 사전에 액세스할 수 있기 때문에 &lt;strong&gt;특히 대용량 필드(1MB 초과)나 접두사 또는 와일드카드&lt;/strong&gt;와 같은 다중 용어 쿼리를 강조 표시할 때 빠름.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;fvh 하이라이터는 항상 용어 벡터를 사용&lt;/strong&gt;함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;대용량 필드(1MB 초과)에 빠른 성능&lt;/li&gt;
+&lt;li&gt;다중 용어 쿼리에 효율적 (접두사, 와일드카드)&lt;/li&gt;
+&lt;li&gt;문서의 용어 사전 직접 액세스&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain-highlighting-일반-하이라이팅"&gt;&lt;a href="#plain-highlighting-%ec%9d%bc%eb%b0%98-%ed%95%98%ec%9d%b4%eb%9d%bc%ec%9d%b4%ed%8c%85" class="header-anchor"&gt;&lt;/a&gt;Plain Highlighting (일반 하이라이팅)
+&lt;/h3&gt;&lt;p&gt;이 모드는 &lt;strong&gt;다른 대안이 없을 때 통합에서 사용&lt;/strong&gt;함.&lt;/p&gt;
+&lt;p&gt;작은 인메모리 인덱스를 생성하고 Lucene의 쿼리 실행 플래너를 통해 원래 쿼리 기준을 다시 실행하여 현재 문서에 대한 낮은 수준의 일치 정보에 액세스함함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;이 작업은 강조 표시가 필요한 모든 필드와 모든 문서에 대해 반복&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;plain highlighter은 항상 plain highlighting을 사용&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;다른 옵션이 없을 때 사용&lt;/li&gt;
+&lt;li&gt;인메모리 인덱스 생성&lt;/li&gt;
+&lt;li&gt;모든 필드/문서에 대해 반복 실행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://elastic.co/guide/en/elasticsearch/reference/current/highlighting.html#boundary-scanners" target="_blank" rel="noopener"
+ &gt;Highlighting | Elasticsearch Guide [8.13]&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Pagination Technique" /&gt;&lt;h2 id="elasticsearch-pagination-3가지-옵션"&gt;&lt;a href="#elasticsearch-pagination-3%ea%b0%80%ec%a7%80-%ec%98%b5%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;ElasticSearch Pagination 3가지 옵션
+&lt;/h2&gt;&lt;h3 id="1-fromsize-pagination"&gt;&lt;a href="#1-fromsize-pagination" class="header-anchor"&gt;&lt;/a&gt;1. From/Size Pagination
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;from&lt;/code&gt; + &lt;code&gt;size&lt;/code&gt; = offset 방식으로 그때그때 메모리에 적재하여 검색을 함. 최대 10,000건까지 지원&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-modules.html#index-max-result-window" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;index.max_result_window&lt;/code&gt;&lt;/a&gt; 옵션을 사용하여 10,000건 이상을 로드할 수 있지만 추천하지 않음&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;간단한 구현&lt;/li&gt;
+&lt;li&gt;최대 10,000건 제한&lt;/li&gt;
+&lt;li&gt;Deep pagination 시 성능 저하&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="2-search-after"&gt;&lt;a href="#2-search-after" class="header-anchor"&gt;&lt;/a&gt;2. Search After
+&lt;/h3&gt;&lt;p&gt;Pagination이 최대 10,000건까지 페이징 처리할 수 있는 한계를 극복할 수 있음. 일반적인 커서 방식과 유사함.&lt;/p&gt;
+&lt;p&gt;검색 결과의 &lt;code&gt;sort&lt;/code&gt; 조건 필드를 키 값으로 사용하며 그 다음부터 조회를 함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;단점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;search-after&lt;/code&gt;만 사용할 경우 중간에 인덱싱이 업데이트되거나 하면 응답 결과가 불규칙해질 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PIT(Point In Time)와 함께 사용&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이를 보완하기 위해 PIT(Point In Time)를 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;POST /my-index-000001/_pit?keep_alive&lt;span class="o"&gt;=&lt;/span&gt;1m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 요청을 통해 해당 인덱스의 현재 시점의 스냅샷을 찍어두고 다음과 같이 &lt;code&gt;id&lt;/code&gt; 값으로 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;size&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;desc&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;search_after&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;{{pit_value}}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;중간에 인덱스에 변경사항이 있어도 스냅샷을 기준으로 응답 결과가 반환됨.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keep_alive&lt;/code&gt;는 해당 PIT의 유효기간과 같음. 최신 시점을 기준으로 PIT를 관리하는 것이 권장됨.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;10,000건 이상 페이징 가능&lt;/li&gt;
+&lt;li&gt;커서 기반 방식&lt;/li&gt;
+&lt;li&gt;PIT와 함께 사용 시 일관된 결과 보장&lt;/li&gt;
+&lt;li&gt;Deep pagination에 효율적&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="3-scroll"&gt;&lt;a href="#3-scroll" class="header-anchor"&gt;&lt;/a&gt;3. Scroll
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: ES 공식 문서에 따라 Scroll 방식 대신 Search After 방식을 권장함&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;대량 데이터 추출용&lt;/li&gt;
+&lt;li&gt;실시간 검색에는 부적합&lt;/li&gt;
+&lt;li&gt;현재는 Search After + PIT 조합을 권장&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opster.com/guides/elasticsearch/how-tos/elasticsearch-pagination-techniques/" target="_blank" rel="noopener"
+ &gt;Elasticsearch Pagination Techniques: SearchAfter, Scroll, Pagination &amp;amp; PIT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://danawalab.github.io/elastic/2023/02/13/Search-After.html" target="_blank" rel="noopener"
+ &gt;Elasticsearch Search After 성능 체크&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after" target="_blank" rel="noopener"
+ &gt;Paginate search results | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html" target="_blank" rel="noopener"
+ &gt;Point in time API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
+ &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch 자동완성 검색 처리 방법</title><link>https://0andwild.com/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/posts/240204_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch 자동완성 검색 처리 방법" /&gt;&lt;h2 id="elastic-search-자동완성-처리-방법"&gt;&lt;a href="#elastic-search-%ec%9e%90%eb%8f%99%ec%99%84%ec%84%b1-%ec%b2%98%eb%a6%ac-%eb%b0%a9%eb%b2%95" class="header-anchor"&gt;&lt;/a&gt;Elastic search 자동완성 처리 방법
+&lt;/h2&gt;&lt;h3 id="edge-n-gram-tokenizer"&gt;&lt;a href="#edge-n-gram-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Tokenizer
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;token_chars&lt;/code&gt;: letter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요하지 않은 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점 및 위치가 중요하지 않은 곳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="edge-n-gram-token-filter"&gt;&lt;a href="#edge-n-gram-token-filter" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Token Filter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요하지 않은 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점 및 위치가 중요하지 않은 곳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="index_prefixes-parameter"&gt;&lt;a href="#index_prefixes-parameter" class="header-anchor"&gt;&lt;/a&gt;Index_prefixes Parameter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_chars&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_chars&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;N-gram과 동일함&lt;/p&gt;
+&lt;p&gt;다만 한가지 차이점은 후자의 경우 생성된 토큰을 넣는 추가적인 필드를 넣는다는 것&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="search-as-you-type-data-type"&gt;&lt;a href="#search-as-you-type-data-type" class="header-anchor"&gt;&lt;/a&gt;Search-as-you-type Data Type
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_shingle_size&lt;/code&gt;: 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Generated Tokens (지원하는 서브 필드)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;예시: &amp;ldquo;real panda blog&amp;rdquo;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;._2gram&lt;/code&gt; additional field: real panda, panda blog (shingle token filter 적용됨)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._3gram&lt;/code&gt; additional field: real panda blog (shingle token filter 적용됨)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._index_prefix&lt;/code&gt; additional field: r, re, rea, real, &amp;ldquo;real &amp;ldquo;, real p, real pa, real pan, real pand, real panda, &amp;ldquo;real panda &amp;ldquo;, real panda b, real panda bl, real panda blo, real panda blog, p, pa, pan, pand, panda, &amp;ldquo;panda &amp;ldquo;, panda b, panda bl, panda blo, panda blog, &amp;ldquo;panda blog &amp;ldquo;, b, bl, blo, blog, &amp;ldquo;blog &amp;quot; (&lt;strong&gt;._3gram 필드에 적용이 되고 n gram max 는 3으로 적용된다&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;ES에서 말하는 가장 효율적인 쿼리 방법은 루트 필드와 해당 shingle 하위 필드를 대상으로 하는 bool_prefix 타입의 다중 일치 쿼리이다.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 쿼리는 어떤 순서로든 쿼리 용어와 일치할 수 있지만, 문서에서 shingle 서브 필드에 순서대로 용어가 포함된 경우 더 높은 점수를 부여한다.&lt;/p&gt;
+&lt;p&gt;쿼리 용어와 문서의 용어가 정확하게 순서대로 일치하게 검색을 하거나 구문 쿼리의 다른 속성을 사용하려면 루트 필드에 match_phrase_prefix 쿼리를 사용할 수 있다. 접두사가 아닌 마지막 용어가 정확하게 일치해야 하는 경우도 그렇다. 하지만 match_bool_prefix 쿼리를 사용하는 것 보다 효율성이 떨어질 수 있다.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;shingle token filter 는 default 로 2가 적용됨&lt;/code&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;적절한 사용처&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;용어의 순서가 중요한 곳&lt;/li&gt;
+&lt;li&gt;토큰의 시작점과 위치가 중요한 곳&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;인덱싱을 할때 설정된 analyzer 가 없으면 default 로 standard analyzer 가 적용된다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="suggester-api"&gt;&lt;a href="#suggester-api" class="header-anchor"&gt;&lt;/a&gt;Suggester API
+&lt;/h2&gt;&lt;h3 id="in-memory-completion-suggester-context-suggester"&gt;&lt;a href="#in-memory-completion-suggester-context-suggester" class="header-anchor"&gt;&lt;/a&gt;In-memory (Completion Suggester, Context Suggester)
+&lt;/h3&gt;&lt;p&gt;completion suggester는 auto-complete과 search-as-your-type 기능을 제공함. (오타 수정은 지원 x)&lt;/p&gt;
+&lt;p&gt;completion suggester는 속도에 최적화 되어 있어 유저가 타이핑 하는 것에 즉각적으로 반응해줌.&lt;/p&gt;
+&lt;p&gt;하지만 빌드와 인메모리 방식에 저장을 하는데 있어 많은 리소스 비용이 부담됨.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="term-suggester"&gt;&lt;a href="#term-suggester" class="header-anchor"&gt;&lt;/a&gt;Term Suggester
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;사용자가 입력한 텍스트에 대한 결과가 없을경우 추천 단어를 기준으로 검색결과를 제공할때 사용&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;잘못된 철자에 대해 추천 단어 제안&lt;/p&gt;
+&lt;p&gt;편집거리를 사용해 단어를 제안한다. 편집거리 척도란 어떤 문자열이 다른 문자열과 얼마나 비슷한가를 편집거리를 사용해 알아볼 수 있다.&lt;/p&gt;
+&lt;p&gt;편집거리를 측정하는 방식은 대부분 각 단어를 추가, 삭제, 치환을 통해 이루어진다.&lt;/p&gt;
+&lt;p&gt;예를들어 tamming test 문자열을 taming text로 바꾸는데 m을 삭제하는 연산 1회와 s를 x로 바꾸는 연산 1회가 필요하다. 그러므로 편집거리는 2가 된다.&lt;/p&gt;
+&lt;p&gt;만약 색인된 데이터와 일치하는 텀이 존재하지 않을 경우 term suggest 결과로 비슷한 단어를 추천해준다.&lt;/p&gt;
+&lt;p&gt;결과에서 text는 제안한 문자를 나타내고, score는 제안하고자 하는 텍스트가 원본과 얼마나 가까운지를 나타낸다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;알고리즘&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;엘라스틱 서치에서는 편집거리 계산 알고리즘으로 Levenshtein 편집거리 측정 또는 Jaro-Winkler 편집거리 측정을 사용한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;한글 처리&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한글의 경우 term suggest를 이용해도 데이터가 추천되지 않는다. 기본적으로 한글 유니코드 체계가 복잡하기 때문이다.&lt;/li&gt;
+&lt;li&gt;ICU 분석기를 통해 한글 오타를 처리하는 것이 가능. ICU 분석기는 국제화 처리를 위해 특별히 개발된 분석기로 내부에 한글 자소를 분해하는 기능과 합치는 기능을 가지고 있음. 하지만 정교한 오타교정, 한영 변환, 자동완성 등의 전문적인 기능은 별도의 플러그인을 개발해서 사용하는 것이 좋다. (Ex. 자바카페 플러그인)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="phrase-suggester-추천-문장-제안"&gt;&lt;a href="#phrase-suggester-%ec%b6%94%ec%b2%9c-%eb%ac%b8%ec%9e%a5-%ec%a0%9c%ec%95%88" class="header-anchor"&gt;&lt;/a&gt;Phrase Suggester (추천 문장 제안)
+&lt;/h3&gt;&lt;h4 id="completion-suggester"&gt;&lt;a href="#completion-suggester" class="header-anchor"&gt;&lt;/a&gt;Completion Suggester
+&lt;/h4&gt;&lt;p&gt;자동완성 제안, 사용자가 입력을 완료하기 전에 자동완성을 사용해 검색어를 예측해서 보여줌&lt;/p&gt;
+&lt;h4 id="context-suggester"&gt;&lt;a href="#context-suggester" class="header-anchor"&gt;&lt;/a&gt;Context Suggester
+&lt;/h4&gt;&lt;p&gt;추천 문맥 제안&lt;/p&gt;</description></item><item><title>Elasticsearch Query 처리 순서</title><link>https://0andwild.com/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/posts/240203_es_query/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Query 처리 순서" /&gt;&lt;h1 id="elasticsearch-query-처리-순서"&gt;&lt;a href="#elasticsearch-query-%ec%b2%98%eb%a6%ac-%ec%88%9c%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Query 처리 순서
+&lt;/h1&gt;&lt;h2 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Filtered Query&lt;/strong&gt;는 최종 search와 aggregation 둘 다의 결과에 영향을 미치지만, &lt;strong&gt;PostFiltered Query&lt;/strong&gt;는 최종 search 결과에만 영향을 미치고 aggregation에는 영향을 미치지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="query-처리-순서"&gt;&lt;a href="#query-%ec%b2%98%eb%a6%ac-%ec%88%9c%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;Query 처리 순서
+&lt;/h2&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;SearchRequest → (Filtered) → Query → (PostFilter) → Result → RescoreQuery
+ ↓
+ Aggregation → AggregationResult
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="804px" data-flex-grow="335" height="191" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence1.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="filter-query-예시"&gt;&lt;a href="#filter-query-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Filter Query 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filtered&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filter Query는 검색 결과와 Aggregation 모두에 영향을 미친다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="882px" data-flex-grow="367" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence2.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="postfilter-query-예시"&gt;&lt;a href="#postfilter-query-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;PostFilter Query 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;post_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;PostFilter Query는 검색 결과에만 영향을 미치고, Aggregation 결과에는 영향을 미치지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rescore-query-파라미터"&gt;&lt;a href="#rescore-query-%ed%8c%8c%eb%9d%bc%eb%af%b8%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Rescore Query 파라미터
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;window_size&lt;/strong&gt;: 각 shard에서 재점수화할 상위 결과의 수&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;score_mode&lt;/strong&gt;: main query score와 rescore query의 점수를 결합하는 방식&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Token Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer3/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer3/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer3/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="token-filter"&gt;&lt;a href="#token-filter" class="header-anchor"&gt;&lt;/a&gt;Token Filter
+&lt;/h1&gt;&lt;p&gt;Token Filter는 Tokenizer에서 생성된 토큰 스트림을 받아 토큰을 추가, 제거 또는 변경하는 역할을 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="word-delimiter-graph-filter"&gt;&lt;a href="#word-delimiter-graph-filter" class="header-anchor"&gt;&lt;/a&gt;Word Delimiter Graph Filter
+&lt;/h2&gt;&lt;p&gt;Word delimiter graph 필터는 제품 ID나 부품 번호와 같은 복잡한 식별자에서 문장 부호를 제거하도록 설계되었다. 이러한 사용 사례의 경우 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword tokenizer&lt;/a&gt;와 함께 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;wi-fi와 같은 하이픈으로 연결된 단어를 분리할 때는 word delimiter graph 필터를 사용하지 않는 것이 좋다. 사용자들은 하이픈을 포함하기도 하고 포함하지 않고도 검색을 하기 때문에 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-synonym-graph-tokenfilter.html" target="_blank" rel="noopener"
+ &gt;synonym graph&lt;/a&gt; 필터를 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h3 id="변환-규칙"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ea%b7%9c%ec%b9%99" class="header-anchor"&gt;&lt;/a&gt;변환 규칙
+&lt;/h3&gt;&lt;p&gt;다음과 같은 방식으로 토큰을 분할한다:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;비영숫자 문자로 토큰 분할&lt;/strong&gt;: &lt;code&gt;Super-Duper&lt;/code&gt; → &lt;code&gt;Super, Duper&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;앞뒤 구분 기호 제거&lt;/strong&gt;: &lt;code&gt;XL---42+'Autocoder'&lt;/code&gt; → &lt;code&gt;XL, 42, Autocoder&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;대소문자 전환 시 분할&lt;/strong&gt;: &lt;code&gt;PowerShot&lt;/code&gt; → &lt;code&gt;Power, Shot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;문자-숫자 전환 시 분할&lt;/strong&gt;: &lt;code&gt;XL500&lt;/code&gt; → &lt;code&gt;XL, 500&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;영어 소유격 제거&lt;/strong&gt;: &lt;code&gt;Neil's&lt;/code&gt; → &lt;code&gt;Neil&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="api-사용-예시"&gt;&lt;a href="#api-%ec%82%ac%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;API 사용 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Neil&amp;#39;s-Super-Duper-XL500--42+AutoCoder&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Neil, Super, Duper, XL, 500, 42, Auto, Coder ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="custom-analyzer-설정"&gt;&lt;a href="#custom-analyzer-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;Custom Analyzer 설정
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="configurable-parameters"&gt;&lt;a href="#configurable-parameters" class="header-anchor"&gt;&lt;/a&gt;Configurable Parameters
+&lt;/h3&gt;&lt;h4 id="adjust_offsets"&gt;&lt;a href="#adjust_offsets" class="header-anchor"&gt;&lt;/a&gt;adjust_offsets
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true일 경우 필터는 토큰 스트림에서 실제 위치를 더 잘 반영하도록 분할 토큰 또는 체이닝된 토큰의 시작점을 조정함&lt;/li&gt;
+&lt;li&gt;만약 trim 같은 필터를 사용한다면 offset의 변화 없이 token의 길이를 변경하기 때문에 함께 사용할 때는 &lt;code&gt;false&lt;/code&gt;로 해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_all"&gt;&lt;a href="#catenate_all" class="header-anchor"&gt;&lt;/a&gt;catenate_all
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 영숫자가 아닌 구분 기호로 구분된 영숫자 체인에 대해 체이닝 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ superduperxl500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_numbers"&gt;&lt;a href="#catenate_numbers" class="header-anchor"&gt;&lt;/a&gt;catenate_numbers
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 알파벳이 아닌 구분 기호로 구분된 숫자 문자 체인에 대해 카테네이트 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;01-02-03&lt;/code&gt; → &lt;code&gt;[ 010203, 01, 02, 03 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_words"&gt;&lt;a href="#catenate_words" class="header-anchor"&gt;&lt;/a&gt;catenate_words
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 알파벳이 아닌 구분 기호로 구분된 알파벳 문자 체인에 대해 카테네이트 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl&lt;/code&gt; → &lt;code&gt;[ superduperxl, super, duper, xl ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Catenate 파라미터 사용 시 주의점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 매개변수를 true로 설정하면 인덱싱에서 지원되지 않는 다중 위치 토큰이 생성함&lt;/p&gt;
+&lt;p&gt;이 매개변수가 true이면 인덱스 분석기에서 이 필터를 사용하지 않거나 이 필터 뒤에 flatten_graph 필터를 사용하여 토큰 스트림을 인덱싱에 적합하게 만들어야함&lt;/p&gt;
+&lt;p&gt;검색 분석에 사용할 경우, 카테네이트된 토큰은 match_phrase 쿼리 및 일치하는 토큰 위치에 의존하는 다른 쿼리에 문제를 일으킬 수 있음. 이러한 쿼리를 사용하려는 경우 이 매개변수를 true로 설정하지 않아야 함.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="generate_number_parts"&gt;&lt;a href="#generate_number_parts" class="header-anchor"&gt;&lt;/a&gt;generate_number_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 숫자로 구성된 토큰을 포함함&lt;/li&gt;
+&lt;li&gt;false인 경우 필터는 이러한 토큰을 출력에서 제외함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="generate_word_parts"&gt;&lt;a href="#generate_word_parts" class="header-anchor"&gt;&lt;/a&gt;generate_word_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 알파벳 문자로 구성된 토큰을 포함함&lt;/li&gt;
+&lt;li&gt;false일 경우 이러한 토큰을 출력에서 제외함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ignore_keywords"&gt;&lt;a href="#ignore_keywords" class="header-anchor"&gt;&lt;/a&gt;ignore_keywords
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true일 경우 필터는 키워드 속성이 true인 토큰을 건너뜀&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="preserve_original"&gt;&lt;a href="#preserve_original" class="header-anchor"&gt;&lt;/a&gt;preserve_original
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 분할된 토큰의 원본 버전을 포함함&lt;/li&gt;
+&lt;li&gt;이 원본 버전에는 영숫자가 아닌 구분 기호가 포함됨&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ super-duper-xl-500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;preserve_original 파라미터 사용 시 주의점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 매개변수를 true로 설정하면 인덱싱에서 지원되지 않는 다중 위치 토큰이 생성함&lt;/p&gt;
+&lt;p&gt;이 매개변수가 true이면 인덱스 분석기에서 이 필터를 사용하지 않거나 이 필터 뒤에 flatten_graph 필터를 사용하여 토큰 스트림을 인덱싱에 적합하게 만들어야함&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="protected_words"&gt;&lt;a href="#protected_words" class="header-anchor"&gt;&lt;/a&gt;protected_words
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;필터가 분할하지 않는 토큰의 배열&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="protected_words_path"&gt;&lt;a href="#protected_words_path" class="header-anchor"&gt;&lt;/a&gt;protected_words_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;필터가 분할하지 않는 토큰 목록이 포함된 파일의 경로&lt;/li&gt;
+&lt;li&gt;이 경로는 구성 위치에 대한 절대 경로이거나 상대 경로여야 하며, 파일은 UTF-8로 인코딩되어야 함&lt;/li&gt;
+&lt;li&gt;파일의 각 토큰은 줄 바꿈으로 구분해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_case_change"&gt;&lt;a href="#split_on_case_change" class="header-anchor"&gt;&lt;/a&gt;split_on_case_change
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 대소문자 전환 시 토큰을 분할함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;camelCase&lt;/code&gt; → &lt;code&gt;[ camel, Case ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_numerics"&gt;&lt;a href="#split_on_numerics" class="header-anchor"&gt;&lt;/a&gt;split_on_numerics
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 문자-숫자 전환 시 토큰을 분할함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;j2se&lt;/code&gt; → &lt;code&gt;[ j, 2, se ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="stem_english_possessive"&gt;&lt;a href="#stem_english_possessive" class="header-anchor"&gt;&lt;/a&gt;stem_english_possessive
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 각 토큰의 끝에서 영어 소유격(&amp;rsquo;s)을 제거함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;O'Neil's&lt;/code&gt; → &lt;code&gt;[ O, Neil ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table"&gt;&lt;a href="#type_table" class="header-anchor"&gt;&lt;/a&gt;type_table
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;문자에 대한 사용자 지정 유형 매핑의 배열&lt;/li&gt;
+&lt;li&gt;이를 통해 영숫자가 아닌 문자를 숫자 또는 영숫자로 매핑하여 해당 문자의 분할을 방지할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;예시&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;+ =&amp;gt; ALPHA&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;- =&amp;gt; ALPHA&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 배열은 더하기(+) 및 하이픈(-) 문자를 영숫자로 매핑하므로 구분 기호로 취급되지 않음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;지원되는 타입&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ALPHA&lt;/code&gt; (Alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ALPHANUM&lt;/code&gt; (Alphanumeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DIGIT&lt;/code&gt; (Numeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LOWER&lt;/code&gt; (Lowercase alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SUBWORD_DELIM&lt;/code&gt; (Non-alphanumeric delimiter)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPPER&lt;/code&gt; (Uppercase alphabetical)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table_path"&gt;&lt;a href="#type_table_path" class="header-anchor"&gt;&lt;/a&gt;type_table_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;custom type mapping 파일 경로&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;작성 예시&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;# Map the $, %, &amp;#39;.&amp;#39;, and &amp;#39;,&amp;#39; characters to DIGIT
+# This might be useful for financial data.
+$ =&amp;gt; DIGIT
+% =&amp;gt; DIGIT
+. =&amp;gt; DIGIT
+\u002C =&amp;gt; DIGIT
+
+# in some cases you might not want to split on ZWJ
+# this also tests the case where we need a bigger byte[]
+# see https://en.wikipedia.org/wiki/Zero-width_joiner
+\u200D =&amp;gt; ALPHANUM
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;이 파일 경로는 설정 위치에 대한 절대 경로이거나 상대 경로여야 하며, 파일은 UTF-8로 인코딩되어야 함. 파일의 각 매핑은 줄 바꿈으로 구분함.&lt;/p&gt;
+&lt;h3 id="사용-시-주의사항"&gt;&lt;a href="#%ec%82%ac%ec%9a%a9-%ec%8b%9c-%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;사용 시 주의사항
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-standard-tokenizer.html" target="_blank" rel="noopener"
+ &gt;Standard tokenizer&lt;/a&gt;와 같이 구두점을 제거하는 토큰화기와 함께 word_delimiter_graph 필터를 사용하지 않는 것이 좋다. 이렇게 하면 word_delimiter_graph 필터가 토큰을 올바르게 분할하지 못할 수 있다.&lt;/p&gt;
+&lt;p&gt;또한 catenate_all 또는 preserve_original과 같은 필터의 구성 가능한 매개변수를 방해할 수도 있다. 대신 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword&lt;/a&gt; 또는 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-whitespace-tokenizer.html" target="_blank" rel="noopener"
+ &gt;whitespace tokenizer&lt;/a&gt;를 사용하는 것이 좋다.&lt;/p&gt;</description></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="tokenizer"&gt;&lt;a href="#tokenizer" class="header-anchor"&gt;&lt;/a&gt;Tokenizer
+&lt;/h1&gt;&lt;p&gt;Tokenizer는 문자열 스트림을 받고 각각의 토큰 단위로 자른다. (주로 각각의 단어별로 토큰화가 이루어짐)&lt;/p&gt;
+&lt;p&gt;가장 standard하게 사용되는 &lt;code&gt;whitespace&lt;/code&gt; tokenizer는 공백을 기준으로 잘라 토큰화를 진행한다.&lt;/p&gt;
+&lt;h3 id="whitespace-tokenizer-예시"&gt;&lt;a href="#whitespace-tokenizer-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer 예시
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;// character streams
+Quick brown fox!
+
+// Result
+[Quick, brown, fox!]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="tokenizer의-책임"&gt;&lt;a href="#tokenizer%ec%9d%98-%ec%b1%85%ec%9e%84" class="header-anchor"&gt;&lt;/a&gt;Tokenizer의 책임
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;각 용어의 정렬과 포지션 (구 또는 단어 유사성 쿼리에서 사용)&lt;/li&gt;
+&lt;li&gt;변형 전의 기존 단어의 시작과 끝 문자는 검색 스니펫 하이라이팅에 사용됨&lt;/li&gt;
+&lt;li&gt;Token별 타입: &lt;code&gt;&amp;lt;ALPHANUM&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;HANGUL&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;NUM&amp;gt;&lt;/code&gt; 등 (단순한 analyzer는 오직 단어 토큰 타입만 제공함)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="word-oriented-tokenizer"&gt;&lt;a href="#word-oriented-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Word Oriented Tokenizer
+&lt;/h2&gt;&lt;p&gt;아래 tokenizer들은 풀 텍스트에서 각각의 단어로 토큰화를 하는데 사용된다.&lt;/p&gt;
+&lt;h3 id="standard-tokenizer"&gt;&lt;a href="#standard-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Standard Tokenizer
+&lt;/h3&gt;&lt;p&gt;standard tokenizer는 Unicode Text Segmentation algorithm을 기반으로 토큰화를 진행한다.&lt;/p&gt;
+&lt;h4 id="configuration"&gt;&lt;a href="#configuration" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="max_token_length-적용-예시"&gt;&lt;a href="#max_token_length-%ec%a0%81%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;max_token_length 적용 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumpe, d, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="letter-tokenizer"&gt;&lt;a href="#letter-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Letter Tokenizer
+&lt;/h3&gt;&lt;p&gt;letter tokenizer는 문자열이 아닌 것을 기점으로 잘라 토큰화를 진행한다. 이는 유럽권 언어(영미권)에는 적합하나 아시아 언어, 특히 공백을 기점으로 단어가 나뉘지 않는 언어에는 적합하지 않다.&lt;/p&gt;
+&lt;h4 id="변환-예시-1"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-1" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;letter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, QUICK, Brown, Foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="lowercase-tokenizer"&gt;&lt;a href="#lowercase-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Lowercase Tokenizer
+&lt;/h3&gt;&lt;p&gt;lowercase tokenizer는 letter tokenizer처럼 문자열이 아닌 것을 기점으로 잘라 토큰화를 진행하며, 추가적으로 모든 문자열을 소문자로 변환한다. 기능적으로는 letter tokenizer와 동일하면서도 소문자로 변환하는 기능을 한번에 수행함으로 효율적이다.&lt;/p&gt;
+&lt;h4 id="변환-예시-2"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-2" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lowercase&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ the, quick, brown, foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="whitespace-tokenizer"&gt;&lt;a href="#whitespace-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer
+&lt;/h3&gt;&lt;p&gt;whitespace tokenizer는 공백 문자열을 기준으로 토큰화를 진행한다.&lt;/p&gt;
+&lt;h4 id="configuration-1"&gt;&lt;a href="#configuration-1" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-3"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-3" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;whitespace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown-Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone. ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="uax-url-email-tokenizer"&gt;&lt;a href="#uax-url-email-tokenizer" class="header-anchor"&gt;&lt;/a&gt;UAX URL Email Tokenizer
+&lt;/h3&gt;&lt;p&gt;uax_url_email tokenizer는 standard tokenizer와 동일하지만, 한 가지 다른점은 URLs이나 email 주소를 인식하고 하나의 토큰으로 취급을 한다.&lt;/p&gt;
+&lt;h4 id="configuration-2"&gt;&lt;a href="#configuration-2" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-4"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-4" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Email me at john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith@global-international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 위의 예시를 만약 standard tokenizer로 한다면 다음과 같은 결과가 나옴
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith, global, international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="configuration-예시"&gt;&lt;a href="#configuration-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Configuration 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result (email 형식을 무시하고 max_token_length가 우선순위가 됨)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// [ john, smith, globa, l, inter, natio, nal.c, om ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="classic-tokenizer"&gt;&lt;a href="#classic-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Classic Tokenizer
+&lt;/h3&gt;&lt;p&gt;classic tokenizer는 문법 베이스의 토큰화를 진행하고 영어 document에 좋다. 이 토큰화 방식은 약어, 회사 이름, 이메일 주소, 인터넷 호스트 이름을 특별하게 처리하는 방식이 있다. 그러나 이러한 규칙들이 항상 동작하지는 않고, 영어 이외의 언어에서는 잘 동작하지 않는다.&lt;/p&gt;
+&lt;h4 id="tokenizing-규칙"&gt;&lt;a href="#tokenizing-%ea%b7%9c%ec%b9%99" class="header-anchor"&gt;&lt;/a&gt;Tokenizing 규칙
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;대부분 구두점을 기준으로, 구두점을 제거하며 단어를 나눈다. 하지만 공백이 뒤따르지 않는 점은 토큰의 일부로 간주된다.&lt;/li&gt;
+&lt;li&gt;하이픈을 기준으로 단어를 나누긴 하지만 만약 해당 단어에 하이픈이 있을 경우 제품번호로 인식을 하고 나누지 않는다. (예: 123-23)&lt;/li&gt;
+&lt;li&gt;email과 internet hostname은 하나의 토큰으로 간주한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="configuration-3"&gt;&lt;a href="#configuration-3" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-5"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-5" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;classic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="thai-tokenizer"&gt;&lt;a href="#thai-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Thai Tokenizer
+&lt;/h3&gt;&lt;p&gt;thai tokenizer는 태국어 텍스트를 단어 단위로 토큰화를 시킨다. Java에 포함되어 있는 Thai segmentation algorithm을 사용한다. 만약 input text에 태국어가 아닌 다른 언어의 문자열이 함께 포함되어 있는 경우는 해당 문자열에 한해 standard tokenizer가 적용된다.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;주의사항&lt;/strong&gt;: 해당 토큰화 방식은 일부 JRE에서 지원되지 않을 수 있음. 이 토큰화 방식은 Sun/Oracle 및 OpenJDK에서 작동하는 것으로 알려져 있음. 어플리케이션에 완전한 이식성을 고려하는 경우 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/plugins/8.8/analysis-icu-tokenizer.html" target="_blank" rel="noopener"
+ &gt;ICU tokenizer&lt;/a&gt;를 대신 사용하는 것을 고려하는 것이 좋음&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="변환-예시-6"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-6" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;thai&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;การที่ได้ต้องแสดงว่างานดี&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ การ, ที่, ได้, ต้อง, แสดง, ว่า, งาน, ดี ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="참고-문서"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%eb%ac%b8%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;참고 문서
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-tokenizers.html" target="_blank" rel="noopener"
+ &gt;Tokenizer reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer1/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Character Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer1/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer1/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer1/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="character-filters"&gt;&lt;a href="#character-filters" class="header-anchor"&gt;&lt;/a&gt;Character Filters
+&lt;/h1&gt;&lt;p&gt;Character Filter는 토크나이저 단계 이전에 입력된 문자열을 전처리하는 과정이다.&lt;/p&gt;
+&lt;p&gt;문자열들에 더하거나, 제거하거나, 문자열을 바꾸는 작업을 한다.&lt;/p&gt;
+&lt;p&gt;Elasticsearch에서는 다음과 같이 기본적인 Character Filter들을 제공하고 커스텀 필터도 적용 가능하다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="html-strip-character-filter"&gt;&lt;a href="#html-strip-character-filter" class="header-anchor"&gt;&lt;/a&gt;HTML Strip Character Filter
+&lt;/h2&gt;&lt;p&gt;HTML 형태로 입력받은 값을 decoding된 값으로 변환시켜준다.&lt;/p&gt;
+&lt;h3 id="변환-예시"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;html_strip&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;lt;p&amp;gt;I&amp;amp;apos;m so &amp;lt;b&amp;gt;happy&amp;lt;/b&amp;gt;!&amp;lt;/p&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ \nI&amp;#39;m so happy!\n ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="적용-방법"&gt;&lt;a href="#%ec%a0%81%ec%9a%a9-%eb%b0%a9%eb%b2%95" class="header-anchor"&gt;&lt;/a&gt;적용 방법
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;html_strip&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="mapping-character-filter"&gt;&lt;a href="#mapping-character-filter" class="header-anchor"&gt;&lt;/a&gt;Mapping Character Filter
+&lt;/h2&gt;&lt;p&gt;Mapping Character Filter는 입력받은 문자열이 key 값으로 지정된 문자와 동일하면 해당 key의 value 값으로 변환을 시켜준다.&lt;/p&gt;
+&lt;p&gt;Matching 방식은 탐욕법으로 가장 많이 매칭된 패턴으로 변환되며 변환값(value)은 빈 문자열도 가능하다.&lt;/p&gt;
+&lt;h3 id="변환-예시-1"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-1" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;mapping&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;mappings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٠ =&amp;gt; 0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;١ =&amp;gt; 1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٢ =&amp;gt; 2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٣ =&amp;gt; 3&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٤ =&amp;gt; 4&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٥ =&amp;gt; 5&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٦ =&amp;gt; 6&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٧ =&amp;gt; 7&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٨ =&amp;gt; 8&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٩ =&amp;gt; 9&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;My license plate is ٢٥٠١٥&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ My license plate is 25015 ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="pattern-replace-character-filter"&gt;&lt;a href="#pattern-replace-character-filter" class="header-anchor"&gt;&lt;/a&gt;Pattern Replace Character Filter
+&lt;/h2&gt;&lt;p&gt;pattern_replace 필터는 정규식에 매칭되는 문자열들을 지정된 문자열로 변환시켜준다.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;주의사항&lt;/strong&gt;: 정규식은 Java 정규식을 따르며, 안 좋은 정규식은 성능 저하 또는 StackOverflow 에러를 발생시키고, 실행 중인 노드를 갑자기 종료시킬 수 있다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="파라미터"&gt;&lt;a href="#%ed%8c%8c%eb%9d%bc%eb%af%b8%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;파라미터
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pattern&lt;/code&gt;: Java 정규표현식&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;replacement&lt;/code&gt;: 치환할 문자열&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;flags&lt;/code&gt;: Java의 정규 표현식 플래그로 &lt;code&gt;|&lt;/code&gt;로 분리되어야 함 (예: &amp;ldquo;CASE_INSENSITIVE|COMMENTS&amp;rdquo;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="변환-예시-2"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-2" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;my_char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pattern_replace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pattern&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;(\\d+)-(?=\\d)&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;replacement&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$1_&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;My credit card is 123-456-789&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ My, credit, card, is, 123_456_789 ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="참고-문서"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%eb%ac%b8%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;참고 문서
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-charfilters.html" target="_blank" rel="noopener"
+ &gt;Character filters reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>ElasticSearch 란?</title><link>https://0andwild.com/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/posts/240201_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post ElasticSearch 란?" /&gt;&lt;p&gt;Elastic Search 는 Apache Lucene 기반의 Java 오픈소스 분산 검색 엔진이다.&lt;/p&gt;
+&lt;p&gt;ElasticSearch 를 통해 루씬 라이브러리(Java에서 개발한 정보 검색용 라이브러리)를 단독으로 사용할 수 있으며, 방대한 양의 데이터를 실시간에 가깝게 저장, 검색, 분석을 수행할 수 있다.&lt;/p&gt;
+&lt;p&gt;ElasticeSearch 는 검색을 위해 단독으로 사용되기도 하며, &lt;strong&gt;ELK(Elasticsearch / Logstash / Kibana)&lt;/strong&gt; 스택으로 사용되기도 한다.&lt;/p&gt;
+&lt;h3 id="elk-스택-구성-요소"&gt;&lt;a href="#elk-%ec%8a%a4%ed%83%9d-%ea%b5%ac%ec%84%b1-%ec%9a%94%ec%86%8c" class="header-anchor"&gt;&lt;/a&gt;ELK 스택 구성 요소
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Elasticsearch&lt;/strong&gt;: Logstash로 부터 받은 데이터를 검색 및 집계하여 필요한 정보를 획득&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logstash&lt;/strong&gt;: 다양한 소스(DB, csv 파일 등)의 로그 또는 트랜잭션 데이터를 수집, 집계, 파싱하여 Elasticsearch로 전달&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kibana&lt;/strong&gt;: Elasticsearch 의 빠른 검색을 통해 데이터를 시각화 및 모니터링&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 주로 ELK는 로드밸런싱되어 있는 WAS의 흩어져있는 로그를 한 곳으로 모으고, 원하는 데이터를 빠르게 검색한 뒤 시각화하여 모니터링하기 위해 사용한다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="elasticsearch-와-rdb-의-명칭-비교"&gt;&lt;a href="#elasticsearch-%ec%99%80-rdb-%ec%9d%98-%eb%aa%85%ec%b9%ad-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 와 RDB 의 명칭 비교
+&lt;/h2&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es1.png"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es2.png"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;h3 id="elasticsearch-70-부터는-하나의-인덱스에-하나의-타입만-가질-수-있음"&gt;&lt;a href="#elasticsearch-70-%eb%b6%80%ed%84%b0%eb%8a%94-%ed%95%98%eb%82%98%ec%9d%98-%ec%9d%b8%eb%8d%b1%ec%8a%a4%ec%97%90-%ed%95%98%eb%82%98%ec%9d%98-%ed%83%80%ec%9e%85%eb%a7%8c-%ea%b0%80%ec%a7%88-%ec%88%98-%ec%9e%88%ec%9d%8c" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 7.0 부터는 하나의 인덱스에 하나의 타입만 가질 수 있음
+&lt;/h3&gt;&lt;p&gt;이 이유는 Elasticsearch는 하나의 인덱스(DB) 안에서의 타입은 같은 Lucene 필드를 사용한다. 따라서 타입은 다를지라도 동일한 이름을 가진 필드는 독립적이지 않아으므로 여러가지 문제가 발생할 수 있으므로 하나의 인덱스는 하나의 타입만을 갖도록 수정이 되었다.&lt;/p&gt;
+&lt;h4 id="rdb와의-비교"&gt;&lt;a href="#rdb%ec%99%80%ec%9d%98-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;RDB와의 비교
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;RDB의 경우&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;하나의 DB에 여러 테이블이 있고 각 테이블에 동일한 이름의 컬럼이 존재해도 서로 영향을 미치지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Elasticsearch의 경우&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;하나의 인덱스(=DB) 내의 각 타입(=테이블)에 동일한 이름을 가진 필드(=컬럼)가 있을 경우, 해당 필드는 독립적이지 않고 동일한 Lucene 필드에 저장되며 동일한 정의를 가져야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="elasticsearch-구조"&gt;&lt;a href="#elasticsearch-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 구조
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es3.png"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="클러스터-cluster"&gt;&lt;a href="#%ed%81%b4%eb%9f%ac%ec%8a%a4%ed%84%b0-cluster" class="header-anchor"&gt;&lt;/a&gt;클러스터 (Cluster)
+&lt;/h3&gt;&lt;p&gt;클러스터란 Elasticsearch 에서 가장 큰 시스템 단위를 의미하며, 최소 하나 이상의 노드로 이루어진 노드의 집합이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서로 다른 클러스터는 데이터의 접근, 교환을 할 수 없는 독립적인 시스템으로 유지됨&lt;/li&gt;
+&lt;li&gt;여러 대의 서버가 하나의 클러스터를 구성할 수 있음&lt;/li&gt;
+&lt;li&gt;한 서버에 여러 개의 클러스터가 존재할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="노드-node"&gt;&lt;a href="#%eb%85%b8%eb%93%9c-node" class="header-anchor"&gt;&lt;/a&gt;노드 (Node)
+&lt;/h3&gt;&lt;p&gt;노드는 클러스터에 포함된 단일 서버로서 데이터를 저장하고 클러스터의 색인화 및 검색 기능에 참여한다. 노드는 역할에 따라 다음과 같이 구분한다.&lt;/p&gt;
+&lt;h4 id="master-eligible-node"&gt;&lt;a href="#master-eligible-node" class="header-anchor"&gt;&lt;/a&gt;Master-eligible Node
+&lt;/h4&gt;&lt;p&gt;클러스터를 제어하는 마스터로 선택할 수 있는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱스 생성, 삭제&lt;/li&gt;
+&lt;li&gt;클러스터 노드의 추적 관리&lt;/li&gt;
+&lt;li&gt;데이터 입력 시 할당할 샤드 선택&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="data-node"&gt;&lt;a href="#data-node" class="header-anchor"&gt;&lt;/a&gt;Data Node
+&lt;/h4&gt;&lt;p&gt;데이터(Document)가 저장되는 노드이며, 데이터가 분산 저장되는 공간인 샤드가 배치되는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CRUD, 색인, 검색, 통계 등의 데이터 작업을 수행&lt;/li&gt;
+&lt;li&gt;많은 리소스(CPU, 메모리 등)를 필요로 함&lt;/li&gt;
+&lt;li&gt;모니터링 작업이 필요하며, 마스터 노드와는 분리해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ingest-node"&gt;&lt;a href="#ingest-node" class="header-anchor"&gt;&lt;/a&gt;Ingest Node
+&lt;/h4&gt;&lt;p&gt;데이터를 변환하는 등 사전 처리 파이프라인을 실행하는 역할&lt;/p&gt;
+&lt;h4 id="coordination-only-node"&gt;&lt;a href="#coordination-only-node" class="header-anchor"&gt;&lt;/a&gt;Coordination Only Node
+&lt;/h4&gt;&lt;p&gt;사용자의 요청을 받고 라운드 로빈 방식으로 분산하는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;클러스터에 관련된 것은 마스터 노드로 전달&lt;/li&gt;
+&lt;li&gt;데이터와 관련된 것은 데이터 노드로 전달&lt;/li&gt;
+&lt;li&gt;로드밸런싱 역할을 수행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="인덱스--샤드--복제"&gt;&lt;a href="#%ec%9d%b8%eb%8d%b1%ec%8a%a4--%ec%83%a4%eb%93%9c--%eb%b3%b5%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;인덱스 / 샤드 / 복제
+&lt;/h3&gt;&lt;h4 id="인덱스-index"&gt;&lt;a href="#%ec%9d%b8%eb%8d%b1%ec%8a%a4-index" class="header-anchor"&gt;&lt;/a&gt;인덱스 (Index)
+&lt;/h4&gt;&lt;p&gt;RDB의 데이터베이스와 대응하는 개념&lt;/p&gt;
+&lt;h4 id="샤드-shard"&gt;&lt;a href="#%ec%83%a4%eb%93%9c-shard" class="header-anchor"&gt;&lt;/a&gt;샤드 (Shard)
+&lt;/h4&gt;&lt;p&gt;인덱스 내부에 색인된 데이터들이 하나로 뭉쳐서 존재하지 않고 여러 부분으로 나뉘어 존재함. 스케일 아웃을 위해 하나의 인덱스를 여러 샤드로 쪼갬.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 샤드는 프라이머리 샤드와 레플리카 샤드로 나뉜다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;프라이머리 샤드 (Primary Shard)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터의 원본&lt;/li&gt;
+&lt;li&gt;데이터 업데이트 요청은 프라이머리 샤드에 전달됨&lt;/li&gt;
+&lt;li&gt;업데이트된 내용은 레플리카 샤드에 복제됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;레플리카 샤드 (Replica Shard)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;프라이머리 샤드의 복제본&lt;/li&gt;
+&lt;li&gt;원본 데이터가 손실되었을 때 대신 사용하면서 장애를 극복하는 역할을 수행&lt;/li&gt;
+&lt;li&gt;기본적으로 원본인 프라이머리 샤드와 다른 노드에 배정됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="세그먼트-segment"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8-segment" class="header-anchor"&gt;&lt;/a&gt;세그먼트 (Segment)
+&lt;/h3&gt;&lt;p&gt;세그먼트는 ElasticSearch 에서 문서의 빠른 검색을 위해 설계된 자료 구조이며, 샤드의 데이터를 가지고 있는 물리적인 파일이다.&lt;/p&gt;
+&lt;h4 id="세그먼트의-특징"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8%ec%9d%98-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;세그먼트의 특징
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;각 샤드는 다수의 세그먼트로 구성되어 있어 검색 요청을 분산 처리하여 효율적인 검색이 가능&lt;/li&gt;
+&lt;li&gt;샤드에서 검색 시, 먼저 각 세그먼트를 검색하여 결과를 조합한 후 최종 결과를 해당 샤드의 결과로 반환&lt;/li&gt;
+&lt;li&gt;세그먼트 내부에 색인된 데이터가 역색인 구조로 저장되어 있어 검색 속도가 매우 빠름&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="세그먼트-생성-과정"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8-%ec%83%9d%ec%84%b1-%ea%b3%bc%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;세그먼트 생성 과정
+&lt;/h4&gt;&lt;p&gt;매 요청마다 새로운 세그먼트를 만들면 너무 많은 세그먼트가 생성되므로 이를 방지하기 위해 &lt;strong&gt;인메모리 버퍼&lt;/strong&gt;를 사용한다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Flush&lt;/strong&gt;: 인메모리 버퍼에 쌓인 내용이 일정 시간이 지나거나 버퍼가 가득 차면 flush를 수행하고, 시스템 캐시에 세그먼트가 생성됨&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;이 시점부터 데이터 검색이 가능&lt;/li&gt;
+&lt;li&gt;이 상태는 세그먼트가 시스템 캐시에 저장된 상태이지 디스크에 저장된 상태가 아님&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Commit&lt;/strong&gt;: 일정 시간이 지나면 commit을 통해 물리적인 디스크에 세그먼트를 저장&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;병합&lt;/strong&gt;: 저장된 세그먼트는 시간이 지날수록 하나로 병합하는 과정을 수행&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;병합을 통해 세그먼트를 하나로 줄여주면 검색할 세그먼트 개수가 줄어 검색 성능이 향상됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

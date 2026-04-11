@@ -1,1 +1,832 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub on 0AndWild_log</title><link>https://0andwild.com/en/tags/github/</link><description>Recent content in GitHub on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/github/index.xml" rel="self" type="application/rss+xml"/><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>Implemented Base Directory support, tier path granularity, directory name normalization, Java Main/package automation, and bulk upload.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260220_baekjoonhub/featured.png"/></item><item><title>Adding Comments to Hugo Blog with Giscus</title><link>https://0andwild.com/en/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/251017_comments_giscus/</guid><description>How to add a free, Markdown-supporting comment system in 10 minutes</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251017_comments_giscus/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub on 0AndWild_log</title><link>https://0andwild.com/en/tags/github/</link><description>Recent content in GitHub on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/github/index.xml" rel="self" type="application/rss+xml"/><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Customizing the BaekjoonHub Chrome Extension" /&gt;&lt;h1 id="why-i-ended-up-customizing-baekjoonhub"&gt;&lt;a href="#why-i-ended-up-customizing-baekjoonhub" class="header-anchor"&gt;&lt;/a&gt;Why I Ended Up Customizing BaekjoonHub
+&lt;/h1&gt;&lt;p&gt;As I started using Baekjoon more seriously, I discovered the &lt;code&gt;BaekjoonHub&lt;/code&gt; extension.&lt;br&gt;
+It was convenient because it could automatically upload solutions to GitHub, but there were still several pain points for my actual workflow.&lt;/p&gt;
+&lt;p&gt;So I first checked issues in the official repository.&lt;br&gt;
+I found that people with similar concerns already existed, and there were PRs proposing related features. However, at that time, it did not look like those features would be merged soon, so I decided to customize what I needed instead of waiting.&lt;/p&gt;
+&lt;p&gt;Original repository: &lt;a class="link" href="https://github.com/BaekjoonHub/BaekjoonHub" target="_blank" rel="noopener"
+ &gt;https://github.com/BaekjoonHub/BaekjoonHub&lt;/a&gt;&lt;br&gt;
+Custom repository: &lt;a class="link" href="https://github.com/0AndWild/baekjoonhub_custom" target="_blank" rel="noopener"
+ &gt;https://github.com/0AndWild/baekjoonhub_custom&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="pain-points-i-had"&gt;&lt;a href="#pain-points-i-had" class="header-anchor"&gt;&lt;/a&gt;Pain Points I Had
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Upload paths were based on the repository root, which made it hard to fit my project structure&lt;/li&gt;
+&lt;li&gt;Tier paths were not granular enough, making problem organization less clean&lt;/li&gt;
+&lt;li&gt;Problem directory names were awkward to use as package/path names&lt;/li&gt;
+&lt;li&gt;I sometimes had to manually align Java file names with the runtime entry point (&lt;code&gt;Main.java&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;It was difficult to organize and upload already solved problems in one shot&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="what-i-changed-in-my-custom-version"&gt;&lt;a href="#what-i-changed-in-my-custom-version" class="header-anchor"&gt;&lt;/a&gt;What I Changed in My Custom Version
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Added &lt;code&gt;Base Directory&lt;/code&gt; support&lt;/li&gt;
+&lt;li&gt;Split tier paths into granular levels like &lt;code&gt;Bronze/V&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Normalized problem directory names&lt;/li&gt;
+&lt;li&gt;Fixed Java file name to &lt;code&gt;Main.java&lt;/code&gt; and auto-inserted &lt;code&gt;package&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Added bulk upload for all accepted Baekjoon problems&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="wrap-up"&gt;&lt;a href="#wrap-up" class="header-anchor"&gt;&lt;/a&gt;Wrap-up
+&lt;/h2&gt;&lt;p&gt;This customization was focused less on adding many new features,&lt;br&gt;
+and more on reducing repetitive friction in the actual solve-and-organize workflow.&lt;/p&gt;
+&lt;p&gt;Since similar requests already existed in the official repository, I think this customization direction could be useful for others with the same pain points.&lt;/p&gt;</description></item><item><title>Adding Comments to Hugo Blog with Giscus</title><link>https://0andwild.com/en/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/251017_comments_giscus/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Adding Comments to Hugo Blog with Giscus" /&gt;&lt;h2 id="what-is-giscus"&gt;&lt;a href="#what-is-giscus" class="header-anchor"&gt;&lt;/a&gt;What is Giscus?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Giscus&lt;/strong&gt; is an open-source comment system that uses GitHub Discussions as its backend.&lt;/p&gt;
+&lt;h3 id="key-features"&gt;&lt;a href="#key-features" class="header-anchor"&gt;&lt;/a&gt;Key Features
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Completely Free&lt;/strong&gt; (leverages GitHub features)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;No Server Required&lt;/strong&gt; (GitHub handles everything)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Full Markdown Support&lt;/strong&gt; (code blocks, images, tables, etc.)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Reactions&lt;/strong&gt; (👍, ❤️, 😄, etc.)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;GitHub Notifications&lt;/strong&gt; (get notified when comments are posted)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Dark Mode&lt;/strong&gt; (auto-syncs with blog theme)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Data Ownership&lt;/strong&gt; (stored in your repository)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="differences-from-utterances"&gt;&lt;a href="#differences-from-utterances" class="header-anchor"&gt;&lt;/a&gt;Differences from Utterances
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Feature&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Utterances&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Backend&lt;/td&gt;
+ &lt;td&gt;GitHub Discussions&lt;/td&gt;
+ &lt;td&gt;GitHub Issues&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Reactions&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Nested Replies&lt;/td&gt;
+ &lt;td&gt;✅ (nested)&lt;/td&gt;
+ &lt;td&gt;⚠️ (flat)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Comment Sorting&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Best For&lt;/td&gt;
+ &lt;td&gt;Comments&lt;/td&gt;
+ &lt;td&gt;Issue tracking&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;: Giscus is the superior choice over Utterances.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="prerequisites"&gt;&lt;a href="#prerequisites" class="header-anchor"&gt;&lt;/a&gt;Prerequisites
+&lt;/h2&gt;&lt;h3 id="requirements"&gt;&lt;a href="#requirements" class="header-anchor"&gt;&lt;/a&gt;Requirements
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;GitHub account&lt;/li&gt;
+&lt;li&gt;Public GitHub repository (your blog repository)&lt;/li&gt;
+&lt;li&gt;Hugo + Blowfish theme&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="limitations"&gt;&lt;a href="#limitations" class="header-anchor"&gt;&lt;/a&gt;Limitations
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;⚠️ &lt;strong&gt;Public repositories only&lt;/strong&gt; (Private repositories have limited Discussions functionality)&lt;/li&gt;
+&lt;li&gt;⚠️ &lt;strong&gt;GitHub account required&lt;/strong&gt; (no anonymous comments)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="step-1-enable-github-discussions"&gt;&lt;a href="#step-1-enable-github-discussions" class="header-anchor"&gt;&lt;/a&gt;Step 1: Enable GitHub Discussions
+&lt;/h2&gt;&lt;h3 id="11-navigate-to-repository-settings"&gt;&lt;a href="#11-navigate-to-repository-settings" class="header-anchor"&gt;&lt;/a&gt;1.1 Navigate to Repository Settings
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Go to your blog repository on GitHub&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Example: https://github.com/0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Click the &lt;strong&gt;Settings&lt;/strong&gt; tab&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="12-enable-discussions"&gt;&lt;a href="#12-enable-discussions" class="header-anchor"&gt;&lt;/a&gt;1.2 Enable Discussions
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Scroll down to find the &lt;strong&gt;Features&lt;/strong&gt; section&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check the &lt;strong&gt;Discussions&lt;/strong&gt; checkbox ✅&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;It will save automatically&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="13-verify"&gt;&lt;a href="#13-verify" class="header-anchor"&gt;&lt;/a&gt;1.3 Verify
+&lt;/h3&gt;&lt;p&gt;Confirm that the &lt;strong&gt;Discussions&lt;/strong&gt; tab appears at the top of your repository&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Code | Issues | Pull requests | Discussions | ← Newly created!
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="step-2-install-giscus-app"&gt;&lt;a href="#step-2-install-giscus-app" class="header-anchor"&gt;&lt;/a&gt;Step 2: Install Giscus App
+&lt;/h2&gt;&lt;h3 id="21-install-giscus-github-app"&gt;&lt;a href="#21-install-giscus-github-app" class="header-anchor"&gt;&lt;/a&gt;2.1 Install Giscus GitHub App
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Visit &lt;a class="link" href="https://github.com/apps/giscus" target="_blank" rel="noopener"
+ &gt;https://github.com/apps/giscus&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Click the &lt;strong&gt;Install&lt;/strong&gt; button&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Choose permission scope:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;All repositories&lt;/strong&gt; (all repositories)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Only select repositories&lt;/strong&gt; (specific repositories - recommended)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Select your blog repository:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Click &lt;strong&gt;Install&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="22-verify-permissions"&gt;&lt;a href="#22-verify-permissions" class="header-anchor"&gt;&lt;/a&gt;2.2 Verify Permissions
+&lt;/h3&gt;&lt;p&gt;Giscus requests the following permissions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Read access to discussions&lt;/strong&gt; (read discussions)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Write access to discussions&lt;/strong&gt; (write discussions)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Read access to metadata&lt;/strong&gt; (read metadata)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="step-3-generate-giscus-configuration"&gt;&lt;a href="#step-3-generate-giscus-configuration" class="header-anchor"&gt;&lt;/a&gt;Step 3: Generate Giscus Configuration
+&lt;/h2&gt;&lt;h3 id="31-visit-giscus-website"&gt;&lt;a href="#31-visit-giscus-website" class="header-anchor"&gt;&lt;/a&gt;3.1 Visit Giscus Website
+&lt;/h3&gt;&lt;p&gt;Go to &lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;https://giscus.app&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="32-connect-repository"&gt;&lt;a href="#32-connect-repository" class="header-anchor"&gt;&lt;/a&gt;3.2 Connect Repository
+&lt;/h3&gt;&lt;p&gt;Enter in the &lt;strong&gt;Repository&lt;/strong&gt; section:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;You should see a success message below:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;✅ Success! This repository meets all criteria.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;If you see an error:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify Discussions is enabled&lt;/li&gt;
+&lt;li&gt;Verify Giscus App is installed&lt;/li&gt;
+&lt;li&gt;Verify the repository is Public&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="33-page--discussion-mapping"&gt;&lt;a href="#33-page--discussion-mapping" class="header-anchor"&gt;&lt;/a&gt;3.3 Page ↔️ Discussion Mapping
+&lt;/h3&gt;&lt;p&gt;Choose in the &lt;strong&gt;Discussion Mapping&lt;/strong&gt; section:&lt;/p&gt;
+&lt;h4 id="recommended-pathname-path-name"&gt;&lt;a href="#recommended-pathname-path-name" class="header-anchor"&gt;&lt;/a&gt;Recommended: &lt;code&gt;pathname&lt;/code&gt; (path name)
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Mapping: Select pathname
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Each blog post&amp;rsquo;s path becomes the Discussion title.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Post: &lt;code&gt;/posts/giscus-guide/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Discussion title: &lt;code&gt;posts/giscus-guide&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="alternatives"&gt;&lt;a href="#alternatives" class="header-anchor"&gt;&lt;/a&gt;Alternatives:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;URL&lt;/code&gt;: Uses full URL (problematic if domain changes)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;title&lt;/code&gt;: Uses post title (problematic if title changes)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;og:title&lt;/code&gt;: OpenGraph title&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;specific term&lt;/code&gt;: Manually specified&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Recommendation&lt;/strong&gt;: Use &lt;code&gt;pathname&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id="34-select-discussion-category"&gt;&lt;a href="#34-select-discussion-category" class="header-anchor"&gt;&lt;/a&gt;3.4 Select Discussion Category
+&lt;/h3&gt;&lt;p&gt;Choose from the &lt;strong&gt;Discussion Category&lt;/strong&gt; dropdown:&lt;/p&gt;
+&lt;h4 id="recommended-announcements"&gt;&lt;a href="#recommended-announcements" class="header-anchor"&gt;&lt;/a&gt;Recommended: &lt;code&gt;Announcements&lt;/code&gt;
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Category: Select Announcements
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Characteristics&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only admins can create new Discussions&lt;/li&gt;
+&lt;li&gt;Anyone can comment&lt;/li&gt;
+&lt;li&gt;Ideal for blog posts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="alternative-general"&gt;&lt;a href="#alternative-general" class="header-anchor"&gt;&lt;/a&gt;Alternative: &lt;code&gt;General&lt;/code&gt;
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Anyone can create Discussions&lt;/li&gt;
+&lt;li&gt;More open&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Recommendation&lt;/strong&gt;: &lt;code&gt;Announcements&lt;/code&gt; (best for blogs)&lt;/p&gt;
+&lt;h3 id="35-feature-selection"&gt;&lt;a href="#35-feature-selection" class="header-anchor"&gt;&lt;/a&gt;3.5 Feature Selection
+&lt;/h3&gt;&lt;h4 id="enable-reactions"&gt;&lt;a href="#enable-reactions" class="header-anchor"&gt;&lt;/a&gt;Enable Reactions
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;✅ Enable reactions
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Users can react with 👍, ❤️, 😄, etc.&lt;/p&gt;
+&lt;h4 id="emit-metadata"&gt;&lt;a href="#emit-metadata" class="header-anchor"&gt;&lt;/a&gt;Emit Metadata
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;□ Emit metadata (recommended to leave unchecked)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Unnecessary feature, better to keep it off&lt;/p&gt;
+&lt;h4 id="comment-input-position"&gt;&lt;a href="#comment-input-position" class="header-anchor"&gt;&lt;/a&gt;Comment Input Position
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;⚪ Above comments
+⚪ Below comments (recommended)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Recommendation&lt;/strong&gt;: Below comments&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Encourages users to read existing comments first&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="lazy-loading"&gt;&lt;a href="#lazy-loading" class="header-anchor"&gt;&lt;/a&gt;Lazy Loading
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;✅ Lazy loading
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Improves page load speed (recommended)&lt;/p&gt;
+&lt;h3 id="36-theme-selection"&gt;&lt;a href="#36-theme-selection" class="header-anchor"&gt;&lt;/a&gt;3.6 Theme Selection
+&lt;/h3&gt;&lt;h4 id="recommended-preferred_color_scheme"&gt;&lt;a href="#recommended-preferred_color_scheme" class="header-anchor"&gt;&lt;/a&gt;Recommended: &lt;code&gt;preferred_color_scheme&lt;/code&gt;
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Theme: preferred_color_scheme
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Behavior&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Automatically switches based on user&amp;rsquo;s system settings&lt;/li&gt;
+&lt;li&gt;Dark mode ↔️ Light mode automatic&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="alternatives-1"&gt;&lt;a href="#alternatives-1" class="header-anchor"&gt;&lt;/a&gt;Alternatives:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;light&lt;/code&gt;: Always light theme&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dark&lt;/code&gt;: Always dark theme&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;transparent_dark&lt;/code&gt;: Transparent dark&lt;/li&gt;
+&lt;li&gt;Other GitHub themes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Recommendation&lt;/strong&gt;: &lt;code&gt;preferred_color_scheme&lt;/code&gt; (auto-switching)&lt;/p&gt;
+&lt;h3 id="37-language-setting"&gt;&lt;a href="#37-language-setting" class="header-anchor"&gt;&lt;/a&gt;3.7 Language Setting
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Language: en (English)
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="step-4-copy-generated-code"&gt;&lt;a href="#step-4-copy-generated-code" class="header-anchor"&gt;&lt;/a&gt;Step 4: Copy Generated Code
+&lt;/h2&gt;&lt;h3 id="41-copy-script"&gt;&lt;a href="#41-copy-script" class="header-anchor"&gt;&lt;/a&gt;4.1 Copy Script
+&lt;/h3&gt;&lt;p&gt;Copy the generated code from the &lt;strong&gt;Enable giscus&lt;/strong&gt; section at the bottom of the page:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;en&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-loading&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;lazy&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="42-important-values"&gt;&lt;a href="#42-important-values" class="header-anchor"&gt;&lt;/a&gt;4.2 Important Values
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;data-repo-id&lt;/code&gt;: Repository unique ID (auto-generated)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data-category-id&lt;/code&gt;: Category unique ID (auto-generated)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These values are unique to your repository, so you must use the code generated from the Giscus website.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-5-integrate-with-blowfish-theme"&gt;&lt;a href="#step-5-integrate-with-blowfish-theme" class="header-anchor"&gt;&lt;/a&gt;Step 5: Integrate with Blowfish Theme
+&lt;/h2&gt;&lt;h3 id="51-create-directory"&gt;&lt;a href="#51-create-directory" class="header-anchor"&gt;&lt;/a&gt;5.1 Create Directory
+&lt;/h3&gt;&lt;p&gt;From the terminal, navigate to your blog&amp;rsquo;s root directory:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p layouts/partials
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="52-create-commentshtml-file"&gt;&lt;a href="#52-create-commentshtml-file" class="header-anchor"&gt;&lt;/a&gt;5.2 Create comments.html File
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;touch layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Or create directly in your IDE/editor:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;layouts/
+ └── partials/
+ └── comments.html ← Create new
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="53-insert-giscus-code"&gt;&lt;a href="#53-insert-giscus-code" class="header-anchor"&gt;&lt;/a&gt;5.3 Insert Giscus Code
+&lt;/h3&gt;&lt;p&gt;Add the following content to &lt;code&gt;layouts/partials/comments.html&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- Giscus Comment System --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;en&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-loading&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;lazy&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;⚠️ &lt;strong&gt;Important&lt;/strong&gt;: Replace the &lt;code&gt;data-repo-id&lt;/code&gt; and &lt;code&gt;data-category-id&lt;/code&gt; values with &lt;strong&gt;your own values&lt;/strong&gt;!&lt;/p&gt;
+&lt;h3 id="54-configure-paramstoml"&gt;&lt;a href="#54-configure-paramstoml" class="header-anchor"&gt;&lt;/a&gt;5.4 Configure params.toml
+&lt;/h3&gt;&lt;p&gt;Open &lt;code&gt;config/_default/params.toml&lt;/code&gt; and add to the &lt;code&gt;[article]&lt;/code&gt; section:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c"&gt;# Add or verify this line&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;# ... other settings&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If the &lt;code&gt;showComments&lt;/code&gt; entry already exists, make sure it&amp;rsquo;s set to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-6-local-testing"&gt;&lt;a href="#step-6-local-testing" class="header-anchor"&gt;&lt;/a&gt;Step 6: Local Testing
+&lt;/h2&gt;&lt;h3 id="61-run-hugo-server"&gt;&lt;a href="#61-run-hugo-server" class="header-anchor"&gt;&lt;/a&gt;6.1 Run Hugo Server
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="62-verify-in-browser"&gt;&lt;a href="#62-verify-in-browser" class="header-anchor"&gt;&lt;/a&gt;6.2 Verify in Browser
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;http://localhost:1313
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The Giscus comment widget should appear at the bottom of post pages.&lt;/p&gt;
+&lt;h3 id="63-write-test-comment"&gt;&lt;a href="#63-write-test-comment" class="header-anchor"&gt;&lt;/a&gt;6.3 Write Test Comment
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Click &lt;strong&gt;Sign in with GitHub&lt;/strong&gt; button&lt;/li&gt;
+&lt;li&gt;Authorize GitHub OAuth&lt;/li&gt;
+&lt;li&gt;Write a test comment&lt;/li&gt;
+&lt;li&gt;Verify the comment displays&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="64-check-github-discussions"&gt;&lt;a href="#64-check-github-discussions" class="header-anchor"&gt;&lt;/a&gt;6.4 Check GitHub Discussions
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;GitHub repository → &lt;strong&gt;Discussions&lt;/strong&gt; tab&lt;/li&gt;
+&lt;li&gt;Verify a new Discussion was created in the Announcements category&lt;/li&gt;
+&lt;li&gt;Verify the Discussion title matches the post path&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="step-7-deploy"&gt;&lt;a href="#step-7-deploy" class="header-anchor"&gt;&lt;/a&gt;Step 7: Deploy
+&lt;/h2&gt;&lt;h3 id="71-commit-to-git"&gt;&lt;a href="#71-commit-to-git" class="header-anchor"&gt;&lt;/a&gt;7.1 Commit to Git
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add config/_default/params.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;Add Giscus comments system&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="72-push-to-github"&gt;&lt;a href="#72-push-to-github" class="header-anchor"&gt;&lt;/a&gt;7.2 Push to GitHub
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push origin main
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="73-check-github-actions"&gt;&lt;a href="#73-check-github-actions" class="header-anchor"&gt;&lt;/a&gt;7.3 Check GitHub Actions
+&lt;/h3&gt;&lt;p&gt;GitHub Actions will automatically build and deploy.&lt;/p&gt;
+&lt;p&gt;Check deployment status:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;GitHub repository → Actions tab
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="74-verify-deployed-site"&gt;&lt;a href="#74-verify-deployed-site" class="header-anchor"&gt;&lt;/a&gt;7.4 Verify Deployed Site
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;https://0andwild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Verify the comment widget displays correctly on post pages.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="advanced-configuration"&gt;&lt;a href="#advanced-configuration" class="header-anchor"&gt;&lt;/a&gt;Advanced Configuration
+&lt;/h2&gt;&lt;h3 id="dynamic-dark-mode-and-language-setting-recommended"&gt;&lt;a href="#dynamic-dark-mode-and-language-setting-recommended" class="header-anchor"&gt;&lt;/a&gt;Dynamic Dark Mode and Language Setting (Recommended)
+&lt;/h3&gt;&lt;p&gt;A complete solution to make Giscus automatically adapt to Blowfish theme&amp;rsquo;s dark mode toggle and language switching.&lt;/p&gt;
+&lt;h4 id="complete-dynamic-configuration"&gt;&lt;a href="#complete-dynamic-configuration" class="header-anchor"&gt;&lt;/a&gt;Complete Dynamic Configuration
+&lt;/h4&gt;&lt;p&gt;Full code for &lt;code&gt;layouts/partials/comments.html&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- Giscus Comments with Dynamic Theme and Language --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{ $lang := .Site.Language.Lang }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{ $translationKey := .File.TranslationBaseName }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Get current theme (dark/light)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_tritanopia&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_tritanopia&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Get language from Hugo template
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;currentLang&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{{ $lang }}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Use file directory path for unified comments across languages
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Example: &amp;#34;posts/subscription_alert&amp;#34; for both index.ko.md and index.en.md
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;discussionId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{{ .File.Dir | replaceRE &amp;#34;^content/&amp;#34; &amp;#34;&amp;#34; | replaceRE &amp;#34;/$&amp;#34; &amp;#34;&amp;#34; }}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Wait for DOM to be ready
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;readyState&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;loading&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;DOMContentLoaded&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Create and insert Giscus script with dynamic settings
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;script&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createElement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;script&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app/client.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-repo&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0AndWild/0AndWild.github.io&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-repo-id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;R_kgDOQAqZFA&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-category&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;General&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-category-id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;DIC_kwDOQAqZFM4CwwRg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-mapping&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;specific&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-term&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;discussionId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-strict&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-reactions-enabled&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-emit-metadata&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-input-position&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bottom&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-theme&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-lang&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;currentLang&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-loading&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;lazy&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;crossorigin&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;anonymous&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Find giscus container or create one
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;container&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.giscus-container&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;currentScript&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;parentElement&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;container&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;container&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;appendChild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Monitor theme changes and update Giscus
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;iframe&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;iframe.giscus-frame&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contentWindow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;postMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setConfig&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;catch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;error&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Giscus theme update delayed, will retry...&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Watch for theme changes using MutationObserver
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;observer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MutationObserver&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributeName&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Delay update to ensure iframe is ready
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Start observing after a short delay
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;observer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;observe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;attributeFilter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Update theme when Giscus iframe loads
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;!==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Giscus is ready, update theme
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;})();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;/* Ensure Giscus iframe has proper height and displays all content */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-container&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;min-height&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-container&lt;/span&gt; &lt;span class="nt"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-frame&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;width&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="kt"&gt;%&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;border&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;none&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;min-height&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;/* Make sure comment actions are visible */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;overflow&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;visible&lt;/span&gt; &lt;span class="cp"&gt;!important&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;giscus-container&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="how-it-works"&gt;&lt;a href="#how-it-works" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h4&gt;&lt;h5 id="1-dynamic-language-setting"&gt;&lt;a href="#1-dynamic-language-setting" class="header-anchor"&gt;&lt;/a&gt;1. &lt;strong&gt;Dynamic Language Setting&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;:=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Site&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Language&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;currentLang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Gets current page language from Hugo template&lt;/li&gt;
+&lt;li&gt;Korean page: &lt;code&gt;ko&lt;/code&gt;, English page: &lt;code&gt;en&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Sets Giscus to the corresponding language&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Result&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Korean page → Giscus UI displays in Korean&lt;/li&gt;
+&lt;li&gt;English page → Giscus UI displays in English&lt;/li&gt;
+&lt;li&gt;Language switch triggers page reload with automatic update&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="2-dynamic-dark-mode-setting"&gt;&lt;a href="#2-dynamic-dark-mode-setting" class="header-anchor"&gt;&lt;/a&gt;2. &lt;strong&gt;Dynamic Dark Mode Setting&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_tritanopia&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_tritanopia&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Blowfish theme adds &lt;code&gt;&amp;lt;html class=&amp;quot;dark&amp;quot;&amp;gt;&lt;/code&gt; in dark mode&lt;/li&gt;
+&lt;li&gt;Detects this to determine theme&lt;/li&gt;
+&lt;li&gt;Uses &lt;code&gt;dark_tritanopia&lt;/code&gt; / &lt;code&gt;light_tritanopia&lt;/code&gt; themes (colorblind-friendly)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Result&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Page load: Loads Giscus with current theme state&lt;/li&gt;
+&lt;li&gt;Dark mode toggle click: Real-time Giscus theme change&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="3-unified-comments-across-languages"&gt;&lt;a href="#3-unified-comments-across-languages" class="header-anchor"&gt;&lt;/a&gt;3. &lt;strong&gt;Unified Comments Across Languages&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;discussionId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;File&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Dir&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;replaceRE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;^content/&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;replaceRE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/$&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Uses file directory path as Discussion ID&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;content/posts/subscription_alert/index.ko.md&lt;/code&gt; → &lt;code&gt;posts/subscription_alert&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;content/posts/subscription_alert/index.en.md&lt;/code&gt; → &lt;code&gt;posts/subscription_alert&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Same ID means Korean/English versions share the same comments&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Result&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comments written on Korean post&lt;/li&gt;
+&lt;li&gt;Also display on English post&lt;/li&gt;
+&lt;li&gt;Separate Discussions created per post&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="4-real-time-theme-change-detection"&gt;&lt;a href="#4-real-time-theme-change-detection" class="header-anchor"&gt;&lt;/a&gt;4. &lt;strong&gt;Real-time Theme Change Detection&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;observer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MutationObserver&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributeName&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;MutationObserver&lt;/code&gt; detects HTML class changes&lt;/li&gt;
+&lt;li&gt;Immediately detects dark mode toggle clicks&lt;/li&gt;
+&lt;li&gt;Sends theme change command to Giscus iframe via &lt;code&gt;postMessage&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="testing-method"&gt;&lt;a href="#testing-method" class="header-anchor"&gt;&lt;/a&gt;Testing Method
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 1. Run local server&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 2. Verify in browser&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;http://localhost:1313/posts/subscription_alert/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Test Items&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;✅ Page load displays Giscus with current theme (light/dark)&lt;/li&gt;
+&lt;li&gt;✅ Dark mode toggle click immediately changes Giscus theme&lt;/li&gt;
+&lt;li&gt;✅ Language switch (ko → en) changes Giscus language&lt;/li&gt;
+&lt;li&gt;✅ Korean/English pages display same comments&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="changing-theme-options"&gt;&lt;a href="#changing-theme-options" class="header-anchor"&gt;&lt;/a&gt;Changing Theme Options
+&lt;/h4&gt;&lt;p&gt;To use different themes, modify the &lt;code&gt;getGiscusTheme()&lt;/code&gt; function:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Basic theme
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// High contrast theme
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_high_contrast&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_high_contrast&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// GitHub style theme
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_dimmed&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Available themes&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;light&lt;/code&gt; / &lt;code&gt;dark&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;light_high_contrast&lt;/code&gt; / &lt;code&gt;dark_high_contrast&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;light_tritanopia&lt;/code&gt; / &lt;code&gt;dark_tritanopia&lt;/code&gt; (colorblind-friendly)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dark_dimmed&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;transparent_dark&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;preferred_color_scheme&lt;/code&gt; (follows system settings)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="static-theme-configuration-simple-method"&gt;&lt;a href="#static-theme-configuration-simple-method" class="header-anchor"&gt;&lt;/a&gt;Static Theme Configuration (Simple Method)
+&lt;/h4&gt;&lt;p&gt;If dynamic changes aren&amp;rsquo;t needed, you can configure statically:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;General&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;en&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Pros&lt;/strong&gt;: Simple
+&lt;strong&gt;Cons&lt;/strong&gt;: No real-time theme changes, comments separated by language&lt;/p&gt;
+&lt;h3 id="hide-comments-on-specific-posts"&gt;&lt;a href="#hide-comments-on-specific-posts" class="header-anchor"&gt;&lt;/a&gt;Hide Comments on Specific Posts
+&lt;/h3&gt;&lt;p&gt;To hide comments on specific posts only, add to that post&amp;rsquo;s front matter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Post Without Comments&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;showComments&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# Hide comments on this post only&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="separate-comments-by-category"&gt;&lt;a href="#separate-comments-by-category" class="header-anchor"&gt;&lt;/a&gt;Separate Comments by Category
+&lt;/h3&gt;&lt;p&gt;To use different Discussion categories for posts in different categories:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- Conditional category configuration --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;category&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;categories&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Tutorial&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;DIC_kwDOxxxxTutorial&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;DIC_kwDOxxxxGeneral&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="nx"&gt;end&lt;/span&gt; &lt;span class="p"&gt;}};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;{{ category }}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;...&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="troubleshooting"&gt;&lt;a href="#troubleshooting" class="header-anchor"&gt;&lt;/a&gt;Troubleshooting
+&lt;/h2&gt;&lt;h3 id="comment-widget-not-displaying"&gt;&lt;a href="#comment-widget-not-displaying" class="header-anchor"&gt;&lt;/a&gt;Comment Widget Not Displaying
+&lt;/h3&gt;&lt;h4 id="cause-1-discussions-not-enabled"&gt;&lt;a href="#cause-1-discussions-not-enabled" class="header-anchor"&gt;&lt;/a&gt;Cause 1: Discussions Not Enabled
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Solution: GitHub repository → Settings → Check Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="cause-2-giscus-app-not-installed"&gt;&lt;a href="#cause-2-giscus-app-not-installed" class="header-anchor"&gt;&lt;/a&gt;Cause 2: Giscus App Not Installed
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Solution: Install at https://github.com/apps/giscus
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="cause-3-repository-id-error"&gt;&lt;a href="#cause-3-repository-id-error" class="header-anchor"&gt;&lt;/a&gt;Cause 3: Repository ID Error
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Solution: Regenerate code at giscus.app
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="cause-4-showcomments-setting-missing"&gt;&lt;a href="#cause-4-showcomments-setting-missing" class="header-anchor"&gt;&lt;/a&gt;Cause 4: showComments Setting Missing
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# config/_default/params.toml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c"&gt;# Verify&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="only-login-button-shows-cant-comment"&gt;&lt;a href="#only-login-button-shows-cant-comment" class="header-anchor"&gt;&lt;/a&gt;Only Login Button Shows, Can&amp;rsquo;t Comment
+&lt;/h3&gt;&lt;h4 id="cause-github-oauth-authorization-needed"&gt;&lt;a href="#cause-github-oauth-authorization-needed" class="header-anchor"&gt;&lt;/a&gt;Cause: GitHub OAuth Authorization Needed
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Click &lt;span class="s2"&gt;&amp;#34;Sign in with GitHub&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Authorize OAuth permissions
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Redirect to repository
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Can write comments
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="comments-not-saving"&gt;&lt;a href="#comments-not-saving" class="header-anchor"&gt;&lt;/a&gt;Comments Not Saving
+&lt;/h3&gt;&lt;h4 id="cause-repository-permission-issue"&gt;&lt;a href="#cause-repository-permission-issue" class="header-anchor"&gt;&lt;/a&gt;Cause: Repository Permission Issue
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Check:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Is the repository Public?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Is the repository included in Giscus App permissions?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Does the Discussion category exist?
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="dark-mode-not-syncing"&gt;&lt;a href="#dark-mode-not-syncing" class="header-anchor"&gt;&lt;/a&gt;Dark Mode Not Syncing
+&lt;/h3&gt;&lt;h4 id="solution-add-javascript-sync-code"&gt;&lt;a href="#solution-add-javascript-sync-code" class="header-anchor"&gt;&lt;/a&gt;Solution: Add JavaScript Sync Code
+&lt;/h4&gt;&lt;p&gt;Refer to &amp;ldquo;Advanced Configuration &amp;gt; Automatic Dark Mode Switching&amp;rdquo; above&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="managing-giscus"&gt;&lt;a href="#managing-giscus" class="header-anchor"&gt;&lt;/a&gt;Managing Giscus
+&lt;/h2&gt;&lt;h3 id="comment-management"&gt;&lt;a href="#comment-management" class="header-anchor"&gt;&lt;/a&gt;Comment Management
+&lt;/h3&gt;&lt;h4 id="manage-via-github-discussions"&gt;&lt;a href="#manage-via-github-discussions" class="header-anchor"&gt;&lt;/a&gt;Manage via GitHub Discussions
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub repository → Discussions tab
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Click the relevant Discussion
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Management actions:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Edit comment &lt;span class="o"&gt;(&lt;/span&gt;own comments only&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Delete comment &lt;span class="o"&gt;(&lt;/span&gt;admin&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Block user &lt;span class="o"&gt;(&lt;/span&gt;admin&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Lock Discussion &lt;span class="o"&gt;(&lt;/span&gt;admin&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="handling-spam-comments"&gt;&lt;a href="#handling-spam-comments" class="header-anchor"&gt;&lt;/a&gt;Handling Spam Comments
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Find spam comment in GitHub Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. ... menu next to comment → &lt;span class="s2"&gt;&amp;#34;Delete&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Block user: Profile → Block user
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="notification-settings"&gt;&lt;a href="#notification-settings" class="header-anchor"&gt;&lt;/a&gt;Notification Settings
+&lt;/h3&gt;&lt;h4 id="receive-comment-notifications-via-github"&gt;&lt;a href="#receive-comment-notifications-via-github" class="header-anchor"&gt;&lt;/a&gt;Receive Comment Notifications via GitHub
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub → Settings → Notifications
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Add repository to Watching
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Configure email notifications
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="receive-notifications-for-specific-discussions-only"&gt;&lt;a href="#receive-notifications-for-specific-discussions-only" class="header-anchor"&gt;&lt;/a&gt;Receive Notifications for Specific Discussions Only
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Discussions tab → Relevant Discussion
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. &lt;span class="s2"&gt;&amp;#34;Subscribe&amp;#34;&lt;/span&gt; button on right
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Select &lt;span class="s2"&gt;&amp;#34;Notify me&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="statistics-and-analytics"&gt;&lt;a href="#statistics-and-analytics" class="header-anchor"&gt;&lt;/a&gt;Statistics and Analytics
+&lt;/h2&gt;&lt;h3 id="view-comment-statistics"&gt;&lt;a href="#view-comment-statistics" class="header-anchor"&gt;&lt;/a&gt;View Comment Statistics
+&lt;/h3&gt;&lt;p&gt;In GitHub Discussions:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Discussions tab
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Check number of Discussions by category
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Check comment count &lt;span class="k"&gt;for&lt;/span&gt; each Discussion
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="utilize-github-insights"&gt;&lt;a href="#utilize-github-insights" class="header-anchor"&gt;&lt;/a&gt;Utilize GitHub Insights
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GitHub repository → Insights → Community
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;→ Check Discussions activity
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="cost-and-limitations"&gt;&lt;a href="#cost-and-limitations" class="header-anchor"&gt;&lt;/a&gt;Cost and Limitations
+&lt;/h2&gt;&lt;h3 id="cost"&gt;&lt;a href="#cost" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Completely Free&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only need a GitHub account&lt;/li&gt;
+&lt;li&gt;Unlimited comments within repository size limits&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="limitations-1"&gt;&lt;a href="#limitations-1" class="header-anchor"&gt;&lt;/a&gt;Limitations
+&lt;/h3&gt;&lt;h4 id="github-api-rate-limit"&gt;&lt;a href="#github-api-rate-limit" class="header-anchor"&gt;&lt;/a&gt;GitHub API Rate Limit
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;60 requests/hour (unauthenticated)&lt;/li&gt;
+&lt;li&gt;5,000 requests/hour (authenticated)&lt;/li&gt;
+&lt;li&gt;Giscus is optimized with caching, so no issues&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="repository-size"&gt;&lt;a href="#repository-size" class="header-anchor"&gt;&lt;/a&gt;Repository Size
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;GitHub Free: 1GB per repository&lt;/li&gt;
+&lt;li&gt;Text comments alone won&amp;rsquo;t reach the limit&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="discussions-limit"&gt;&lt;a href="#discussions-limit" class="header-anchor"&gt;&lt;/a&gt;Discussions Limit
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;None (unlimited)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="alternative-comparisons"&gt;&lt;a href="#alternative-comparisons" class="header-anchor"&gt;&lt;/a&gt;Alternative Comparisons
+&lt;/h2&gt;&lt;h3 id="giscus-vs-utterances"&gt;&lt;a href="#giscus-vs-utterances" class="header-anchor"&gt;&lt;/a&gt;Giscus vs Utterances
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Item&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Utterances&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Backend&lt;/td&gt;
+ &lt;td&gt;Discussions&lt;/td&gt;
+ &lt;td&gt;Issues&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Reactions&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Nested Replies&lt;/td&gt;
+ &lt;td&gt;Nested support&lt;/td&gt;
+ &lt;td&gt;Flat&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Recommendation&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐⭐⭐&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;: Giscus is recommended&lt;/p&gt;
+&lt;h3 id="giscus-vs-disqus"&gt;&lt;a href="#giscus-vs-disqus" class="header-anchor"&gt;&lt;/a&gt;Giscus vs Disqus
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Item&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Disqus&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Cost&lt;/td&gt;
+ &lt;td&gt;Free&lt;/td&gt;
+ &lt;td&gt;Free (with ads)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Ads&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Anonymous Comments&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅ (Guest)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Markdown&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Data Ownership&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Recommendation&lt;/td&gt;
+ &lt;td&gt;Developer blogs&lt;/td&gt;
+ &lt;td&gt;General blogs&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="migration-guide"&gt;&lt;a href="#migration-guide" class="header-anchor"&gt;&lt;/a&gt;Migration Guide
+&lt;/h2&gt;&lt;h3 id="utterances--giscus"&gt;&lt;a href="#utterances--giscus" class="header-anchor"&gt;&lt;/a&gt;Utterances → Giscus
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Convert GitHub Issues to Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Manual work required &lt;span class="o"&gt;(&lt;/span&gt;no automation&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Or leave Issues as-is and start fresh with Giscus
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Replace comments.html file
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Delete Utterances code
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Add Giscus code
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Deploy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="disqus--giscus"&gt;&lt;a href="#disqus--giscus" class="header-anchor"&gt;&lt;/a&gt;Disqus → Giscus
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Export Disqus data &lt;span class="o"&gt;(&lt;/span&gt;XML&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Manual migration to GitHub Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - No automation tools available
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Need to write custom script
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Or starting fresh recommended
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="additional-resources"&gt;&lt;a href="#additional-resources" class="header-anchor"&gt;&lt;/a&gt;Additional Resources
+&lt;/h2&gt;&lt;h3 id="official-documentation"&gt;&lt;a href="#official-documentation" class="header-anchor"&gt;&lt;/a&gt;Official Documentation
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;Giscus Official Site&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/giscus/giscus" target="_blank" rel="noopener"
+ &gt;Giscus GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="community"&gt;&lt;a href="#community" class="header-anchor"&gt;&lt;/a&gt;Community
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/giscus/giscus/discussions" target="_blank" rel="noopener"
+ &gt;Giscus Discussions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://blowfish.page/docs/" target="_blank" rel="noopener"
+ &gt;Blowfish Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="checklist"&gt;&lt;a href="#checklist" class="header-anchor"&gt;&lt;/a&gt;Checklist
+&lt;/h2&gt;&lt;p&gt;Installation completion checklist:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; GitHub Discussions enabled&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Giscus App installed&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Created &lt;code&gt;layouts/partials/comments.html&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Inserted Giscus code (with your own IDs)&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Set &lt;code&gt;showComments = true&lt;/code&gt; in &lt;code&gt;params.toml&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Local testing complete&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Pushed to GitHub&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Verified on deployed site&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Wrote test comment&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Verified creation in GitHub Discussions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;Giscus is the most suitable comment system for Hugo/GitHub Pages blogs:&lt;/p&gt;
+&lt;h3 id="summary-of-advantages"&gt;&lt;a href="#summary-of-advantages" class="header-anchor"&gt;&lt;/a&gt;Summary of Advantages
+&lt;/h3&gt;&lt;p&gt;✅ Completely free
+✅ Simple setup (10 minutes)
+✅ No server required
+✅ Full Markdown support
+✅ GitHub integration
+✅ Data ownership&lt;/p&gt;
+&lt;h3 id="disadvantages"&gt;&lt;a href="#disadvantages" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;p&gt;❌ GitHub account required (no anonymous comments)
+❌ Best for technical blogs (barrier for general users)&lt;/p&gt;
+&lt;h3 id="recommended-for"&gt;&lt;a href="#recommended-for" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Developer blogs&lt;/li&gt;
+&lt;li&gt;✅ Technical documentation&lt;/li&gt;
+&lt;li&gt;✅ Open source projects&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

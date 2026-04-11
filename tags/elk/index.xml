@@ -1,1 +1,118 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ELK on 0AndWild_log</title><link>https://0andwild.com/tags/elk/</link><description>Recent content in ELK on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Thu, 01 Feb 2024 21:07:14 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/elk/index.xml" rel="self" type="application/rss+xml"/><item><title>ElasticSearch 란?</title><link>https://0andwild.com/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/posts/240201_es/</guid><description>Elasticsearch의 기본 개념, ELK 스택, RDB와의 비교, 그리고 클러스터/노드/샤드 등 핵심 구조.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240201_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ELK on 0AndWild_log</title><link>https://0andwild.com/tags/elk/</link><description>Recent content in ELK on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Thu, 01 Feb 2024 21:07:14 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/elk/index.xml" rel="self" type="application/rss+xml"/><item><title>ElasticSearch 란?</title><link>https://0andwild.com/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/posts/240201_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post ElasticSearch 란?" /&gt;&lt;p&gt;Elastic Search 는 Apache Lucene 기반의 Java 오픈소스 분산 검색 엔진이다.&lt;/p&gt;
+&lt;p&gt;ElasticSearch 를 통해 루씬 라이브러리(Java에서 개발한 정보 검색용 라이브러리)를 단독으로 사용할 수 있으며, 방대한 양의 데이터를 실시간에 가깝게 저장, 검색, 분석을 수행할 수 있다.&lt;/p&gt;
+&lt;p&gt;ElasticeSearch 는 검색을 위해 단독으로 사용되기도 하며, &lt;strong&gt;ELK(Elasticsearch / Logstash / Kibana)&lt;/strong&gt; 스택으로 사용되기도 한다.&lt;/p&gt;
+&lt;h3 id="elk-스택-구성-요소"&gt;&lt;a href="#elk-%ec%8a%a4%ed%83%9d-%ea%b5%ac%ec%84%b1-%ec%9a%94%ec%86%8c" class="header-anchor"&gt;&lt;/a&gt;ELK 스택 구성 요소
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Elasticsearch&lt;/strong&gt;: Logstash로 부터 받은 데이터를 검색 및 집계하여 필요한 정보를 획득&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logstash&lt;/strong&gt;: 다양한 소스(DB, csv 파일 등)의 로그 또는 트랜잭션 데이터를 수집, 집계, 파싱하여 Elasticsearch로 전달&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kibana&lt;/strong&gt;: Elasticsearch 의 빠른 검색을 통해 데이터를 시각화 및 모니터링&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 주로 ELK는 로드밸런싱되어 있는 WAS의 흩어져있는 로그를 한 곳으로 모으고, 원하는 데이터를 빠르게 검색한 뒤 시각화하여 모니터링하기 위해 사용한다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="elasticsearch-와-rdb-의-명칭-비교"&gt;&lt;a href="#elasticsearch-%ec%99%80-rdb-%ec%9d%98-%eb%aa%85%ec%b9%ad-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 와 RDB 의 명칭 비교
+&lt;/h2&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es1.png"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es2.png"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;h3 id="elasticsearch-70-부터는-하나의-인덱스에-하나의-타입만-가질-수-있음"&gt;&lt;a href="#elasticsearch-70-%eb%b6%80%ed%84%b0%eb%8a%94-%ed%95%98%eb%82%98%ec%9d%98-%ec%9d%b8%eb%8d%b1%ec%8a%a4%ec%97%90-%ed%95%98%eb%82%98%ec%9d%98-%ed%83%80%ec%9e%85%eb%a7%8c-%ea%b0%80%ec%a7%88-%ec%88%98-%ec%9e%88%ec%9d%8c" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 7.0 부터는 하나의 인덱스에 하나의 타입만 가질 수 있음
+&lt;/h3&gt;&lt;p&gt;이 이유는 Elasticsearch는 하나의 인덱스(DB) 안에서의 타입은 같은 Lucene 필드를 사용한다. 따라서 타입은 다를지라도 동일한 이름을 가진 필드는 독립적이지 않아으므로 여러가지 문제가 발생할 수 있으므로 하나의 인덱스는 하나의 타입만을 갖도록 수정이 되었다.&lt;/p&gt;
+&lt;h4 id="rdb와의-비교"&gt;&lt;a href="#rdb%ec%99%80%ec%9d%98-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;RDB와의 비교
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;RDB의 경우&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;하나의 DB에 여러 테이블이 있고 각 테이블에 동일한 이름의 컬럼이 존재해도 서로 영향을 미치지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Elasticsearch의 경우&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;하나의 인덱스(=DB) 내의 각 타입(=테이블)에 동일한 이름을 가진 필드(=컬럼)가 있을 경우, 해당 필드는 독립적이지 않고 동일한 Lucene 필드에 저장되며 동일한 정의를 가져야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="elasticsearch-구조"&gt;&lt;a href="#elasticsearch-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 구조
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es3.png"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="클러스터-cluster"&gt;&lt;a href="#%ed%81%b4%eb%9f%ac%ec%8a%a4%ed%84%b0-cluster" class="header-anchor"&gt;&lt;/a&gt;클러스터 (Cluster)
+&lt;/h3&gt;&lt;p&gt;클러스터란 Elasticsearch 에서 가장 큰 시스템 단위를 의미하며, 최소 하나 이상의 노드로 이루어진 노드의 집합이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서로 다른 클러스터는 데이터의 접근, 교환을 할 수 없는 독립적인 시스템으로 유지됨&lt;/li&gt;
+&lt;li&gt;여러 대의 서버가 하나의 클러스터를 구성할 수 있음&lt;/li&gt;
+&lt;li&gt;한 서버에 여러 개의 클러스터가 존재할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="노드-node"&gt;&lt;a href="#%eb%85%b8%eb%93%9c-node" class="header-anchor"&gt;&lt;/a&gt;노드 (Node)
+&lt;/h3&gt;&lt;p&gt;노드는 클러스터에 포함된 단일 서버로서 데이터를 저장하고 클러스터의 색인화 및 검색 기능에 참여한다. 노드는 역할에 따라 다음과 같이 구분한다.&lt;/p&gt;
+&lt;h4 id="master-eligible-node"&gt;&lt;a href="#master-eligible-node" class="header-anchor"&gt;&lt;/a&gt;Master-eligible Node
+&lt;/h4&gt;&lt;p&gt;클러스터를 제어하는 마스터로 선택할 수 있는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱스 생성, 삭제&lt;/li&gt;
+&lt;li&gt;클러스터 노드의 추적 관리&lt;/li&gt;
+&lt;li&gt;데이터 입력 시 할당할 샤드 선택&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="data-node"&gt;&lt;a href="#data-node" class="header-anchor"&gt;&lt;/a&gt;Data Node
+&lt;/h4&gt;&lt;p&gt;데이터(Document)가 저장되는 노드이며, 데이터가 분산 저장되는 공간인 샤드가 배치되는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CRUD, 색인, 검색, 통계 등의 데이터 작업을 수행&lt;/li&gt;
+&lt;li&gt;많은 리소스(CPU, 메모리 등)를 필요로 함&lt;/li&gt;
+&lt;li&gt;모니터링 작업이 필요하며, 마스터 노드와는 분리해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ingest-node"&gt;&lt;a href="#ingest-node" class="header-anchor"&gt;&lt;/a&gt;Ingest Node
+&lt;/h4&gt;&lt;p&gt;데이터를 변환하는 등 사전 처리 파이프라인을 실행하는 역할&lt;/p&gt;
+&lt;h4 id="coordination-only-node"&gt;&lt;a href="#coordination-only-node" class="header-anchor"&gt;&lt;/a&gt;Coordination Only Node
+&lt;/h4&gt;&lt;p&gt;사용자의 요청을 받고 라운드 로빈 방식으로 분산하는 노드&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;클러스터에 관련된 것은 마스터 노드로 전달&lt;/li&gt;
+&lt;li&gt;데이터와 관련된 것은 데이터 노드로 전달&lt;/li&gt;
+&lt;li&gt;로드밸런싱 역할을 수행&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="인덱스--샤드--복제"&gt;&lt;a href="#%ec%9d%b8%eb%8d%b1%ec%8a%a4--%ec%83%a4%eb%93%9c--%eb%b3%b5%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;인덱스 / 샤드 / 복제
+&lt;/h3&gt;&lt;h4 id="인덱스-index"&gt;&lt;a href="#%ec%9d%b8%eb%8d%b1%ec%8a%a4-index" class="header-anchor"&gt;&lt;/a&gt;인덱스 (Index)
+&lt;/h4&gt;&lt;p&gt;RDB의 데이터베이스와 대응하는 개념&lt;/p&gt;
+&lt;h4 id="샤드-shard"&gt;&lt;a href="#%ec%83%a4%eb%93%9c-shard" class="header-anchor"&gt;&lt;/a&gt;샤드 (Shard)
+&lt;/h4&gt;&lt;p&gt;인덱스 내부에 색인된 데이터들이 하나로 뭉쳐서 존재하지 않고 여러 부분으로 나뉘어 존재함. 스케일 아웃을 위해 하나의 인덱스를 여러 샤드로 쪼갬.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 샤드는 프라이머리 샤드와 레플리카 샤드로 나뉜다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;프라이머리 샤드 (Primary Shard)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터의 원본&lt;/li&gt;
+&lt;li&gt;데이터 업데이트 요청은 프라이머리 샤드에 전달됨&lt;/li&gt;
+&lt;li&gt;업데이트된 내용은 레플리카 샤드에 복제됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;레플리카 샤드 (Replica Shard)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;프라이머리 샤드의 복제본&lt;/li&gt;
+&lt;li&gt;원본 데이터가 손실되었을 때 대신 사용하면서 장애를 극복하는 역할을 수행&lt;/li&gt;
+&lt;li&gt;기본적으로 원본인 프라이머리 샤드와 다른 노드에 배정됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="세그먼트-segment"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8-segment" class="header-anchor"&gt;&lt;/a&gt;세그먼트 (Segment)
+&lt;/h3&gt;&lt;p&gt;세그먼트는 ElasticSearch 에서 문서의 빠른 검색을 위해 설계된 자료 구조이며, 샤드의 데이터를 가지고 있는 물리적인 파일이다.&lt;/p&gt;
+&lt;h4 id="세그먼트의-특징"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8%ec%9d%98-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;세그먼트의 특징
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;각 샤드는 다수의 세그먼트로 구성되어 있어 검색 요청을 분산 처리하여 효율적인 검색이 가능&lt;/li&gt;
+&lt;li&gt;샤드에서 검색 시, 먼저 각 세그먼트를 검색하여 결과를 조합한 후 최종 결과를 해당 샤드의 결과로 반환&lt;/li&gt;
+&lt;li&gt;세그먼트 내부에 색인된 데이터가 역색인 구조로 저장되어 있어 검색 속도가 매우 빠름&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="세그먼트-생성-과정"&gt;&lt;a href="#%ec%84%b8%ea%b7%b8%eb%a8%bc%ed%8a%b8-%ec%83%9d%ec%84%b1-%ea%b3%bc%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;세그먼트 생성 과정
+&lt;/h4&gt;&lt;p&gt;매 요청마다 새로운 세그먼트를 만들면 너무 많은 세그먼트가 생성되므로 이를 방지하기 위해 &lt;strong&gt;인메모리 버퍼&lt;/strong&gt;를 사용한다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Flush&lt;/strong&gt;: 인메모리 버퍼에 쌓인 내용이 일정 시간이 지나거나 버퍼가 가득 차면 flush를 수행하고, 시스템 캐시에 세그먼트가 생성됨&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;이 시점부터 데이터 검색이 가능&lt;/li&gt;
+&lt;li&gt;이 상태는 세그먼트가 시스템 캐시에 저장된 상태이지 디스크에 저장된 상태가 아님&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Commit&lt;/strong&gt;: 일정 시간이 지나면 commit을 통해 물리적인 디스크에 세그먼트를 저장&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;병합&lt;/strong&gt;: 저장된 세그먼트는 시간이 지날수록 하나로 병합하는 과정을 수행&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;병합을 통해 세그먼트를 하나로 줄여주면 검색할 세그먼트 개수가 줄어 검색 성능이 향상됨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

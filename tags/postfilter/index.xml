@@ -1,1 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PostFilter on 0AndWild_log</title><link>https://0andwild.com/tags/postfilter/</link><description>Recent content in PostFilter on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/postfilter/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query 처리 순서</title><link>https://0andwild.com/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/posts/240203_es_query/</guid><description>Elasticsearch에서 Query, Filter, PostFilter의 실행 순서와 Aggregation에 미치는 영향</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240203_es_query/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PostFilter on 0AndWild_log</title><link>https://0andwild.com/tags/postfilter/</link><description>Recent content in PostFilter on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/postfilter/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query 처리 순서</title><link>https://0andwild.com/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/posts/240203_es_query/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Query 처리 순서" /&gt;&lt;h1 id="elasticsearch-query-처리-순서"&gt;&lt;a href="#elasticsearch-query-%ec%b2%98%eb%a6%ac-%ec%88%9c%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Query 처리 순서
+&lt;/h1&gt;&lt;h2 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Filtered Query&lt;/strong&gt;는 최종 search와 aggregation 둘 다의 결과에 영향을 미치지만, &lt;strong&gt;PostFiltered Query&lt;/strong&gt;는 최종 search 결과에만 영향을 미치고 aggregation에는 영향을 미치지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="query-처리-순서"&gt;&lt;a href="#query-%ec%b2%98%eb%a6%ac-%ec%88%9c%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;Query 처리 순서
+&lt;/h2&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;SearchRequest → (Filtered) → Query → (PostFilter) → Result → RescoreQuery
+ ↓
+ Aggregation → AggregationResult
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="804px" data-flex-grow="335" height="191" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence1.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="filter-query-예시"&gt;&lt;a href="#filter-query-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Filter Query 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filtered&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filter Query는 검색 결과와 Aggregation 모두에 영향을 미친다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="882px" data-flex-grow="367" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence2.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="postfilter-query-예시"&gt;&lt;a href="#postfilter-query-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;PostFilter Query 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;post_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;PostFilter Query는 검색 결과에만 영향을 미치고, Aggregation 결과에는 영향을 미치지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rescore-query-파라미터"&gt;&lt;a href="#rescore-query-%ed%8c%8c%eb%9d%bc%eb%af%b8%ed%84%b0" class="header-anchor"&gt;&lt;/a&gt;Rescore Query 파라미터
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;window_size&lt;/strong&gt;: 각 shard에서 재점수화할 상위 결과의 수&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;score_mode&lt;/strong&gt;: main query score와 rescore query의 점수를 결합하는 방식&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

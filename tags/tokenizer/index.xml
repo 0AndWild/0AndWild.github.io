@@ -1,1 +1,182 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tokenizer on 0AndWild_log</title><link>https://0andwild.com/tags/tokenizer/</link><description>Recent content in Tokenizer on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 02 Feb 2024 21:23:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/tokenizer/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>Elasticsearch Analyzer를 구성하는 Tokenizer의 다양한 종류와 설정 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer2/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tokenizer on 0AndWild_log</title><link>https://0andwild.com/tags/tokenizer/</link><description>Recent content in Tokenizer on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 02 Feb 2024 21:23:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/tokenizer/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="tokenizer"&gt;&lt;a href="#tokenizer" class="header-anchor"&gt;&lt;/a&gt;Tokenizer
+&lt;/h1&gt;&lt;p&gt;Tokenizer는 문자열 스트림을 받고 각각의 토큰 단위로 자른다. (주로 각각의 단어별로 토큰화가 이루어짐)&lt;/p&gt;
+&lt;p&gt;가장 standard하게 사용되는 &lt;code&gt;whitespace&lt;/code&gt; tokenizer는 공백을 기준으로 잘라 토큰화를 진행한다.&lt;/p&gt;
+&lt;h3 id="whitespace-tokenizer-예시"&gt;&lt;a href="#whitespace-tokenizer-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer 예시
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;// character streams
+Quick brown fox!
+
+// Result
+[Quick, brown, fox!]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="tokenizer의-책임"&gt;&lt;a href="#tokenizer%ec%9d%98-%ec%b1%85%ec%9e%84" class="header-anchor"&gt;&lt;/a&gt;Tokenizer의 책임
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;각 용어의 정렬과 포지션 (구 또는 단어 유사성 쿼리에서 사용)&lt;/li&gt;
+&lt;li&gt;변형 전의 기존 단어의 시작과 끝 문자는 검색 스니펫 하이라이팅에 사용됨&lt;/li&gt;
+&lt;li&gt;Token별 타입: &lt;code&gt;&amp;lt;ALPHANUM&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;HANGUL&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;NUM&amp;gt;&lt;/code&gt; 등 (단순한 analyzer는 오직 단어 토큰 타입만 제공함)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="word-oriented-tokenizer"&gt;&lt;a href="#word-oriented-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Word Oriented Tokenizer
+&lt;/h2&gt;&lt;p&gt;아래 tokenizer들은 풀 텍스트에서 각각의 단어로 토큰화를 하는데 사용된다.&lt;/p&gt;
+&lt;h3 id="standard-tokenizer"&gt;&lt;a href="#standard-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Standard Tokenizer
+&lt;/h3&gt;&lt;p&gt;standard tokenizer는 Unicode Text Segmentation algorithm을 기반으로 토큰화를 진행한다.&lt;/p&gt;
+&lt;h4 id="configuration"&gt;&lt;a href="#configuration" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="max_token_length-적용-예시"&gt;&lt;a href="#max_token_length-%ec%a0%81%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;max_token_length 적용 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumpe, d, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="letter-tokenizer"&gt;&lt;a href="#letter-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Letter Tokenizer
+&lt;/h3&gt;&lt;p&gt;letter tokenizer는 문자열이 아닌 것을 기점으로 잘라 토큰화를 진행한다. 이는 유럽권 언어(영미권)에는 적합하나 아시아 언어, 특히 공백을 기점으로 단어가 나뉘지 않는 언어에는 적합하지 않다.&lt;/p&gt;
+&lt;h4 id="변환-예시-1"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-1" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;letter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, QUICK, Brown, Foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="lowercase-tokenizer"&gt;&lt;a href="#lowercase-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Lowercase Tokenizer
+&lt;/h3&gt;&lt;p&gt;lowercase tokenizer는 letter tokenizer처럼 문자열이 아닌 것을 기점으로 잘라 토큰화를 진행하며, 추가적으로 모든 문자열을 소문자로 변환한다. 기능적으로는 letter tokenizer와 동일하면서도 소문자로 변환하는 기능을 한번에 수행함으로 효율적이다.&lt;/p&gt;
+&lt;h4 id="변환-예시-2"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-2" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lowercase&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ the, quick, brown, foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="whitespace-tokenizer"&gt;&lt;a href="#whitespace-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer
+&lt;/h3&gt;&lt;p&gt;whitespace tokenizer는 공백 문자열을 기준으로 토큰화를 진행한다.&lt;/p&gt;
+&lt;h4 id="configuration-1"&gt;&lt;a href="#configuration-1" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-3"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-3" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;whitespace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown-Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone. ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="uax-url-email-tokenizer"&gt;&lt;a href="#uax-url-email-tokenizer" class="header-anchor"&gt;&lt;/a&gt;UAX URL Email Tokenizer
+&lt;/h3&gt;&lt;p&gt;uax_url_email tokenizer는 standard tokenizer와 동일하지만, 한 가지 다른점은 URLs이나 email 주소를 인식하고 하나의 토큰으로 취급을 한다.&lt;/p&gt;
+&lt;h4 id="configuration-2"&gt;&lt;a href="#configuration-2" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-4"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-4" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Email me at john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith@global-international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 위의 예시를 만약 standard tokenizer로 한다면 다음과 같은 결과가 나옴
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith, global, international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="configuration-예시"&gt;&lt;a href="#configuration-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;Configuration 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result (email 형식을 무시하고 max_token_length가 우선순위가 됨)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// [ john, smith, globa, l, inter, natio, nal.c, om ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="classic-tokenizer"&gt;&lt;a href="#classic-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Classic Tokenizer
+&lt;/h3&gt;&lt;p&gt;classic tokenizer는 문법 베이스의 토큰화를 진행하고 영어 document에 좋다. 이 토큰화 방식은 약어, 회사 이름, 이메일 주소, 인터넷 호스트 이름을 특별하게 처리하는 방식이 있다. 그러나 이러한 규칙들이 항상 동작하지는 않고, 영어 이외의 언어에서는 잘 동작하지 않는다.&lt;/p&gt;
+&lt;h4 id="tokenizing-규칙"&gt;&lt;a href="#tokenizing-%ea%b7%9c%ec%b9%99" class="header-anchor"&gt;&lt;/a&gt;Tokenizing 규칙
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;대부분 구두점을 기준으로, 구두점을 제거하며 단어를 나눈다. 하지만 공백이 뒤따르지 않는 점은 토큰의 일부로 간주된다.&lt;/li&gt;
+&lt;li&gt;하이픈을 기준으로 단어를 나누긴 하지만 만약 해당 단어에 하이픈이 있을 경우 제품번호로 인식을 하고 나누지 않는다. (예: 123-23)&lt;/li&gt;
+&lt;li&gt;email과 internet hostname은 하나의 토큰으로 간주한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="configuration-3"&gt;&lt;a href="#configuration-3" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: 지정된 길이를 초과하는 문자열을 기점으로 잘라 토큰화를 진행&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="변환-예시-5"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-5" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;classic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="thai-tokenizer"&gt;&lt;a href="#thai-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Thai Tokenizer
+&lt;/h3&gt;&lt;p&gt;thai tokenizer는 태국어 텍스트를 단어 단위로 토큰화를 시킨다. Java에 포함되어 있는 Thai segmentation algorithm을 사용한다. 만약 input text에 태국어가 아닌 다른 언어의 문자열이 함께 포함되어 있는 경우는 해당 문자열에 한해 standard tokenizer가 적용된다.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;주의사항&lt;/strong&gt;: 해당 토큰화 방식은 일부 JRE에서 지원되지 않을 수 있음. 이 토큰화 방식은 Sun/Oracle 및 OpenJDK에서 작동하는 것으로 알려져 있음. 어플리케이션에 완전한 이식성을 고려하는 경우 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/plugins/8.8/analysis-icu-tokenizer.html" target="_blank" rel="noopener"
+ &gt;ICU tokenizer&lt;/a&gt;를 대신 사용하는 것을 고려하는 것이 좋음&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="변환-예시-6"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ec%98%88%ec%8b%9c-6" class="header-anchor"&gt;&lt;/a&gt;변환 예시
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;thai&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;การที่ได้ต้องแสดงว่างานดี&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ การ, ที่, ได้, ต้อง, แสดง, ว่า, งาน, ดี ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="참고-문서"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%eb%ac%b8%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;참고 문서
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-tokenizers.html" target="_blank" rel="noopener"
+ &gt;Tokenizer reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

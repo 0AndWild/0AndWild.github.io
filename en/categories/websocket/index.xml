@@ -1,1 +1,1075 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Websocket on 0AndWild_log</title><link>https://0andwild.com/en/categories/websocket/</link><description>Recent content in Websocket on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 21 Jan 2026 15:38:26 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/websocket/index.xml" rel="self" type="application/rss+xml"/><item><title>What is WebSocket? (RFC 6455)</title><link>https://0andwild.com/en/posts/260210_websocket/</link><pubDate>Wed, 21 Jan 2026 15:38:26 +0900</pubDate><guid>https://0andwild.com/en/posts/260210_websocket/</guid><description>Let’s walk through RFC 6455 to understand what WebSocket is and how the WebSocket protocol works.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260210_websocket/featured.png"/></item><item><title>Bidirectional Communication Before WebSocket</title><link>https://0andwild.com/en/posts/260112_before_websocket/</link><pubDate>Mon, 12 Jan 2026 21:18:15 +0900</pubDate><guid>https://0andwild.com/en/posts/260112_before_websocket/</guid><description>Let&amp;rsquo;s explore HTTP long polling and HTTP streaming by reading RFC 6202 about bidirectional communication before WebSocket</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260112_before_websocket/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Websocket on 0AndWild_log</title><link>https://0andwild.com/en/categories/websocket/</link><description>Recent content in Websocket on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 21 Jan 2026 15:38:26 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/websocket/index.xml" rel="self" type="application/rss+xml"/><item><title>What is WebSocket? (RFC 6455)</title><link>https://0andwild.com/en/posts/260210_websocket/</link><pubDate>Wed, 21 Jan 2026 15:38:26 +0900</pubDate><guid>https://0andwild.com/en/posts/260210_websocket/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is WebSocket? (RFC 6455)" /&gt;&lt;h2 id="introduction"&gt;&lt;a href="#introduction" class="header-anchor"&gt;&lt;/a&gt;Introduction
+&lt;/h2&gt;&lt;p&gt;Following the previous post about bidirectional communication before WebSocket, I’m going to read the WebSocket protocol spec, RFC 6455, and cover WebSocket in more detail.
+&lt;em&gt;Examples used for detailed explanation were generated with the help of AI.&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rfc-6455-the-websocket-protocol"&gt;&lt;a href="#rfc-6455-the-websocket-protocol" class="header-anchor"&gt;&lt;/a&gt;&lt;a class="link" href="https://datatracker.ietf.org/doc/html/rfc6455" target="_blank" rel="noopener"
+ &gt;RFC 6455&lt;/a&gt; (The WebSocket Protocol)
+&lt;/h2&gt;&lt;p&gt;The goal of the WebSocket protocol is to provide a mechanism for browser-based applications that need bidirectional communication with a server, without relying on multiple HTTP connections (e.g., &lt;code&gt;XMLHttpRequest&lt;/code&gt;, long polling). WebSocket is composed of an initial handshake followed by basic message framing over TCP.&lt;/p&gt;
+&lt;p&gt;In the past, applications that needed bidirectional communication between a client and a server often “abused” HTTP: they polled for server updates and then sent notifications via separate HTTP calls on top of that (RFC 6202).&lt;/p&gt;
+&lt;p&gt;One way to solve this is to use a single TCP connection for bidirectional traffic. WebSocket supports this approach.
+WebSocket API spec: &lt;a class="link" href="https://websockets.spec.whatwg.org/" target="_blank" rel="noopener"
+ &gt;https://websockets.spec.whatwg.org/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;WebSocket was designed to replace bidirectional communication techniques that used HTTP as a transport layer in order to benefit from existing infrastructure such as proxies, filtering, and authentication.
+Existing techniques were implemented as compromises between efficiency and reliability, because HTTP was not originally built for bidirectional communication.&lt;/p&gt;
+&lt;p&gt;The WebSocket protocol attempts to address the goals of existing bidirectional HTTP techniques within HTTP infrastructure environments.
+So it is designed to work over ports 80 and 443, and to support HTTP proxies and intermediaries—even if that adds complexity in today’s environment.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;That said, this design does not limit WebSocket to HTTP. The spec notes that future implementations could use a simpler handshake over a dedicated port without reinventing the entire protocol.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The document emphasizes this because the traffic patterns of interactive messaging often do not resemble standard HTTP traffic, which can cause abnormal load on some infrastructure components.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="protocol-overview"&gt;&lt;a href="#protocol-overview" class="header-anchor"&gt;&lt;/a&gt;Protocol Overview
+&lt;/h2&gt;&lt;p&gt;The WebSocket protocol consists of two parts: the handshake and data transfer.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;// Client handshake request
+GET /chat HTTP/1.1
+ Host: server.example.com
+ Upgrade: websocket
+ Connection: Upgrade
+ Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+ Origin: http://example.com
+ Sec-WebSocket-Protocol: chat, superchat
+ Sec-WebSocket-Version: 13
+
+// Server handshake response
+HTTP/1.1 101 Switching Protocols
+ Upgrade: websocket
+ Connection: Upgrade
+ Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+ Sec-WebSocket-Protocol: chat
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The client follows the Request-Line format and the server follows the Status-Line format. (&lt;a class="link" href="https://datatracker.ietf.org/doc/html/rfc2616#page-35" target="_blank" rel="noopener"
+ &gt;RFC 2616&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Once both sides send the handshake and it succeeds, data transfer begins.
+This is a bidirectional communication channel where each side can send data independently, without waiting for the other side to “request” it.&lt;/p&gt;
+&lt;p&gt;Now the client and server exchange data in units called “messages” in the WebSocket spec.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;A WebSocket message may not map 1:1 to frames at a particular network layer.&lt;/code&gt; The reason is that intermediate devices can &lt;em&gt;coalesce fragmented messages&lt;/em&gt; or do the opposite (&lt;em&gt;split them further&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Each frame that belongs to the same message contains the same type of data. Broadly, there are &lt;code&gt;textual data&lt;/code&gt;, &lt;code&gt;binary data&lt;/code&gt;, and &lt;code&gt;control frames&lt;/code&gt; (not application data; e.g., protocol-level signaling such as closing the connection).&lt;/p&gt;
+&lt;p&gt;The WebSocket protocol defines six frame types and reserves ten for future use.&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Opcode&lt;/th&gt;
+ &lt;th&gt;Type&lt;/th&gt;
+ &lt;th&gt;Name&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x0&lt;/td&gt;
+ &lt;td&gt;Data&lt;/td&gt;
+ &lt;td&gt;Continuation&lt;/td&gt;
+ &lt;td&gt;Continuation of the previous frame’s payload&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x1&lt;/td&gt;
+ &lt;td&gt;Data&lt;/td&gt;
+ &lt;td&gt;Text&lt;/td&gt;
+ &lt;td&gt;UTF-8 text data&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x2&lt;/td&gt;
+ &lt;td&gt;Data&lt;/td&gt;
+ &lt;td&gt;Binary&lt;/td&gt;
+ &lt;td&gt;Binary data&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x3~0x7&lt;/td&gt;
+ &lt;td&gt;Data&lt;/td&gt;
+ &lt;td&gt;Reserved&lt;/td&gt;
+ &lt;td&gt;Reserved for future data frame extensions (5)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x8&lt;/td&gt;
+ &lt;td&gt;Control&lt;/td&gt;
+ &lt;td&gt;Close&lt;/td&gt;
+ &lt;td&gt;Request to close the connection&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0x9&lt;/td&gt;
+ &lt;td&gt;Control&lt;/td&gt;
+ &lt;td&gt;Ping&lt;/td&gt;
+ &lt;td&gt;Heartbeat / liveness check&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0xA&lt;/td&gt;
+ &lt;td&gt;Control&lt;/td&gt;
+ &lt;td&gt;Pong&lt;/td&gt;
+ &lt;td&gt;Response to Ping&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;0xB~0xF&lt;/td&gt;
+ &lt;td&gt;Control&lt;/td&gt;
+ &lt;td&gt;Reserved&lt;/td&gt;
+ &lt;td&gt;Reserved for future control frame extensions (5)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="a-fragmented-message-can-be-coalesced-or-the-opposite-can-happen"&gt;&lt;a href="#a-fragmented-message-can-be-coalesced-or-the-opposite-can-happen" class="header-anchor"&gt;&lt;/a&gt;“A fragmented message can be coalesced, or the opposite can happen”
+&lt;/h3&gt;&lt;p&gt;That line can be confusing, so here’s an example.&lt;/p&gt;
+&lt;p&gt;First, why does fragmentation happen? Common reasons include:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;MTU (Maximum Transmission Unit) limits (network packet size limit, typically ~1500 bytes)
+Packets larger than the MTU may be split into smaller pieces on the path (fragmented). Think of it like a height limit in a tunnel.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The server may be configured to send in chunks of a specific size.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Similar to (1): intermediaries such as proxies, load balancers, or API gateways may split large frames.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Memory efficiency: splitting avoids buffering a huge payload all at once.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Back to the main point—let’s look at both coalescing and splitting.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;1. Coalesced
+
+(original: sent in fragments)
+[Frame 1: FIN=0, opcode=text, &amp;#34;Hello &amp;#34;]
+[Frame 2: FIN=0, opcode=continuation, &amp;#34;World&amp;#34;]
+[Frame 3: FIN=1, opcode=continuation, &amp;#34;!&amp;#34;]
+
+(an intermediary receives the three frames and forwards them as one)
+[Frame: FIN=1, opcode=text, &amp;#34;Hello World!&amp;#34;]
+
+2. Split
+
+(original)
+[Frame: FIN=1, &amp;#34;Hello World!&amp;#34;]
+
+(an intermediary splits the original frame)
+[Frame 1: FIN=0, &amp;#34;Hello &amp;#34;]
+[Frame 2: FIN=1, &amp;#34;World!&amp;#34;]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;As another example, assume we have a Spring Boot service (acting as a client) receiving real-time stock data via WebSocket from a financial server (acting as the server). Let’s walk through it.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Assume the financial server sends a single message split across multiple frames (and they are not coalesced in the middle):
+
+[WebSocket Frame 1]
+FIN: 0 (not done yet)
+Opcode: 0x1 (text)
+Payload: {&amp;#34;stockCode&amp;#34;:&amp;#34;005930&amp;#34;,&amp;#34;price&amp;#34;:71500,&amp;#34;vol
+
+[WebSocket Frame 2]
+FIN: 0 (not done yet)
+Opcode: 0x0 (continuation)
+Payload: ume&amp;#34;:50000,&amp;#34;time&amp;#34;:&amp;#34;09:00:01&amp;#34;,&amp;#34;seller&amp;#34;:&amp;#34;
+
+[WebSocket Frame 3]
+FIN: 1 (this is the last)
+Opcode: 0x0 (continuation)
+Payload: foreign&amp;#34;,&amp;#34;buyer&amp;#34;:&amp;#34;institution&amp;#34;,...}
+&lt;/code&gt;&lt;/pre&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Component&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;WebSocketHandler&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;extends&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;TextWebSocketHandler&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Override&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;protected&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;handleTextMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;WebSocketSession&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;TextMessage&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// message.getPayload() is already a complete message here&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// You receive the full payload: {&amp;#34;stockCode&amp;#34;:&amp;#34;005930&amp;#34;,&amp;#34;price&amp;#34;:71500,&amp;#34;volume&amp;#34;:50000,...}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getPayload&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The reason &lt;code&gt;payload&lt;/code&gt; is a complete message is that Spring buffers Frame 1 and 2 (because &lt;code&gt;FIN=0&lt;/code&gt;), concatenates them, and when it sees Frame 3 with &lt;code&gt;FIN=1&lt;/code&gt;, it combines the buffered data and then invokes &lt;code&gt;handleTextMessage()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;One thing I felt while studying this is that, because frameworks implement so many things so well for us, it’s easy to ship features without really understanding what’s happening at the network level.&lt;/p&gt;
+&lt;p&gt;To summarize the “big picture” of the WebSocket protocol so far:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It consists of two parts: Handshake and Data Transfer.&lt;/li&gt;
+&lt;li&gt;After the handshake succeeds, the connection becomes bidirectional and data transfer happens. Data is exchanged as a unit called a &lt;code&gt;message&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;message&lt;/code&gt; may not match a specific network-layer frame, because intermediaries can split or coalesce it.&lt;/li&gt;
+&lt;li&gt;WebSocket defines 16 opcodes total: 3 data frames + 3 control frames + 5 reserved data + 5 reserved control.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Next, let’s look at how the Opening Handshake works.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="opening-handshake"&gt;&lt;a href="#opening-handshake" class="header-anchor"&gt;&lt;/a&gt;Opening Handshake
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: left"&gt;Header&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;Purpose&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Upgrade&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Request protocol upgrade&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Connection&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Request connection upgrade&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Sec-WebSocket-Key&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Security key (Base64-encoded random 16 bytes)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Sec-WebSocket-Version&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Protocol version (currently 13)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Sec-WebSocket-Protocol&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Subprotocol (optional)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: left"&gt;Origin&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;Origin info sent by the browser&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The initial handshake is designed to be compatible with HTTP-based servers and intermediaries, so that both HTTP clients and WebSocket clients can use a single port to talk to the same server.
+Therefore, the WebSocket client’s handshake is an HTTP Upgrade request.&lt;/p&gt;
+&lt;p&gt;Header fields in the handshake can be sent in any order, so the order in which different header fields are received is not important.
+The client includes the host name in the &lt;code&gt;Host&lt;/code&gt; header field so that both the client and server can confirm they agree on the host being used.&lt;/p&gt;
+&lt;p&gt;Additional header fields are used to select options in the WebSocket protocol.
+Common options include a subprotocol selector (&lt;code&gt;Sec-WebSocket-Protocol&lt;/code&gt;), the list of extensions the client supports (&lt;code&gt;Sec-WebSocket-Extensions&lt;/code&gt;), and the &lt;code&gt;Origin&lt;/code&gt; field. The &lt;code&gt;Sec-WebSocket-Protocol&lt;/code&gt; request header indicates subprotocols (application-level protocols layered on top of WebSocket) that the client is willing to use. The server may select one of the acceptable protocols—or none—and it echoes the selected value in the handshake response.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;// Client handshake request
+
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Origin: http://example.com
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+
+
+// Server handshake response
+
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+Sec-WebSocket-Protocol: chat &amp;lt;- the server echoes the protocol it selected
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;When the server receives the client’s handshake, it must include two key pieces of information in the response. The first is &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="how-to-compute-sec-websocket-accept"&gt;&lt;a href="#how-to-compute-sec-websocket-accept" class="header-anchor"&gt;&lt;/a&gt;How to compute &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt;
+&lt;/h3&gt;&lt;p&gt;The &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt; field indicates whether the server is willing to accept the WebSocket connection.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Take &lt;code&gt;Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Concatenate: &lt;code&gt;dGhlIHNhbXBsZSBub25jZQ==&lt;/code&gt; + &lt;code&gt;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Compute SHA-1 hash: &lt;code&gt;0xb3 0x7a 0x4f 0x2c 0xc0 0x62 0x4f 0x16 0x90 0xf6 0x46 0x06 0xcf 0x38 0x59 0x45 0xb2 0xbe 0xc4 0xea&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Base64 encode: &lt;code&gt;&amp;quot;s3pPLMBiTxaQ9kYGzzhZRbK+xOo=&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Include &lt;code&gt;Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=&lt;/code&gt; in the response&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;By returning &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt; and status code &lt;code&gt;101&lt;/code&gt;, the server tells the client it accepted the handshake.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;// If the server accepts the client&amp;#39;s handshake and the connection is established normally, the status code is 101.
+// Any status code other than 101 means the WebSocket handshake did not complete.
+HTTP/1.1 101 Switching Protocols
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Based on this response, the client checks that &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt; matches the expected value, required header fields are present, and the HTTP status code is &lt;code&gt;101&lt;/code&gt;. If any of these checks fail, no WebSocket frames are sent.&lt;/p&gt;
+&lt;p&gt;To recap:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The handshake begins as an HTTP protocol upgrade request.&lt;/li&gt;
+&lt;li&gt;Header order does not matter.&lt;/li&gt;
+&lt;li&gt;The server response must include &lt;code&gt;Sec-WebSocket-Accept&lt;/code&gt; computed from &lt;code&gt;Sec-WebSocket-Key&lt;/code&gt;, along with HTTP status &lt;code&gt;101&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Next, let’s look at how a WebSocket connection is closed.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="closing-handshake"&gt;&lt;a href="#closing-handshake" class="header-anchor"&gt;&lt;/a&gt;Closing Handshake
+&lt;/h2&gt;&lt;p&gt;WebSocket also uses a handshake-style process when closing the connection.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;One side sends a control frame indicating close.&lt;/li&gt;
+&lt;li&gt;The other side responds with a close control frame.&lt;/li&gt;
+&lt;li&gt;After both sides have sent and received a close frame, the TCP connection is closed.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The reason WebSocket uses its own closing handshake is to complement the TCP closing handshake (FIN/ACK). If there are intercepting proxies or other intermediaries, TCP closing handshake signals are not always reliably end-to-end, according to the spec.&lt;/p&gt;
+&lt;p&gt;What does “not reliably end-to-end” mean here? Using the TCP closing handshake (4-way handshake) can lead to data loss.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;// TCP Closing handshake
+
+Client Server
+ | |
+ |-------- FIN -----------&amp;gt;| &amp;#34;I&amp;#39;m done sending&amp;#34;
+ |&amp;lt;------- ACK ------------| &amp;#34;OK&amp;#34;
+ |&amp;lt;------- FIN ------------| &amp;#34;I&amp;#39;m done too&amp;#34;
+ |-------- ACK -----------&amp;gt;| &amp;#34;OK&amp;#34;
+ | |
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The core issue described is that with intermediaries (proxies, load balancers), TCP close may not propagate end-to-end as expected.&lt;/p&gt;
+&lt;p&gt;Let’s look at an example if you rely only on the TCP closing handshake.&lt;/p&gt;
+&lt;p&gt;Here’s a quick reference for flags:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Flag&lt;/th&gt;
+ &lt;th&gt;Purpose&lt;/th&gt;
+ &lt;th&gt;When used&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;SYN&lt;/td&gt;
+ &lt;td&gt;Start connection&lt;/td&gt;
+ &lt;td&gt;Start 3-way handshake&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;ACK&lt;/td&gt;
+ &lt;td&gt;Acknowledge receipt&lt;/td&gt;
+ &lt;td&gt;Included in most packets&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;FIN&lt;/td&gt;
+ &lt;td&gt;Graceful close&lt;/td&gt;
+ &lt;td&gt;When no more data to send&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;RST&lt;/td&gt;
+ &lt;td&gt;Abort / reset&lt;/td&gt;
+ &lt;td&gt;Error cases, abnormal close&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Reproducing a scenario: the client closes the socket while the stock server is still sending data.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Stock Server side&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;sendMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;TextMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stockData1&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// delivered&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;sendMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;TextMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stockData2&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// delivered, but the client hasn&amp;#39;t read it yet&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Client side - suddenly closes the socket&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;close&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// stockData2 is still in the receive queue when closing&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;What happens at the OS level:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Client receive queue]
++----------------------+
+| stockData2 (unread) | ← the app hasn&amp;#39;t consumed it yet
++----------------------+
+
+socket.close() is called
+ ↓
+OS: &amp;#34;You want to close with unread data still pending?&amp;#34;
+ ↓
+OS sends an RST packet (instead of a graceful FIN)
+ ↓
+Stock Server receives RST
+ ↓
+Stock Server&amp;#39;s recv() fails (Connection reset by peer)
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="rst-vs-fin"&gt;&lt;a href="#rst-vs-fin" class="header-anchor"&gt;&lt;/a&gt;RST vs FIN
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;FIN: &amp;#34;I&amp;#39;m done. Let&amp;#39;s close cleanly.&amp;#34;
+RST: &amp;#34;Emergency! Reset the connection—something went wrong!&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;When the stock server receives an RST:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It discards any remaining data it was about to send.&lt;/li&gt;
+&lt;li&gt;It logs errors.&lt;/li&gt;
+&lt;li&gt;Connection state becomes harder to reason about.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;At this point you might wonder: doesn’t the same issue apply to HTTP request/response too?&lt;/p&gt;
+&lt;p&gt;Yes, the same issue can happen.
+But it usually doesn’t matter much:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The request/response is already complete.&lt;/li&gt;
+&lt;li&gt;The connection is short-lived.&lt;/li&gt;
+&lt;li&gt;The next request can use a new connection.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;HTTP example
+
+Client Proxy Server
+ │ │ │
+ │── GET /stock ─────────&amp;gt;│── GET /stock ─────────&amp;gt;│
+ │ │ │
+ │&amp;lt;── 200 OK + data ──────│&amp;lt;── 200 OK + data ──────│
+ │ │ │
+ │── FIN ────────────────&amp;gt;│ │
+ │ │ (may or may not forward)
+ │ │ │
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;HTTP is stateless, and once a request/response ends, the connection’s job is done—so an abnormal close is typically not a big deal.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;WebSocket example
+
+Client Proxy Server
+ │ │ │
+ │══ WebSocket connection (persistent) ════════════│
+ │ │ │
+ │&amp;lt;── stockData1 ─────────│&amp;lt;── stockData1 ─────────│
+ │&amp;lt;── stockData2 ─────────│&amp;lt;── stockData2 ─────────│
+ │&amp;lt;── stockData3 ─────────│&amp;lt;── stockData3 ─────────│
+ │ ... │ ... │
+ │ │ │
+ │── FIN ────────────────&amp;gt;│ │
+ │ │ (not forwarded) │
+ │ │ │
+ │ │&amp;lt;── stockData4 ─────────│ ← server keeps sending!
+ │ │&amp;lt;── stockData5 ─────────│
+ │ │&amp;lt;── stockData6 ─────────│
+ │ │ │
+ │ │ buffered in proxy │
+ │ │ or lost somewhere │
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But WebSocket is stateful and the connection stays open while data flows continuously, so this becomes a real problem.&lt;/p&gt;
+&lt;p&gt;That’s why WebSocket closes via its own handshake.
+The close frame is an application-layer message that intermediaries must forward. Unlike TCP FIN, a proxy cannot arbitrarily handle it.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Client Proxy Server
+ │ │ │
+ │── Close Frame ────────&amp;gt;│── Close Frame ────────&amp;gt;│ ← application level
+ │ │ │
+ │ │ Server: &amp;#34;closing&amp;#34; │
+ │ │ unsubscribe │
+ │ │ stop sending │
+ │ │ │
+ │&amp;lt;── Close Frame ────────│&amp;lt;── Close Frame ────────│
+ │ │ │
+ │── FIN ────────────────&amp;gt;│── FIN ────────────────&amp;gt;│ ← then TCP closes
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="websocket-design-philosophy-minimal-framing"&gt;&lt;a href="#websocket-design-philosophy-minimal-framing" class="header-anchor"&gt;&lt;/a&gt;WebSocket design philosophy: minimal framing
+&lt;/h2&gt;&lt;h3 id="core-principle"&gt;&lt;a href="#core-principle" class="header-anchor"&gt;&lt;/a&gt;Core principle
+&lt;/h3&gt;&lt;p&gt;RFC 6455 states WebSocket’s design principle like this:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;The WebSocket Protocol is designed on the principle that there should be minimal framing&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;The framing WebSocket provides is for exactly two purposes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Stream → message conversion&lt;/strong&gt;: TCP is a continuous byte stream, but applications think in “messages”&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Text vs binary distinction&lt;/strong&gt;: whether a payload is UTF-8 text or arbitrary binary&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;All other metadata (message type, routing, authentication, etc.) is &lt;strong&gt;intentionally left to the application layer&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="the-tcp-problem-no-message-boundaries"&gt;&lt;a href="#the-tcp-problem-no-message-boundaries" class="header-anchor"&gt;&lt;/a&gt;The TCP problem: no message boundaries
+&lt;/h3&gt;&lt;p&gt;TCP is a byte-stream protocol. Data flows continuously like water through a pipe; there’s no notion of “this is the end of a message.”&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Sender:
+ send(&amp;#34;Hello&amp;#34;)
+ send(&amp;#34;World&amp;#34;)
+
+Inside the TCP pipe:
+ [H][e][l][l][o][W][o][r][l][d] ← all contiguous
+
+What the receiver may actually get:
+ recv() → &amp;#34;Hel&amp;#34;
+ recv() → &amp;#34;loWor&amp;#34;
+ recv() → &amp;#34;ld&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The receiver can’t tell where “Hello” ends and “World” begins.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="websockets-solution-restore-boundaries-with-frames"&gt;&lt;a href="#websockets-solution-restore-boundaries-with-frames" class="header-anchor"&gt;&lt;/a&gt;WebSocket’s solution: restore boundaries with frames
+&lt;/h3&gt;&lt;p&gt;WebSocket wraps each message in frames to define boundaries:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Sender:
+ ws.send(&amp;#34;Hello&amp;#34;)
+ ws.send(&amp;#34;World&amp;#34;)
+
+After WebSocket framing:
+ [FIN=1, len=5, &amp;#34;Hello&amp;#34;][FIN=1, len=5, &amp;#34;World&amp;#34;]
+ ├─── Frame 1 ───────┤├─── Frame 2 ────────┤
+
+Receiver:
+ onMessage(&amp;#34;Hello&amp;#34;) ← receives exactly the original message units
+ onMessage(&amp;#34;World&amp;#34;)
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h3 id="what-minimal-means"&gt;&lt;a href="#what-minimal-means" class="header-anchor"&gt;&lt;/a&gt;What “minimal” means
+&lt;/h3&gt;&lt;p&gt;This is all the information that appears in the WebSocket frame header:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Field&lt;/th&gt;
+ &lt;th&gt;Purpose&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;FIN&lt;/td&gt;
+ &lt;td&gt;Whether this is the last frame of the message&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Opcode&lt;/td&gt;
+ &lt;td&gt;Text (0x1) vs Binary (0x2) vs Control (0x8, 0x9, 0xA)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Length&lt;/td&gt;
+ &lt;td&gt;Payload length&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Mask&lt;/td&gt;
+ &lt;td&gt;Whether masking is used (security)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Compared to HTTP headers, the difference is obvious:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;HTTP headers (hundreds of bytes):
+ Content-Type: application/json
+ Content-Length: 42
+ Authorization: Bearer xxx
+ X-Request-ID: abc123
+ Cache-Control: no-cache
+ ... and so on
+
+WebSocket frame header (2~14 bytes):
+ [FIN + opcode][MASK + length]
+ That&amp;#39;s it.
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h3 id="what-websocket-does-not-do"&gt;&lt;a href="#what-websocket-does-not-do" class="header-anchor"&gt;&lt;/a&gt;What WebSocket does &lt;em&gt;not&lt;/em&gt; do
+&lt;/h3&gt;&lt;p&gt;The “minimal framing” philosophy also means: &lt;strong&gt;everything else is your job&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;Example&lt;/span&gt; &lt;span class="err"&gt;of&lt;/span&gt; &lt;span class="err"&gt;an&lt;/span&gt; &lt;span class="err"&gt;actual&lt;/span&gt; &lt;span class="err"&gt;client&lt;/span&gt; &lt;span class="err"&gt;message:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;SUBSCRIBE&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;channel&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;stock.005930&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;userId&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;gun0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;token&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;abc123&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;What WebSocket knows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;ldquo;This is a text frame and its length is 120 bytes.&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What WebSocket doesn’t know:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What &lt;code&gt;type&lt;/code&gt; means&lt;/li&gt;
+&lt;li&gt;How to route by &lt;code&gt;channel&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;How to authenticate/authorize using &lt;code&gt;userId&lt;/code&gt; and &lt;code&gt;token&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All of that must be implemented by the application layer.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="why-you-use-subprotocols-like-stomp"&gt;&lt;a href="#why-you-use-subprotocols-like-stomp" class="header-anchor"&gt;&lt;/a&gt;Why you use subprotocols like STOMP
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;With plain WebSocket only:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@OnMessage&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;onMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// message is just a string&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// you must parse it and implement routing / semantics yourself&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;JSONObject&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;JSONObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getString&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;equals&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;SUBSCRIBE&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// implement subscribe logic&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;equals&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;UNSUBSCRIBE&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// implement unsubscribe logic&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;equals&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;SEND&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// implement message sending logic&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;If you layer STOMP on top:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@MessageMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/stock/{stockCode}&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;handleStock&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nd"&gt;@DestinationVariable&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;stockCode&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;StockRequest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// message type and routing are already handled&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="what-websocket-adds-on-top-of-tcp"&gt;&lt;a href="#what-websocket-adds-on-top-of-tcp" class="header-anchor"&gt;&lt;/a&gt;What WebSocket adds on top of TCP
+&lt;/h3&gt;&lt;p&gt;RFC 6455 clearly defines WebSocket’s role:&lt;/p&gt;
+&lt;h4 id="1-web-origin-based-security-model"&gt;&lt;a href="#1-web-origin-based-security-model" class="header-anchor"&gt;&lt;/a&gt;1. Web Origin-based security model
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Origin: http://example.com
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In browser environments, this tells the server “where the script came from,” giving the server a basis to reject cross-origin requests.&lt;/p&gt;
+&lt;h4 id="2-addressing-and-protocol-naming"&gt;&lt;a href="#2-addressing-and-protocol-naming" class="header-anchor"&gt;&lt;/a&gt;2. Addressing and protocol naming
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-http" data-lang="http"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nf"&gt;GET&lt;/span&gt; &lt;span class="nn"&gt;/chat&lt;/span&gt; &lt;span class="kr"&gt;HTTP&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Host&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="l"&gt;server.example.com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Sec-WebSocket-Protocol&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="l"&gt;stomp, mqtt&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can provide multiple services on a single IP + port:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Distinguish endpoints via path (&lt;code&gt;/chat&lt;/code&gt;, &lt;code&gt;/notifications&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Virtual hosting via the &lt;code&gt;Host&lt;/code&gt; header&lt;/li&gt;
+&lt;li&gt;Negotiate subprotocols via &lt;code&gt;Sec-WebSocket-Protocol&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-framing-mechanism"&gt;&lt;a href="#3-framing-mechanism" class="header-anchor"&gt;&lt;/a&gt;3. Framing mechanism
+&lt;/h4&gt;&lt;p&gt;The RFC uses an interesting phrasing:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;layers a framing mechanism on top of TCP to get back to the IP packet mechanism that TCP is built on, but without length limits&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Layer&lt;/th&gt;
+ &lt;th&gt;Property&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;IP&lt;/td&gt;
+ &lt;td&gt;Packet-based, clear boundaries, size limits (~1500 bytes)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;TCP&lt;/td&gt;
+ &lt;td&gt;Stream-based, no boundaries, no size limits&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;WebSocket&lt;/td&gt;
+ &lt;td&gt;Frame-based, clear boundaries, no size limits&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;TCP stitches IP packets together into a continuous stream, and WebSocket restores application-level message boundaries.&lt;/p&gt;
+&lt;h4 id="4-proxy-friendly-closing-handshake"&gt;&lt;a href="#4-proxy-friendly-closing-handshake" class="header-anchor"&gt;&lt;/a&gt;4. Proxy-friendly Closing Handshake
+&lt;/h4&gt;&lt;p&gt;TCP FIN/ACK alone can cause data loss when a proxy is involved:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Client] ----data----&amp;gt; [Proxy] ----data----&amp;gt; [Server]
+[Client] &amp;lt;---FIN------ [Proxy] [Server] ← proxy may cut off independently
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;WebSocket Close frames negotiate closure at the application layer, which is safer:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Client] ---Close Frame---&amp;gt; [Proxy] ---Close Frame---&amp;gt; [Server]
+[Client] &amp;lt;--Close Frame---- [Proxy] &amp;lt;--Close Frame---- [Server]
+[Client] -------TCP FIN-------&amp;gt; ... -------TCP FIN-------&amp;gt; [Server]
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h3 id="as-close-to-raw-tcp-as-possible"&gt;&lt;a href="#as-close-to-raw-tcp-as-possible" class="header-anchor"&gt;&lt;/a&gt;“As close to raw TCP as possible”
+&lt;/h3&gt;&lt;p&gt;A key sentence from the RFC:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;Basically it is intended to be as close to just exposing raw TCP to script as possible given the constraints of the Web.&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Browsers cannot allow JavaScript to open raw TCP sockets directly (for security reasons). WebSocket aims to provide an experience &lt;strong&gt;as close to TCP as possible&lt;/strong&gt; within those constraints.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What WebSocket does not add:&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Feature&lt;/th&gt;
+ &lt;th&gt;Why&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Message IDs&lt;/td&gt;
+ &lt;td&gt;Up to the application&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Request-response mapping&lt;/td&gt;
+ &lt;td&gt;It’s a bidirectional stream&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Retransmission / ordering&lt;/td&gt;
+ &lt;td&gt;TCP already provides this&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Compression&lt;/td&gt;
+ &lt;td&gt;Raw by default (possible via extensions)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Authentication&lt;/td&gt;
+ &lt;td&gt;Typically handled in the HTTP handshake&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Routing&lt;/td&gt;
+ &lt;td&gt;Typically handled by a subprotocol&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h3 id="coexisting-with-http-infrastructure"&gt;&lt;a href="#coexisting-with-http-infrastructure" class="header-anchor"&gt;&lt;/a&gt;Coexisting with HTTP infrastructure
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;It&amp;rsquo;s also designed in such a way that its servers can share a port with HTTP servers&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;This is a very practical design decision:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Port 80/443
+ │
+ ├── GET /api/users HTTP/1.1 → handled as normal HTTP
+ ├── GET /index.html HTTP/1.1 → handled as normal HTTP
+ └── GET /ws HTTP/1.1 → WebSocket upgrade
+ Upgrade: websocket
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Benefits:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can pass through existing load balancers, proxies, and firewalls&lt;/li&gt;
+&lt;li&gt;No need to open extra ports&lt;/li&gt;
+&lt;li&gt;Can share TLS certificates&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is why the handshake takes the form of an HTTP Upgrade request. The RFC also mentions:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;the design does not limit WebSocket to HTTP, and future implementations could use a simpler handshake over a dedicated port without reinventing the entire protocol&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;In other words, HTTP compatibility is a choice for today’s web infrastructure, not the essence of the protocol.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="extensibility"&gt;&lt;a href="#extensibility" class="header-anchor"&gt;&lt;/a&gt;Extensibility
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;The protocol is intended to be extensible; future versions will likely introduce additional concepts such as multiplexing.&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Reserved for extensions:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Reserved item&lt;/th&gt;
+ &lt;th&gt;Purpose&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;RSV1, RSV2, RSV3 bits&lt;/td&gt;
+ &lt;td&gt;Per-frame extension flags&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Opcode 0x3-0x7&lt;/td&gt;
+ &lt;td&gt;Additional data frame types&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Opcode 0xB-0xF&lt;/td&gt;
+ &lt;td&gt;Additional control frame types&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;code&gt;Sec-WebSocket-Extensions&lt;/code&gt; header&lt;/td&gt;
+ &lt;td&gt;Extension negotiation&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;A real-world extension example — permessage-deflate:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This is a message compression extension; it uses the RSV1 bit to mark “this frame is compressed.”&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="analogy"&gt;&lt;a href="#analogy" class="header-anchor"&gt;&lt;/a&gt;Analogy
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;TCP = a highway&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cars (bytes) keep flowing&lt;/li&gt;
+&lt;li&gt;No clear boundary lines showing where one “group” ends and the next begins&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;WebSocket = container trucks&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Goods (messages) are packed into containers (frames)&lt;/li&gt;
+&lt;li&gt;The truck doesn’t know what’s inside; it just carries the container safely&lt;/li&gt;
+&lt;li&gt;It only needs minimal info like container size&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;STOMP = a logistics system&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Adds manifests: “this goes to A, that goes to B”&lt;/li&gt;
+&lt;li&gt;Categorizes goods by type&lt;/li&gt;
+&lt;li&gt;Adds tracking and routing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;WebSocket is like the container truck: it delivers payloads safely as chunks, while higher-level protocols such as STOMP manage what’s inside.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h3&gt;&lt;p&gt;WebSocket’s design philosophy can be summarized as: &lt;em&gt;“do the minimum, delegate the rest.”&lt;/em&gt;&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;What WebSocket does&lt;/th&gt;
+ &lt;th&gt;What WebSocket doesn’t do&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Define message boundaries&lt;/td&gt;
+ &lt;td&gt;Message types / routing&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Distinguish text vs binary&lt;/td&gt;
+ &lt;td&gt;Auth / authorization&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Keep the connection alive&lt;/td&gt;
+ &lt;td&gt;Reconnect logic&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Ping/Pong heartbeat&lt;/td&gt;
+ &lt;td&gt;Business logic&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Origin-based security basis&lt;/td&gt;
+ &lt;td&gt;Application-level security&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Because of this philosophy, WebSocket is lightweight and general-purpose. You can layer STOMP, Socket.IO, or your own custom protocol on top depending on your needs.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;That’s what I learned from reading RFC 6455 and digging into how WebSocket works. In the next post, I’m thinking of exploring how WebSocket is implemented in Spring Boot.&lt;/p&gt;</description></item><item><title>Bidirectional Communication Before WebSocket</title><link>https://0andwild.com/en/posts/260112_before_websocket/</link><pubDate>Mon, 12 Jan 2026 21:18:15 +0900</pubDate><guid>https://0andwild.com/en/posts/260112_before_websocket/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Bidirectional Communication Before WebSocket" /&gt;&lt;h2 id="introduction"&gt;&lt;a href="#introduction" class="header-anchor"&gt;&lt;/a&gt;Introduction
+&lt;/h2&gt;&lt;p&gt;While working on a mock investment project, I needed to serve real-time stock price fluctuation data and ended up using WebSocket technology.
+I&amp;rsquo;ve known about WebSocket, a bidirectional real-time communication technology, for some time, but never dug deep into it. I took this opportunity to dive in thoroughly.&lt;/p&gt;
+&lt;p&gt;While reading RFC 6455, the WebSocket technical document, I found a section that referenced RFC 6202 (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP) to explain past processing methods and their problems.
+Today, I&amp;rsquo;ll read RFC 6202 to learn how bidirectional communication was handled before WebSocket emerged, and explore the thoughts and best practices of that time.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rfc-6202-known-issues-and-best-practices-for-the-use-of-long-polling-and-streaming-in-bidirectional-http"&gt;&lt;a href="#rfc-6202-known-issues-and-best-practices-for-the-use-of-long-polling-and-streaming-in-bidirectional-http" class="header-anchor"&gt;&lt;/a&gt;&lt;a class="link" href="%22https://datatracker.ietf.org/doc/html/rfc6202%22" &gt;RFC 6202&lt;/a&gt; (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)
+&lt;/h2&gt;&lt;p&gt;This document, written in April 2011, discusses HTTP long polling and HTTP streaming as well-known issues and best practices for bidirectional HTTP communication at that time. It also acknowledges that both HTTP long polling and HTTP streaming are extensions of HTTP, and that the HTTP protocol was not designed for bidirectional communication.
+The authors note that this document neither recommends using these two methods nor discourages their use, but rather focuses on discussing good use cases and issues.&lt;/p&gt;
+&lt;p&gt;Fundamentally, HTTP (Hypertext Transfer Protocol: RFC 2616) is a request/response protocol.
+HTTP defines three entities: clients, proxies, and servers.
+A client creates a connection to send an HTTP request to a server, and the server accepts the connection to process the HTTP request by returning a response. Proxies are objects that can intervene in forwarding requests and responses between clients and servers.&lt;/p&gt;
+&lt;p&gt;By default, the standard HTTP model doesn&amp;rsquo;t allow servers to send asynchronous events to clients because servers cannot initiate connections to clients first and cannot send unsolicited HTTP responses.&lt;/p&gt;
+&lt;p&gt;So to receive asynchronous events as quickly as possible, clients must periodically poll the server. This continuous polling forces request/response cycles even when there&amp;rsquo;s no data, consuming network resources and reducing application response efficiency as data queues up until the server receives the next polling request.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="http-long-polling--http-streaming"&gt;&lt;a href="#http-long-polling--http-streaming" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling &amp;amp; HTTP streaming
+&lt;/h2&gt;&lt;h2 id="1-http-long-polling"&gt;&lt;a href="#1-http-long-polling" class="header-anchor"&gt;&lt;/a&gt;1. HTTP long polling
+&lt;/h2&gt;&lt;p&gt;Traditional short polling is a technique where clients periodically send requests to the server to update data, but they receive empty responses even when there are no new events, or must wait until the next poll. This technique&amp;rsquo;s request cycle is determined by the delay time set by the client, and when this cycle is short (high polling frequency), it can cause unbearable burden on both server and network.&lt;/p&gt;
+&lt;p&gt;In contrast, long polling attempts to minimize message delivery delays and network resource usage by responding to requests only when specific events, states, or network timeouts occur.&lt;/p&gt;
+&lt;h3 id="http-long-polling-life-cycle"&gt;&lt;a href="#http-long-polling-life-cycle" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling life cycle
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Client creates an initial request and waits for a response&lt;/li&gt;
+&lt;li&gt;Server withholds response until updates are available or a specific state or timeout occurs&lt;/li&gt;
+&lt;li&gt;When updates become available, server sends a response to the client&lt;/li&gt;
+&lt;li&gt;Immediately after receiving the response, client either creates a new long poll request right away or after an acceptable delay&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="http-long-polling-issues"&gt;&lt;a href="#http-long-polling-issues" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling issues
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Header overhead: Since every request/response is an HTTP message, HTTP headers always accompany it even if the data is small.
+For small data, headers can constitute a significant portion of data transmission. If the network MTU (Maximum Transmission Unit) can accommodate all information including headers in a single IP packet, the network burden isn&amp;rsquo;t significant. However, when small messages are frequently exchanged, the problem of transmission volume being large relative to actual data occurs.
+For example, it&amp;rsquo;s like sending a single sheet of paper (20g) in a delivery box (300g).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Maximal latency: Even if the server wants to immediately send a new message right after sending a long poll response, it must wait until the client&amp;rsquo;s next request arrives. Average latency is close to 1 network transit, but in the worst case can extend up to 3 network transits (response-request-response), and considering TCP packet loss retransmission, even more can occur.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Connection Establishment: Both short polling and long polling are criticized for frequently opening and closing TCP/IP connections. However, both polling mechanisms work well with persistent HTTP connections that can be reused.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Allocated Resources: Operating systems allocate resources to TCP/IP connections and pending HTTP requests. HTTP long polling requires both TCP/IP connections and HTTP requests to remain open for each client. Therefore, when determining the scale of an HTTP long polling application, it&amp;rsquo;s important to consider resources related to both.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Graceful Degradation: When servers or clients are overloaded, messages can queue up and multiple messages can be bundled in one response. Latency increases but per-message overhead decreases, naturally distributing the load.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Timeouts: Long poll requests can have timeout issues because they must maintain a hanging state until the server has data to send.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Caching: If intermediate proxies or CDNs cache responses, the problem of receiving old data instead of fresh data can occur. While clients or hosts have no way to inform HTTP intermediaries that long polling is in use, caching that could interfere with bidirectional flow can be controlled with standard headers or cookies. As a best practice, caching should always be intentionally suppressed in long polling requests or responses. Set the &amp;ldquo;Cache-Control&amp;rdquo; header to &amp;ldquo;no-cache&amp;rdquo;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="2-http-streaming"&gt;&lt;a href="#2-http-streaming" class="header-anchor"&gt;&lt;/a&gt;2. HTTP Streaming
+&lt;/h2&gt;&lt;p&gt;The mechanism of HTTP streaming is to never terminate the request or disconnect the connection even after the server sends data to the client.
+This mechanism significantly reduces network latency because clients and servers don&amp;rsquo;t need to continuously initiate and disconnect connections.&lt;/p&gt;
+&lt;h3 id="http-streaming-life-cycle"&gt;&lt;a href="#http-streaming-life-cycle" class="header-anchor"&gt;&lt;/a&gt;HTTP Streaming life cycle
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Client creates an initial request and waits for a response&lt;/li&gt;
+&lt;li&gt;Server withholds response until updates are available or a specific state or timeout occurs&lt;/li&gt;
+&lt;li&gt;When updates become available, server sends a response to the client&lt;/li&gt;
+&lt;li&gt;After sending data, server continues step 3 without terminating the request or disconnecting&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="http-streaming-issues"&gt;&lt;a href="#http-streaming-issues" class="header-anchor"&gt;&lt;/a&gt;HTTP Streaming issues
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Network Intermediaries: The HTTP protocol allows intermediaries (proxies, transparent proxies, gateways, etc.) to intervene in the process of transmitting responses from server to client. HTTP Streaming doesn&amp;rsquo;t work with these intermediaries.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Maximal Latency: Theoretically 1 network transit, but in practice, connections must be periodically disconnected and reconnected to prevent unlimited growth in memory usage related to Javascript/DOM elements. Ultimately, like long polling, maximum latency is 3 network transits.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Client Buffering: According to HTTP specifications, there&amp;rsquo;s no obligation to process partial responses immediately. While most browsers execute response JS, some only execute after buffer overflow occurs. Sending blank characters to fill the buffer can be used as a method.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Framing Techniques: When using HTTP Streaming, multiple application messages can be transmitted in a single HTTP response. However, because intermediate objects like proxies can re-chunk chunk units, messages cannot be distinguished by chunk units. Therefore, separators must be separately defined at the application level. Long polling doesn&amp;rsquo;t have this problem because there&amp;rsquo;s one message per response.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="other-server-push-mechanisms"&gt;&lt;a href="#other-server-push-mechanisms" class="header-anchor"&gt;&lt;/a&gt;Other server-push mechanisms
+&lt;/h2&gt;&lt;p&gt;Besides the two mechanisms above, this section introduces Bayeux (4.1), BOSH (4.2), Server-Sent Events (4.3), etc.
+It covers recommendations when using the SSE mechanism, as follows:&lt;/p&gt;
+&lt;p&gt;The specification recommends disabling HTTP chunking. The reason is the same as the HTTP streaming issues explained above.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Intermediate proxies can re-chunk chunks&lt;/li&gt;
+&lt;li&gt;Some proxies can buffer entire responses&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="best-practices"&gt;&lt;a href="#best-practices" class="header-anchor"&gt;&lt;/a&gt;Best Practices
+&lt;/h2&gt;&lt;h3 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Item&lt;/th&gt;
+ &lt;th&gt;Key Content&lt;/th&gt;
+ &lt;th&gt;Recommendation&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Connection Limit&lt;/td&gt;
+ &lt;td&gt;6-8 per browser limit&lt;/td&gt;
+ &lt;td&gt;Use one for long poll, detect duplicates with cookies&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Pipelining&lt;/td&gt;
+ &lt;td&gt;Regular requests can get blocked behind long poll&lt;/td&gt;
+ &lt;td&gt;Check support before use, prepare fallback&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Proxies&lt;/td&gt;
+ &lt;td&gt;Starvation occurs when connections are shared&lt;/td&gt;
+ &lt;td&gt;Use async proxies, avoid connection sharing&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Timeouts&lt;/td&gt;
+ &lt;td&gt;Too high gets 408/504, too low wastes traffic&lt;/td&gt;
+ &lt;td&gt;30 seconds recommended&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Caching&lt;/td&gt;
+ &lt;td&gt;Real-time data shouldn&amp;rsquo;t be cached&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;Cache-Control: no-cache&lt;/code&gt; mandatory&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Security&lt;/td&gt;
+ &lt;td&gt;Vulnerable to Injection, DoS&lt;/td&gt;
+ &lt;td&gt;Input validation, connection limit&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="1-limits-to-the-maximum-number-of-connections"&gt;&lt;a href="#1-limits-to-the-maximum-number-of-connections" class="header-anchor"&gt;&lt;/a&gt;1. Limits to the Maximum Number of Connections
+&lt;/h2&gt;&lt;h3 id="background"&gt;&lt;a href="#background" class="header-anchor"&gt;&lt;/a&gt;Background
+&lt;/h3&gt;&lt;p&gt;The HTTP specification (RFC 2616) originally recommended that &lt;strong&gt;a single client maintain a maximum of 2 connections&lt;/strong&gt; to a server. There are two reasons:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Prevent server overload&lt;/li&gt;
+&lt;li&gt;Prevent unexpected side effects in congested networks&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Recent browsers have increased this limit to 6-8, but limits still exist. The problem is that users quickly exhaust these connections when opening multiple tabs or frames.&lt;/p&gt;
+&lt;h3 id="why-is-this-a-problem"&gt;&lt;a href="#why-is-this-a-problem" class="header-anchor"&gt;&lt;/a&gt;Why is this a problem?
+&lt;/h3&gt;&lt;p&gt;Long polling occupies connections for a long time. If 3 tabs each open 2 long polls:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Tab 1: 2 long poll connections
+Tab 2: 2 long poll connections
+Tab 3: 2 long poll connections
+─────────────────────
+Total 6 connections → Browser limit reached
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In this state, to send regular HTTP requests (images, API calls, etc.), you must &lt;strong&gt;wait until existing connections end&lt;/strong&gt;. This is called &lt;strong&gt;connection starvation&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="recommendations"&gt;&lt;a href="#recommendations" class="header-anchor"&gt;&lt;/a&gt;Recommendations
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Client side:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ideally, &lt;strong&gt;limit long poll requests to one&lt;/strong&gt; and have multiple tabs/frames share it&lt;/li&gt;
+&lt;li&gt;However, sharing resources between tabs is difficult due to browser security models (Same-Origin Policy, etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Server side:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Must use cookies to detect duplicate long poll requests from the same browser&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;When duplicate requests are detected, don&amp;rsquo;t make both wait—immediately respond to one to release it&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Wrong handling]
+Request 1: Waiting...
+Request 2: Waiting... ← Both waiting causes connection starvation
+
+[Correct handling]
+Request 1: Waiting...
+Request 2: Arrives → Immediately send empty response to Request 1 → Only Request 2 waits
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="2-pipelined-connections"&gt;&lt;a href="#2-pipelined-connections" class="header-anchor"&gt;&lt;/a&gt;2. Pipelined Connections
+&lt;/h2&gt;&lt;h3 id="what-is-pipelining"&gt;&lt;a href="#what-is-pipelining" class="header-anchor"&gt;&lt;/a&gt;What is pipelining?
+&lt;/h3&gt;&lt;p&gt;A feature supported in HTTP/1.1 that allows &lt;strong&gt;sending multiple requests consecutively&lt;/strong&gt; without waiting for responses.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Without pipelining]
+Request 1 → Response 1 → Request 2 → Response 2 → Request 3 → Response 3
+
+[With pipelining]
+Request 1 → Request 2 → Request 3 → Response 1 → Response 2 → Response 3
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages-in-long-polling"&gt;&lt;a href="#advantages-in-long-polling" class="header-anchor"&gt;&lt;/a&gt;Advantages in Long Polling
+&lt;/h3&gt;&lt;p&gt;Useful when the server needs to send multiple messages in a short time. With pipelining, the server doesn&amp;rsquo;t need to wait for the client&amp;rsquo;s new request after responding. Requests are already queued.&lt;/p&gt;
+&lt;h3 id="problem-regular-requests-get-blocked"&gt;&lt;a href="#problem-regular-requests-get-blocked" class="header-anchor"&gt;&lt;/a&gt;Problem: Regular requests get blocked
+&lt;/h3&gt;&lt;p&gt;There&amp;rsquo;s a critical problem with pipelining. &lt;strong&gt;If a regular request gets queued behind a long poll, it must wait until the long poll ends&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Pipeline queue]
+1. Long poll request (waiting 30 seconds...)
+2. Image request ← Wait until long poll ends
+3. API request ← Wait until long poll ends
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This can delay page loading by 30 seconds.&lt;/p&gt;
+&lt;h3 id="precautions"&gt;&lt;a href="#precautions" class="header-anchor"&gt;&lt;/a&gt;Precautions
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;HTTP POST pipelining is &lt;strong&gt;not recommended&lt;/strong&gt; in RFC 2616&lt;/li&gt;
+&lt;li&gt;Protocols like BOSH or Bayeux pipeline POSTs while guaranteeing order with request IDs&lt;/li&gt;
+&lt;li&gt;To use pipelining, must &lt;strong&gt;verify that clients, intermediate equipment, and servers all support it&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;If not supported, must &lt;strong&gt;fallback&lt;/strong&gt; to non-pipelined method&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3-proxies"&gt;&lt;a href="#3-proxies" class="header-anchor"&gt;&lt;/a&gt;3. Proxies
+&lt;/h2&gt;&lt;h3 id="compatibility-with-general-proxies"&gt;&lt;a href="#compatibility-with-general-proxies" class="header-anchor"&gt;&lt;/a&gt;Compatibility with general proxies
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Long Polling:&lt;/strong&gt; Works well with most proxies. Because it ultimately sends a complete HTTP response (when events occur or timeout).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HTTP Streaming:&lt;/strong&gt; Has problems. It relies on two assumptions:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Proxy will forward each chunk immediately → &lt;strong&gt;Not guaranteed&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Browser will immediately execute arrived JS chunks → &lt;strong&gt;Not guaranteed&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="reverse-proxy-problems"&gt;&lt;a href="#reverse-proxy-problems" class="header-anchor"&gt;&lt;/a&gt;Reverse proxy problems
+&lt;/h3&gt;&lt;p&gt;Reverse proxies appear as the actual server from the client&amp;rsquo;s perspective, but play the role of forwarding requests to the real server behind them.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Client → [Reverse Proxy] → Actual Server
+ (Nginx, Apache, etc.)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Both long polling and streaming work, but there are &lt;strong&gt;performance issues&lt;/strong&gt;. Most proxies aren&amp;rsquo;t designed to maintain many connections for long periods.&lt;/p&gt;
+&lt;h3 id="connection-sharing-problem"&gt;&lt;a href="#connection-sharing-problem" class="header-anchor"&gt;&lt;/a&gt;Connection Sharing Problem
+&lt;/h3&gt;&lt;p&gt;This is the most serious problem. Proxies like Apache mod_jk are designed to have &lt;strong&gt;multiple clients share a small number of connections&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Apache mod_jk connection pool: 8 connections]
+
+Client A&amp;#39;s long poll → Connection 1 occupied (30 seconds...)
+Client B&amp;#39;s long poll → Connection 2 occupied (30 seconds...)
+Client C&amp;#39;s long poll → Connection 3 occupied (30 seconds...)
+...
+Client H&amp;#39;s long poll → Connection 8 occupied (30 seconds...)
+
+Client I&amp;#39;s regular request → No connection! Waiting...
+Client J&amp;#39;s regular request → No connection! Waiting...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;When all 8 connections are occupied by long polls, all other requests (whether long poll or regular) get blocked. This is called &lt;strong&gt;connection starvation&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="root-cause-synchronous-vs-asynchronous"&gt;&lt;a href="#root-cause-synchronous-vs-asynchronous" class="header-anchor"&gt;&lt;/a&gt;Root cause: Synchronous vs Asynchronous
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Model&lt;/th&gt;
+ &lt;th&gt;Operation&lt;/th&gt;
+ &lt;th&gt;Long Poll Impact&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Synchronous&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;One thread/connection per request&lt;/td&gt;
+ &lt;td&gt;Severe resource exhaustion&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Asynchronous&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Event-based, minimal resources per connection&lt;/td&gt;
+ &lt;td&gt;Minimal impact&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Synchronous examples: Apache mod_jk, Java Servlet 2.5
+Asynchronous examples: Nginx, Node.js, Java Servlet 3.0+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion:&lt;/strong&gt; When using long polling/streaming, &lt;strong&gt;must avoid connection sharing&lt;/strong&gt;. HTTP&amp;rsquo;s basic assumption is &amp;ldquo;each request completes as quickly as possible,&amp;rdquo; but long poll breaks this assumption.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="4-http-responses"&gt;&lt;a href="#4-http-responses" class="header-anchor"&gt;&lt;/a&gt;4. HTTP Responses
+&lt;/h2&gt;&lt;p&gt;This is simple. Just follow standard HTTP.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When server successfully receives a request, respond with &lt;strong&gt;200 OK&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Response timing: event occurrence, state change, or timeout&lt;/li&gt;
+&lt;li&gt;Response body includes actual event/state/timeout information&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nothing special, just comply with HTTP specifications.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="5-timeouts"&gt;&lt;a href="#5-timeouts" class="header-anchor"&gt;&lt;/a&gt;5. Timeouts
+&lt;/h2&gt;&lt;h3 id="dilemma"&gt;&lt;a href="#dilemma" class="header-anchor"&gt;&lt;/a&gt;Dilemma
+&lt;/h3&gt;&lt;p&gt;Setting long poll timeout values is tricky:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;If set too high:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;May receive &lt;strong&gt;408 Request Timeout&lt;/strong&gt; from server&lt;/li&gt;
+&lt;li&gt;May receive &lt;strong&gt;504 Gateway Timeout&lt;/strong&gt; from proxy&lt;/li&gt;
+&lt;li&gt;Slow detection of disconnected network connections&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;If set too low:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Unnecessary requests/responses increase&lt;/li&gt;
+&lt;li&gt;Network traffic waste&lt;/li&gt;
+&lt;li&gt;Server load increase&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="experimental-results-and-recommended-values"&gt;&lt;a href="#experimental-results-and-recommended-values" class="header-anchor"&gt;&lt;/a&gt;Experimental results and recommended values
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;Browser default timeout: 300 seconds (5 minutes)
+Values that succeeded in experiments: up to 120 seconds
+Safe recommended value: 30 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Most network infrastructure (proxies, load balancers, etc.) don&amp;rsquo;t have timeouts as long as browsers. Intermediate equipment can disconnect first.&lt;/p&gt;
+&lt;h3 id="recommendations-for-network-equipment-vendors"&gt;&lt;a href="#recommendations-for-network-equipment-vendors" class="header-anchor"&gt;&lt;/a&gt;Recommendations for network equipment vendors
+&lt;/h3&gt;&lt;p&gt;To be long polling compatible, timeouts must be set &lt;strong&gt;significantly longer than 30 seconds&lt;/strong&gt;. &amp;ldquo;Significantly&amp;rdquo; here means several times the average network round-trip time or more.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="6-impact-on-intermediary-entities"&gt;&lt;a href="#6-impact-on-intermediary-entities" class="header-anchor"&gt;&lt;/a&gt;6. Impact on Intermediary Entities
+&lt;/h2&gt;&lt;h3 id="transparency-problem"&gt;&lt;a href="#transparency-problem" class="header-anchor"&gt;&lt;/a&gt;Transparency problem
+&lt;/h3&gt;&lt;p&gt;Long poll requests are &lt;strong&gt;indistinguishable from regular HTTP requests&lt;/strong&gt; from the perspective of intermediate equipment (proxies, gateways, etc.). There&amp;rsquo;s no way to tell them &amp;ldquo;this is a long poll, so handle it specially.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;This can cause intermediate equipment to do unnecessary work:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Attempt caching (shouldn&amp;rsquo;t cache real-time data)&lt;/li&gt;
+&lt;li&gt;Apply timeouts (long poll is supposed to take long)&lt;/li&gt;
+&lt;li&gt;Attempt connection reuse (long poll has long occupation time)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cache-prevention"&gt;&lt;a href="#cache-prevention" class="header-anchor"&gt;&lt;/a&gt;Cache prevention
+&lt;/h3&gt;&lt;p&gt;The most important thing is &lt;strong&gt;cache prevention&lt;/strong&gt;. If real-time data is cached, clients receive past data.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Header that must be set:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-http" data-lang="http"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;Cache-Control: no-cache
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This header must be included in both requests and responses. It&amp;rsquo;s a standard HTTP header, so most intermediate equipment understands and respects it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="7-security-considerations"&gt;&lt;a href="#7-security-considerations" class="header-anchor"&gt;&lt;/a&gt;7. Security Considerations
+&lt;/h2&gt;&lt;p&gt;RFC 6202 is a document that describes existing usage patterns of HTTP, not proposing new features. Therefore, it doesn&amp;rsquo;t create new security vulnerabilities. However, there are security issues that exist in already deployed solutions.&lt;/p&gt;
+&lt;h3 id="1-injection-attacks-cross-domain-long-polling"&gt;&lt;a href="#1-injection-attacks-cross-domain-long-polling" class="header-anchor"&gt;&lt;/a&gt;1. Injection attacks (Cross-Domain Long Polling)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Problem situation:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When using the JSONP method in cross-domain long polling, the browser executes JavaScript returned by the server.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Server response (JSONP)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;price&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;52300&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If the server is vulnerable to injection attacks, attackers can insert malicious code:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Response manipulated by attacker
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;price&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;52300&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt; &lt;span class="nx"&gt;stealCookies&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The browser executes this as is.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Countermeasures:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Thorough server-side input validation&lt;/li&gt;
+&lt;li&gt;Use CORS and avoid JSONP&lt;/li&gt;
+&lt;li&gt;Set Content-Type headers accurately&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-dos-denial-of-service-attacks"&gt;&lt;a href="#2-dos-denial-of-service-attacks" class="header-anchor"&gt;&lt;/a&gt;2. DoS (Denial of Service) attacks
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Problem situation:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Long polling and HTTP streaming must &lt;strong&gt;maintain many connections for long periods&lt;/strong&gt;. If attackers open a large number of long poll connections:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Attacker → Opens 1,000 connections (each waiting 30 seconds)
+ ↓
+Server resource exhaustion → Normal users cannot receive service
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Regular HTTP requests end quickly, so resource occupation time per connection is short. But long poll is intentionally maintained for long periods, making it vulnerable to DoS.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Countermeasures:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Limit connections per IP&lt;/li&gt;
+&lt;li&gt;Allow long poll only for authenticated users&lt;/li&gt;
+&lt;li&gt;Apply rate limiting&lt;/li&gt;
+&lt;li&gt;Use asynchronous servers (minimize resources per connection)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;By reading RFC 6202, I learned how server push events were created in the past. It was good to learn in more detail about the knowledge and problems of polling, streaming, and SSE mechanisms that I already knew.&lt;/p&gt;
+&lt;p&gt;The organized thought from reading this document is that it&amp;rsquo;s a concept of extending the HTTP protocol rather than a new protocol, and because HTTP by design is not a protocol for bidirectional asynchronous communication, it felt like they abused it to achieve the purpose of server event push.&lt;/p&gt;
+&lt;p&gt;In the next post, I&amp;rsquo;ll organize the RFC 6455 WebSocket document and try to connect the problems from RFC 6202 with the development process.&lt;/p&gt;</description></item></channel></rss>

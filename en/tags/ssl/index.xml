@@ -1,1 +1,422 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SSL on 0AndWild_log</title><link>https://0andwild.com/en/tags/ssl/</link><description>Recent content in SSL on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 25 Oct 2022 19:17:04 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/ssl/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Nginx? Evolution and Architecture of Web Servers</title><link>https://0andwild.com/en/posts/221025_about_nginx/</link><pubDate>Tue, 25 Oct 2022 19:17:04 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_about_nginx/</guid><description>A comprehensive guide covering high-performance web server Nginx concepts, Apache comparison, Event-Driven architecture, and practical features used in production</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221025_about_nginx/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SSL on 0AndWild_log</title><link>https://0andwild.com/en/tags/ssl/</link><description>Recent content in SSL on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 25 Oct 2022 19:17:04 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/ssl/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Nginx? Evolution and Architecture of Web Servers</title><link>https://0andwild.com/en/posts/221025_about_nginx/</link><pubDate>Tue, 25 Oct 2022 19:17:04 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_about_nginx/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is Nginx? Evolution and Architecture of Web Servers" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/featured.png"
+ alt="Nginx logo"&gt;
+&lt;/figure&gt;
+
+&lt;h2 id="what-is-nginx"&gt;&lt;a href="#what-is-nginx" class="header-anchor"&gt;&lt;/a&gt;What is Nginx?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Nginx&lt;/strong&gt; (engine-x) is a &lt;strong&gt;lightweight, high-performance web server software&lt;/strong&gt;. It functions not only as a web server but also as a reverse proxy, load balancer, and HTTP cache.&lt;/p&gt;
+&lt;p&gt;Nginx was designed to handle high concurrent connections and is currently used by numerous large-scale websites worldwide.&lt;/p&gt;
+&lt;h3 id="why-was-nginx-needed"&gt;&lt;a href="#why-was-nginx-needed" class="header-anchor"&gt;&lt;/a&gt;Why Was Nginx Needed?
+&lt;/h3&gt;&lt;p&gt;In the past, &lt;strong&gt;Apache web server&lt;/strong&gt; was the industry standard. However, in the early 2000s, as internet users grew exponentially, a bottleneck called the &lt;strong&gt;C10k problem&lt;/strong&gt; emerged.&lt;/p&gt;
+&lt;h2 id="the-c10k-problem"&gt;&lt;a href="#the-c10k-problem" class="header-anchor"&gt;&lt;/a&gt;The C10k Problem
+&lt;/h2&gt;&lt;p&gt;The &lt;strong&gt;C10k problem&lt;/strong&gt; stands for &amp;ldquo;Connection 10,000,&amp;rdquo; meaning &lt;strong&gt;handling 10,000 concurrent client connections on a single server&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Important Concept Distinction&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Concurrent Processing&lt;/strong&gt;: Maintaining and managing many connections simultaneously&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Throughput&lt;/strong&gt;: Number of requests that can be processed per second&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Concurrent connection handling focuses on &lt;strong&gt;efficient resource management and scheduling&lt;/strong&gt; rather than raw speed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure1.png"
+ alt="Apache&amp;#39;s thread-based architecture - one thread per connection"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="apaches-architectural-limitations"&gt;&lt;a href="#apaches-architectural-limitations" class="header-anchor"&gt;&lt;/a&gt;Apache&amp;rsquo;s Architectural Limitations
+&lt;/h3&gt;&lt;p&gt;Traditional Apache had the following structural issues:&lt;/p&gt;
+&lt;h4 id="1-process-based-processing"&gt;&lt;a href="#1-process-based-processing" class="header-anchor"&gt;&lt;/a&gt;1. Process-Based Processing
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Creates a new process or thread&lt;/strong&gt; for each incoming request&lt;/li&gt;
+&lt;li&gt;Number of processes increases proportionally with users&lt;/li&gt;
+&lt;li&gt;Results in &lt;strong&gt;memory exhaustion&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-high-resource-consumption"&gt;&lt;a href="#2-high-resource-consumption" class="header-anchor"&gt;&lt;/a&gt;2. High Resource Consumption
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Apache&amp;rsquo;s powerful extensibility allows various module additions&lt;/li&gt;
+&lt;li&gt;However, each process &lt;strong&gt;loads all modules into memory&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Memory usage per process increases&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-context-switching-overhead"&gt;&lt;a href="#3-context-switching-overhead" class="header-anchor"&gt;&lt;/a&gt;3. Context-Switching Overhead
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;CPU cores alternate between multiple processes&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Context-switching costs&lt;/strong&gt; occur during process transitions&lt;/li&gt;
+&lt;li&gt;CPU overhead increases with more requests&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Due to these issues, Apache was &lt;strong&gt;unsuitable for large-scale concurrent connection environments&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id="the-birth-of-nginx"&gt;&lt;a href="#the-birth-of-nginx" class="header-anchor"&gt;&lt;/a&gt;The Birth of Nginx
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure2.png"
+ alt="Igor Sysoev - Nginx Developer"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;In 2002, Russian developer &lt;strong&gt;Igor Sysoev&lt;/strong&gt; began developing Nginx to solve this problem, releasing the first version in 2004.&lt;/p&gt;
+&lt;h3 id="nginxs-core-goals"&gt;&lt;a href="#nginxs-core-goals" class="header-anchor"&gt;&lt;/a&gt;Nginx&amp;rsquo;s Core Goals
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;High concurrent connection handling&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Low memory footprint&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;High performance and stability&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="nginxs-primary-roles"&gt;&lt;a href="#nginxs-primary-roles" class="header-anchor"&gt;&lt;/a&gt;Nginx&amp;rsquo;s Primary Roles
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;HTTP Server&lt;/strong&gt;: Quickly serves static files (HTML, CSS, JS, images)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Reverse Proxy Server&lt;/strong&gt;: Relays requests to backend application servers&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Load Balancer&lt;/strong&gt;: Distributes traffic across multiple servers&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mail Proxy Server&lt;/strong&gt;: Mail server proxy functionality&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="nginx-internal-architecture"&gt;&lt;a href="#nginx-internal-architecture" class="header-anchor"&gt;&lt;/a&gt;Nginx Internal Architecture
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure3.png"
+ alt="Event-Driven Nginx Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Nginx consists of &lt;strong&gt;1 Master Process&lt;/strong&gt; and &lt;strong&gt;multiple Worker Processes&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="master-process-responsibilities"&gt;&lt;a href="#master-process-responsibilities" class="header-anchor"&gt;&lt;/a&gt;Master Process Responsibilities
+&lt;/h3&gt;&lt;p&gt;The Master Process handles:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reading and validating configuration files&lt;/li&gt;
+&lt;li&gt;Creating and managing Worker Processes&lt;/li&gt;
+&lt;li&gt;Restarting Worker Processes on configuration changes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Check Master Process&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ps aux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="worker-process-responsibilities"&gt;&lt;a href="#worker-process-responsibilities" class="header-anchor"&gt;&lt;/a&gt;Worker Process Responsibilities
+&lt;/h3&gt;&lt;p&gt;Worker Processes handle actual client requests:&lt;/p&gt;
+&lt;h4 id="1-connection-management"&gt;&lt;a href="#1-connection-management" class="header-anchor"&gt;&lt;/a&gt;1. Connection Management
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Receives &lt;strong&gt;listen socket&lt;/strong&gt; from Master Process&lt;/li&gt;
+&lt;li&gt;Forms connections with clients&lt;/li&gt;
+&lt;li&gt;Maintains connections for &lt;strong&gt;Keep-Alive&lt;/strong&gt; duration&lt;/li&gt;
+&lt;li&gt;One Worker handles &lt;strong&gt;thousands of connections&lt;/strong&gt; simultaneously&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-non-blocking-io"&gt;&lt;a href="#2-non-blocking-io" class="header-anchor"&gt;&lt;/a&gt;2. Non-blocking I/O
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Processes other tasks when no requests on connection&lt;/li&gt;
+&lt;li&gt;Responds immediately when requests arrive&lt;/li&gt;
+&lt;li&gt;Efficient processing via &lt;strong&gt;asynchronous Event-Driven&lt;/strong&gt; approach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-thread-pool"&gt;&lt;a href="#3-thread-pool" class="header-anchor"&gt;&lt;/a&gt;3. Thread Pool
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Delegates time-consuming tasks (file I/O, DB queries) to &lt;strong&gt;Thread Pool&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Worker Process continues handling other requests&lt;/li&gt;
+&lt;li&gt;Minimizes impact of blocking operations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="4-cpu-core-optimization"&gt;&lt;a href="#4-cpu-core-optimization" class="header-anchor"&gt;&lt;/a&gt;4. CPU Core Optimization
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Worker Processes are typically created &lt;strong&gt;equal to CPU core count&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Each Worker pinned to specific CPU core (CPU Affinity)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Minimizes Context-Switching&lt;/strong&gt; for performance improvement&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# nginx.conf configuration example
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;worker_processes&lt;/span&gt; &lt;span class="s"&gt;auto&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Auto-create based on CPU core count
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;worker_cpu_affinity&lt;/span&gt; &lt;span class="s"&gt;auto&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Auto-set CPU affinity
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="event-driven-architecture"&gt;&lt;a href="#event-driven-architecture" class="header-anchor"&gt;&lt;/a&gt;Event-Driven Architecture
+&lt;/h3&gt;&lt;p&gt;Nginx operates with &lt;strong&gt;Multi-process + Single-thread + Event-Driven&lt;/strong&gt; approach:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Event Handler&lt;/strong&gt; manages multiple connections&lt;/li&gt;
+&lt;li&gt;Processes via &lt;strong&gt;asynchronous Non-blocking&lt;/strong&gt; method&lt;/li&gt;
+&lt;li&gt;Executes ready events sequentially&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Maximizes resource efficiency&lt;/strong&gt; without idle processes&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This allows &lt;strong&gt;efficient memory and CPU usage&lt;/strong&gt; without processes waiting idle for requests like Apache.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="nginx-advantages-and-disadvantages"&gt;&lt;a href="#nginx-advantages-and-disadvantages" class="header-anchor"&gt;&lt;/a&gt;Nginx Advantages and Disadvantages
+&lt;/h2&gt;&lt;h3 id="advantages"&gt;&lt;a href="#advantages" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;h4 id="1-high-concurrent-connection-capability"&gt;&lt;a href="#1-high-concurrent-connection-capability" class="header-anchor"&gt;&lt;/a&gt;1. High Concurrent Connection Capability
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;10x more concurrent connections&lt;/strong&gt; compared to Apache&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;2x faster&lt;/strong&gt; processing speed for same connection count&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-low-resource-usage"&gt;&lt;a href="#2-low-resource-usage" class="header-anchor"&gt;&lt;/a&gt;2. Low Resource Usage
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Operates with fewer processes&lt;/li&gt;
+&lt;li&gt;Minimized memory usage&lt;/li&gt;
+&lt;li&gt;Fast response times with lightweight structure&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-zero-downtime-configuration-reload"&gt;&lt;a href="#3-zero-downtime-configuration-reload" class="header-anchor"&gt;&lt;/a&gt;3. Zero-Downtime Configuration Reload
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;nginx -s reload &lt;span class="c1"&gt;# Apply configuration without service interruption&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Master Process reads new configuration&lt;/li&gt;
+&lt;li&gt;Existing Workers finish current requests then terminate&lt;/li&gt;
+&lt;li&gt;New Workers handle requests with new configuration&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Configuration changes without service interruption&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="4-superior-static-file-handling"&gt;&lt;a href="#4-superior-static-file-handling" class="header-anchor"&gt;&lt;/a&gt;4. Superior Static File Handling
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Quickly serves static content like images, CSS, JS&lt;/li&gt;
+&lt;li&gt;Better static file performance than Apache&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages"&gt;&lt;a href="#disadvantages" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;h4 id="1-difficult-dynamic-module-development"&gt;&lt;a href="#1-difficult-dynamic-module-development" class="header-anchor"&gt;&lt;/a&gt;1. Difficult Dynamic Module Development
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Worker Process restart needed when adding modules&lt;/li&gt;
+&lt;li&gt;Harder module development compared to Apache&lt;/li&gt;
+&lt;li&gt;Partially compensated by Lua scripting&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-windows-environment-limitations"&gt;&lt;a href="#2-windows-environment-limitations" class="header-anchor"&gt;&lt;/a&gt;2. Windows Environment Limitations
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Optimized for Linux/Unix environments&lt;/li&gt;
+&lt;li&gt;Performance and stability degraded on Windows&lt;/li&gt;
+&lt;li&gt;Linux recommended for production environments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-no-htaccess-support"&gt;&lt;a href="#3-no-htaccess-support" class="header-anchor"&gt;&lt;/a&gt;3. No .htaccess Support
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Cannot use Apache&amp;rsquo;s &lt;code&gt;.htaccess&lt;/code&gt; files&lt;/li&gt;
+&lt;li&gt;All configuration managed in central config file&lt;/li&gt;
+&lt;li&gt;May lack flexibility in hosting environments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="key-nginx-features"&gt;&lt;a href="#key-nginx-features" class="header-anchor"&gt;&lt;/a&gt;Key Nginx Features
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure4.png"
+ alt="Nginx Key Features Diagram"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="1-reverse-proxy"&gt;&lt;a href="#1-reverse-proxy" class="header-anchor"&gt;&lt;/a&gt;1. Reverse Proxy
+&lt;/h3&gt;&lt;p&gt;A reverse proxy acts as an &lt;strong&gt;intermediary&lt;/strong&gt; between clients and backend servers.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure5.png"
+ alt="Reverse Proxy Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;h4 id="key-benefits"&gt;&lt;a href="#key-benefits" class="header-anchor"&gt;&lt;/a&gt;Key Benefits
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Enhanced Security&lt;/strong&gt;: Hides actual server IP&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Caching&lt;/strong&gt;: Caches frequently requested responses&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Compression&lt;/strong&gt;: Saves bandwidth by compressing response data&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SSL Processing&lt;/strong&gt;: Handles HTTPS encryption/decryption&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Reverse proxy configuration example
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://backend_server&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Host&lt;/span&gt; &lt;span class="nv"&gt;$host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;X-Real-IP&lt;/span&gt; &lt;span class="nv"&gt;$remote_addr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="practical-usage-patterns"&gt;&lt;a href="#practical-usage-patterns" class="header-anchor"&gt;&lt;/a&gt;Practical Usage Patterns
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Nginx + Apache&lt;/strong&gt;: Nginx handles static files, Apache handles dynamic processing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nginx + Node.js/Python/Java&lt;/strong&gt;: Nginx protects frontend and backend applications&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nginx + Nginx&lt;/strong&gt;: Hierarchical configuration of multiple Nginx servers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-load-balancing"&gt;&lt;a href="#2-load-balancing" class="header-anchor"&gt;&lt;/a&gt;2. Load Balancing
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Distributes traffic&lt;/strong&gt; across multiple backend servers to balance load evenly.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure6.png"
+ alt="Load Balancing Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;h4 id="load-balancing-algorithms"&gt;&lt;a href="#load-balancing-algorithms" class="header-anchor"&gt;&lt;/a&gt;Load Balancing Algorithms
+&lt;/h4&gt;&lt;h5 id="round-robin-default"&gt;&lt;a href="#round-robin-default" class="header-anchor"&gt;&lt;/a&gt;Round Robin (Default)
+&lt;/h5&gt;&lt;ul&gt;
+&lt;li&gt;Distributes requests sequentially to each server&lt;/li&gt;
+&lt;li&gt;Simplest and most fair approach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend1.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend2.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend3.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id="least-connections"&gt;&lt;a href="#least-connections" class="header-anchor"&gt;&lt;/a&gt;Least Connections
+&lt;/h5&gt;&lt;ul&gt;
+&lt;li&gt;Sends to server with fewest current connections&lt;/li&gt;
+&lt;li&gt;Suitable for requests with varying processing times&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;least_conn&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend1.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend2.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id="ip-hash"&gt;&lt;a href="#ip-hash" class="header-anchor"&gt;&lt;/a&gt;IP Hash
+&lt;/h5&gt;&lt;ul&gt;
+&lt;li&gt;Determines server based on client IP hash&lt;/li&gt;
+&lt;li&gt;Useful for &lt;strong&gt;Session Persistence&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ip_hash&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend1.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend2.example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id="weight"&gt;&lt;a href="#weight" class="header-anchor"&gt;&lt;/a&gt;Weight
+&lt;/h5&gt;&lt;ul&gt;
+&lt;li&gt;Assigns weight based on server performance&lt;/li&gt;
+&lt;li&gt;Sends more requests to high-performance servers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend1.example.com&lt;/span&gt; &lt;span class="s"&gt;weight=3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend2.example.com&lt;/span&gt; &lt;span class="s"&gt;weight=2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend3.example.com&lt;/span&gt; &lt;span class="s"&gt;weight=1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="health-check"&gt;&lt;a href="#health-check" class="header-anchor"&gt;&lt;/a&gt;Health Check
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend1.example.com&lt;/span&gt; &lt;span class="s"&gt;max_fails=3&lt;/span&gt; &lt;span class="s"&gt;fail_timeout=30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server&lt;/span&gt; &lt;span class="s"&gt;backend2.example.com&lt;/span&gt; &lt;span class="s"&gt;max_fails=3&lt;/span&gt; &lt;span class="s"&gt;fail_timeout=30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_fails&lt;/code&gt;: Number of allowed failures&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fail_timeout&lt;/code&gt;: Time to consider server down&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Improves availability&lt;/strong&gt; by automatically excluding failed servers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="3-ssltls-termination"&gt;&lt;a href="#3-ssltls-termination" class="header-anchor"&gt;&lt;/a&gt;3. SSL/TLS Termination
+&lt;/h3&gt;&lt;p&gt;Nginx handles &lt;strong&gt;HTTPS communication with clients&lt;/strong&gt; and &lt;strong&gt;HTTP communication with backend&lt;/strong&gt;.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure7.png"
+ alt="SSL Termination Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;h4 id="key-benefits-1"&gt;&lt;a href="#key-benefits-1" class="header-anchor"&gt;&lt;/a&gt;Key Benefits
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Removes SSL processing burden&lt;/strong&gt; from backend servers&lt;/li&gt;
+&lt;li&gt;Centralized certificate management&lt;/li&gt;
+&lt;li&gt;Backend &lt;strong&gt;focuses on business logic&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Nginx and backend communicate via HTTP on same internal network (security safe)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="mi"&gt;443&lt;/span&gt; &lt;span class="s"&gt;ssl&lt;/span&gt; &lt;span class="s"&gt;http2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server_name&lt;/span&gt; &lt;span class="s"&gt;example.com&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_certificate&lt;/span&gt; &lt;span class="s"&gt;/path/to/cert.pem&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_certificate_key&lt;/span&gt; &lt;span class="s"&gt;/path/to/key.pem&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_protocols&lt;/span&gt; &lt;span class="s"&gt;TLSv1.2&lt;/span&gt; &lt;span class="s"&gt;TLSv1.3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_ciphers&lt;/span&gt; &lt;span class="s"&gt;HIGH:!aNULL:!MD5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://backend&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="http2-support"&gt;&lt;a href="#http2-support" class="header-anchor"&gt;&lt;/a&gt;HTTP/2 Support
+&lt;/h4&gt;&lt;p&gt;Nginx supports HTTP/2:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Multiplexing&lt;/strong&gt;: Multiple requests simultaneously over one connection&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Header Compression&lt;/strong&gt;: Saves bandwidth&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Server Push&lt;/strong&gt;: Sends resources before client requests&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-caching"&gt;&lt;a href="#4-caching" class="header-anchor"&gt;&lt;/a&gt;4. Caching
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Stores server responses&lt;/strong&gt; in memory or disk for fast responses on repeated requests.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Cache path configuration
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;proxy_cache_path&lt;/span&gt; &lt;span class="s"&gt;/var/cache/nginx&lt;/span&gt; &lt;span class="s"&gt;levels=1:2&lt;/span&gt; &lt;span class="s"&gt;keys_zone=my_cache:10m&lt;/span&gt; &lt;span class="s"&gt;max_size=1g&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_cache&lt;/span&gt; &lt;span class="s"&gt;my_cache&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_cache_valid&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt; &lt;span class="mi"&gt;60m&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Cache 200 responses for 60 minutes
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_cache_valid&lt;/span&gt; &lt;span class="mi"&gt;404&lt;/span&gt; &lt;span class="mi"&gt;10m&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Cache 404 responses for 10 minutes
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://backend&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="caching-strategies"&gt;&lt;a href="#caching-strategies" class="header-anchor"&gt;&lt;/a&gt;Caching Strategies
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Proxy Caching&lt;/strong&gt;: Cache backend responses&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;FastCGI Caching&lt;/strong&gt;: Cache dynamic content like PHP-FPM&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Static File Caching&lt;/strong&gt;: Set browser cache headers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Static file cache header configuration
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;location&lt;/span&gt; &lt;span class="p"&gt;~&lt;/span&gt;&lt;span class="sr"&gt;*&lt;/span&gt; &lt;span class="s"&gt;\.(jpg|jpeg|png|gif|ico|css|js)&lt;/span&gt;$ &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;expires&lt;/span&gt; &lt;span class="s"&gt;1y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;add_header&lt;/span&gt; &lt;span class="s"&gt;Cache-Control&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;public,&lt;/span&gt; &lt;span class="s"&gt;immutable&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="5-compression-gzip"&gt;&lt;a href="#5-compression-gzip" class="header-anchor"&gt;&lt;/a&gt;5. Compression (Gzip)
+&lt;/h3&gt;&lt;p&gt;Compress response data to &lt;strong&gt;save network bandwidth&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;gzip&lt;/span&gt; &lt;span class="no"&gt;on&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;gzip_vary&lt;/span&gt; &lt;span class="no"&gt;on&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;gzip_min_length&lt;/span&gt; &lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;gzip_types&lt;/span&gt; &lt;span class="s"&gt;text/plain&lt;/span&gt; &lt;span class="s"&gt;text/css&lt;/span&gt; &lt;span class="s"&gt;text/xml&lt;/span&gt; &lt;span class="s"&gt;text/javascript&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;application/x-javascript&lt;/span&gt; &lt;span class="s"&gt;application/xml+rss&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;application/json&lt;/span&gt; &lt;span class="s"&gt;application/javascript&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Compress text-based content by 60-80%&lt;/li&gt;
+&lt;li&gt;Improves user experience by reducing transfer time&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="6-rate-limiting"&gt;&lt;a href="#6-rate-limiting" class="header-anchor"&gt;&lt;/a&gt;6. Rate Limiting
+&lt;/h3&gt;&lt;p&gt;Defend against DDoS attacks and protect servers&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Define zone
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;limit_req_zone&lt;/span&gt; &lt;span class="nv"&gt;$binary_remote_addr&lt;/span&gt; &lt;span class="s"&gt;zone=mylimit:10m&lt;/span&gt; &lt;span class="s"&gt;rate=10r/s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/api/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;limit_req&lt;/span&gt; &lt;span class="s"&gt;zone=mylimit&lt;/span&gt; &lt;span class="s"&gt;burst=20&lt;/span&gt; &lt;span class="s"&gt;nodelay&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://backend&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Limit requests per second per IP&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;burst&lt;/strong&gt;: Allow sudden traffic spikes&lt;/li&gt;
+&lt;li&gt;Essential for API server protection&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="nginx-vs-apache-which-should-you-choose"&gt;&lt;a href="#nginx-vs-apache-which-should-you-choose" class="header-anchor"&gt;&lt;/a&gt;Nginx vs Apache: Which Should You Choose?
+&lt;/h2&gt;&lt;h3 id="choose-nginx-when"&gt;&lt;a href="#choose-nginx-when" class="header-anchor"&gt;&lt;/a&gt;Choose Nginx When
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;High concurrent connection handling is needed&lt;/li&gt;
+&lt;li&gt;Static file service is primary purpose&lt;/li&gt;
+&lt;li&gt;Reverse proxy/load balancer is needed&lt;/li&gt;
+&lt;li&gt;Resource efficiency is important&lt;/li&gt;
+&lt;li&gt;Modern protocol support needed (HTTP/2, HTTP/3)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="choose-apache-when"&gt;&lt;a href="#choose-apache-when" class="header-anchor"&gt;&lt;/a&gt;Choose Apache When
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.htaccess&lt;/code&gt; file-based configuration is needed&lt;/li&gt;
+&lt;li&gt;Various third-party modules are needed&lt;/li&gt;
+&lt;li&gt;Must use in Windows environment&lt;/li&gt;
+&lt;li&gt;Legacy application compatibility is important&lt;/li&gt;
+&lt;li&gt;Frequent dynamic module development&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="optimal-combination-nginx--apache"&gt;&lt;a href="#optimal-combination-nginx--apache" class="header-anchor"&gt;&lt;/a&gt;Optimal Combination: Nginx + Apache
+&lt;/h3&gt;&lt;p&gt;Many companies use &lt;strong&gt;Nginx as frontend&lt;/strong&gt; and &lt;strong&gt;Apache as backend&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Client] → [Nginx] → [Apache] → [Application]
+ Static Dynamic
+ SSL PHP/Python
+ Caching Modules
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="production-tips"&gt;&lt;a href="#production-tips" class="header-anchor"&gt;&lt;/a&gt;Production Tips
+&lt;/h2&gt;&lt;h3 id="1-worker-connections-configuration"&gt;&lt;a href="#1-worker-connections-configuration" class="header-anchor"&gt;&lt;/a&gt;1. Worker Connections Configuration
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;events&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;worker_connections&lt;/span&gt; &lt;span class="mi"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Connections per Worker
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="s"&gt;epoll&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;# Optimal event model for Linux
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="2-keepalive-optimization"&gt;&lt;a href="#2-keepalive-optimization" class="header-anchor"&gt;&lt;/a&gt;2. Keepalive Optimization
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;http&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;keepalive_timeout&lt;/span&gt; &lt;span class="mi"&gt;65&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;keepalive_requests&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="3-buffer-size-tuning"&gt;&lt;a href="#3-buffer-size-tuning" class="header-anchor"&gt;&lt;/a&gt;3. Buffer Size Tuning
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;http&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;client_body_buffer_size&lt;/span&gt; &lt;span class="s"&gt;16K&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;client_header_buffer_size&lt;/span&gt; &lt;span class="mi"&gt;1k&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;client_max_body_size&lt;/span&gt; &lt;span class="mi"&gt;8m&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;large_client_header_buffers&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;8k&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="4-log-optimization"&gt;&lt;a href="#4-log-optimization" class="header-anchor"&gt;&lt;/a&gt;4. Log Optimization
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;http&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;access_log&lt;/span&gt; &lt;span class="s"&gt;/var/log/nginx/access.log&lt;/span&gt; &lt;span class="s"&gt;combined&lt;/span&gt; &lt;span class="s"&gt;buffer=32k&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;error_log&lt;/span&gt; &lt;span class="s"&gt;/var/log/nginx/error.log&lt;/span&gt; &lt;span class="s"&gt;warn&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="5-security-hardening"&gt;&lt;a href="#5-security-hardening" class="header-anchor"&gt;&lt;/a&gt;5. Security Hardening
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Hide version information
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;server_tokens&lt;/span&gt; &lt;span class="no"&gt;off&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add security headers
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;add_header&lt;/span&gt; &lt;span class="s"&gt;X-Frame-Options&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;SAMEORIGIN&amp;#34;&lt;/span&gt; &lt;span class="s"&gt;always&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;add_header&lt;/span&gt; &lt;span class="s"&gt;X-Content-Type-Options&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;nosniff&amp;#34;&lt;/span&gt; &lt;span class="s"&gt;always&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;add_header&lt;/span&gt; &lt;span class="s"&gt;X-XSS-Protection&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;mode=block&amp;#34;&lt;/span&gt; &lt;span class="s"&gt;always&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;Nginx has established itself as a &lt;strong&gt;core component of modern web infrastructure&lt;/strong&gt;. With high performance and efficiency through Event-Driven architecture, it&amp;rsquo;s used by large-scale services like Netflix, Airbnb, and GitHub.&lt;/p&gt;
+&lt;p&gt;While Apache&amp;rsquo;s stability and extensibility remain valuable, in modern web environments where large-scale traffic handling and resource efficiency are crucial, &lt;strong&gt;Nginx is the more suitable choice&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Recommended Learning Path&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install Nginx in local environment and practice basic configuration&lt;/li&gt;
+&lt;li&gt;Set up reverse proxy&lt;/li&gt;
+&lt;li&gt;Configure and test load balancing&lt;/li&gt;
+&lt;li&gt;Apply SSL certificates (Let&amp;rsquo;s Encrypt)&lt;/li&gt;
+&lt;li&gt;Performance monitoring and optimization&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://nginx.org/en/docs/" target="_blank" rel="noopener"
+ &gt;Nginx Official Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.digitalocean.com/community/tools/nginx" target="_blank" rel="noopener"
+ &gt;Nginx Configuration Generator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.nginx.com/blog/tuning-nginx/" target="_blank" rel="noopener"
+ &gt;Nginx Performance Tuning Guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Important Note&lt;/strong&gt;: Nginx shows limited performance and compatibility on Windows environments, so it&amp;rsquo;s strongly recommended to use &lt;strong&gt;Linux/Unix systems&lt;/strong&gt; in production!&lt;/p&gt;</description></item></channel></rss>

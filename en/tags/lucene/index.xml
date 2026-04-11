@@ -1,1 +1,118 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lucene on 0AndWild_log</title><link>https://0andwild.com/en/tags/lucene/</link><description>Recent content in Lucene on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Thu, 01 Feb 2024 21:07:14 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/lucene/index.xml" rel="self" type="application/rss+xml"/><item><title>What is ElasticSearch?</title><link>https://0andwild.com/en/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/en/posts/240201_es/</guid><description>Explore Elasticsearch fundamentals, the ELK stack, comparison with RDB, and core architecture including clusters, nodes, and shards.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240201_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lucene on 0AndWild_log</title><link>https://0andwild.com/en/tags/lucene/</link><description>Recent content in Lucene on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Thu, 01 Feb 2024 21:07:14 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/lucene/index.xml" rel="self" type="application/rss+xml"/><item><title>What is ElasticSearch?</title><link>https://0andwild.com/en/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/en/posts/240201_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is ElasticSearch?" /&gt;&lt;p&gt;Elasticsearch is a Java-based open-source distributed search engine built on Apache Lucene.&lt;/p&gt;
+&lt;p&gt;Through Elasticsearch, you can use the Lucene library (an information retrieval library developed in Java) independently, and perform near real-time storage, search, and analysis of massive amounts of data.&lt;/p&gt;
+&lt;p&gt;Elasticsearch can be used standalone for search purposes, or as part of the &lt;strong&gt;ELK (Elasticsearch / Logstash / Kibana)&lt;/strong&gt; stack.&lt;/p&gt;
+&lt;h3 id="elk-stack-components"&gt;&lt;a href="#elk-stack-components" class="header-anchor"&gt;&lt;/a&gt;ELK Stack Components
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Elasticsearch&lt;/strong&gt;: Searches and aggregates data received from Logstash to obtain necessary information&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logstash&lt;/strong&gt;: Collects, aggregates, and parses logs or transaction data from various sources (DB, CSV files, etc.) and delivers them to Elasticsearch&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kibana&lt;/strong&gt;: Visualizes and monitors data through Elasticsearch&amp;rsquo;s fast search capabilities&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 The ELK stack is primarily used to collect scattered logs from load-balanced WAS into one place, quickly search for desired data, and visualize it for monitoring purposes.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="elasticsearch-and-rdb-terminology-comparison"&gt;&lt;a href="#elasticsearch-and-rdb-terminology-comparison" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch and RDB Terminology Comparison
+&lt;/h2&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es1.png"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es2.png"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;h3 id="elasticsearch-70-allows-only-one-type-per-index"&gt;&lt;a href="#elasticsearch-70-allows-only-one-type-per-index" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 7.0+ Allows Only One Type Per Index
+&lt;/h3&gt;&lt;p&gt;The reason is that Elasticsearch uses the same Lucene fields for types within a single index (DB). Therefore, even if types are different, fields with the same name are not independent, which can cause various problems. As a result, it was modified so that one index can only have one type.&lt;/p&gt;
+&lt;h4 id="comparison-with-rdb"&gt;&lt;a href="#comparison-with-rdb" class="header-anchor"&gt;&lt;/a&gt;Comparison with RDB
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;In the case of RDB&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A single DB can have multiple tables, and columns with the same name in each table do not affect each other.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;In the case of Elasticsearch&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If there are fields (=columns) with the same name in each type (=table) within one index (=DB), those fields are not independent and are stored in the same Lucene field, requiring the same definition.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="elasticsearch-architecture"&gt;&lt;a href="#elasticsearch-architecture" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Architecture
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es3.png"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="cluster"&gt;&lt;a href="#cluster" class="header-anchor"&gt;&lt;/a&gt;Cluster
+&lt;/h3&gt;&lt;p&gt;A cluster is the largest system unit in Elasticsearch, consisting of a collection of nodes with at least one or more nodes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Different clusters are maintained as independent systems that cannot access or exchange data&lt;/li&gt;
+&lt;li&gt;Multiple servers can form a single cluster&lt;/li&gt;
+&lt;li&gt;Multiple clusters can exist on a single server&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="node"&gt;&lt;a href="#node" class="header-anchor"&gt;&lt;/a&gt;Node
+&lt;/h3&gt;&lt;p&gt;A node is a single server included in a cluster that stores data and participates in the cluster&amp;rsquo;s indexing and search capabilities. Nodes are classified according to their roles as follows:&lt;/p&gt;
+&lt;h4 id="master-eligible-node"&gt;&lt;a href="#master-eligible-node" class="header-anchor"&gt;&lt;/a&gt;Master-eligible Node
+&lt;/h4&gt;&lt;p&gt;A node that can be selected as a master to control the cluster&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Creating and deleting indices&lt;/li&gt;
+&lt;li&gt;Tracking and managing cluster nodes&lt;/li&gt;
+&lt;li&gt;Selecting shards to allocate when data is input&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="data-node"&gt;&lt;a href="#data-node" class="header-anchor"&gt;&lt;/a&gt;Data Node
+&lt;/h4&gt;&lt;p&gt;A node where data (Documents) is stored and where shards, the spaces for distributed data storage, are placed&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Performs data operations such as CRUD, indexing, searching, and statistics&lt;/li&gt;
+&lt;li&gt;Requires significant resources (CPU, memory, etc.)&lt;/li&gt;
+&lt;li&gt;Requires monitoring and should be separated from master nodes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ingest-node"&gt;&lt;a href="#ingest-node" class="header-anchor"&gt;&lt;/a&gt;Ingest Node
+&lt;/h4&gt;&lt;p&gt;Executes pre-processing pipelines such as data transformation&lt;/p&gt;
+&lt;h4 id="coordination-only-node"&gt;&lt;a href="#coordination-only-node" class="header-anchor"&gt;&lt;/a&gt;Coordination Only Node
+&lt;/h4&gt;&lt;p&gt;A node that receives user requests and distributes them in a round-robin manner&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Forwards cluster-related requests to the master node&lt;/li&gt;
+&lt;li&gt;Forwards data-related requests to data nodes&lt;/li&gt;
+&lt;li&gt;Performs load balancing role&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="index--shard--replication"&gt;&lt;a href="#index--shard--replication" class="header-anchor"&gt;&lt;/a&gt;Index / Shard / Replication
+&lt;/h3&gt;&lt;h4 id="index"&gt;&lt;a href="#index" class="header-anchor"&gt;&lt;/a&gt;Index
+&lt;/h4&gt;&lt;p&gt;A concept corresponding to a database in RDB&lt;/p&gt;
+&lt;h4 id="shard"&gt;&lt;a href="#shard" class="header-anchor"&gt;&lt;/a&gt;Shard
+&lt;/h4&gt;&lt;p&gt;Data indexed within an index does not exist as a single unit but is divided into multiple parts. A single index is split into multiple shards for scale-out purposes.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 Shards are divided into primary shards and replica shards.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Primary Shard&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The original data&lt;/li&gt;
+&lt;li&gt;Data update requests are sent to the primary shard&lt;/li&gt;
+&lt;li&gt;Updated content is replicated to replica shards&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Replica Shard&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A copy of the primary shard&lt;/li&gt;
+&lt;li&gt;Used as a replacement when the original data is lost, performing a role in overcoming failures&lt;/li&gt;
+&lt;li&gt;By default, assigned to a different node than the primary shard&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="segment"&gt;&lt;a href="#segment" class="header-anchor"&gt;&lt;/a&gt;Segment
+&lt;/h3&gt;&lt;p&gt;A segment is a data structure designed for fast document search in Elasticsearch and is a physical file containing shard data.&lt;/p&gt;
+&lt;h4 id="segment-characteristics"&gt;&lt;a href="#segment-characteristics" class="header-anchor"&gt;&lt;/a&gt;Segment Characteristics
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Each shard consists of multiple segments, enabling efficient search through distributed processing of search requests&lt;/li&gt;
+&lt;li&gt;When searching a shard, each segment is searched first, results are combined, and the final result is returned as the shard&amp;rsquo;s result&lt;/li&gt;
+&lt;li&gt;Data indexed within segments is stored in an inverted index structure, making search speed very fast&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="segment-creation-process"&gt;&lt;a href="#segment-creation-process" class="header-anchor"&gt;&lt;/a&gt;Segment Creation Process
+&lt;/h4&gt;&lt;p&gt;Creating a new segment for every request would generate too many segments, so an &lt;strong&gt;in-memory buffer&lt;/strong&gt; is used to prevent this.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Flush&lt;/strong&gt;: When the content accumulated in the in-memory buffer reaches a certain time or the buffer is full, flush is performed and segments are created in the system cache&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Data becomes searchable from this point&lt;/li&gt;
+&lt;li&gt;In this state, the segment is stored in the system cache, not on disk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Commit&lt;/strong&gt;: After a certain time, segments are stored on physical disk through commit&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Merge&lt;/strong&gt;: Stored segments are merged into one over time&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By merging segments into one, the number of segments to search decreases, improving search performance&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

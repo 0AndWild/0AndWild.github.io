@@ -1,1 +1,649 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backend on 0AndWild_log</title><link>https://0andwild.com/en/categories/backend/</link><description>Recent content in Backend on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/backend/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting Techniques</title><link>https://0andwild.com/en/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/en/posts/240207_es/</guid><description>Three Elasticsearch highlighter methods including Unified, Plain, and FVH, along with efficient offset strategies using Postings List and Term Vectors</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240207_es/featured.png"/></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/en/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/en/posts/240206_es/</guid><description>Comparing Elasticsearch pagination methods including From/Size, Search After, and Scroll, with stable paging implementation using PIT (Point In Time)</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240206_es/featured.png"/></item><item><title>Elasticsearch Autocomplete Search Methods</title><link>https://0andwild.com/en/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/en/posts/240204_es/</guid><description>Comparing Elasticsearch autocomplete implementation methods like Edge N-Gram, Search-as-you-type, and Completion Suggester with guidelines for optimal choices</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240204_es/featured.png"/></item><item><title>BigQuery Clustering Optimization</title><link>https://0andwild.com/en/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/en/posts/231220_bigquery/</guid><description>BigQuery clustering concepts and efficient data access strategies through combination with partitioning</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231220_bigquery/featured.png"/></item><item><title>What is BigQuery?</title><link>https://0andwild.com/en/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/en/posts/231218_bigquery/</guid><description>Key features of BigQuery as a column-based database and its Colossus-based distributed processing architecture</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231218_bigquery/featured.png"/></item><item><title>Springdoc and OpenAPI (Annotation Usage Guide)</title><link>https://0andwild.com/en/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/en/posts/231017_swagger/</guid><description>Complete guide to Springdoc&amp;rsquo;s @ParameterObject usage and Swagger annotation reference</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231017_swagger/featured.png"/></item><item><title>Mastering OpenAPI Generator</title><link>https://0andwild.com/en/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/en/posts/231016_swagger/</guid><description>API documentation automation and code generation using OpenAPI Generator</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231016_swagger/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backend on 0AndWild_log</title><link>https://0andwild.com/en/categories/backend/</link><description>Recent content in Backend on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/backend/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting Techniques</title><link>https://0andwild.com/en/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/en/posts/240207_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Highlighting Techniques" /&gt;&lt;h2 id="1-kind-of-highlighter"&gt;&lt;a href="#1-kind-of-highlighter" class="header-anchor"&gt;&lt;/a&gt;1) Kind of Highlighter
+&lt;/h2&gt;&lt;p&gt;ES supports highlighting for search results and provides 3 methods.&lt;/p&gt;
+&lt;p&gt;Each type below can be applied separately to each field to be highlighted&lt;/p&gt;
+&lt;h3 id="unified-default-highlighter"&gt;&lt;a href="#unified-default-highlighter" class="header-anchor"&gt;&lt;/a&gt;Unified (Default Highlighter)
+&lt;/h3&gt;&lt;p&gt;The unified highlighter uses the Lucene unified highlighter. This highlighter breaks text into sentences and scores individual sentences as if they were documents in a corpus using the BM25 algorithm. It also supports accurate phrase and multi-term (fuzzy, prefix, regex) highlighting.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BM25 algorithm-based sentence scoring&lt;/li&gt;
+&lt;li&gt;Accurate phrase highlighting support&lt;/li&gt;
+&lt;li&gt;Multi-term query support (fuzzy, prefix, regex)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain"&gt;&lt;a href="#plain" class="header-anchor"&gt;&lt;/a&gt;Plain
+&lt;/h3&gt;&lt;p&gt;The plain highlighter is best suited for highlighting simple query matches in a single field.&lt;/p&gt;
+&lt;p&gt;To accurately reflect the query logic, it &lt;strong&gt;creates a small in-memory index&lt;/strong&gt; and &lt;strong&gt;re-executes the original query criteria&lt;/strong&gt; through Lucene&amp;rsquo;s query execution planner to access low-level match information for the current document.&lt;/p&gt;
+&lt;p&gt;This operation is &lt;strong&gt;repeated for every field and every document that needs to be highlighted&lt;/strong&gt;. For highlighting many fields in many documents with complex queries, it&amp;rsquo;s recommended to use the unified highlighter with postings or term_vector fields.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Suitable for simple queries on single fields&lt;/li&gt;
+&lt;li&gt;Creates in-memory index&lt;/li&gt;
+&lt;li&gt;Repeatedly executes for all fields and documents&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="fvh-fast-vector-highlighter"&gt;&lt;a href="#fvh-fast-vector-highlighter" class="header-anchor"&gt;&lt;/a&gt;FVH (Fast Vector Highlighter)
+&lt;/h3&gt;&lt;p&gt;The fvh highlighter uses the Lucene fast vector highlighter. This highlighter can be used on fields where &lt;code&gt;term_vector&lt;/code&gt; is set to &lt;code&gt;with_positions_offsets&lt;/code&gt; in the mapping.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Customizable with &lt;code&gt;boundary_scanner&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Requires &lt;code&gt;term_vector&lt;/code&gt; to be set to &lt;code&gt;with_positions_offsets&lt;/code&gt;, which increases index size&lt;/li&gt;
+&lt;li&gt;Can combine matches from multiple fields into one result (see &lt;code&gt;matched_fields&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Can assign different weights to matches at different positions, such as phrase matches being ranked higher than term matches when highlighting boosting queries that boost phrase matches over term matches&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: The fvh highlighter does not support span queries. If you need support for span queries, use another highlighter such as the unified highlighter.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="2-offsets-strategy"&gt;&lt;a href="#2-offsets-strategy" class="header-anchor"&gt;&lt;/a&gt;2) Offsets Strategy
+&lt;/h2&gt;&lt;p&gt;To create meaningful search snippets from the terms being searched, the highlighter needs to know the start and end character offsets of each word in the original text. These offsets can be obtained from:&lt;/p&gt;
+&lt;h3 id="postings-list"&gt;&lt;a href="#postings-list" class="header-anchor"&gt;&lt;/a&gt;Postings List
+&lt;/h3&gt;&lt;p&gt;If &lt;strong&gt;&lt;code&gt;index_options&lt;/code&gt; is set to &lt;code&gt;offsets&lt;/code&gt;&lt;/strong&gt; in the mapping, the unified highlighter uses this information to highlight documents without re-analyzing the text.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The original query is re-executed directly against the postings and matching offsets are extracted from the index to limit the collection to highlighted documents&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is useful when you have large fields because there&amp;rsquo;s no need to re-analyze the text to be highlighted&lt;/strong&gt;. It also &lt;strong&gt;requires less disk space than using &lt;code&gt;term_vectors&lt;/code&gt;&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;No need to re-analyze text&lt;/li&gt;
+&lt;li&gt;Useful for large fields&lt;/li&gt;
+&lt;li&gt;Saves disk space compared to &lt;code&gt;term_vectors&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="term-vectors"&gt;&lt;a href="#term-vectors" class="header-anchor"&gt;&lt;/a&gt;Term Vectors
+&lt;/h3&gt;&lt;p&gt;If &lt;strong&gt;&lt;code&gt;term_vector&lt;/code&gt; is set to &lt;code&gt;with_positions_offsets&lt;/code&gt;&lt;/strong&gt; in the mapping to provide term vector information, the &lt;strong&gt;unified highlighter automatically uses term vectors&lt;/strong&gt; to highlight fields.&lt;/p&gt;
+&lt;p&gt;Because you have access to each document&amp;rsquo;s term dictionary, it&amp;rsquo;s fast &lt;strong&gt;especially when highlighting multi-term queries like prefixes or wildcards on large fields (over 1MB)&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The fvh highlighter always uses term vectors&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fast performance on large fields (over 1MB)&lt;/li&gt;
+&lt;li&gt;Efficient for multi-term queries (prefixes, wildcards)&lt;/li&gt;
+&lt;li&gt;Direct access to document&amp;rsquo;s term dictionary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain-highlighting"&gt;&lt;a href="#plain-highlighting" class="header-anchor"&gt;&lt;/a&gt;Plain Highlighting
+&lt;/h3&gt;&lt;p&gt;This mode is &lt;strong&gt;used by unified when there are no other alternatives&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;It creates a small in-memory index and re-executes the original query criteria through Lucene&amp;rsquo;s query execution planner to access low-level match information for the current document.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This operation is repeated for every field and every document that needs highlighting&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The plain highlighter always uses plain highlighting&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Used when there are no other options&lt;/li&gt;
+&lt;li&gt;Creates in-memory index&lt;/li&gt;
+&lt;li&gt;Repeatedly executes for all fields/documents&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://elastic.co/guide/en/elasticsearch/reference/current/highlighting.html#boundary-scanners" target="_blank" rel="noopener"
+ &gt;Highlighting | Elasticsearch Guide [8.13]&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/en/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/en/posts/240206_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Pagination Technique" /&gt;&lt;h2 id="elasticsearch-pagination-3-options"&gt;&lt;a href="#elasticsearch-pagination-3-options" class="header-anchor"&gt;&lt;/a&gt;ElasticSearch Pagination: 3 Options
+&lt;/h2&gt;&lt;h3 id="1-fromsize-pagination"&gt;&lt;a href="#1-fromsize-pagination" class="header-anchor"&gt;&lt;/a&gt;1. From/Size Pagination
+&lt;/h3&gt;&lt;p&gt;Uses &lt;code&gt;from&lt;/code&gt; + &lt;code&gt;size&lt;/code&gt; = offset method to load data into memory on-demand. Supports up to 10,000 results.&lt;/p&gt;
+&lt;p&gt;The &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-modules.html#index-max-result-window" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;index.max_result_window&lt;/code&gt;&lt;/a&gt; option can be used to load more than 10,000 results, but this is not recommended.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Simple implementation&lt;/li&gt;
+&lt;li&gt;Limited to 10,000 results maximum&lt;/li&gt;
+&lt;li&gt;Performance degradation with deep pagination&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="2-search-after"&gt;&lt;a href="#2-search-after" class="header-anchor"&gt;&lt;/a&gt;2. Search After
+&lt;/h3&gt;&lt;p&gt;Overcomes the pagination limitation of 10,000 results. Similar to typical cursor-based approaches.&lt;/p&gt;
+&lt;p&gt;Uses the &lt;code&gt;sort&lt;/code&gt; condition field of search results as a key value to retrieve subsequent results.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Drawbacks&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;search-after&lt;/code&gt; alone may result in inconsistent responses if indexing is updated during pagination.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Using with PIT (Point In Time)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;To address this, use PIT (Point In Time)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;POST /my-index-000001/_pit?keep_alive&lt;span class="o"&gt;=&lt;/span&gt;1m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above request creates a snapshot of the index at the current point in time, which can then be used with the &lt;code&gt;id&lt;/code&gt; value as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;size&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;desc&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;search_after&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;{{pit_value}}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Even if there are changes to the index, results are returned based on the snapshot.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keep_alive&lt;/code&gt; represents the validity period of the PIT. It&amp;rsquo;s recommended to manage PIT based on the latest point in time.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can paginate more than 10,000 results&lt;/li&gt;
+&lt;li&gt;Cursor-based approach&lt;/li&gt;
+&lt;li&gt;Guarantees consistent results when used with PIT&lt;/li&gt;
+&lt;li&gt;Efficient for deep pagination&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="3-scroll"&gt;&lt;a href="#3-scroll" class="header-anchor"&gt;&lt;/a&gt;3. Scroll
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: According to ES official documentation, Search After method is recommended instead of Scroll method&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For bulk data extraction&lt;/li&gt;
+&lt;li&gt;Not suitable for real-time search&lt;/li&gt;
+&lt;li&gt;Search After + PIT combination is now recommended&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opster.com/guides/elasticsearch/how-tos/elasticsearch-pagination-techniques/" target="_blank" rel="noopener"
+ &gt;Elasticsearch Pagination Techniques: SearchAfter, Scroll, Pagination &amp;amp; PIT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://danawalab.github.io/elastic/2023/02/13/Search-After.html" target="_blank" rel="noopener"
+ &gt;Elasticsearch Search After Performance Check&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after" target="_blank" rel="noopener"
+ &gt;Paginate search results | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html" target="_blank" rel="noopener"
+ &gt;Point in time API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
+ &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Autocomplete Search Methods</title><link>https://0andwild.com/en/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/en/posts/240204_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Autocomplete Search Methods" /&gt;&lt;h2 id="elasticsearch-autocomplete-methods"&gt;&lt;a href="#elasticsearch-autocomplete-methods" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Autocomplete Methods
+&lt;/h2&gt;&lt;h3 id="edge-n-gram-tokenizer"&gt;&lt;a href="#edge-n-gram-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Tokenizer
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;token_chars&lt;/code&gt;: letter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is not important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are not important&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="edge-n-gram-token-filter"&gt;&lt;a href="#edge-n-gram-token-filter" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Token Filter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is not important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are not important&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="index_prefixes-parameter"&gt;&lt;a href="#index_prefixes-parameter" class="header-anchor"&gt;&lt;/a&gt;Index_prefixes Parameter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_chars&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_chars&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Same as N-gram&lt;/p&gt;
+&lt;p&gt;However, one difference is that the latter puts generated tokens into an additional field&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="search-as-you-type-data-type"&gt;&lt;a href="#search-as-you-type-data-type" class="header-anchor"&gt;&lt;/a&gt;Search-as-you-type Data Type
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_shingle_size&lt;/code&gt;: 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Generated Tokens (Supported Sub-fields)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Example: &amp;ldquo;real panda blog&amp;rdquo;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;._2gram&lt;/code&gt; additional field: real panda, panda blog (shingle token filter applied)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._3gram&lt;/code&gt; additional field: real panda blog (shingle token filter applied)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._index_prefix&lt;/code&gt; additional field: r, re, rea, real, &amp;ldquo;real &amp;ldquo;, real p, real pa, real pan, real pand, real panda, &amp;ldquo;real panda &amp;ldquo;, real panda b, real panda bl, real panda blo, real panda blog, p, pa, pan, pand, panda, &amp;ldquo;panda &amp;ldquo;, panda b, panda bl, panda blo, panda blog, &amp;ldquo;panda blog &amp;ldquo;, b, bl, blo, blog, &amp;ldquo;blog &amp;quot; (&lt;strong&gt;Applied to ._3gram field with n-gram max of 3&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The most efficient query method recommended by ES is a multi-match query of bool_prefix type targeting the root field and its shingle sub-fields.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This query can match query terms in any order, but gives a higher score when the terms appear in order in the shingle sub-field of the document.&lt;/p&gt;
+&lt;p&gt;If you want to search for exact order matching of query terms and document terms, or use other properties of phrase queries, you can use the match_phrase_prefix query on the root field. This is also the case when the last term (not a prefix) must match exactly. However, this may be less efficient than using the match_bool_prefix query.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;shingle token filter defaults to 2&lt;/code&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are important&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;If no analyzer is configured during indexing, the standard analyzer is applied by default.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="suggester-api"&gt;&lt;a href="#suggester-api" class="header-anchor"&gt;&lt;/a&gt;Suggester API
+&lt;/h2&gt;&lt;h3 id="in-memory-completion-suggester-context-suggester"&gt;&lt;a href="#in-memory-completion-suggester-context-suggester" class="header-anchor"&gt;&lt;/a&gt;In-memory (Completion Suggester, Context Suggester)
+&lt;/h3&gt;&lt;p&gt;Completion suggester provides auto-complete and search-as-you-type functionality. (Does not support typo correction)&lt;/p&gt;
+&lt;p&gt;Completion suggester is optimized for speed and responds immediately to user typing.&lt;/p&gt;
+&lt;p&gt;However, building and storing in in-memory manner incurs significant resource costs.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="term-suggester"&gt;&lt;a href="#term-suggester" class="header-anchor"&gt;&lt;/a&gt;Term Suggester
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Used to provide search results based on suggested words when there are no results for the text entered by the user&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Suggests words for misspellings&lt;/p&gt;
+&lt;p&gt;Words are suggested using edit distance. Edit distance is a metric that measures how similar one string is to another string.&lt;/p&gt;
+&lt;p&gt;Edit distance is typically measured through operations of adding, deleting, and substituting each word.&lt;/p&gt;
+&lt;p&gt;For example, to change the string &amp;ldquo;tamming test&amp;rdquo; to &amp;ldquo;taming text&amp;rdquo;, you need 1 operation to delete m and 1 operation to change s to x. Therefore, the edit distance is 2.&lt;/p&gt;
+&lt;p&gt;If there is no term matching the indexed data, term suggest will recommend similar words.&lt;/p&gt;
+&lt;p&gt;In the results, text represents the suggested character, and score indicates how close the suggested text is to the original.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Algorithms&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Elasticsearch uses Levenshtein edit distance measurement or Jaro-Winkler edit distance measurement as edit distance calculation algorithms.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Korean Processing&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For Korean, data is not recommended even when using term suggest. This is fundamentally because the Korean Unicode system is complex.&lt;/li&gt;
+&lt;li&gt;Korean typo handling is possible through ICU analyzer. ICU analyzer is specifically developed for internationalization and has built-in functions to decompose and combine Korean graphemes. However, for sophisticated features such as typo correction, Korean-English conversion, and autocomplete, it is recommended to develop separate plugins. (e.g., JavaCafe plugin)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="phrase-suggester-phrase-suggestion"&gt;&lt;a href="#phrase-suggester-phrase-suggestion" class="header-anchor"&gt;&lt;/a&gt;Phrase Suggester (Phrase Suggestion)
+&lt;/h3&gt;&lt;h4 id="completion-suggester"&gt;&lt;a href="#completion-suggester" class="header-anchor"&gt;&lt;/a&gt;Completion Suggester
+&lt;/h4&gt;&lt;p&gt;Autocomplete suggestion, predicts and shows search terms using autocomplete before the user completes input&lt;/p&gt;
+&lt;h4 id="context-suggester"&gt;&lt;a href="#context-suggester" class="header-anchor"&gt;&lt;/a&gt;Context Suggester
+&lt;/h4&gt;&lt;p&gt;Contextual suggestion&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://realpandablog.wordpress.com/2019/09/11/search-as-you-type-n-grams-suggesters-in-elasticsearch/" target="_blank" rel="noopener"
+ &gt;Search-as-you-type, N-grams &amp;amp; Suggesters in Elasticsearch&lt;/a&gt;&lt;/p&gt;</description></item><item><title>BigQuery Clustering Optimization</title><link>https://0andwild.com/en/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/en/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering Optimization" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_3ecc95e8ba98b1db.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Lebanon&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2023-12-01&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Through clustering, BigQuery can perform less work in accessing data, thereby increasing query speed. However, before clustering, it&amp;rsquo;s good to consider the amount of data in the table and whether the cost of processing clustering might be worse.&lt;/p&gt;
+&lt;p&gt;For example, if a BigQuery column-based table has only 10 rows of data, you should recognize that the cost of clustering will be higher than the cost of doing a full scan.&lt;/p&gt;
+&lt;p&gt;Quoting a former Google engineer, if the data group for clustering is less than 100MB, doing a full scan might be better than clustering.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Reference&lt;/strong&gt;: &lt;a class="link" href="https://stackoverflow.com/questions/52669725/google-bigquery-clustered-table-not-reducing-query-size-when-running-query-with/52674573#52674573" target="_blank" rel="noopener"
+ &gt;Google BigQuery clustered table not reducing query size&lt;/a&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important Note&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Additionally, if you don&amp;rsquo;t filter on the clustered base column during query time, it provides no help to query performance whatsoever.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="example-of-creating-clustered-tables"&gt;&lt;a href="#example-of-creating-clustered-tables" class="header-anchor"&gt;&lt;/a&gt;Example of Creating Clustered Tables
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;TABLE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="n"&gt;myproject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mydataset&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clustered_table&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;DATE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_e4a55682afde7f7.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Clustering Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can cluster up to 4 columns maximum&lt;/li&gt;
+&lt;li&gt;Unlike partitioning, not limited to INT64 and DATE types only&lt;/li&gt;
+&lt;li&gt;Can also use types like STRING and GEOGRAPHY&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_d68a5613875dfcea.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;p&gt;Using partitioning and clustering together enables more efficient data access.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Combination Strategy&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Partitioning: Date-based data division&lt;/li&gt;
+&lt;li&gt;Clustering: Additional sorting within partitions&lt;/li&gt;
+&lt;li&gt;Query performance and cost optimization&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://medium.com/towards-data-science/add-one-line-of-sql-to-optimise-your-bigquery-tables-304761b048f0" target="_blank" rel="noopener"
+ &gt;Add One Line of SQL to Optimise Your BigQuery Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://towardsdatascience.com/use-the-partitions-luke-a-simple-and-proven-way-to-optimise-your-sql-queries-43e24ea4c5d0" target="_blank" rel="noopener"
+ &gt;Use the Partitions, Luke! A Simple and Proven Way to Optimise Your SQL Queries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>What is BigQuery?</title><link>https://0andwild.com/en/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/en/posts/231218_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is BigQuery?" /&gt;&lt;h2 id="bigquery-features"&gt;&lt;a href="#bigquery-features" class="header-anchor"&gt;&lt;/a&gt;BigQuery Features
+&lt;/h2&gt;&lt;h3 id="column-based-database"&gt;&lt;a href="#column-based-database" class="header-anchor"&gt;&lt;/a&gt;Column-based Database
+&lt;/h3&gt;&lt;p&gt;Unlike typical RDBs that store data in row units, when accessing data in a specific column, it scans only the column file you&amp;rsquo;re looking for without scanning the entire row.&lt;/p&gt;
+&lt;p&gt;Advantageous for analytical database (OLAP) operations that read only specific columns to count or calculate statistics.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fast queries with column-level scanning&lt;/li&gt;
+&lt;li&gt;Optimized for analytical queries&lt;/li&gt;
+&lt;li&gt;Storage efficiency&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="data-processing-architecture"&gt;&lt;a href="#data-processing-architecture" class="header-anchor"&gt;&lt;/a&gt;Data Processing Architecture
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_fad767db3e02e3de.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Colossus (Distributed Storage)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Google&amp;rsquo;s cluster-level file system succeeding Google File System (GFS)&lt;/li&gt;
+&lt;li&gt;Provides storage at the bottom layer&lt;/li&gt;
+&lt;li&gt;Communicates with compute nodes through Jupiter, a TB-level network&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Compute Layers (Leaf, Mixer1, Mixer0)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Process data read from Colossus without disks&lt;/li&gt;
+&lt;li&gt;Each layer passes data up to the layer above&lt;/li&gt;
+&lt;li&gt;High-speed computation through distributed parallel processing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-key-no-index"&gt;&lt;a href="#no-key-no-index" class="header-anchor"&gt;&lt;/a&gt;No Key, No Index
+&lt;/h3&gt;&lt;p&gt;No concept of keys and indexes. Full scan only&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;No need for index management&lt;/li&gt;
+&lt;li&gt;Performance achieved through column-based scanning&lt;/li&gt;
+&lt;li&gt;Optimized for large-scale data analysis&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-update-delete"&gt;&lt;a href="#no-update-delete" class="header-anchor"&gt;&lt;/a&gt;No Update, Delete
+&lt;/h3&gt;&lt;p&gt;Only additions are allowed for performance, and once data is entered, it cannot be modified or deleted.&lt;/p&gt;
+&lt;p&gt;If data is entered incorrectly, the table must be deleted and recreated.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Constraints&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only INSERT supported&lt;/li&gt;
+&lt;li&gt;UPDATE/DELETE not supported&lt;/li&gt;
+&lt;li&gt;Requires recreation when modifying data&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
+&lt;/h3&gt;&lt;p&gt;Data is replicated to 3 data centers, so it may not be immediately available for querying after writing.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_7243d5dea1f40b1f.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;High availability through triple replication&lt;/li&gt;
+&lt;li&gt;Eventual consistency guarantee&lt;/li&gt;
+&lt;li&gt;Reads may not be immediately available after writes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://burning-dba.tistory.com/137" target="_blank" rel="noopener"
+ &gt;BigQuery Performance/Cost Tips&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://zzsza.github.io/gcp/2020/04/12/bigquery-unnest-array-struct/#bigquery-unnest" target="_blank" rel="noopener"
+ &gt;How to Use BigQuery UNNEST, ARRAY, STRUCT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bcho.tistory.com/1117" target="_blank" rel="noopener"
+ &gt;Introduction to Google Big Data Platform BigQuery Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Springdoc and OpenAPI (Annotation Usage Guide)</title><link>https://0andwild.com/en/posts/231017_swagger/</link><pubDate>Tue, 17 Oct 2023 17:12:52 +0900</pubDate><guid>https://0andwild.com/en/posts/231017_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Springdoc and OpenAPI (Annotation Usage Guide)" /&gt;&lt;h2 id="querystring-processing-methods-comparison"&gt;&lt;a href="#querystring-processing-methods-comparison" class="header-anchor"&gt;&lt;/a&gt;QueryString Processing Methods Comparison
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s compare two methods for handling QueryString in Spring.&lt;/p&gt;
+&lt;h3 id="method-1-receiving-as-object-parameterobject"&gt;&lt;a href="#method-1-receiving-as-object-parameterobject" class="header-anchor"&gt;&lt;/a&gt;Method 1: Receiving as Object (ParameterObject)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;email&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;password&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;req&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;occupation&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="method-2-receiving-as-individual-parameters-requestparam"&gt;&lt;a href="#method-2-receiving-as-individual-parameters-requestparam" class="header-anchor"&gt;&lt;/a&gt;Method 2: Receiving as Individual Parameters (@RequestParam)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Operation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;swagger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@GetMapping&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/hello/parameters2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;parameterObjectTest2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pw&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@RequestParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;oq&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseTest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ResponseEntity&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="model-definition"&gt;&lt;a href="#model-definition" class="header-anchor"&gt;&lt;/a&gt;Model Definition
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;ParameterObjectReq (Request DTO)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;OccupationStatus (Enum)&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;enum&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STUDENT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;EMPLOYEE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;UNEMPLOYED&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="differences-between-the-two-approaches"&gt;&lt;a href="#differences-between-the-two-approaches" class="header-anchor"&gt;&lt;/a&gt;Differences Between the Two Approaches
+&lt;/h3&gt;&lt;p&gt;While &lt;code&gt;@RequestParam&lt;/code&gt; is commonly used for receiving QueryString requests, when there are many parameters, you can receive the QueryString as an Object like in the first method.&lt;/p&gt;
+&lt;h4 id="requestparam-vs-parameterobject"&gt;&lt;a href="#requestparam-vs-parameterobject" class="header-anchor"&gt;&lt;/a&gt;@RequestParam vs ParameterObject
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;@RequestParam&lt;/strong&gt;: By default set to &lt;code&gt;required = true&lt;/code&gt;, making request values mandatory.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ParameterObject&lt;/strong&gt;: Spring automatically binds QueryString to the object&amp;rsquo;s field values without any special annotation. However, since &lt;code&gt;required&lt;/code&gt; is not set by default, &lt;code&gt;null&lt;/code&gt; values can be passed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="parameterobject-vs-requestparam-conversion-in-springdoc"&gt;&lt;a href="#parameterobject-vs-requestparam-conversion-in-springdoc" class="header-anchor"&gt;&lt;/a&gt;ParameterObject vs @RequestParam Conversion in Springdoc
+&lt;/h2&gt;&lt;h3 id="using-parameterobject"&gt;&lt;a href="#using-parameterobject" class="header-anchor"&gt;&lt;/a&gt;Using ParameterObject
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="ParameterObject Conversion Result" class="gallery-image" data-flex-basis="273px" data-flex-grow="114" height="817" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image1.png" srcset="https://0andwild.com/posts/231017_swagger/image1_hu_cf1157316278237d.png 800w, https://0andwild.com/posts/231017_swagger/image1.png 932w" width="932"&gt;&lt;/p&gt;
+&lt;h3 id="using-requestparam"&gt;&lt;a href="#using-requestparam" class="header-anchor"&gt;&lt;/a&gt;Using @RequestParam
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="RequestParam Conversion Result" class="gallery-image" data-flex-basis="286px" data-flex-grow="119" height="776" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image2.png" srcset="https://0andwild.com/posts/231017_swagger/image2_hu_885e9d03410a6c49.png 800w, https://0andwild.com/posts/231017_swagger/image2.png 927w" width="927"&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="using-parameterobject-annotation"&gt;&lt;a href="#using-parameterobject-annotation" class="header-anchor"&gt;&lt;/a&gt;Using @ParameterObject Annotation
+&lt;/h2&gt;&lt;p&gt;To make Springdoc convert ParameterObject like when using &lt;code&gt;@RequestParam&lt;/code&gt; and display the Required status, configure as follows.&lt;/p&gt;
+&lt;h3 id="code-example"&gt;&lt;a href="#code-example" class="header-anchor"&gt;&lt;/a&gt;Code Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@ParameterObject&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;record&lt;/span&gt; &lt;span class="nc"&gt;ParameterObjectReq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@NotNull&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;OccupationStatus&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;occupation&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;@ParameterObject&lt;/code&gt; is a Springdoc annotation. When receiving multiple QueryStrings as an Object, specifying it on the class will make it recognize and convert like &lt;code&gt;@RequestParam&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Conversion Result in Swagger UI" class="gallery-image" data-flex-basis="306px" data-flex-grow="127" height="356" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image3.png" width="454"&gt;&lt;/p&gt;
+&lt;h3 id="jsr-303-support"&gt;&lt;a href="#jsr-303-support" class="header-anchor"&gt;&lt;/a&gt;JSR-303 Support
+&lt;/h3&gt;&lt;p&gt;Springdoc supports JSR-303 and allows the following validation annotations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@NotNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Min&lt;/code&gt;, &lt;code&gt;@Max&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@Size&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Other validation annotations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;According to Springdoc official documentation&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;This library supports&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenAPI 3&lt;/li&gt;
+&lt;li&gt;Spring-boot (v1, v2 and v3)&lt;/li&gt;
+&lt;li&gt;JSR-303, specifically for @NotNull, @Min, @Max, and @Size&lt;/li&gt;
+&lt;li&gt;Swagger-ui&lt;/li&gt;
+&lt;li&gt;OAuth 2&lt;/li&gt;
+&lt;li&gt;GraalVM native images&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="conversion-result"&gt;&lt;a href="#conversion-result" class="header-anchor"&gt;&lt;/a&gt;Conversion Result
+&lt;/h3&gt;&lt;p&gt;The spec file is written so that ParameterObject is also recognized as &lt;code&gt;@RequestParam&lt;/code&gt;, and &lt;code&gt;occupation&lt;/code&gt; without &lt;code&gt;@NotNull&lt;/code&gt; is displayed as optional in the Required field.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spec File Conversion Result" class="gallery-image" data-flex-basis="276px" data-flex-grow="115" height="796" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image4.png" srcset="https://0andwild.com/posts/231017_swagger/image4_hu_88db034e3bd78cc8.png 800w, https://0andwild.com/posts/231017_swagger/image4.png 918w" width="918"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI Display Result" class="gallery-image" data-flex-basis="563px" data-flex-grow="234" height="701" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image5.png" srcset="https://0andwild.com/posts/231017_swagger/image5_hu_9ca7d7b267dcf395.png 800w, https://0andwild.com/posts/231017_swagger/image5_hu_f4b70326621470ab.png 1600w, https://0andwild.com/posts/231017_swagger/image5.png 1647w" width="1647"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Left Image&lt;/strong&gt;: When &lt;code&gt;@ParameterObject&lt;/code&gt; is specified, Springdoc recognizes it and converts to proper spec&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger2--swagger3-annotations"&gt;&lt;a href="#swagger2--swagger3-annotations" class="header-anchor"&gt;&lt;/a&gt;Swagger2 → Swagger3 Annotations
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Swagger2&lt;/th&gt;
+ &lt;th&gt;Swagger3&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@Api&lt;/td&gt;
+ &lt;td&gt;@Tag&lt;/td&gt;
+ &lt;td&gt;Displays swagger resource at class level (for grouping)&lt;br&gt;&lt;br&gt;&lt;code&gt;name&lt;/code&gt; : Tag name&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : Tag description&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiIgnore&lt;/td&gt;
+ &lt;td&gt;@Parameter(hidden = true)&lt;br&gt;@Operation(hidden = true)&lt;br&gt;@Hidden&lt;/td&gt;
+ &lt;td&gt;This annotation allows hiding parameters in swagger-ui.&lt;br&gt;&lt;br&gt;For requestBody or ResponseBody, use&lt;br&gt;@JsonProperty(access = JsonProperty.Access.READ_ONLY)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;Configuration and resource display for single RequestParam&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiImplicitParams&lt;/td&gt;
+ &lt;td&gt;@Parameters&lt;/td&gt;
+ &lt;td&gt;Configuration for multiple RequestParams&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModel&lt;/td&gt;
+ &lt;td&gt;@Schema&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;description&lt;/code&gt; : Human-readable name&lt;br&gt;&lt;code&gt;defaultValue&lt;/code&gt; : Default value&lt;br&gt;&lt;code&gt;allowableValues&lt;/code&gt; : Allowable values (set when enumerable)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiModelProperty(hidden = true)&lt;/td&gt;
+ &lt;td&gt;@Schema(accessMode = READ_ONLY)&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiOperation(value = &amp;ldquo;foo&amp;rdquo;, notes = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@Operation(summary = &amp;ldquo;foo&amp;rdquo;, description = &amp;ldquo;bar&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;summary&lt;/code&gt; : Brief description of API&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : Detailed description of API&lt;br&gt;&lt;code&gt;responses&lt;/code&gt; : List of API responses&lt;br&gt;&lt;code&gt;parameters&lt;/code&gt; : List of API parameters&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiParam&lt;/td&gt;
+ &lt;td&gt;@Parameter&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;name&lt;/code&gt; : Parameter name&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : Parameter description&lt;br&gt;&lt;code&gt;in&lt;/code&gt; : Parameter location (query, header, path, cookie)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;@ApiResponse(code = 404, message = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;@ApiResponse(responseCode = &amp;ldquo;404&amp;rdquo;, description = &amp;ldquo;foo&amp;rdquo;)&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;responseCode&lt;/code&gt; : HTTP status code&lt;br&gt;&lt;code&gt;description&lt;/code&gt; : Response description&lt;br&gt;&lt;code&gt;content&lt;/code&gt; : Response payload structure&lt;br&gt;&lt;code&gt;schema&lt;/code&gt; : Schema used in payload&lt;br&gt;&lt;br&gt;&lt;code&gt;hidden&lt;/code&gt; : Whether to hide schema&lt;br&gt;&lt;code&gt;implementation&lt;/code&gt; : Schema target class&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;When using an object to capture multiple request query params, use the &lt;code&gt;@ParameterObject&lt;/code&gt; annotation on that method argument&lt;/li&gt;
+&lt;li&gt;This step is optional: Replace with &lt;code&gt;GroupedOpenApi&lt;/code&gt; bean only if you have &lt;strong&gt;multiple&lt;/strong&gt; &lt;code&gt;Docket&lt;/code&gt; beans&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="using-tag-annotation"&gt;&lt;a href="#using-tag-annotation" class="header-anchor"&gt;&lt;/a&gt;Using @Tag Annotation
+&lt;/h2&gt;&lt;p&gt;The &lt;code&gt;@Tag&lt;/code&gt; annotation enables the following grouping:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Grouping by Controller&lt;/li&gt;
+&lt;li&gt;Grouping by method within Controller&lt;/li&gt;
+&lt;li&gt;Grouping in spec file conversion according to the name specified in &lt;code&gt;@Tag&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;File creation with that name when generating client code using OpenAPI Generator&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cautions-when-using-multiple-tag"&gt;&lt;a href="#cautions-when-using-multiple-tag" class="header-anchor"&gt;&lt;/a&gt;Cautions When Using Multiple @Tag
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Question&lt;/strong&gt;: What happens if you group with &lt;code&gt;@Tag&lt;/code&gt; at the top level and set a different tag name in the &lt;code&gt;@Operation&lt;/code&gt; of a lower-level method?&lt;/p&gt;
+&lt;h4 id="test-result"&gt;&lt;a href="#test-result" class="header-anchor"&gt;&lt;/a&gt;Test Result
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="Duplicate Group Creation Result" class="gallery-image" data-flex-basis="442px" data-flex-grow="184" height="573" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image6.png" srcset="https://0andwild.com/posts/231017_swagger/image6_hu_39ef28f5749fa3a7.png 800w, https://0andwild.com/posts/231017_swagger/image6.png 1056w" width="1056"&gt;&lt;/p&gt;
+&lt;p&gt;When &lt;code&gt;@Tag(name = &amp;quot;swagger&amp;quot;)&lt;/code&gt; is set at the top level and &lt;code&gt;tags = {&amp;quot;swagger123&amp;quot;}&lt;/code&gt; is added in the &lt;code&gt;@Operation&lt;/code&gt; of the &lt;code&gt;postHello&lt;/code&gt; method, the same endpoint is created as duplicate groups.&lt;/p&gt;
+&lt;h4 id="problem"&gt;&lt;a href="#problem" class="header-anchor"&gt;&lt;/a&gt;Problem
+&lt;/h4&gt;&lt;p&gt;Using OpenAPI Generator in this state causes the problem of duplicate client code being generated as shown below.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Duplicate Generated API File 1" class="gallery-image" data-flex-basis="728px" data-flex-grow="303" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image7.png" srcset="https://0andwild.com/posts/231017_swagger/image7_hu_bc30ff9f9efe9f74.png 800w, https://0andwild.com/posts/231017_swagger/image7.png 1548w" width="1548"&gt;
+&lt;img alt="Duplicate Generated API File 2" class="gallery-image" data-flex-basis="269px" data-flex-grow="112" height="673" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image8.png" width="757"&gt;
+&lt;img alt="Duplicate Generated API File 3" class="gallery-image" data-flex-basis="428px" data-flex-grow="178" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image9.png" width="311"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Recommendation&lt;/strong&gt;: Unless there&amp;rsquo;s a special case, it&amp;rsquo;s recommended to use &lt;code&gt;@Tag&lt;/code&gt; grouping only at the Controller&amp;rsquo;s top level.&lt;/p&gt;
+&lt;h3 id="file-naming-for-openapi-generator-client-code-generation"&gt;&lt;a href="#file-naming-for-openapi-generator-client-code-generation" class="header-anchor"&gt;&lt;/a&gt;File Naming for OpenAPI Generator Client Code Generation
+&lt;/h3&gt;&lt;p&gt;When generating client code, the name specified in &lt;code&gt;@Tag&lt;/code&gt; + &lt;code&gt;-api&lt;/code&gt; is added as a postfix. To customize this, you need to modify the Mustache file.&lt;/p&gt;
+&lt;h3 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/templating" target="_blank" rel="noopener"
+ &gt;Using Templates | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/janl/mustache.js" target="_blank" rel="noopener"
+ &gt;Mustache.js GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://hmos.dev/how-to-use-oas-generator" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator Usage Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://velog.io/@kdeun1/OpenAPI-Generator%eb%a5%bc-%ec%82%ac%ec%9a%a9%ed%95%98%ec%97%ac-API%ec%99%80-%eb%8f%99%ec%9d%bc%ed%95%9c-Model%ea%b3%bc-%ec%a0%95%ed%98%95%ed%99%94%eb%90%9c-API%ec%bd%94%eb%93%9c-%ec%9e%90%eb%8f%99%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0" target="_blank" rel="noopener"
+ &gt;Auto-generating Safe Models and Standardized Implementation Code with OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="authentication-related-openapi-specs"&gt;&lt;a href="#authentication-related-openapi-specs" class="header-anchor"&gt;&lt;/a&gt;Authentication-Related OpenAPI Specs
+&lt;/h2&gt;&lt;p&gt;OpenAPI supports various authentication methods. Key configuration items are as follows.&lt;/p&gt;
+&lt;h3 id="type-authentication-format"&gt;&lt;a href="#type-authentication-format" class="header-anchor"&gt;&lt;/a&gt;type (Authentication Format)
+&lt;/h3&gt;&lt;p&gt;Currently supports API Key, HTTP, OAuth2, and OpenID Connect methods.
+&lt;strong&gt;Note&lt;/strong&gt;: OpenAPI v2 spec does not support OpenID Connect method.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Supported Types&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;http&lt;/code&gt;: Basic, Bearer and other HTTP authentication schemes&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apiKey&lt;/code&gt;: API key and cookie authentication&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;oauth2&lt;/code&gt;: OAuth2 authentication&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;openIdConnect&lt;/code&gt;: OpenID Connect discovery&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="key-configuration-items"&gt;&lt;a href="#key-configuration-items" class="header-anchor"&gt;&lt;/a&gt;Key Configuration Items
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;name&lt;/code&gt;&lt;/strong&gt;: Authentication key name (required when using API Key method)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;in&lt;/code&gt;&lt;/strong&gt;: Specifies authentication key location (choose from &lt;code&gt;query&lt;/code&gt;, &lt;code&gt;header&lt;/code&gt;, &lt;code&gt;cookie&lt;/code&gt;, required when using API Key method)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;scheme&lt;/code&gt;&lt;/strong&gt;: Specifies authentication method (&lt;code&gt;Basic&lt;/code&gt; or &lt;code&gt;Bearer&lt;/code&gt;, required when using HTTP authentication)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;bearerFormat&lt;/code&gt;&lt;/strong&gt;: Bearer token format (commonly &lt;code&gt;JWT&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;flows&lt;/code&gt;&lt;/strong&gt;: OAuth2 flow type (choose from &lt;code&gt;implicit&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;clientCredentials&lt;/code&gt;, &lt;code&gt;authorizationCode&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;openIdConnectUrl&lt;/code&gt;&lt;/strong&gt;: OpenID Connect URL (recommended to use OAuth2 or Bearer token method as alternative in OpenAPI v2 spec)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="deprecated-strategy"&gt;&lt;a href="#deprecated-strategy" class="header-anchor"&gt;&lt;/a&gt;@Deprecated Strategy
+&lt;/h2&gt;&lt;p&gt;When there are changes to DTO specs due to API version updates, use the following phased strategy.&lt;/p&gt;
+&lt;h3 id="phase-1-mark-with-deprecated"&gt;&lt;a href="#phase-1-mark-with-deprecated" class="header-anchor"&gt;&lt;/a&gt;Phase 1: Mark with @Deprecated
+&lt;/h3&gt;&lt;p&gt;First, add the &lt;code&gt;@Deprecated&lt;/code&gt; annotation to the field that will change.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The OpenAPI spec will also show &lt;code&gt;deprecated&lt;/code&gt; for that schema field, and when generating code on the frontend, the field will be marked as deprecated. This notifies the frontend team in advance that the field will be removed soon.&lt;/p&gt;
+&lt;h3 id="phase-2-apply-schemahidden--true"&gt;&lt;a href="#phase-2-apply-schemahidden--true" class="header-anchor"&gt;&lt;/a&gt;Phase 2: Apply @Schema(hidden = true)
+&lt;/h3&gt;&lt;p&gt;Once the frontend has completed migration to the new spec, add &lt;code&gt;@Schema(hidden = true)&lt;/code&gt; to the &lt;code&gt;@Deprecated&lt;/code&gt; field on the server so that the field is no longer generated in the OpenAPI spec.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UserDto&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Deprecated&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nd"&gt;@Schema&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hidden&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;oldField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// Excluded from spec&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;newField&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="phase-3-remove-field"&gt;&lt;a href="#phase-3-remove-field" class="header-anchor"&gt;&lt;/a&gt;Phase 3: Remove Field
+&lt;/h3&gt;&lt;p&gt;After sufficient time has passed, completely remove the field.&lt;/p&gt;
+&lt;p&gt;This phased approach enables safe API version management between frontend and backend.&lt;/p&gt;</description></item><item><title>Mastering OpenAPI Generator</title><link>https://0andwild.com/en/posts/231016_swagger/</link><pubDate>Mon, 16 Oct 2023 16:56:35 +0900</pubDate><guid>https://0andwild.com/en/posts/231016_swagger/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Mastering OpenAPI Generator" /&gt;&lt;h2 id="what-is-swagger"&gt;&lt;a href="#what-is-swagger" class="header-anchor"&gt;&lt;/a&gt;What is Swagger?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt; is a framework for OAS (OpenAPI Specification) that allows you to specify and manage the specifications of APIs. Through Swagger, you can design, build, and document REST API services.&lt;/p&gt;
+&lt;h3 id="swagger-tools"&gt;&lt;a href="#swagger-tools" class="header-anchor"&gt;&lt;/a&gt;Swagger Tools
+&lt;/h3&gt;&lt;p&gt;Swagger provides the following key tools&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Swagger UI&lt;/strong&gt;: A tool that visualizes Swagger API specifications in HTML format for easy viewing&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Codegen&lt;/strong&gt;: A CLI tool that automatically generates client and server code based on Swagger specifications&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Swagger Editor&lt;/strong&gt;: An editor for creating API design documents and specifications according to Swagger standards&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="springfox-vs-springdoc"&gt;&lt;a href="#springfox-vs-springdoc" class="header-anchor"&gt;&lt;/a&gt;Springfox vs Springdoc
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Springfox Swagger&lt;/strong&gt; is a library that helps you easily write API documentation using Swagger in projects using Spring or Spring Boot.&lt;/p&gt;
+&lt;p&gt;When Springfox stopped updating, &lt;strong&gt;Springdoc&lt;/strong&gt; emerged and rapidly gained popularity with active updates. Springdoc is also a library that supports Swagger documentation creation and is now the more recommended choice over Springfox.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="swagger-codegen-vs-openapi-generator"&gt;&lt;a href="#swagger-codegen-vs-openapi-generator" class="header-anchor"&gt;&lt;/a&gt;Swagger Codegen vs OpenAPI Generator
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Swagger&lt;/strong&gt; is a trademark of SmartBear, and &lt;strong&gt;Swagger Codegen&lt;/strong&gt; is a project included within it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;OpenAPI Generator&lt;/strong&gt; is a community-driven open-source project that started as a fork of the Swagger Codegen project. Currently, more than 40 top project contributors and founding members of Swagger Codegen are participating together.&lt;/p&gt;
+&lt;h3 id="openapi-generator-license"&gt;&lt;a href="#openapi-generator-license" class="header-anchor"&gt;&lt;/a&gt;OpenAPI Generator License
+&lt;/h3&gt;&lt;p&gt;OpenAPI Generator follows &lt;strong&gt;Apache License 2.0&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="what-is-apache-license-20"&gt;&lt;a href="#what-is-apache-license-20" class="header-anchor"&gt;&lt;/a&gt;What is Apache License 2.0?
+&lt;/h4&gt;&lt;p&gt;Apache License 2.0 grants the following rights&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Anyone can create programs derived from the software&lt;/li&gt;
+&lt;li&gt;Copyright can be transferred and transmitted&lt;/li&gt;
+&lt;li&gt;Parts or the whole can be used for personal or commercial purposes&lt;/li&gt;
+&lt;li&gt;When redistributing, you don&amp;rsquo;t necessarily have to include the original or modified source code&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;However, you must include the Apache License version and notice&lt;/strong&gt; (clearly indicating that the software was developed under Apache License)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="background-of-openapi-generators-birth"&gt;&lt;a href="#background-of-openapi-generators-birth" class="header-anchor"&gt;&lt;/a&gt;Background of OpenAPI Generator&amp;rsquo;s Birth
+&lt;/h3&gt;&lt;p&gt;The official Q&amp;amp;A of OpenAPI Generator reveals the background of the project&amp;rsquo;s creation&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Difference in Version Philosophy&lt;/strong&gt;
+The founding members of Swagger Codegen felt that Swagger Codegen 3.0.0 was too different from the 2.x philosophy. They were concerned that the overhead of maintaining two separate branches (2.x, 3.x) could cause problems similar to those experienced by the Python community.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Faster Release Cycle&lt;/strong&gt;
+The founding members wanted a faster release cycle so users wouldn&amp;rsquo;t have to wait months to use the stable release version they wanted.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Weekly patch releases&lt;/li&gt;
+&lt;li&gt;Monthly minor releases&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Community-Driven Development&lt;/strong&gt;
+Proceeding as a community-driven open-source project ensures innovation, reliability, and a roadmap owned by the community.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For these reasons, the OpenAPI Generator project was born. OpenAPI Generator feels somewhat like the relationship between MySQL and MariaDB.&lt;/p&gt;
+&lt;h3 id="migrating-from-swagger-codegen"&gt;&lt;a href="#migrating-from-swagger-codegen" class="header-anchor"&gt;&lt;/a&gt;Migrating from Swagger Codegen
+&lt;/h3&gt;&lt;p&gt;According to the official documentation, if you&amp;rsquo;re currently using Swagger Codegen 2.x version, you can conveniently migrate to OpenAPI Generator. This is because OpenAPI Generator is based on Swagger Codegen 2.4.0-SNAPSHOT version.&lt;/p&gt;
+&lt;p&gt;For detailed migration instructions, refer to the official guide&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen | OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/" target="_blank" rel="noopener"
+ &gt;OpenAPI Generator Official Site&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://openapi-generator.tech/docs/swagger-codegen-migration" target="_blank" rel="noopener"
+ &gt;Migrating from Swagger Codegen&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

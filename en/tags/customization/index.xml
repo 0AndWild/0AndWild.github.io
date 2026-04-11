@@ -1,1 +1,32 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Customization on 0AndWild_log</title><link>https://0andwild.com/en/tags/customization/</link><description>Recent content in Customization on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/customization/index.xml" rel="self" type="application/rss+xml"/><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>Implemented Base Directory support, tier path granularity, directory name normalization, Java Main/package automation, and bulk upload.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260220_baekjoonhub/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Customization on 0AndWild_log</title><link>https://0andwild.com/en/tags/customization/</link><description>Recent content in Customization on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/customization/index.xml" rel="self" type="application/rss+xml"/><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Customizing the BaekjoonHub Chrome Extension" /&gt;&lt;h1 id="why-i-ended-up-customizing-baekjoonhub"&gt;&lt;a href="#why-i-ended-up-customizing-baekjoonhub" class="header-anchor"&gt;&lt;/a&gt;Why I Ended Up Customizing BaekjoonHub
+&lt;/h1&gt;&lt;p&gt;As I started using Baekjoon more seriously, I discovered the &lt;code&gt;BaekjoonHub&lt;/code&gt; extension.&lt;br&gt;
+It was convenient because it could automatically upload solutions to GitHub, but there were still several pain points for my actual workflow.&lt;/p&gt;
+&lt;p&gt;So I first checked issues in the official repository.&lt;br&gt;
+I found that people with similar concerns already existed, and there were PRs proposing related features. However, at that time, it did not look like those features would be merged soon, so I decided to customize what I needed instead of waiting.&lt;/p&gt;
+&lt;p&gt;Original repository: &lt;a class="link" href="https://github.com/BaekjoonHub/BaekjoonHub" target="_blank" rel="noopener"
+ &gt;https://github.com/BaekjoonHub/BaekjoonHub&lt;/a&gt;&lt;br&gt;
+Custom repository: &lt;a class="link" href="https://github.com/0AndWild/baekjoonhub_custom" target="_blank" rel="noopener"
+ &gt;https://github.com/0AndWild/baekjoonhub_custom&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="pain-points-i-had"&gt;&lt;a href="#pain-points-i-had" class="header-anchor"&gt;&lt;/a&gt;Pain Points I Had
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Upload paths were based on the repository root, which made it hard to fit my project structure&lt;/li&gt;
+&lt;li&gt;Tier paths were not granular enough, making problem organization less clean&lt;/li&gt;
+&lt;li&gt;Problem directory names were awkward to use as package/path names&lt;/li&gt;
+&lt;li&gt;I sometimes had to manually align Java file names with the runtime entry point (&lt;code&gt;Main.java&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;It was difficult to organize and upload already solved problems in one shot&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="what-i-changed-in-my-custom-version"&gt;&lt;a href="#what-i-changed-in-my-custom-version" class="header-anchor"&gt;&lt;/a&gt;What I Changed in My Custom Version
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;Added &lt;code&gt;Base Directory&lt;/code&gt; support&lt;/li&gt;
+&lt;li&gt;Split tier paths into granular levels like &lt;code&gt;Bronze/V&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Normalized problem directory names&lt;/li&gt;
+&lt;li&gt;Fixed Java file name to &lt;code&gt;Main.java&lt;/code&gt; and auto-inserted &lt;code&gt;package&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Added bulk upload for all accepted Baekjoon problems&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="wrap-up"&gt;&lt;a href="#wrap-up" class="header-anchor"&gt;&lt;/a&gt;Wrap-up
+&lt;/h2&gt;&lt;p&gt;This customization was focused less on adding many new features,&lt;br&gt;
+and more on reducing repetitive friction in the actual solve-and-organize workflow.&lt;/p&gt;
+&lt;p&gt;Since similar requests already existed in the official repository, I think this customization direction could be useful for others with the same pain points.&lt;/p&gt;</description></item></channel></rss>

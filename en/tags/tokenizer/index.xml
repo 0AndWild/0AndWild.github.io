@@ -1,1 +1,182 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tokenizer on 0AndWild_log</title><link>https://0andwild.com/en/tags/tokenizer/</link><description>Recent content in Tokenizer on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 02 Feb 2024 21:23:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/tokenizer/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/en/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer2/</guid><description>Various types and configuration methods of Tokenizers that compose Elasticsearch Analyzer</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer2/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tokenizer on 0AndWild_log</title><link>https://0andwild.com/en/tags/tokenizer/</link><description>Recent content in Tokenizer on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 02 Feb 2024 21:23:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/tokenizer/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/en/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter sequence" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter sequence" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="tokenizer"&gt;&lt;a href="#tokenizer" class="header-anchor"&gt;&lt;/a&gt;Tokenizer
+&lt;/h1&gt;&lt;p&gt;A Tokenizer receives a character stream and breaks it into individual tokens (usually tokenized by each word).&lt;/p&gt;
+&lt;p&gt;The most commonly used &lt;code&gt;whitespace&lt;/code&gt; tokenizer splits and tokenizes based on whitespace.&lt;/p&gt;
+&lt;h3 id="whitespace-tokenizer-example"&gt;&lt;a href="#whitespace-tokenizer-example" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer Example
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;// character streams
+Quick brown fox!
+
+// Result
+[Quick, brown, fox!]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="tokenizers-responsibilities"&gt;&lt;a href="#tokenizers-responsibilities" class="header-anchor"&gt;&lt;/a&gt;Tokenizer&amp;rsquo;s Responsibilities
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Ordering and position of each term (used in phrase or word proximity queries)&lt;/li&gt;
+&lt;li&gt;Start and end characters of the original word before transformation are used for search snippet highlighting&lt;/li&gt;
+&lt;li&gt;Token type: &lt;code&gt;&amp;lt;ALPHANUM&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;HANGUL&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;NUM&amp;gt;&lt;/code&gt;, etc. (simple analyzers only provide word token types)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="word-oriented-tokenizer"&gt;&lt;a href="#word-oriented-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Word Oriented Tokenizer
+&lt;/h2&gt;&lt;p&gt;The tokenizers below are used to tokenize full text into individual words.&lt;/p&gt;
+&lt;h3 id="standard-tokenizer"&gt;&lt;a href="#standard-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Standard Tokenizer
+&lt;/h3&gt;&lt;p&gt;The standard tokenizer performs tokenization based on the Unicode Text Segmentation algorithm.&lt;/p&gt;
+&lt;h4 id="configuration"&gt;&lt;a href="#configuration" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example"&gt;&lt;a href="#conversion-example" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="max_token_length-application-example"&gt;&lt;a href="#max_token_length-application-example" class="header-anchor"&gt;&lt;/a&gt;max_token_length Application Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumpe, d, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="letter-tokenizer"&gt;&lt;a href="#letter-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Letter Tokenizer
+&lt;/h3&gt;&lt;p&gt;The letter tokenizer splits and tokenizes at non-letter characters. This is suitable for European languages (English-speaking regions) but not for Asian languages, especially languages where words are not separated by spaces.&lt;/p&gt;
+&lt;h4 id="conversion-example-1"&gt;&lt;a href="#conversion-example-1" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;letter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, QUICK, Brown, Foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="lowercase-tokenizer"&gt;&lt;a href="#lowercase-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Lowercase Tokenizer
+&lt;/h3&gt;&lt;p&gt;The lowercase tokenizer splits and tokenizes at non-letter characters like the letter tokenizer, and additionally converts all strings to lowercase. Functionally, it is efficient as it performs both the letter tokenizer&amp;rsquo;s function and lowercase conversion in one operation.&lt;/p&gt;
+&lt;h4 id="conversion-example-2"&gt;&lt;a href="#conversion-example-2" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lowercase&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ the, quick, brown, foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="whitespace-tokenizer"&gt;&lt;a href="#whitespace-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer
+&lt;/h3&gt;&lt;p&gt;The whitespace tokenizer performs tokenization based on whitespace characters.&lt;/p&gt;
+&lt;h4 id="configuration-1"&gt;&lt;a href="#configuration-1" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-3"&gt;&lt;a href="#conversion-example-3" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;whitespace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown-Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone. ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="uax-url-email-tokenizer"&gt;&lt;a href="#uax-url-email-tokenizer" class="header-anchor"&gt;&lt;/a&gt;UAX URL Email Tokenizer
+&lt;/h3&gt;&lt;p&gt;The uax_url_email tokenizer is identical to the standard tokenizer, but with one difference: it recognizes URLs or email addresses and treats them as a single token.&lt;/p&gt;
+&lt;h4 id="configuration-2"&gt;&lt;a href="#configuration-2" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-4"&gt;&lt;a href="#conversion-example-4" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Email me at john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith@global-international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// If using standard tokenizer for the above example, the result would be:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith, global, international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="configuration-example"&gt;&lt;a href="#configuration-example" class="header-anchor"&gt;&lt;/a&gt;Configuration Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result (ignores email format, max_token_length takes priority)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// [ john, smith, globa, l, inter, natio, nal.c, om ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="classic-tokenizer"&gt;&lt;a href="#classic-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Classic Tokenizer
+&lt;/h3&gt;&lt;p&gt;The classic tokenizer performs grammar-based tokenization and is good for English documents. This tokenization method has special handling for abbreviations, company names, email addresses, and internet hostnames. However, these rules don&amp;rsquo;t always work and don&amp;rsquo;t work well for languages other than English.&lt;/p&gt;
+&lt;h4 id="tokenizing-rules"&gt;&lt;a href="#tokenizing-rules" class="header-anchor"&gt;&lt;/a&gt;Tokenizing Rules
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Splits words at most punctuation marks, removing the punctuation. However, dots not followed by whitespace are considered part of the token.&lt;/li&gt;
+&lt;li&gt;Splits words at hyphens, but if the word contains a hyphen, it recognizes it as a product number and doesn&amp;rsquo;t split it (e.g., 123-23).&lt;/li&gt;
+&lt;li&gt;Email and internet hostnames are considered as a single token.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="configuration-3"&gt;&lt;a href="#configuration-3" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-5"&gt;&lt;a href="#conversion-example-5" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;classic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="thai-tokenizer"&gt;&lt;a href="#thai-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Thai Tokenizer
+&lt;/h3&gt;&lt;p&gt;The thai tokenizer tokenizes Thai text into words. It uses the Thai segmentation algorithm included in Java. If the input text contains strings in languages other than Thai, the standard tokenizer is applied to those strings.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Warning&lt;/strong&gt;: This tokenization method may not be supported in some JREs. This tokenization method is known to work with Sun/Oracle and OpenJDK. If considering full portability for your application, it&amp;rsquo;s recommended to use the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/plugins/8.8/analysis-icu-tokenizer.html" target="_blank" rel="noopener"
+ &gt;ICU tokenizer&lt;/a&gt; instead&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="conversion-example-6"&gt;&lt;a href="#conversion-example-6" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;thai&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;การที่ได้ต้องแสดงว่างานดี&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ การ, ที่, ได้, ต้อง, แสดง, ว่า, งาน, ดี ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-tokenizers.html" target="_blank" rel="noopener"
+ &gt;Tokenizer reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

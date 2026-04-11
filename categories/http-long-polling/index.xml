@@ -1,1 +1,327 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTP Long Polling on 0AndWild_log</title><link>https://0andwild.com/categories/http-long-polling/</link><description>Recent content in HTTP Long Polling on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Mon, 12 Jan 2026 21:18:15 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/http-long-polling/index.xml" rel="self" type="application/rss+xml"/><item><title>Websocket 이전의 양방향 통신</title><link>https://0andwild.com/posts/260112_before_websocket/</link><pubDate>Mon, 12 Jan 2026 21:18:15 +0900</pubDate><guid>https://0andwild.com/posts/260112_before_websocket/</guid><description>웹소켓 이전의 양방향 통신에 대해 RFC 6202 문서를 읽어보고 HTTP long polling 과 Http streaming 에 대해 알아가보자</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/260112_before_websocket/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTP Long Polling on 0AndWild_log</title><link>https://0andwild.com/categories/http-long-polling/</link><description>Recent content in HTTP Long Polling on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Mon, 12 Jan 2026 21:18:15 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/http-long-polling/index.xml" rel="self" type="application/rss+xml"/><item><title>Websocket 이전의 양방향 통신</title><link>https://0andwild.com/posts/260112_before_websocket/</link><pubDate>Mon, 12 Jan 2026 21:18:15 +0900</pubDate><guid>https://0andwild.com/posts/260112_before_websocket/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Websocket 이전의 양방향 통신" /&gt;&lt;h2 id="서론"&gt;&lt;a href="#%ec%84%9c%eb%a1%a0" class="header-anchor"&gt;&lt;/a&gt;서론
+&lt;/h2&gt;&lt;p&gt;모의투자 프로젝트를 진행해보면서 주식의 가격변동 데이터를 실시간성으로 서빙해야하는 상황이 생겼고 Websocket 기술을 사용하게 됨.
+양방향 실시간 통신 기술인 Websocket 을 이전부터 알고는 있었지만 상세하게 파고든적은 없어 이번 기회에 깊게 파고들어 가보고자함.&lt;/p&gt;
+&lt;p&gt;Websocket 기술 문서인 RFC 6455 를 읽어보다 더 과거의 처리방식과 문제점을 설명하며 RFC 6202(Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)를 인용한 부분이
+있었음. 오늘은 RFC 6202 를 읽어보며 Websocket이 나오기 전에는 어떤 방식으로 처리를 하였고 그 당시의 생각과 Best practice 들에 관하여 알아가보고자 함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rfc-6202-known-issues-and-best-practices-for-the-use-of-long-polling-and-streaming-in-bidirectional-http"&gt;&lt;a href="#rfc-6202-known-issues-and-best-practices-for-the-use-of-long-polling-and-streaming-in-bidirectional-http" class="header-anchor"&gt;&lt;/a&gt;&lt;a class="link" href="%22https://datatracker.ietf.org/doc/html/rfc6202%22" &gt;RFC 6202&lt;/a&gt; (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)
+&lt;/h2&gt;&lt;p&gt;2011년 4월 작성된 문서로 이 문서에서는 그 당시의 양방향 HTTP 통신의 잘 알려진 문제점과 best practice 로 HTTP long polling 과 HTTP streaming 에 대해 다룸. 또한 HTTP long polling과 HTTP streaming 모두 HTTP 를 확장한 것이며 HTTP 프로토콜이 양방향 통신을 위해 설계되지 않았음을 인정함.
+문서의 저자들은 이 문서가 위 두가지 방식의 사용을 권장하지도 사용하지 말라는 것도 아니며 그저 좋은 사용사례와 문제점들을 얘기하는 것에 중점을 둔다고 표기함.&lt;/p&gt;
+&lt;p&gt;기본적으로 HTTP(Hypertext Transfer Protocol:RFC2616)은 request/response 프로토콜임.
+HTTP 는 clients, proxies, servers 이 세 가지 엔티티를 정의 하고 있음.
+client 는 HTTP request 를 서버에 보내기 위해 연결을 생성하고, 서버는 응답을 반환하여 HTTP request 를 처리하기 위해 연결을 수락함. Proxies 는 클라이언트와 서버 사이에서 요청과 응답을 전달하는데 개입 할 수 있는 객체임.&lt;/p&gt;
+&lt;p&gt;기본적으로 표준 HTTP 모델은 서버가 먼저 클라이언트에게 연결을 시작할 수 없고 요청하지 않은 HTTP 응답을 보낼 수 없기 때문에 서버가 클라이언트에게 비동기 이벤트를 보낼 수 없음.&lt;/p&gt;
+&lt;p&gt;그래서 비동기 이벤트를 최대한 빠르게 받기 위해 클라이언트는 주기적으로 서버를 폴링을 해야하는데 이런 지속적인 폴링은 데이터가 없을때도 요청/응답을 강제로 발생시켜 네트워크 리소스를 잡아먹고, 데이터가 다음 폴링 요청을 서버가 수신할 때 까지 큐에 쌓이기 때문에 애플리케이션의 응답 효율을 떨어뜨림.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="http-long-polling--http-streaming"&gt;&lt;a href="#http-long-polling--http-streaming" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling &amp;amp; HTTP streaming
+&lt;/h2&gt;&lt;h2 id="1-http-long-polling"&gt;&lt;a href="#1-http-long-polling" class="header-anchor"&gt;&lt;/a&gt;1. HTTP long polling
+&lt;/h2&gt;&lt;p&gt;전통적인 short polling 기술은 클라이언트에서 서버측으로 주기적으로 요청을 보내어 데이터를 업데이트 하는 방식이지만 새로운 이벤트가 없어도 빈 응답을 받거나 다음 polling 까지 대기를 해야함. 이 기술은 클라이언트가 설정한 지연시간에 따라 요청 주기가 결정되고 이 주기가 짧을 경우(폴링빈도=높음) 서버,네트워크 양쪽 모두에 감당하기 어려운 부담을 초래할 수 있음.&lt;/p&gt;
+&lt;p&gt;이와 반대로 long polling은 특정 이벤트, 상태 또는 네트워크 타임아웃이 발생 하였을때만 요청에 대해 응답을 하여 메시지 전달 지연과 네트워크 자원 사용을 최소화 하려고 시도함.&lt;/p&gt;
+&lt;h3 id="http-long-polling-life-cycle"&gt;&lt;a href="#http-long-polling-life-cycle" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling life cycle
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;클라이언트가 초기 요청을 생성하고 응답을 기다림&lt;/li&gt;
+&lt;li&gt;서버는 업데이트가 가능하거나 특정상태 또는 타임아웃이 발생할때까지 응답을 보류함&lt;/li&gt;
+&lt;li&gt;업데이트가 가능해지면 서버는 클라이언트로 응답을 전송함&lt;/li&gt;
+&lt;li&gt;클라이언트는 응답을 받은 직후 새로운 long poll request 를 바로 생성하거나 허용가능한 일정 지연시간 동안 정지 후 생성함.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="http-long-polling-issue"&gt;&lt;a href="#http-long-polling-issue" class="header-anchor"&gt;&lt;/a&gt;HTTP long polling issue
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Header overhead : 매 요청/응답이 HTTP 메세지 이므로 데이터가 작더라도 HTTP header 가 항상 따라붙음.
+작고 데이터의 경우 헤더가 데이터 전송의 상당부분을 차지하게 된다. 만약 네트워크 MTU(Maximum Transmission Unit)가 헤더를 포함한 모든 정보를 단일 IP 패킷에 수용 가능하다면 네트워크 부담은 크게 없음. 하지만 작은 메시지가 자주 오갈 때, 실제 데이터 대비 전송량이 커지는 문제가 발생함.
+예시로 편지지 한 장(20g)을 보내는데 택배 박스(300g) 에 넣어서 보내는 것 과 같은 맥락임.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Maximal latency : long poll 응답을 보낸 직후 서버가 바로 새 메시지를 보내고 싶어도 클라이언트의 다음 요청이 올때까지 기다려야 함. 평균 지연은 1 network trasit 에 가깝지만 최악의 경우 3 network transit(response-request-response) 까지 늘어날 수 있고 TCP 패킷 손실이 되었을 경우 재전송까지 고려하면 그 이상이 발생할 수 있음.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Connection Establishment : short polling, long polling 모두 TCP/IP 연결을 열고 닫는 것을 자주 한다는 비판이 있음. 하지만 두 polling 메커니즘은 재사용될 수 있는 presistent HTTP connection 과 잘 작동함.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Allocated Resources : 운영체제는 TCP/IP 연결 및 연결 보류 중인 HTTP 요청들에게 자원을 할당함. HTTP long polling 은 각 클라이언트에 대해 TCP/IP 연결과 HTTP 요청이 모두 열린 상태로 유지되도록 요구함. 따라서 HTTP 롱 폴링 애플리케이션의 규모를 결정할 때 이 두가지와 관련된 리소스를 고려하는 것이 중요함.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Graceful Degradation : 서버나 클라이언트가 과부하 상태일 때 메시지가 큐에 쌓이다가 한 응답에 여러 메시지를 묶어서 보낼 수 있음. 지연은 늘어나지만 메시지당 오버헤드가 줄어서 부하가 자연스럽게 분산됨.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Timeouts : long poll 요청은 서버가 보낼 데이터가 생길 때까지 계속 대기(hanging) 상태를 유지해야 하기 때문에 타임아웃 문제가 발생 할 수 있음.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Caching : 중간 프록시나 CDN 이 응답을 캐싱하면 최신 데이터가 아닌 오래된 데이터를 받는 문제가 생길 수 있음. 클라이언트나 호스트가 HTTP 중개자에게 롱 폴링이 사용중임을 알릴 방법이 없으나 양방향 흐름을 방해 할 수 있는(=캐싱)은 표준 헤더나 쿠키로 제어가 가능함. 최선의 관행으로 롱 폴링 요청이나 응답에서는 항상 의도적으로 캐싱을 억제함. &amp;ldquo;Cache-Control&amp;rdquo; 헤더를 &amp;ldquo;no-cache&amp;rdquo; 로 설정함.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="2-http-streaming"&gt;&lt;a href="#2-http-streaming" class="header-anchor"&gt;&lt;/a&gt;2. HTTP Streaming
+&lt;/h2&gt;&lt;p&gt;HTTP streaming 의 메커니즘은 절대 request 를 종료 하거나 서버가 클라이언트에게 데이터를 보낸 후 에도 연결을 끊지 않는것임.
+이러한 메커니즘은 클라이언트와 서버가 계속해서 연결을 시작하고 끊는 것을 하지 않아도 되기 때문에 네트워크 지연을 상당히 낮추어줌.&lt;/p&gt;
+&lt;h3 id="http-streaming-life-cycle"&gt;&lt;a href="#http-streaming-life-cycle" class="header-anchor"&gt;&lt;/a&gt;HTTP Streaming life cycle
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;클라이언트가 초기 요청을 생성하고 응답을 기다림&lt;/li&gt;
+&lt;li&gt;서버는 업데이트가 가능하거나 특정상태 또는 타임아웃이 발생할때까지 응답을 보류함&lt;/li&gt;
+&lt;li&gt;업데이트가 가능해지면 서버는 클라이언트로 응답을 전송함&lt;/li&gt;
+&lt;li&gt;데이터를 보내고 서버는 요청을 종료 하거나 연결을 끊지 않고 3번을 계속해서 진행함&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="http-streaming-issue"&gt;&lt;a href="#http-streaming-issue" class="header-anchor"&gt;&lt;/a&gt;HTTP Streaming issue
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Network Intermediaries : HTTP 프로토콜은 서버에서 클라이언트로 응답을 전송하는 과정에서 중개자(프록시, 투명 프록시, 게이트웨이 등)가 개입할 수 있도록 허용함. HTTP Streaming 은 이러한 중개자와 함께 작동하지 않음.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Maximal Latency : 이론상 1 network transit 이지만 실제로는 Javascript / DOM 요소와 관련된 메모리 사용량의 무제한 증가 방지를 위해 주기적으로 연결을 끊고 다시 맺어야 함. 결국 long polling 처럼 최대 지연은 3 network transit 이 발생함.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Client Buffering : HTTP 스펙상 부분 응답을 즉시 처리할 의무가 없음. 대부분의 브라우저는 응답의 JS 를 실행하긴 하지만 일부는 버퍼 오버플로우가 발생해야 실행함. 공백 문자를 보내 버퍼를 채우는 방법을 사용할 수 있음.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Framing Techniques : HTTP Streaming 을 사용하면 단일 HTTP 응답에 여러 애플리케이션 메시지를 전송할 수 있음. 하지만 중간 객체인 프록시에서 청크단위를 다시 재청크 하는 상황이 발생할 수 있기 때문에 청크 단위로 메시지를 구분 할 수 없음. 따라서 애플리케이션 레벨에서 별도로 구분자를 정의 해야함. Long polling 은 응답하나에 메시지가 하나이기 때문에 이와 같은 문제가 발생하지 않음.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="그-외의-server-push-메커니즘-소개"&gt;&lt;a href="#%ea%b7%b8-%ec%99%b8%ec%9d%98-server-push-%eb%a9%94%ec%bb%a4%eb%8b%88%ec%a6%98-%ec%86%8c%ea%b0%9c" class="header-anchor"&gt;&lt;/a&gt;그 외의 server-push 메커니즘 소개
+&lt;/h2&gt;&lt;p&gt;여기서는 위 두 가지의 메커니즘 외에 Bayeux(4.1), BOSH(4.2), Server-Sent Events(4.3) 등을 소개함.
+SSE 메커니즘을 사용할 때 권고사항을 다루고 있는데 아래와 같음.&lt;/p&gt;
+&lt;p&gt;스펙상 HTTP chunking을 비활성화 하라고 권장한다. 그 이유는 위에서 설명한 HTTP streaming issue 와 같음.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;중간 프록시가 청크를 re-chunking 할 수 있음&lt;/li&gt;
+&lt;li&gt;일부 프록시가 전체 응답을 버퍼링 할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="best-practice"&gt;&lt;a href="#best-practice" class="header-anchor"&gt;&lt;/a&gt;Best Practice
+&lt;/h2&gt;&lt;h3 id="요약"&gt;&lt;a href="#%ec%9a%94%ec%95%bd" class="header-anchor"&gt;&lt;/a&gt;요약
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;항목&lt;/th&gt;
+ &lt;th&gt;핵심 내용&lt;/th&gt;
+ &lt;th&gt;권장사항&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;연결 수 제한&lt;/td&gt;
+ &lt;td&gt;브라우저당 6~8개 제한&lt;/td&gt;
+ &lt;td&gt;Long poll은 하나로, 쿠키로 중복 감지&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;파이프라이닝&lt;/td&gt;
+ &lt;td&gt;일반 요청이 long poll 뒤에 막힐 수 있음&lt;/td&gt;
+ &lt;td&gt;지원 여부 확인 후 사용, 폴백 준비&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;프록시&lt;/td&gt;
+ &lt;td&gt;연결 공유 시 starvation 발생&lt;/td&gt;
+ &lt;td&gt;비동기 프록시 사용, 연결 공유 피하기&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;타임아웃&lt;/td&gt;
+ &lt;td&gt;너무 높으면 408/504, 너무 낮으면 트래픽 낭비&lt;/td&gt;
+ &lt;td&gt;30초 권장&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;캐싱&lt;/td&gt;
+ &lt;td&gt;실시간 데이터가 캐시되면 안 됨&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;Cache-Control: no-cache&lt;/code&gt; 필수&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;보안&lt;/td&gt;
+ &lt;td&gt;Injection, DoS 취약&lt;/td&gt;
+ &lt;td&gt;입력 검증, 연결 수 제한&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="1-limits-to-the-maximum-number-of-connections"&gt;&lt;a href="#1-limits-to-the-maximum-number-of-connections" class="header-anchor"&gt;&lt;/a&gt;1. Limits to the Maximum Number of Connections
+&lt;/h2&gt;&lt;h3 id="배경"&gt;&lt;a href="#%eb%b0%b0%ea%b2%bd" class="header-anchor"&gt;&lt;/a&gt;배경
+&lt;/h3&gt;&lt;p&gt;HTTP 스펙(RFC 2616)에서는 원래 &lt;strong&gt;클라이언트 하나가 서버에 최대 2개 연결&lt;/strong&gt;까지만 유지하라고 권장했음. 이유는 두 가지임:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;서버 과부하 방지&lt;/li&gt;
+&lt;li&gt;혼잡한 네트워크에서 예상치 못한 부작용 방지&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;최근 브라우저들은 이 제한을 6~8개로 늘렸지만, 여전히 제한이 존재함. 문제는 사용자가 여러 탭이나 프레임을 열면 이 연결들을 금방 소진한다는 것임.&lt;/p&gt;
+&lt;h3 id="왜-문제가-되는가"&gt;&lt;a href="#%ec%99%9c-%eb%ac%b8%ec%a0%9c%ea%b0%80-%eb%90%98%eb%8a%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;왜 문제가 되는가?
+&lt;/h3&gt;&lt;p&gt;Long polling은 연결을 오래 점유함. 만약 탭 3개에서 각각 long poll을 2개씩 열면:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;탭1: long poll 연결 2개
+탭2: long poll 연결 2개 
+탭3: long poll 연결 2개
+─────────────────────
+총 6개 연결 → 브라우저 한계 도달
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;이 상태에서 일반 HTTP 요청(이미지, API 호출 등)을 보내려면 기존 연결이 끝날 때까지 &lt;strong&gt;대기해야 함&lt;/strong&gt;. 이걸 **connection starvation(연결 고갈)**이라고 부름.&lt;/p&gt;
+&lt;h3 id="권장사항"&gt;&lt;a href="#%ea%b6%8c%ec%9e%a5%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;권장사항
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;클라이언트 측:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Long poll 요청을 &lt;strong&gt;하나로 제한&lt;/strong&gt;하고, 여러 탭/프레임이 이걸 공유하는 게 이상적임&lt;/li&gt;
+&lt;li&gt;하지만 브라우저 보안 모델 때문에 탭 간 리소스 공유가 어려움 (Same-Origin Policy 등)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;서버 측:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;쿠키를 사용해서 같은 브라우저에서 오는 중복 long poll 요청을 감지&lt;/strong&gt;해야 함&lt;/li&gt;
+&lt;li&gt;중복 요청이 감지되면 둘 다 대기시키지 말고, 하나는 즉시 응답해서 해제해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[잘못된 처리]
+요청1: 대기 중...
+요청2: 대기 중... ← 둘 다 대기하면 connection starvation 발생
+
+[올바른 처리]
+요청1: 대기 중...
+요청2: 들어옴 → 요청1에 즉시 빈 응답 → 요청2만 대기
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="2-pipelined-connections"&gt;&lt;a href="#2-pipelined-connections" class="header-anchor"&gt;&lt;/a&gt;2. Pipelined Connections
+&lt;/h2&gt;&lt;h3 id="파이프라이닝이란"&gt;&lt;a href="#%ed%8c%8c%ec%9d%b4%ed%94%84%eb%9d%bc%ec%9d%b4%eb%8b%9d%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;파이프라이닝이란?
+&lt;/h3&gt;&lt;p&gt;HTTP/1.1에서 지원하는 기능으로, 응답을 기다리지 않고 &lt;strong&gt;여러 요청을 연속으로 보내는 것&lt;/strong&gt;임.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[파이프라이닝 없음]
+요청1 → 응답1 → 요청2 → 응답2 → 요청3 → 응답3
+
+[파이프라이닝 있음]
+요청1 → 요청2 → 요청3 → 응답1 → 응답2 → 응답3
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="long-polling에서의-장점"&gt;&lt;a href="#long-polling%ec%97%90%ec%84%9c%ec%9d%98-%ec%9e%a5%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;Long Polling에서의 장점
+&lt;/h3&gt;&lt;p&gt;서버가 짧은 시간에 여러 메시지를 보내야 할 때 유용함. 파이프라이닝이 있으면 서버가 응답 후 클라이언트의 새 요청을 기다리지 않아도 됨. 이미 큐에 요청이 쌓여있으니까.&lt;/p&gt;
+&lt;h3 id="문제점-일반-요청이-막힘"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c%ec%a0%90-%ec%9d%bc%eb%b0%98-%ec%9a%94%ec%b2%ad%ec%9d%b4-%eb%a7%89%ed%9e%98" class="header-anchor"&gt;&lt;/a&gt;문제점: 일반 요청이 막힘
+&lt;/h3&gt;&lt;p&gt;파이프라이닝의 치명적인 문제가 있음. &lt;strong&gt;일반 요청이 long poll 뒤에 큐잉되면, long poll이 끝날 때까지 기다려야 함&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[파이프라인 큐]
+1. Long poll 요청 (30초 대기 중...)
+2. 이미지 요청 ← long poll 끝날 때까지 대기
+3. API 요청 ← long poll 끝날 때까지 대기
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;이러면 페이지 로딩이 30초씩 지연될 수 있음.&lt;/p&gt;
+&lt;h3 id="주의사항"&gt;&lt;a href="#%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;주의사항
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;HTTP POST 파이프라이닝은 RFC 2616에서 &lt;strong&gt;권장하지 않음&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;BOSH나 Bayeux 같은 프로토콜은 POST를 파이프라이닝하면서 요청 ID로 순서를 보장하는 방식을 씀&lt;/li&gt;
+&lt;li&gt;파이프라이닝을 쓰려면 클라이언트, 중간 장비, 서버 &lt;strong&gt;모두 지원하는지 확인&lt;/strong&gt;해야 함&lt;/li&gt;
+&lt;li&gt;지원 안 되면 파이프라이닝 없는 방식으로 &lt;strong&gt;폴백&lt;/strong&gt;해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3-proxies"&gt;&lt;a href="#3-proxies" class="header-anchor"&gt;&lt;/a&gt;3. Proxies
+&lt;/h2&gt;&lt;h3 id="일반-프록시와의-호환성"&gt;&lt;a href="#%ec%9d%bc%eb%b0%98-%ed%94%84%eb%a1%9d%ec%8b%9c%ec%99%80%ec%9d%98-%ed%98%b8%ed%99%98%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;일반 프록시와의 호환성
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Long Polling:&lt;/strong&gt; 대부분의 프록시와 잘 동작함. 왜냐하면 결국 완전한 HTTP 응답을 보내기 때문임 (이벤트 발생 시 또는 타임아웃 시).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HTTP Streaming:&lt;/strong&gt; 문제가 있음. 두 가지 가정에 의존하는데:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;프록시가 각 청크를 즉시 전달할 것 → &lt;strong&gt;보장 안 됨&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;브라우저가 도착한 JS 청크를 즉시 실행할 것 → &lt;strong&gt;보장 안 됨&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="리버스-프록시-문제"&gt;&lt;a href="#%eb%a6%ac%eb%b2%84%ec%8a%a4-%ed%94%84%eb%a1%9d%ec%8b%9c-%eb%ac%b8%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;리버스 프록시 문제
+&lt;/h3&gt;&lt;p&gt;리버스 프록시는 클라이언트 입장에서는 실제 서버처럼 보이지만, 뒤에 있는 진짜 서버로 요청을 전달하는 역할을 함.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;클라이언트 → [리버스 프록시] → 실제 서버
+ (Nginx, Apache 등)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Long polling과 streaming 모두 동작하긴 하지만, &lt;strong&gt;성능 문제&lt;/strong&gt;가 있음. 대부분의 프록시는 많은 연결을 오래 유지하도록 설계되지 않았음.&lt;/p&gt;
+&lt;h3 id="연결-공유-문제-connection-sharing"&gt;&lt;a href="#%ec%97%b0%ea%b2%b0-%ea%b3%b5%ec%9c%a0-%eb%ac%b8%ec%a0%9c-connection-sharing" class="header-anchor"&gt;&lt;/a&gt;연결 공유 문제 (Connection Sharing)
+&lt;/h3&gt;&lt;p&gt;이게 가장 심각한 문제임. Apache mod_jk 같은 프록시는 &lt;strong&gt;여러 클라이언트가 소수의 연결을 공유&lt;/strong&gt;하도록 설계됨.&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;[Apache mod_jk 연결 풀: 8개]
+
+클라이언트A의 long poll → 연결1 점유 (30초...)
+클라이언트B의 long poll → 연결2 점유 (30초...)
+클라이언트C의 long poll → 연결3 점유 (30초...)
+...
+클라이언트H의 long poll → 연결8 점유 (30초...)
+
+클라이언트I의 일반 요청 → 연결 없음! 대기...
+클라이언트J의 일반 요청 → 연결 없음! 대기...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;8개 연결이 모두 long poll에 점유되면, 다른 모든 요청(long poll이든 일반 요청이든)이 막혀버림. 이걸 &lt;strong&gt;connection starvation&lt;/strong&gt;이라고 함.&lt;/p&gt;
+&lt;h3 id="근본-원인-동기식-vs-비동기식"&gt;&lt;a href="#%ea%b7%bc%eb%b3%b8-%ec%9b%90%ec%9d%b8-%eb%8f%99%ea%b8%b0%ec%8b%9d-vs-%eb%b9%84%eb%8f%99%ea%b8%b0%ec%8b%9d" class="header-anchor"&gt;&lt;/a&gt;근본 원인: 동기식 vs 비동기식
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;모델&lt;/th&gt;
+ &lt;th&gt;동작 방식&lt;/th&gt;
+ &lt;th&gt;Long Poll 영향&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;동기식&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;요청 하나당 스레드/연결 하나 점유&lt;/td&gt;
+ &lt;td&gt;리소스 고갈 심각&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;비동기식&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;이벤트 기반, 연결당 최소 리소스&lt;/td&gt;
+ &lt;td&gt;영향 적음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;동기식 예시: Apache mod_jk, Java Servlet 2.5
+비동기식 예시: Nginx, Node.js, Java Servlet 3.0+&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;결론:&lt;/strong&gt; Long polling/streaming을 쓸 때는 &lt;strong&gt;연결 공유를 피해야 함&lt;/strong&gt;. HTTP의 기본 가정은 &amp;ldquo;각 요청이 최대한 빨리 완료된다&amp;quot;인데, long poll은 이 가정을 깨기 때문임.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="4-http-responses"&gt;&lt;a href="#4-http-responses" class="header-anchor"&gt;&lt;/a&gt;4. HTTP Responses
+&lt;/h2&gt;&lt;p&gt;이건 단순함. 표준 HTTP 그대로 따르면 됨.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서버가 요청을 성공적으로 받으면 &lt;strong&gt;200 OK&lt;/strong&gt;로 응답&lt;/li&gt;
+&lt;li&gt;응답 시점: 이벤트 발생, 상태 변화, 또는 타임아웃&lt;/li&gt;
+&lt;li&gt;응답 body에 실제 이벤트/상태/타임아웃 정보 포함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;특별한 건 없고, 그냥 HTTP 스펙 준수하면 됨.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="5-timeouts"&gt;&lt;a href="#5-timeouts" class="header-anchor"&gt;&lt;/a&gt;5. Timeouts
+&lt;/h2&gt;&lt;h3 id="딜레마"&gt;&lt;a href="#%eb%94%9c%eb%a0%88%eb%a7%88" class="header-anchor"&gt;&lt;/a&gt;딜레마
+&lt;/h3&gt;&lt;p&gt;Long poll 타임아웃 값을 정하는 건 까다로움:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;너무 높게 설정하면:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서버에서 &lt;strong&gt;408 Request Timeout&lt;/strong&gt; 받을 수 있음&lt;/li&gt;
+&lt;li&gt;프록시에서 &lt;strong&gt;504 Gateway Timeout&lt;/strong&gt; 받을 수 있음&lt;/li&gt;
+&lt;li&gt;네트워크 연결이 끊어진 걸 늦게 감지함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;너무 낮게 설정하면:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;불필요한 요청/응답이 증가함&lt;/li&gt;
+&lt;li&gt;네트워크 트래픽 낭비&lt;/li&gt;
+&lt;li&gt;서버 부하 증가&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="실험-결과와-권장값"&gt;&lt;a href="#%ec%8b%a4%ed%97%98-%ea%b2%b0%ea%b3%bc%ec%99%80-%ea%b6%8c%ec%9e%a5%ea%b0%92" class="header-anchor"&gt;&lt;/a&gt;실험 결과와 권장값
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;브라우저 기본 타임아웃: 300초 (5분)
+실험에서 성공한 값: 최대 120초
+안전한 권장값: 30초
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;대부분의 네트워크 인프라(프록시, 로드밸런서 등)는 브라우저만큼 긴 타임아웃을 갖고 있지 않음. 중간에 있는 장비가 먼저 연결을 끊어버릴 수 있음.&lt;/p&gt;
+&lt;h3 id="네트워크-장비-벤더를-위한-권장사항"&gt;&lt;a href="#%eb%84%a4%ed%8a%b8%ec%9b%8c%ed%81%ac-%ec%9e%a5%eb%b9%84-%eb%b2%a4%eb%8d%94%eb%a5%bc-%ec%9c%84%ed%95%9c-%ea%b6%8c%ec%9e%a5%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;네트워크 장비 벤더를 위한 권장사항
+&lt;/h3&gt;&lt;p&gt;Long polling 호환성을 원하면, 타임아웃을 &lt;strong&gt;30초보다 충분히 길게&lt;/strong&gt; 설정해야 함. 여기서 &amp;ldquo;충분히&amp;quot;란 평균 네트워크 왕복 시간의 몇 배 이상을 의미함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="6-impact-on-intermediary-entities"&gt;&lt;a href="#6-impact-on-intermediary-entities" class="header-anchor"&gt;&lt;/a&gt;6. Impact on Intermediary Entities
+&lt;/h2&gt;&lt;h3 id="투명성-문제"&gt;&lt;a href="#%ed%88%ac%eb%aa%85%ec%84%b1-%eb%ac%b8%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;투명성 문제
+&lt;/h3&gt;&lt;p&gt;Long poll 요청은 중간 장비(프록시, 게이트웨이 등) 입장에서 &lt;strong&gt;일반 HTTP 요청과 구분이 안 됨&lt;/strong&gt;. &amp;ldquo;이건 long poll이니까 특별하게 처리해줘&amp;quot;라고 알려줄 방법이 없음.&lt;/p&gt;
+&lt;p&gt;이로 인해 중간 장비가 불필요한 작업을 할 수 있음:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;캐싱 시도 (실시간 데이터인데 캐시하면 안 됨)&lt;/li&gt;
+&lt;li&gt;타임아웃 적용 (long poll은 원래 오래 걸림)&lt;/li&gt;
+&lt;li&gt;연결 재사용 시도 (long poll은 점유 시간이 김)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="캐싱-방지"&gt;&lt;a href="#%ec%ba%90%ec%8b%b1-%eb%b0%a9%ec%a7%80" class="header-anchor"&gt;&lt;/a&gt;캐싱 방지
+&lt;/h3&gt;&lt;p&gt;가장 중요한 건 &lt;strong&gt;캐싱 방지&lt;/strong&gt;임. 실시간 데이터가 캐시되면 클라이언트가 과거 데이터를 받게 됨.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;반드시 설정해야 하는 헤더:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-http" data-lang="http"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;Cache-Control: no-cache
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;요청과 응답 모두에 이 헤더를 포함시켜야 함. 이건 표준 HTTP 헤더라서 대부분의 중간 장비가 이해하고 존중함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="7-security-considerations"&gt;&lt;a href="#7-security-considerations" class="header-anchor"&gt;&lt;/a&gt;7. Security Considerations
+&lt;/h2&gt;&lt;p&gt;RFC 6202는 HTTP의 새로운 기능을 제안하는 게 아니라, 기존 사용 방식을 설명하는 문서임. 따라서 새로운 보안 취약점을 만들지는 않음. 하지만 이미 배포된 솔루션들에 존재하는 보안 이슈들이 있음.&lt;/p&gt;
+&lt;h3 id="1-injection-공격-cross-domain-long-polling"&gt;&lt;a href="#1-injection-%ea%b3%b5%ea%b2%a9-cross-domain-long-polling" class="header-anchor"&gt;&lt;/a&gt;1. Injection 공격 (Cross-Domain Long Polling)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;문제 상황:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;크로스 도메인 long polling에서 JSONP 방식을 쓸 때, 서버가 반환한 JavaScript를 브라우저가 실행함.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 서버 응답 (JSONP)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;price&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;52300&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;만약 서버가 injection 공격에 취약하면, 공격자가 악성 코드를 삽입할 수 있음:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 공격자가 조작한 응답
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;callback&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;price&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;52300&lt;/span&gt;&lt;span class="p"&gt;});&lt;/span&gt; &lt;span class="nx"&gt;stealCookies&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;브라우저는 이걸 그대로 실행해버림.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;대응책:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서버 측 입력 검증 철저히&lt;/li&gt;
+&lt;li&gt;CORS를 사용하고 JSONP 피하기&lt;/li&gt;
+&lt;li&gt;Content-Type 헤더 정확히 설정&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-dos-denial-of-service-공격"&gt;&lt;a href="#2-dos-denial-of-service-%ea%b3%b5%ea%b2%a9" class="header-anchor"&gt;&lt;/a&gt;2. DoS (Denial of Service) 공격
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;문제 상황:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Long polling과 HTTP streaming은 &lt;strong&gt;많은 연결을 오래 유지&lt;/strong&gt;해야 함. 공격자가 대량의 long poll 연결을 열어두면:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;공격자 → 연결 1,000개 열어둠 (각각 30초 대기)
+ ↓
+서버 리소스 고갈 → 정상 사용자 서비스 불가
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;일반 HTTP 요청은 금방 끝나니까 연결당 리소스 점유 시간이 짧음. 하지만 long poll은 의도적으로 오래 유지하니까 DoS에 취약함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;대응책:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;IP당 연결 수 제한&lt;/li&gt;
+&lt;li&gt;인증된 사용자만 long poll 허용&lt;/li&gt;
+&lt;li&gt;Rate limiting 적용&lt;/li&gt;
+&lt;li&gt;비동기 서버 사용 (연결당 리소스 최소화)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="정리"&gt;&lt;a href="#%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;정리
+&lt;/h2&gt;&lt;p&gt;RFC 6202 를 읽어보면서 과거의 서버 푸쉬 이벤트를 어떤식으로 만들었는지 알아보았음. 기존에 알고 있던 polling, streaming, SSE 메커니즘에 대한 지식과 문제점들을 좀 더 상세하게 알아볼 수 있어서 좋았음.&lt;/p&gt;
+&lt;p&gt;이 문서를 읽어보며 정리된 생각은 새로운 프로토콜이 아닌 HTTP 프로토콜을 확장해서 쓰는 개념이고 HTTP 의 설계상 양방향 비동기 통신을 위한 프로토콜이 아니기 때문에 남용을 해서 server event push 의 목적을 달성한 느낌이었음.&lt;/p&gt;
+&lt;p&gt;다음 포스팅 에서는 RFC 6455 Websocket 문서를 정리해보면서 RFC 6202 에서의 문제점과 그 발전과정을 연결지어 작성해보려 함.&lt;/p&gt;</description></item></channel></rss>

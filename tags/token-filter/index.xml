@@ -1,1 +1,179 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Token Filter on 0AndWild_log</title><link>https://0andwild.com/tags/token-filter/</link><description>Recent content in Token Filter on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 02 Feb 2024 21:30:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/token-filter/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>Elasticsearch Analyzer를 구성하는 Token Filter의 종류와 설정 방법.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer3/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Token Filter on 0AndWild_log</title><link>https://0andwild.com/tags/token-filter/</link><description>Recent content in Token Filter on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 02 Feb 2024 21:30:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/token-filter/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Token Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer3/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer3/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer3/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="token-filter"&gt;&lt;a href="#token-filter" class="header-anchor"&gt;&lt;/a&gt;Token Filter
+&lt;/h1&gt;&lt;p&gt;Token Filter는 Tokenizer에서 생성된 토큰 스트림을 받아 토큰을 추가, 제거 또는 변경하는 역할을 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="word-delimiter-graph-filter"&gt;&lt;a href="#word-delimiter-graph-filter" class="header-anchor"&gt;&lt;/a&gt;Word Delimiter Graph Filter
+&lt;/h2&gt;&lt;p&gt;Word delimiter graph 필터는 제품 ID나 부품 번호와 같은 복잡한 식별자에서 문장 부호를 제거하도록 설계되었다. 이러한 사용 사례의 경우 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword tokenizer&lt;/a&gt;와 함께 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;wi-fi와 같은 하이픈으로 연결된 단어를 분리할 때는 word delimiter graph 필터를 사용하지 않는 것이 좋다. 사용자들은 하이픈을 포함하기도 하고 포함하지 않고도 검색을 하기 때문에 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-synonym-graph-tokenfilter.html" target="_blank" rel="noopener"
+ &gt;synonym graph&lt;/a&gt; 필터를 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h3 id="변환-규칙"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ea%b7%9c%ec%b9%99" class="header-anchor"&gt;&lt;/a&gt;변환 규칙
+&lt;/h3&gt;&lt;p&gt;다음과 같은 방식으로 토큰을 분할한다:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;비영숫자 문자로 토큰 분할&lt;/strong&gt;: &lt;code&gt;Super-Duper&lt;/code&gt; → &lt;code&gt;Super, Duper&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;앞뒤 구분 기호 제거&lt;/strong&gt;: &lt;code&gt;XL---42+'Autocoder'&lt;/code&gt; → &lt;code&gt;XL, 42, Autocoder&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;대소문자 전환 시 분할&lt;/strong&gt;: &lt;code&gt;PowerShot&lt;/code&gt; → &lt;code&gt;Power, Shot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;문자-숫자 전환 시 분할&lt;/strong&gt;: &lt;code&gt;XL500&lt;/code&gt; → &lt;code&gt;XL, 500&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;영어 소유격 제거&lt;/strong&gt;: &lt;code&gt;Neil's&lt;/code&gt; → &lt;code&gt;Neil&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="api-사용-예시"&gt;&lt;a href="#api-%ec%82%ac%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;API 사용 예시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Neil&amp;#39;s-Super-Duper-XL500--42+AutoCoder&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Neil, Super, Duper, XL, 500, 42, Auto, Coder ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="custom-analyzer-설정"&gt;&lt;a href="#custom-analyzer-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;Custom Analyzer 설정
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="configurable-parameters"&gt;&lt;a href="#configurable-parameters" class="header-anchor"&gt;&lt;/a&gt;Configurable Parameters
+&lt;/h3&gt;&lt;h4 id="adjust_offsets"&gt;&lt;a href="#adjust_offsets" class="header-anchor"&gt;&lt;/a&gt;adjust_offsets
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true일 경우 필터는 토큰 스트림에서 실제 위치를 더 잘 반영하도록 분할 토큰 또는 체이닝된 토큰의 시작점을 조정함&lt;/li&gt;
+&lt;li&gt;만약 trim 같은 필터를 사용한다면 offset의 변화 없이 token의 길이를 변경하기 때문에 함께 사용할 때는 &lt;code&gt;false&lt;/code&gt;로 해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_all"&gt;&lt;a href="#catenate_all" class="header-anchor"&gt;&lt;/a&gt;catenate_all
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 영숫자가 아닌 구분 기호로 구분된 영숫자 체인에 대해 체이닝 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ superduperxl500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_numbers"&gt;&lt;a href="#catenate_numbers" class="header-anchor"&gt;&lt;/a&gt;catenate_numbers
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 알파벳이 아닌 구분 기호로 구분된 숫자 문자 체인에 대해 카테네이트 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;01-02-03&lt;/code&gt; → &lt;code&gt;[ 010203, 01, 02, 03 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_words"&gt;&lt;a href="#catenate_words" class="header-anchor"&gt;&lt;/a&gt;catenate_words
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 알파벳이 아닌 구분 기호로 구분된 알파벳 문자 체인에 대해 카테네이트 토큰을 생성함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl&lt;/code&gt; → &lt;code&gt;[ superduperxl, super, duper, xl ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Catenate 파라미터 사용 시 주의점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 매개변수를 true로 설정하면 인덱싱에서 지원되지 않는 다중 위치 토큰이 생성함&lt;/p&gt;
+&lt;p&gt;이 매개변수가 true이면 인덱스 분석기에서 이 필터를 사용하지 않거나 이 필터 뒤에 flatten_graph 필터를 사용하여 토큰 스트림을 인덱싱에 적합하게 만들어야함&lt;/p&gt;
+&lt;p&gt;검색 분석에 사용할 경우, 카테네이트된 토큰은 match_phrase 쿼리 및 일치하는 토큰 위치에 의존하는 다른 쿼리에 문제를 일으킬 수 있음. 이러한 쿼리를 사용하려는 경우 이 매개변수를 true로 설정하지 않아야 함.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="generate_number_parts"&gt;&lt;a href="#generate_number_parts" class="header-anchor"&gt;&lt;/a&gt;generate_number_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 숫자로 구성된 토큰을 포함함&lt;/li&gt;
+&lt;li&gt;false인 경우 필터는 이러한 토큰을 출력에서 제외함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="generate_word_parts"&gt;&lt;a href="#generate_word_parts" class="header-anchor"&gt;&lt;/a&gt;generate_word_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 알파벳 문자로 구성된 토큰을 포함함&lt;/li&gt;
+&lt;li&gt;false일 경우 이러한 토큰을 출력에서 제외함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ignore_keywords"&gt;&lt;a href="#ignore_keywords" class="header-anchor"&gt;&lt;/a&gt;ignore_keywords
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true일 경우 필터는 키워드 속성이 true인 토큰을 건너뜀&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="preserve_original"&gt;&lt;a href="#preserve_original" class="header-anchor"&gt;&lt;/a&gt;preserve_original
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 출력에 분할된 토큰의 원본 버전을 포함함&lt;/li&gt;
+&lt;li&gt;이 원본 버전에는 영숫자가 아닌 구분 기호가 포함됨&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ super-duper-xl-500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;preserve_original 파라미터 사용 시 주의점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 매개변수를 true로 설정하면 인덱싱에서 지원되지 않는 다중 위치 토큰이 생성함&lt;/p&gt;
+&lt;p&gt;이 매개변수가 true이면 인덱스 분석기에서 이 필터를 사용하지 않거나 이 필터 뒤에 flatten_graph 필터를 사용하여 토큰 스트림을 인덱싱에 적합하게 만들어야함&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="protected_words"&gt;&lt;a href="#protected_words" class="header-anchor"&gt;&lt;/a&gt;protected_words
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;필터가 분할하지 않는 토큰의 배열&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="protected_words_path"&gt;&lt;a href="#protected_words_path" class="header-anchor"&gt;&lt;/a&gt;protected_words_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;필터가 분할하지 않는 토큰 목록이 포함된 파일의 경로&lt;/li&gt;
+&lt;li&gt;이 경로는 구성 위치에 대한 절대 경로이거나 상대 경로여야 하며, 파일은 UTF-8로 인코딩되어야 함&lt;/li&gt;
+&lt;li&gt;파일의 각 토큰은 줄 바꿈으로 구분해야 함&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_case_change"&gt;&lt;a href="#split_on_case_change" class="header-anchor"&gt;&lt;/a&gt;split_on_case_change
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 대소문자 전환 시 토큰을 분할함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;camelCase&lt;/code&gt; → &lt;code&gt;[ camel, Case ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_numerics"&gt;&lt;a href="#split_on_numerics" class="header-anchor"&gt;&lt;/a&gt;split_on_numerics
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 문자-숫자 전환 시 토큰을 분할함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;j2se&lt;/code&gt; → &lt;code&gt;[ j, 2, se ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="stem_english_possessive"&gt;&lt;a href="#stem_english_possessive" class="header-anchor"&gt;&lt;/a&gt;stem_english_possessive
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;true이면 필터는 각 토큰의 끝에서 영어 소유격(&amp;rsquo;s)을 제거함&lt;/li&gt;
+&lt;li&gt;예시: &lt;code&gt;O'Neil's&lt;/code&gt; → &lt;code&gt;[ O, Neil ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table"&gt;&lt;a href="#type_table" class="header-anchor"&gt;&lt;/a&gt;type_table
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;문자에 대한 사용자 지정 유형 매핑의 배열&lt;/li&gt;
+&lt;li&gt;이를 통해 영숫자가 아닌 문자를 숫자 또는 영숫자로 매핑하여 해당 문자의 분할을 방지할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;예시&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;+ =&amp;gt; ALPHA&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;- =&amp;gt; ALPHA&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 배열은 더하기(+) 및 하이픈(-) 문자를 영숫자로 매핑하므로 구분 기호로 취급되지 않음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;지원되는 타입&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ALPHA&lt;/code&gt; (Alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ALPHANUM&lt;/code&gt; (Alphanumeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DIGIT&lt;/code&gt; (Numeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LOWER&lt;/code&gt; (Lowercase alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SUBWORD_DELIM&lt;/code&gt; (Non-alphanumeric delimiter)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPPER&lt;/code&gt; (Uppercase alphabetical)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table_path"&gt;&lt;a href="#type_table_path" class="header-anchor"&gt;&lt;/a&gt;type_table_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;custom type mapping 파일 경로&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;작성 예시&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;# Map the $, %, &amp;#39;.&amp;#39;, and &amp;#39;,&amp;#39; characters to DIGIT
+# This might be useful for financial data.
+$ =&amp;gt; DIGIT
+% =&amp;gt; DIGIT
+. =&amp;gt; DIGIT
+\u002C =&amp;gt; DIGIT
+
+# in some cases you might not want to split on ZWJ
+# this also tests the case where we need a bigger byte[]
+# see https://en.wikipedia.org/wiki/Zero-width_joiner
+\u200D =&amp;gt; ALPHANUM
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;이 파일 경로는 설정 위치에 대한 절대 경로이거나 상대 경로여야 하며, 파일은 UTF-8로 인코딩되어야 함. 파일의 각 매핑은 줄 바꿈으로 구분함.&lt;/p&gt;
+&lt;h3 id="사용-시-주의사항"&gt;&lt;a href="#%ec%82%ac%ec%9a%a9-%ec%8b%9c-%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;사용 시 주의사항
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-standard-tokenizer.html" target="_blank" rel="noopener"
+ &gt;Standard tokenizer&lt;/a&gt;와 같이 구두점을 제거하는 토큰화기와 함께 word_delimiter_graph 필터를 사용하지 않는 것이 좋다. 이렇게 하면 word_delimiter_graph 필터가 토큰을 올바르게 분할하지 못할 수 있다.&lt;/p&gt;
+&lt;p&gt;또한 catenate_all 또는 preserve_original과 같은 필터의 구성 가능한 매개변수를 방해할 수도 있다. 대신 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword&lt;/a&gt; 또는 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-whitespace-tokenizer.html" target="_blank" rel="noopener"
+ &gt;whitespace tokenizer&lt;/a&gt;를 사용하는 것이 좋다.&lt;/p&gt;</description></item></channel></rss>

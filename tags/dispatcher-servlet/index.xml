@@ -1,1 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dispatcher Servlet on 0AndWild_log</title><link>https://0andwild.com/tags/dispatcher-servlet/</link><description>Recent content in Dispatcher Servlet on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 27 Sep 2022 23:10:15 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/dispatcher-servlet/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring Dispatcher Servlet의 이해</title><link>https://0andwild.com/posts/220927_dispatcher/</link><pubDate>Tue, 27 Sep 2022 23:10:15 +0900</pubDate><guid>https://0andwild.com/posts/220927_dispatcher/</guid><description>Dispatcher Servlet이 클라이언트 요청을 받아 적절한 컨트롤러로 위임하는 Front Controller 패턴의 동작 원리와 전체 요청 처리 과정을 설명합니다</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/220927_dispatcher/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dispatcher Servlet on 0AndWild_log</title><link>https://0andwild.com/tags/dispatcher-servlet/</link><description>Recent content in Dispatcher Servlet on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Tue, 27 Sep 2022 23:10:15 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/dispatcher-servlet/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring Dispatcher Servlet의 이해</title><link>https://0andwild.com/posts/220927_dispatcher/</link><pubDate>Tue, 27 Sep 2022 23:10:15 +0900</pubDate><guid>https://0andwild.com/posts/220927_dispatcher/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Spring Dispatcher Servlet의 이해" /&gt;&lt;h2 id="dispatcher-servlet이란"&gt;&lt;a href="#dispatcher-servlet%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;Dispatcher Servlet이란?
+&lt;/h2&gt;&lt;p&gt;디스패처 서블릿의 &lt;strong&gt;dispatch&lt;/strong&gt;는 &amp;ldquo;보내다&amp;quot;라는 뜻을 가지고 있다. 이러한 단어의 뜻을 내포하는 디스패처 서블릿은 **HTTP 프로토콜로 들어오는 모든 요청을 가장 먼저 받아 적합한 컨트롤러에 위임해주는 프론트 컨트롤러(Front Controller)**라고 정의할 수 있다.&lt;/p&gt;
+&lt;h3 id="동작-개요"&gt;&lt;a href="#%eb%8f%99%ec%9e%91-%ea%b0%9c%ec%9a%94" class="header-anchor"&gt;&lt;/a&gt;동작 개요
+&lt;/h3&gt;&lt;p&gt;좀 더 자세한 절차는 다음과 같다:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;클라이언트로부터 어떠한 요청이 들어오면 &lt;strong&gt;Tomcat&lt;/strong&gt;과 같은 서블릿 컨테이너가 요청을 받게 된다&lt;/li&gt;
+&lt;li&gt;이 모든 요청을 프론트 컨트롤러인 &lt;strong&gt;디스패처 서블릿&lt;/strong&gt;이 가장 먼저 받게 된다&lt;/li&gt;
+&lt;li&gt;디스패처 서블릿은 공통적인 작업을 먼저 처리한 후에 해당 요청을 처리해야 하는 컨트롤러를 찾아서 작업을 위임한다&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="front-controller-패턴"&gt;&lt;a href="#front-controller-%ed%8c%a8%ed%84%b4" class="header-anchor"&gt;&lt;/a&gt;Front Controller 패턴
+&lt;/h3&gt;&lt;p&gt;여기서 &lt;strong&gt;Front Controller&lt;/strong&gt;라는 용어는 주로 서블릿 컨테이너의 제일 앞에서 서버로 들어오는 클라이언트의 모든 요청을 받아서 처리해주는 컨트롤러로써, &lt;strong&gt;MVC 구조에서 함께 사용되는 디자인 패턴&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="dispatcher-servlet의-동작-방식"&gt;&lt;a href="#dispatcher-servlet%ec%9d%98-%eb%8f%99%ec%9e%91-%eb%b0%a9%ec%8b%9d" class="header-anchor"&gt;&lt;/a&gt;Dispatcher Servlet의 동작 방식
+&lt;/h2&gt;&lt;p&gt;디스패처 서블릿은 가장 먼저 요청을 받는 &lt;strong&gt;Front-Controller&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;**서블릿 컨텍스트(Web Context)**에서 필터들을 지나&lt;/li&gt;
+&lt;li&gt;**스프링 컨텍스트(Spring Context)**에서 디스패처 서블릿이 가장 먼저 요청을 받게 된다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="그림1: Servlet Context와 Spring Context" class="gallery-image" data-flex-basis="601px" data-flex-grow="250" height="505" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/figure1.png" srcset="https://0andwild.com/posts/220927_dispatcher/figure1_hu_4668e2def7db33f8.png 800w, https://0andwild.com/posts/220927_dispatcher/figure1.png 1265w" width="1265"&gt;&lt;/p&gt;
+&lt;p&gt;디스패처 서블릿은 적합한 컨트롤러와 메소드를 찾아 요청을 위임해야 하며 동작 방식은 아래와 같다.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="그림2: Dispatcher Servlet 동작 흐름" class="gallery-image" data-flex-basis="511px" data-flex-grow="213" height="560" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/featured.png" srcset="https://0andwild.com/posts/220927_dispatcher/featured_hu_4d8ad4388727bae1.png 800w, https://0andwild.com/posts/220927_dispatcher/featured.png 1193w" width="1193"&gt;&lt;/p&gt;
+&lt;h3 id="상세-동작-과정"&gt;&lt;a href="#%ec%83%81%ec%84%b8-%eb%8f%99%ec%9e%91-%ea%b3%bc%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;상세 동작 과정
+&lt;/h3&gt;&lt;h4 id="1-http-request가-filter를-거쳐-dispatcher-servlet이-받는다"&gt;&lt;a href="#1-http-request%ea%b0%80-filter%eb%a5%bc-%ea%b1%b0%ec%b3%90-dispatcher-servlet%ec%9d%b4-%eb%b0%9b%eb%8a%94%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;1. HTTP Request가 Filter를 거쳐 Dispatcher Servlet이 받는다
+&lt;/h4&gt;&lt;h4 id="2-요청-정보를-확인하고-위임할-controller를-찾는다"&gt;&lt;a href="#2-%ec%9a%94%ec%b2%ad-%ec%a0%95%eb%b3%b4%eb%a5%bc-%ed%99%95%ec%9d%b8%ed%95%98%ea%b3%a0-%ec%9c%84%ec%9e%84%ed%95%a0-controller%eb%a5%bc-%ec%b0%be%eb%8a%94%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;2. 요청 정보를 확인하고 위임할 Controller를 찾는다
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;HandlerMapping&lt;/code&gt;의 구현체 중 하나인 &lt;code&gt;RequestMappingHandlerMapping&lt;/code&gt;은 &lt;code&gt;@Controller&lt;/code&gt;로 작성된 모든 컨트롤러 빈을 파싱하여 &lt;strong&gt;HashMap으로 (요청정보, 처리대상)을 관리&lt;/strong&gt;한다.&lt;/p&gt;
+&lt;p&gt;요청에 매핑되는 컨트롤러와 해당 메소드 등을 갖는 &lt;code&gt;HandlerMethod&lt;/code&gt; 객체를 찾는다. 그렇기 때문에 &lt;code&gt;HandlerMapping&lt;/code&gt;은 요청이 오면 HTTP Method, URI 등을 사용해 Key 객체인 요청 정보를 만들고, Value인 요청을 처리할 &lt;code&gt;HandlerMethod&lt;/code&gt;를 찾아 &lt;code&gt;HandlerMethodExecutionChain&lt;/code&gt;으로 감싸서 반환한다.&lt;/p&gt;
+&lt;p&gt;이렇게 감싸는 이유는 &lt;strong&gt;컨트롤러로 요청을 넘겨주기 전에 처리해야 하는 인터셉터 등을 포함하기 위함&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;h4 id="3-controller로-위임해줄-handleradapter를-찾아-전달한다"&gt;&lt;a href="#3-controller%eb%a1%9c-%ec%9c%84%ec%9e%84%ed%95%b4%ec%a4%84-handleradapter%eb%a5%bc-%ec%b0%be%ec%95%84-%ec%a0%84%eb%8b%ac%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;3. Controller로 위임해줄 HandlerAdapter를 찾아 전달한다
+&lt;/h4&gt;&lt;p&gt;디스패처 서블릿은 컨트롤러로 요청을 직접 위임하는 것이 아닌 &lt;code&gt;HandlerAdapter&lt;/code&gt;를 통해 컨트롤러로 요청을 위임한다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;HandlerAdapter&lt;/code&gt; 인터페이스를 거치는 이유는 &lt;strong&gt;컨트롤러를 구현하는 방식이 다양하기 때문&lt;/strong&gt;이다. &lt;code&gt;@Controller&lt;/code&gt;에 &lt;code&gt;@RequestMapping&lt;/code&gt; 관련 어노테이션을 사용해 컨트롤러 클래스를 주로 작성하지만, &lt;code&gt;Controller&lt;/code&gt; 인터페이스를 구현하여 컨트롤러 클래스를 작성할 수도 있다.&lt;/p&gt;
+&lt;p&gt;그렇기 때문에 스프링은 &lt;code&gt;HandlerAdapter&lt;/code&gt;라는 인터페이스를 통해 &lt;strong&gt;어댑터 패턴을 적용&lt;/strong&gt;함으로써 컨트롤러의 구현 방식에 상관없이 요청을 Controller에 위임할 수 있는 것이다.&lt;/p&gt;
+&lt;h4 id="4-handleradapter가-controller로-요청을-위임한다"&gt;&lt;a href="#4-handleradapter%ea%b0%80-controller%eb%a1%9c-%ec%9a%94%ec%b2%ad%ec%9d%84-%ec%9c%84%ec%9e%84%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;4. HandlerAdapter가 Controller로 요청을 위임한다
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;HandlerAdapter&lt;/code&gt;가 Controller로 요청을 넘기기 전에 공통적인 전/후 처리 과정이 필요하다.&lt;/p&gt;
+&lt;p&gt;대표적으로:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인터셉터 처리&lt;/li&gt;
+&lt;li&gt;요청 시 &lt;code&gt;@RequestParam&lt;/code&gt;, &lt;code&gt;@RequestBody&lt;/code&gt; 등을 처리하기 위한 &lt;strong&gt;ArgumentResolver&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;응답 시 &lt;code&gt;ResponseEntity&lt;/code&gt;의 Body를 JSON으로 직렬화하는 등의 처리를 하는 &lt;strong&gt;ReturnValueHandler&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이러한 처리들이 어댑터에서 컨트롤러로 전달되기 전에 처리된다. 그리고 컨트롤러의 메소드를 호출하도록 요청을 위임한다.&lt;/p&gt;
+&lt;h4 id="5-business-logic을-처리한다"&gt;&lt;a href="#5-business-logic%ec%9d%84-%ec%b2%98%eb%a6%ac%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;5. Business Logic을 처리한다
+&lt;/h4&gt;&lt;p&gt;Controller는 서비스를 호출하고 비즈니스 로직을 진행한다.&lt;/p&gt;
+&lt;h4 id="6-controller가-반환값을-return한다"&gt;&lt;a href="#6-controller%ea%b0%80-%eb%b0%98%ed%99%98%ea%b0%92%ec%9d%84-return%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;6. Controller가 반환값을 return한다
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;ResponseEntity&lt;/code&gt; 또는 View 이름을 반환한다.&lt;/p&gt;
+&lt;h4 id="7-handleradapter가-return값을-처리한다"&gt;&lt;a href="#7-handleradapter%ea%b0%80-return%ea%b0%92%ec%9d%84-%ec%b2%98%eb%a6%ac%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;7. HandlerAdapter가 return값을 처리한다
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;HandlerAdapter&lt;/code&gt;는 컨트롤러로부터 받은 응답을 응답 처리기인 &lt;code&gt;ReturnValueHandler&lt;/code&gt;가 후처리한 후에 디스패처 서블릿으로 돌려준다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컨트롤러가 &lt;code&gt;ResponseEntity&lt;/code&gt;를 반환하면 → &lt;code&gt;HttpEntityMethodProcessor&lt;/code&gt;가 &lt;code&gt;MessageConverter&lt;/code&gt;를 사용해 응답 객체를 직렬화하고 응답 상태(&lt;code&gt;HttpStatus&lt;/code&gt;)를 설정&lt;/li&gt;
+&lt;li&gt;View 이름을 반환하면 → &lt;code&gt;ViewResolver&lt;/code&gt;를 통해 View를 반환&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="8-서버의-응답을-클라이언트에게-전달한다"&gt;&lt;a href="#8-%ec%84%9c%eb%b2%84%ec%9d%98-%ec%9d%91%eb%8b%b5%ec%9d%84-%ed%81%b4%eb%9d%bc%ec%9d%b4%ec%96%b8%ed%8a%b8%ec%97%90%ea%b2%8c-%ec%a0%84%eb%8b%ac%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;8. 서버의 응답을 클라이언트에게 전달한다
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;DispatcherServlet&lt;/code&gt;을 통해 반환되는 응답은 다시 Filter를 거쳐 클라이언트에게 반환된다.&lt;/p&gt;</description></item></channel></rss>

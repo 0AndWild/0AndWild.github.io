@@ -1,1 +1,64 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OLAP on 0AndWild_log</title><link>https://0andwild.com/en/tags/olap/</link><description>Recent content in OLAP on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Mon, 18 Dec 2023 21:37:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/olap/index.xml" rel="self" type="application/rss+xml"/><item><title>What is BigQuery?</title><link>https://0andwild.com/en/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/en/posts/231218_bigquery/</guid><description>Key features of BigQuery as a column-based database and its Colossus-based distributed processing architecture</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231218_bigquery/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OLAP on 0AndWild_log</title><link>https://0andwild.com/en/tags/olap/</link><description>Recent content in OLAP on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 18 Dec 2023 21:37:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/olap/index.xml" rel="self" type="application/rss+xml"/><item><title>What is BigQuery?</title><link>https://0andwild.com/en/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/en/posts/231218_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is BigQuery?" /&gt;&lt;h2 id="bigquery-features"&gt;&lt;a href="#bigquery-features" class="header-anchor"&gt;&lt;/a&gt;BigQuery Features
+&lt;/h2&gt;&lt;h3 id="column-based-database"&gt;&lt;a href="#column-based-database" class="header-anchor"&gt;&lt;/a&gt;Column-based Database
+&lt;/h3&gt;&lt;p&gt;Unlike typical RDBs that store data in row units, when accessing data in a specific column, it scans only the column file you&amp;rsquo;re looking for without scanning the entire row.&lt;/p&gt;
+&lt;p&gt;Advantageous for analytical database (OLAP) operations that read only specific columns to count or calculate statistics.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fast queries with column-level scanning&lt;/li&gt;
+&lt;li&gt;Optimized for analytical queries&lt;/li&gt;
+&lt;li&gt;Storage efficiency&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="data-processing-architecture"&gt;&lt;a href="#data-processing-architecture" class="header-anchor"&gt;&lt;/a&gt;Data Processing Architecture
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_fad767db3e02e3de.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Colossus (Distributed Storage)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Google&amp;rsquo;s cluster-level file system succeeding Google File System (GFS)&lt;/li&gt;
+&lt;li&gt;Provides storage at the bottom layer&lt;/li&gt;
+&lt;li&gt;Communicates with compute nodes through Jupiter, a TB-level network&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Compute Layers (Leaf, Mixer1, Mixer0)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Process data read from Colossus without disks&lt;/li&gt;
+&lt;li&gt;Each layer passes data up to the layer above&lt;/li&gt;
+&lt;li&gt;High-speed computation through distributed parallel processing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-key-no-index"&gt;&lt;a href="#no-key-no-index" class="header-anchor"&gt;&lt;/a&gt;No Key, No Index
+&lt;/h3&gt;&lt;p&gt;No concept of keys and indexes. Full scan only&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;No need for index management&lt;/li&gt;
+&lt;li&gt;Performance achieved through column-based scanning&lt;/li&gt;
+&lt;li&gt;Optimized for large-scale data analysis&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-update-delete"&gt;&lt;a href="#no-update-delete" class="header-anchor"&gt;&lt;/a&gt;No Update, Delete
+&lt;/h3&gt;&lt;p&gt;Only additions are allowed for performance, and once data is entered, it cannot be modified or deleted.&lt;/p&gt;
+&lt;p&gt;If data is entered incorrectly, the table must be deleted and recreated.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Constraints&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only INSERT supported&lt;/li&gt;
+&lt;li&gt;UPDATE/DELETE not supported&lt;/li&gt;
+&lt;li&gt;Requires recreation when modifying data&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
+&lt;/h3&gt;&lt;p&gt;Data is replicated to 3 data centers, so it may not be immediately available for querying after writing.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_7243d5dea1f40b1f.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;High availability through triple replication&lt;/li&gt;
+&lt;li&gt;Eventual consistency guarantee&lt;/li&gt;
+&lt;li&gt;Reads may not be immediately available after writes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://burning-dba.tistory.com/137" target="_blank" rel="noopener"
+ &gt;BigQuery Performance/Cost Tips&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://zzsza.github.io/gcp/2020/04/12/bigquery-unnest-array-struct/#bigquery-unnest" target="_blank" rel="noopener"
+ &gt;How to Use BigQuery UNNEST, ARRAY, STRUCT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bcho.tistory.com/1117" target="_blank" rel="noopener"
+ &gt;Introduction to Google Big Data Platform BigQuery Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

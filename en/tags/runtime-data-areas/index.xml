@@ -1,1 +1,159 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Runtime Data Areas on 0AndWild_log</title><link>https://0andwild.com/en/tags/runtime-data-areas/</link><description>Recent content in Runtime Data Areas on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 23 Sep 2022 22:27:28 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/runtime-data-areas/index.xml" rel="self" type="application/rss+xml"/><item><title>Deep Dive into JVM (Java Virtual Machine) (2)</title><link>https://0andwild.com/en/posts/220923_jvm_2/</link><pubDate>Fri, 23 Sep 2022 22:27:28 +0900</pubDate><guid>https://0andwild.com/en/posts/220923_jvm_2/</guid><description>An in-depth analysis of JVM&amp;rsquo;s 4 core components and the 5 memory areas of Runtime Data Areas (Method, Heap, Stack, PC Register, Native Method Stack).</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/220923_jvm_2/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Runtime Data Areas on 0AndWild_log</title><link>https://0andwild.com/en/tags/runtime-data-areas/</link><description>Recent content in Runtime Data Areas on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 23 Sep 2022 22:27:28 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/runtime-data-areas/index.xml" rel="self" type="application/rss+xml"/><item><title>Deep Dive into JVM (Java Virtual Machine) (2)</title><link>https://0andwild.com/en/posts/220923_jvm_2/</link><pubDate>Fri, 23 Sep 2022 22:27:28 +0900</pubDate><guid>https://0andwild.com/en/posts/220923_jvm_2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Deep Dive into JVM (Java Virtual Machine) (2)" /&gt;&lt;h1 id="jvm-components"&gt;&lt;a href="#jvm-components" class="header-anchor"&gt;&lt;/a&gt;JVM Components
+&lt;/h1&gt;&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="420px" data-flex-grow="175" height="325" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/featured.png" width="569"&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="1-class-loader"&gt;&lt;a href="#1-class-loader" class="header-anchor"&gt;&lt;/a&gt;1. Class Loader
+&lt;/h2&gt;&lt;p&gt;JVM&amp;rsquo;s &lt;strong&gt;Class Loader&lt;/strong&gt; loads &lt;code&gt;*.class&lt;/code&gt; files (bytecode files converted by &lt;code&gt;javac&lt;/code&gt;) into &lt;strong&gt;Runtime Data Areas&lt;/strong&gt; to run the program.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;Class Loader loading occurs at &lt;strong&gt;runtime&lt;/strong&gt;, when a class is first accessed. This enables &lt;strong&gt;Lazy Loading Singleton&lt;/strong&gt; implementation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Class Loading is &lt;strong&gt;Thread-safe&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="2-execution-engine"&gt;&lt;a href="#2-execution-engine" class="header-anchor"&gt;&lt;/a&gt;2. Execution Engine
+&lt;/h2&gt;&lt;p&gt;Executes the &lt;strong&gt;bytecode&lt;/strong&gt; loaded into Runtime Data Areas by the Class Loader. It converts bytecode to machine code and executes it instruction by instruction, composed of 1-byte OpCode and operands.&lt;/p&gt;
+&lt;h3 id="key-components"&gt;&lt;a href="#key-components" class="header-anchor"&gt;&lt;/a&gt;Key Components
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Interpreter&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Compiler (Just-in-Time)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3-garbage-collector"&gt;&lt;a href="#3-garbage-collector" class="header-anchor"&gt;&lt;/a&gt;3. Garbage Collector
+&lt;/h2&gt;&lt;p&gt;Responsible for &lt;strong&gt;removing unreferenced objects in the Heap area&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Before Java, programmers managed all program memory. In Java, the JVM manages program memory through a process called &lt;strong&gt;garbage collection&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Garbage collection continuously finds and removes unused memory in Java programs.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="4-runtime-data-areas"&gt;&lt;a href="#4-runtime-data-areas" class="header-anchor"&gt;&lt;/a&gt;4. Runtime Data Areas
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;JVM&amp;rsquo;s memory area allocated from the OS&lt;/strong&gt;. It holds data needed to run Java applications.&lt;/p&gt;
+&lt;p&gt;Runtime Data Areas are divided into &lt;strong&gt;5 areas&lt;/strong&gt; as follows.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Shared Areas&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Method and Heap areas are shared by all Threads&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Thread-specific Areas&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Stack, PC Register, Native Method areas exist per Thread&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_452cc5b05f4a468f.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
+&lt;h3 id="1-method-area"&gt;&lt;a href="#1-method-area" class="header-anchor"&gt;&lt;/a&gt;(1) Method Area
+&lt;/h3&gt;&lt;p&gt;Created when the JVM starts, it stores runtime constant pools, field and method code, static variables, method bytecode, etc. for each class and interface read by the JVM.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;It&amp;rsquo;s a Non-Heap area stored in the Permanent area. This is a factor to consider when specifying the &lt;code&gt;PermSize&lt;/code&gt; (Permanent Generation size) JVM option.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h4 id="1-1-type-information"&gt;&lt;a href="#1-1-type-information" class="header-anchor"&gt;&lt;/a&gt;1-1 Type Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Whether it&amp;rsquo;s an Interface&lt;/li&gt;
+&lt;li&gt;Type name including package name&lt;/li&gt;
+&lt;li&gt;Type access modifiers&lt;/li&gt;
+&lt;li&gt;Associated Interface list&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-2-runtime-constant-pool"&gt;&lt;a href="#1-2-runtime-constant-pool" class="header-anchor"&gt;&lt;/a&gt;1-2 Runtime Constant Pool
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Stores all references to Type, Field, and Method&lt;/li&gt;
+&lt;li&gt;JVM finds and references memory addresses through the Runtime Constant Pool&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-3-field-information"&gt;&lt;a href="#1-3-field-information" class="header-anchor"&gt;&lt;/a&gt;1-3 Field Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Field type&lt;/li&gt;
+&lt;li&gt;Field access modifiers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-4-method-information"&gt;&lt;a href="#1-4-method-information" class="header-anchor"&gt;&lt;/a&gt;1-4 Method Information
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Stores metadata for all Methods including Constructors&lt;/li&gt;
+&lt;li&gt;Stores Method name, parameter count and type, return type, access modifiers, bytecode, local variable section size, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="1-5-class-variable"&gt;&lt;a href="#1-5-class-variable" class="header-anchor"&gt;&lt;/a&gt;1-5 Class Variable
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Stores variables declared with the &lt;code&gt;static&lt;/code&gt; keyword&lt;/li&gt;
+&lt;li&gt;Actual instances of non-primitive static variables are stored in Heap memory&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-heap-area"&gt;&lt;a href="#2-heap-area" class="header-anchor"&gt;&lt;/a&gt;(2) Heap Area
+&lt;/h3&gt;&lt;p&gt;Space for storing objects created with the &lt;code&gt;new&lt;/code&gt; operator.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Objects become targets for &lt;strong&gt;GC (Garbage Collector)&lt;/strong&gt; when no referencing variables or fields exist.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="3-stack-area"&gt;&lt;a href="#3-stack-area" class="header-anchor"&gt;&lt;/a&gt;(3) Stack Area
+&lt;/h3&gt;&lt;p&gt;Stored as &lt;strong&gt;separate Frames per Thread&lt;/strong&gt;, with the following elements stored.&lt;/p&gt;
+&lt;h4 id="3-1-local-variable-area"&gt;&lt;a href="#3-1-local-variable-area" class="header-anchor"&gt;&lt;/a&gt;3-1 Local Variable Area
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Stores temporary data occurring during Method execution, such as local variables, parameters, and method call addresses&lt;/li&gt;
+&lt;li&gt;Stored in 4-byte units: 4-byte primitives like &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;float&lt;/code&gt; occupy 1 cell; 8-byte primitives like &lt;code&gt;double&lt;/code&gt; occupy 2 cells&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bool&lt;/code&gt; generally occupies 1 cell&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-2-operand-stack"&gt;&lt;a href="#3-2-operand-stack" class="header-anchor"&gt;&lt;/a&gt;3-2 Operand Stack
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;The Method&amp;rsquo;s &lt;strong&gt;workspace&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Indicates which commands to execute with which operands&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-3-frame-data"&gt;&lt;a href="#3-3-frame-data" class="header-anchor"&gt;&lt;/a&gt;3-3 Frame Data
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Includes Constant Pool Resolution, Method Return, Exception Dispatch, etc.&lt;/li&gt;
+&lt;li&gt;Also holds referenced Exception tables&lt;/li&gt;
+&lt;li&gt;When an Exception occurs, JVM references this table to determine how to handle the Exception&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-pc-register"&gt;&lt;a href="#4-pc-register" class="header-anchor"&gt;&lt;/a&gt;(4) PC Register
+&lt;/h3&gt;&lt;p&gt;Created when a Thread starts, &lt;strong&gt;one exists per thread&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Holds the &lt;strong&gt;address of the currently executing portion&lt;/strong&gt; of the Thread, recording which part should be executed with which instruction.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;The OS references the &lt;strong&gt;PC (Program Counter) Register&lt;/strong&gt; to know which instruction the Thread should execute next during CPU scheduling.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="5-native-method-stack"&gt;&lt;a href="#5-native-method-stack" class="header-anchor"&gt;&lt;/a&gt;(5) Native Method Stack
+&lt;/h3&gt;&lt;p&gt;Area for executing programs &lt;strong&gt;written in actual executable machine code&lt;/strong&gt; rather than bytecode generated from Java program compilation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Space for &lt;strong&gt;code written in languages other than Java&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Converted to bytecode and stored through the &lt;strong&gt;Java Native Interface&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Area where the kernel grabs the stack and independently executes the program, like a general program&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="jvm-execution-order"&gt;&lt;a href="#jvm-execution-order" class="header-anchor"&gt;&lt;/a&gt;JVM Execution Order
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Memory Allocation&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When a program runs, JVM receives memory needed to execute the program from the OS&lt;/li&gt;
+&lt;li&gt;JVM divides this memory into multiple areas for use&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Compilation&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Java Compiler (&lt;code&gt;javac&lt;/code&gt;) compiles &lt;code&gt;*.java&lt;/code&gt; files and converts them to &lt;code&gt;*.class&lt;/code&gt; Java bytecode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Class Loading&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compiled &lt;code&gt;*.class&lt;/code&gt; files are loaded into JVM memory through the &lt;strong&gt;Class Loader&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Bytecode Interpretation&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Loaded &lt;code&gt;*.class&lt;/code&gt; files are interpreted into machine code through the &lt;strong&gt;Execution Engine&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Execution and Management&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Interpreted bytecode is placed in memory areas and actually executed&lt;/li&gt;
+&lt;li&gt;During execution, JVM performs memory management tasks such as &lt;strong&gt;thread synchronization&lt;/strong&gt; and &lt;strong&gt;garbage collector&lt;/strong&gt; as needed&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

@@ -1,1 +1,176 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Search on 0AndWild_log</title><link>https://0andwild.com/en/tags/search/</link><description>Recent content in Search on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/search/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting Techniques</title><link>https://0andwild.com/en/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/en/posts/240207_es/</guid><description>Three Elasticsearch highlighter methods including Unified, Plain, and FVH, along with efficient offset strategies using Postings List and Term Vectors</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240207_es/featured.png"/></item><item><title>Elasticsearch Autocomplete Search Methods</title><link>https://0andwild.com/en/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/en/posts/240204_es/</guid><description>Comparing Elasticsearch autocomplete implementation methods like Edge N-Gram, Search-as-you-type, and Completion Suggester with guidelines for optimal choices</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240204_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Search on 0AndWild_log</title><link>https://0andwild.com/en/tags/search/</link><description>Recent content in Search on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 07 Feb 2024 21:24:29 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/search/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Highlighting Techniques</title><link>https://0andwild.com/en/posts/240207_es/</link><pubDate>Wed, 07 Feb 2024 21:24:29 +0900</pubDate><guid>https://0andwild.com/en/posts/240207_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Highlighting Techniques" /&gt;&lt;h2 id="1-kind-of-highlighter"&gt;&lt;a href="#1-kind-of-highlighter" class="header-anchor"&gt;&lt;/a&gt;1) Kind of Highlighter
+&lt;/h2&gt;&lt;p&gt;ES supports highlighting for search results and provides 3 methods.&lt;/p&gt;
+&lt;p&gt;Each type below can be applied separately to each field to be highlighted&lt;/p&gt;
+&lt;h3 id="unified-default-highlighter"&gt;&lt;a href="#unified-default-highlighter" class="header-anchor"&gt;&lt;/a&gt;Unified (Default Highlighter)
+&lt;/h3&gt;&lt;p&gt;The unified highlighter uses the Lucene unified highlighter. This highlighter breaks text into sentences and scores individual sentences as if they were documents in a corpus using the BM25 algorithm. It also supports accurate phrase and multi-term (fuzzy, prefix, regex) highlighting.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BM25 algorithm-based sentence scoring&lt;/li&gt;
+&lt;li&gt;Accurate phrase highlighting support&lt;/li&gt;
+&lt;li&gt;Multi-term query support (fuzzy, prefix, regex)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain"&gt;&lt;a href="#plain" class="header-anchor"&gt;&lt;/a&gt;Plain
+&lt;/h3&gt;&lt;p&gt;The plain highlighter is best suited for highlighting simple query matches in a single field.&lt;/p&gt;
+&lt;p&gt;To accurately reflect the query logic, it &lt;strong&gt;creates a small in-memory index&lt;/strong&gt; and &lt;strong&gt;re-executes the original query criteria&lt;/strong&gt; through Lucene&amp;rsquo;s query execution planner to access low-level match information for the current document.&lt;/p&gt;
+&lt;p&gt;This operation is &lt;strong&gt;repeated for every field and every document that needs to be highlighted&lt;/strong&gt;. For highlighting many fields in many documents with complex queries, it&amp;rsquo;s recommended to use the unified highlighter with postings or term_vector fields.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Suitable for simple queries on single fields&lt;/li&gt;
+&lt;li&gt;Creates in-memory index&lt;/li&gt;
+&lt;li&gt;Repeatedly executes for all fields and documents&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="fvh-fast-vector-highlighter"&gt;&lt;a href="#fvh-fast-vector-highlighter" class="header-anchor"&gt;&lt;/a&gt;FVH (Fast Vector Highlighter)
+&lt;/h3&gt;&lt;p&gt;The fvh highlighter uses the Lucene fast vector highlighter. This highlighter can be used on fields where &lt;code&gt;term_vector&lt;/code&gt; is set to &lt;code&gt;with_positions_offsets&lt;/code&gt; in the mapping.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Customizable with &lt;code&gt;boundary_scanner&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Requires &lt;code&gt;term_vector&lt;/code&gt; to be set to &lt;code&gt;with_positions_offsets&lt;/code&gt;, which increases index size&lt;/li&gt;
+&lt;li&gt;Can combine matches from multiple fields into one result (see &lt;code&gt;matched_fields&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Can assign different weights to matches at different positions, such as phrase matches being ranked higher than term matches when highlighting boosting queries that boost phrase matches over term matches&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: The fvh highlighter does not support span queries. If you need support for span queries, use another highlighter such as the unified highlighter.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="2-offsets-strategy"&gt;&lt;a href="#2-offsets-strategy" class="header-anchor"&gt;&lt;/a&gt;2) Offsets Strategy
+&lt;/h2&gt;&lt;p&gt;To create meaningful search snippets from the terms being searched, the highlighter needs to know the start and end character offsets of each word in the original text. These offsets can be obtained from:&lt;/p&gt;
+&lt;h3 id="postings-list"&gt;&lt;a href="#postings-list" class="header-anchor"&gt;&lt;/a&gt;Postings List
+&lt;/h3&gt;&lt;p&gt;If &lt;strong&gt;&lt;code&gt;index_options&lt;/code&gt; is set to &lt;code&gt;offsets&lt;/code&gt;&lt;/strong&gt; in the mapping, the unified highlighter uses this information to highlight documents without re-analyzing the text.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The original query is re-executed directly against the postings and matching offsets are extracted from the index to limit the collection to highlighted documents&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is useful when you have large fields because there&amp;rsquo;s no need to re-analyze the text to be highlighted&lt;/strong&gt;. It also &lt;strong&gt;requires less disk space than using &lt;code&gt;term_vectors&lt;/code&gt;&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;No need to re-analyze text&lt;/li&gt;
+&lt;li&gt;Useful for large fields&lt;/li&gt;
+&lt;li&gt;Saves disk space compared to &lt;code&gt;term_vectors&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="term-vectors"&gt;&lt;a href="#term-vectors" class="header-anchor"&gt;&lt;/a&gt;Term Vectors
+&lt;/h3&gt;&lt;p&gt;If &lt;strong&gt;&lt;code&gt;term_vector&lt;/code&gt; is set to &lt;code&gt;with_positions_offsets&lt;/code&gt;&lt;/strong&gt; in the mapping to provide term vector information, the &lt;strong&gt;unified highlighter automatically uses term vectors&lt;/strong&gt; to highlight fields.&lt;/p&gt;
+&lt;p&gt;Because you have access to each document&amp;rsquo;s term dictionary, it&amp;rsquo;s fast &lt;strong&gt;especially when highlighting multi-term queries like prefixes or wildcards on large fields (over 1MB)&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The fvh highlighter always uses term vectors&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fast performance on large fields (over 1MB)&lt;/li&gt;
+&lt;li&gt;Efficient for multi-term queries (prefixes, wildcards)&lt;/li&gt;
+&lt;li&gt;Direct access to document&amp;rsquo;s term dictionary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="plain-highlighting"&gt;&lt;a href="#plain-highlighting" class="header-anchor"&gt;&lt;/a&gt;Plain Highlighting
+&lt;/h3&gt;&lt;p&gt;This mode is &lt;strong&gt;used by unified when there are no other alternatives&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;It creates a small in-memory index and re-executes the original query criteria through Lucene&amp;rsquo;s query execution planner to access low-level match information for the current document.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This operation is repeated for every field and every document that needs highlighting&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The plain highlighter always uses plain highlighting&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Used when there are no other options&lt;/li&gt;
+&lt;li&gt;Creates in-memory index&lt;/li&gt;
+&lt;li&gt;Repeatedly executes for all fields/documents&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://elastic.co/guide/en/elasticsearch/reference/current/highlighting.html#boundary-scanners" target="_blank" rel="noopener"
+ &gt;Highlighting | Elasticsearch Guide [8.13]&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Elasticsearch Autocomplete Search Methods</title><link>https://0andwild.com/en/posts/240204_es/</link><pubDate>Sun, 04 Feb 2024 20:59:35 +0900</pubDate><guid>https://0andwild.com/en/posts/240204_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Autocomplete Search Methods" /&gt;&lt;h2 id="elasticsearch-autocomplete-methods"&gt;&lt;a href="#elasticsearch-autocomplete-methods" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Autocomplete Methods
+&lt;/h2&gt;&lt;h3 id="edge-n-gram-tokenizer"&gt;&lt;a href="#edge-n-gram-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Tokenizer
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;token_chars&lt;/code&gt;: letter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is not important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are not important&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="edge-n-gram-token-filter"&gt;&lt;a href="#edge-n-gram-token-filter" class="header-anchor"&gt;&lt;/a&gt;Edge N-Gram Token Filter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_gram&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_gram&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is not important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are not important&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="index_prefixes-parameter"&gt;&lt;a href="#index_prefixes-parameter" class="header-anchor"&gt;&lt;/a&gt;Index_prefixes Parameter
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;min_chars&lt;/code&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;max_chars&lt;/code&gt;: 10&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Same as N-gram&lt;/p&gt;
+&lt;p&gt;However, one difference is that the latter puts generated tokens into an additional field&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="search-as-you-type-data-type"&gt;&lt;a href="#search-as-you-type-data-type" class="header-anchor"&gt;&lt;/a&gt;Search-as-you-type Data Type
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_shingle_size&lt;/code&gt;: 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Generated Tokens (Supported Sub-fields)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Example: &amp;ldquo;real panda blog&amp;rdquo;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;._2gram&lt;/code&gt; additional field: real panda, panda blog (shingle token filter applied)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._3gram&lt;/code&gt; additional field: real panda blog (shingle token filter applied)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;._index_prefix&lt;/code&gt; additional field: r, re, rea, real, &amp;ldquo;real &amp;ldquo;, real p, real pa, real pan, real pand, real panda, &amp;ldquo;real panda &amp;ldquo;, real panda b, real panda bl, real panda blo, real panda blog, p, pa, pan, pand, panda, &amp;ldquo;panda &amp;ldquo;, panda b, panda bl, panda blo, panda blog, &amp;ldquo;panda blog &amp;ldquo;, b, bl, blo, blog, &amp;ldquo;blog &amp;quot; (&lt;strong&gt;Applied to ._3gram field with n-gram max of 3&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The most efficient query method recommended by ES is a multi-match query of bool_prefix type targeting the root field and its shingle sub-fields.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This query can match query terms in any order, but gives a higher score when the terms appear in order in the shingle sub-field of the document.&lt;/p&gt;
+&lt;p&gt;If you want to search for exact order matching of query terms and document terms, or use other properties of phrase queries, you can use the match_phrase_prefix query on the root field. This is also the case when the last term (not a prefix) must match exactly. However, this may be less efficient than using the match_bool_prefix query.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;shingle token filter defaults to 2&lt;/code&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Appropriate Use Cases&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the order of terms is important&lt;/li&gt;
+&lt;li&gt;When the starting point and position of tokens are important&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;If no analyzer is configured during indexing, the standard analyzer is applied by default.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="suggester-api"&gt;&lt;a href="#suggester-api" class="header-anchor"&gt;&lt;/a&gt;Suggester API
+&lt;/h2&gt;&lt;h3 id="in-memory-completion-suggester-context-suggester"&gt;&lt;a href="#in-memory-completion-suggester-context-suggester" class="header-anchor"&gt;&lt;/a&gt;In-memory (Completion Suggester, Context Suggester)
+&lt;/h3&gt;&lt;p&gt;Completion suggester provides auto-complete and search-as-you-type functionality. (Does not support typo correction)&lt;/p&gt;
+&lt;p&gt;Completion suggester is optimized for speed and responds immediately to user typing.&lt;/p&gt;
+&lt;p&gt;However, building and storing in in-memory manner incurs significant resource costs.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="term-suggester"&gt;&lt;a href="#term-suggester" class="header-anchor"&gt;&lt;/a&gt;Term Suggester
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Used to provide search results based on suggested words when there are no results for the text entered by the user&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Suggests words for misspellings&lt;/p&gt;
+&lt;p&gt;Words are suggested using edit distance. Edit distance is a metric that measures how similar one string is to another string.&lt;/p&gt;
+&lt;p&gt;Edit distance is typically measured through operations of adding, deleting, and substituting each word.&lt;/p&gt;
+&lt;p&gt;For example, to change the string &amp;ldquo;tamming test&amp;rdquo; to &amp;ldquo;taming text&amp;rdquo;, you need 1 operation to delete m and 1 operation to change s to x. Therefore, the edit distance is 2.&lt;/p&gt;
+&lt;p&gt;If there is no term matching the indexed data, term suggest will recommend similar words.&lt;/p&gt;
+&lt;p&gt;In the results, text represents the suggested character, and score indicates how close the suggested text is to the original.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Algorithms&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Elasticsearch uses Levenshtein edit distance measurement or Jaro-Winkler edit distance measurement as edit distance calculation algorithms.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Korean Processing&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For Korean, data is not recommended even when using term suggest. This is fundamentally because the Korean Unicode system is complex.&lt;/li&gt;
+&lt;li&gt;Korean typo handling is possible through ICU analyzer. ICU analyzer is specifically developed for internationalization and has built-in functions to decompose and combine Korean graphemes. However, for sophisticated features such as typo correction, Korean-English conversion, and autocomplete, it is recommended to develop separate plugins. (e.g., JavaCafe plugin)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="phrase-suggester-phrase-suggestion"&gt;&lt;a href="#phrase-suggester-phrase-suggestion" class="header-anchor"&gt;&lt;/a&gt;Phrase Suggester (Phrase Suggestion)
+&lt;/h3&gt;&lt;h4 id="completion-suggester"&gt;&lt;a href="#completion-suggester" class="header-anchor"&gt;&lt;/a&gt;Completion Suggester
+&lt;/h4&gt;&lt;p&gt;Autocomplete suggestion, predicts and shows search terms using autocomplete before the user completes input&lt;/p&gt;
+&lt;h4 id="context-suggester"&gt;&lt;a href="#context-suggester" class="header-anchor"&gt;&lt;/a&gt;Context Suggester
+&lt;/h4&gt;&lt;p&gt;Contextual suggestion&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://realpandablog.wordpress.com/2019/09/11/search-as-you-type-n-grams-suggesters-in-elasticsearch/" target="_blank" rel="noopener"
+ &gt;Search-as-you-type, N-grams &amp;amp; Suggesters in Elasticsearch&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

@@ -1,1 +1,620 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ElasticSearch on 0AndWild_log</title><link>https://0andwild.com/en/categories/elasticsearch/</link><description>Recent content in ElasticSearch on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query Processing Sequence</title><link>https://0andwild.com/en/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240203_es_query/</guid><description>Execution order of Query, Filter, PostFilter in Elasticsearch and their impact on Aggregation</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240203_es_query/featured.png"/></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/en/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer3/</guid><description>Types and configuration methods of Token Filters that compose Elasticsearch Analyzer.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer3/featured.png"/></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/en/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer2/</guid><description>Various types and configuration methods of Tokenizers that compose Elasticsearch Analyzer</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer2/featured.png"/></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/en/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer1/</guid><description>Various types and configuration methods of Character Filters that compose Elasticsearch Analyzer</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240202_es_analyzer1/featured.png"/></item><item><title>What is ElasticSearch?</title><link>https://0andwild.com/en/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/en/posts/240201_es/</guid><description>Explore Elasticsearch fundamentals, the ELK stack, comparison with RDB, and core architecture including clusters, nodes, and shards.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240201_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ElasticSearch on 0AndWild_log</title><link>https://0andwild.com/en/categories/elasticsearch/</link><description>Recent content in ElasticSearch on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query Processing Sequence</title><link>https://0andwild.com/en/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240203_es_query/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Query Processing Sequence" /&gt;&lt;h1 id="elasticsearch-query-processing-sequence"&gt;&lt;a href="#elasticsearch-query-processing-sequence" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Query Processing Sequence
+&lt;/h1&gt;&lt;h2 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Filtered Query&lt;/strong&gt; affects both the final search and aggregation results, but &lt;strong&gt;PostFiltered Query&lt;/strong&gt; only affects the final search results and does not affect aggregation.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="query-processing-sequence"&gt;&lt;a href="#query-processing-sequence" class="header-anchor"&gt;&lt;/a&gt;Query Processing Sequence
+&lt;/h2&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;SearchRequest → (Filtered) → Query → (PostFilter) → Result → RescoreQuery
+ ↓
+ Aggregation → AggregationResult
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="804px" data-flex-grow="335" height="191" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence1.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="filter-query-example"&gt;&lt;a href="#filter-query-example" class="header-anchor"&gt;&lt;/a&gt;Filter Query Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filtered&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filter Query affects both search results and Aggregation.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="882px" data-flex-grow="367" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence2.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="postfilter-query-example"&gt;&lt;a href="#postfilter-query-example" class="header-anchor"&gt;&lt;/a&gt;PostFilter Query Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;post_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;PostFilter Query only affects search results and does not affect Aggregation results.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rescore-query-parameters"&gt;&lt;a href="#rescore-query-parameters" class="header-anchor"&gt;&lt;/a&gt;Rescore Query Parameters
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;window_size&lt;/strong&gt;: The number of top results to rescore per shard&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;score_mode&lt;/strong&gt;: The method of combining main query score and rescore query scores&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/en/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer3/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Token Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter sequence" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer3/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer3/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer3/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter sequence" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="token-filter"&gt;&lt;a href="#token-filter" class="header-anchor"&gt;&lt;/a&gt;Token Filter
+&lt;/h1&gt;&lt;p&gt;Token Filter receives the token stream generated by the Tokenizer and performs the role of adding, removing, or modifying tokens.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="word-delimiter-graph-filter"&gt;&lt;a href="#word-delimiter-graph-filter" class="header-anchor"&gt;&lt;/a&gt;Word Delimiter Graph Filter
+&lt;/h2&gt;&lt;p&gt;The word delimiter graph filter is designed to remove punctuation from complex identifiers like product IDs or part numbers. For these use cases, it is recommended to use it with the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword tokenizer&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When separating hyphenated words like wi-fi, it&amp;rsquo;s better not to use the word delimiter graph filter. Since users search both with and without hyphens, it&amp;rsquo;s better to use the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-synonym-graph-tokenfilter.html" target="_blank" rel="noopener"
+ &gt;synonym graph&lt;/a&gt; filter.&lt;/p&gt;
+&lt;h3 id="conversion-rules"&gt;&lt;a href="#conversion-rules" class="header-anchor"&gt;&lt;/a&gt;Conversion Rules
+&lt;/h3&gt;&lt;p&gt;Tokens are split in the following ways:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Split tokens at non-alphanumeric characters&lt;/strong&gt;: &lt;code&gt;Super-Duper&lt;/code&gt; → &lt;code&gt;Super, Duper&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Remove leading and trailing delimiters&lt;/strong&gt;: &lt;code&gt;XL---42+'Autocoder'&lt;/code&gt; → &lt;code&gt;XL, 42, Autocoder&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Split at case transitions&lt;/strong&gt;: &lt;code&gt;PowerShot&lt;/code&gt; → &lt;code&gt;Power, Shot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Split at letter-number transitions&lt;/strong&gt;: &lt;code&gt;XL500&lt;/code&gt; → &lt;code&gt;XL, 500&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Remove English possessives&lt;/strong&gt;: &lt;code&gt;Neil's&lt;/code&gt; → &lt;code&gt;Neil&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="api-usage-example"&gt;&lt;a href="#api-usage-example" class="header-anchor"&gt;&lt;/a&gt;API Usage Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Neil&amp;#39;s-Super-Duper-XL500--42+AutoCoder&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Neil, Super, Duper, XL, 500, 42, Auto, Coder ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="custom-analyzer-configuration"&gt;&lt;a href="#custom-analyzer-configuration" class="header-anchor"&gt;&lt;/a&gt;Custom Analyzer Configuration
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;word_delimiter_graph&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="configurable-parameters"&gt;&lt;a href="#configurable-parameters" class="header-anchor"&gt;&lt;/a&gt;Configurable Parameters
+&lt;/h3&gt;&lt;h4 id="adjust_offsets"&gt;&lt;a href="#adjust_offsets" class="header-anchor"&gt;&lt;/a&gt;adjust_offsets
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter adjusts the starting point of split tokens or catenated tokens to better reflect their actual position in the token stream&lt;/li&gt;
+&lt;li&gt;If using filters like trim that change token length without changing offset, this should be set to &lt;code&gt;false&lt;/code&gt; when used together&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_all"&gt;&lt;a href="#catenate_all" class="header-anchor"&gt;&lt;/a&gt;catenate_all
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter generates catenated tokens for alphanumeric chains separated by non-alphanumeric delimiters&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ superduperxl500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_numbers"&gt;&lt;a href="#catenate_numbers" class="header-anchor"&gt;&lt;/a&gt;catenate_numbers
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter generates catenated tokens for numeric character chains separated by non-alphabetic delimiters&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;01-02-03&lt;/code&gt; → &lt;code&gt;[ 010203, 01, 02, 03 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="catenate_words"&gt;&lt;a href="#catenate_words" class="header-anchor"&gt;&lt;/a&gt;catenate_words
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter generates catenated tokens for alphabetic character chains separated by non-alphabetic delimiters&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;super-duper-xl&lt;/code&gt; → &lt;code&gt;[ superduperxl, super, duper, xl ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Caution when using Catenate parameters&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Setting these parameters to true generates multi-position tokens that are not supported in indexing&lt;/p&gt;
+&lt;p&gt;If these parameters are true, either don&amp;rsquo;t use this filter in the index analyzer or use the flatten_graph filter after this filter to make the token stream suitable for indexing&lt;/p&gt;
+&lt;p&gt;When used in search analysis, catenated tokens can cause issues with match_phrase queries and other queries that rely on matching token positions. If you plan to use these queries, you should not set these parameters to true.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="generate_number_parts"&gt;&lt;a href="#generate_number_parts" class="header-anchor"&gt;&lt;/a&gt;generate_number_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter includes tokens composed of numbers in the output&lt;/li&gt;
+&lt;li&gt;When false, the filter excludes these tokens from the output&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="generate_word_parts"&gt;&lt;a href="#generate_word_parts" class="header-anchor"&gt;&lt;/a&gt;generate_word_parts
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter includes tokens composed of alphabetic characters in the output&lt;/li&gt;
+&lt;li&gt;When false, excludes these tokens from the output&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ignore_keywords"&gt;&lt;a href="#ignore_keywords" class="header-anchor"&gt;&lt;/a&gt;ignore_keywords
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter skips tokens with the keyword attribute set to true&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="preserve_original"&gt;&lt;a href="#preserve_original" class="header-anchor"&gt;&lt;/a&gt;preserve_original
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter includes the original version of split tokens in the output&lt;/li&gt;
+&lt;li&gt;This original version includes non-alphanumeric delimiters&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;super-duper-xl-500&lt;/code&gt; → &lt;code&gt;[ super-duper-xl-500, super, duper, xl, 500 ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Caution when using preserve_original parameter&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Setting this parameter to true generates multi-position tokens that are not supported in indexing&lt;/p&gt;
+&lt;p&gt;If this parameter is true, either don&amp;rsquo;t use this filter in the index analyzer or use the flatten_graph filter after this filter to make the token stream suitable for indexing&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="protected_words"&gt;&lt;a href="#protected_words" class="header-anchor"&gt;&lt;/a&gt;protected_words
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;An array of tokens that the filter will not split&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="protected_words_path"&gt;&lt;a href="#protected_words_path" class="header-anchor"&gt;&lt;/a&gt;protected_words_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Path to a file containing a list of tokens that the filter will not split&lt;/li&gt;
+&lt;li&gt;This path must be an absolute or relative path to the config location, and the file must be UTF-8 encoded&lt;/li&gt;
+&lt;li&gt;Each token in the file must be separated by a newline&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_case_change"&gt;&lt;a href="#split_on_case_change" class="header-anchor"&gt;&lt;/a&gt;split_on_case_change
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter splits tokens at case transitions&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;camelCase&lt;/code&gt; → &lt;code&gt;[ camel, Case ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="split_on_numerics"&gt;&lt;a href="#split_on_numerics" class="header-anchor"&gt;&lt;/a&gt;split_on_numerics
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter splits tokens at letter-number transitions&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;j2se&lt;/code&gt; → &lt;code&gt;[ j, 2, se ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="stem_english_possessive"&gt;&lt;a href="#stem_english_possessive" class="header-anchor"&gt;&lt;/a&gt;stem_english_possessive
+&lt;/h4&gt;&lt;p&gt;(Optional, Boolean)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When true, the filter removes English possessives (&amp;rsquo;s) from the end of each token&lt;/li&gt;
+&lt;li&gt;Example: &lt;code&gt;O'Neil's&lt;/code&gt; → &lt;code&gt;[ O, Neil ]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table"&gt;&lt;a href="#type_table" class="header-anchor"&gt;&lt;/a&gt;type_table
+&lt;/h4&gt;&lt;p&gt;(Optional, array of strings)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;An array of custom type mappings for characters&lt;/li&gt;
+&lt;li&gt;This allows mapping non-alphanumeric characters as numeric or alphanumeric to prevent splitting at those characters&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;+ =&amp;gt; ALPHA&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;- =&amp;gt; ALPHA&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above array maps plus (+) and hyphen (-) characters as alphanumeric, so they are not treated as delimiters.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Supported Types&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ALPHA&lt;/code&gt; (Alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ALPHANUM&lt;/code&gt; (Alphanumeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DIGIT&lt;/code&gt; (Numeric)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LOWER&lt;/code&gt; (Lowercase alphabetical)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SUBWORD_DELIM&lt;/code&gt; (Non-alphanumeric delimiter)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPPER&lt;/code&gt; (Uppercase alphabetical)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="type_table_path"&gt;&lt;a href="#type_table_path" class="header-anchor"&gt;&lt;/a&gt;type_table_path
+&lt;/h4&gt;&lt;p&gt;(Optional, string)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Path to a custom type mapping file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;# Map the $, %, &amp;#39;.&amp;#39;, and &amp;#39;,&amp;#39; characters to DIGIT
+# This might be useful for financial data.
+$ =&amp;gt; DIGIT
+% =&amp;gt; DIGIT
+. =&amp;gt; DIGIT
+\u002C =&amp;gt; DIGIT
+
+# in some cases you might not want to split on ZWJ
+# this also tests the case where we need a bigger byte[]
+# see https://en.wikipedia.org/wiki/Zero-width_joiner
+\u200D =&amp;gt; ALPHANUM
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This file path must be an absolute or relative path to the config location, and the file must be UTF-8 encoded. Each mapping in the file is separated by a newline.&lt;/p&gt;
+&lt;h3 id="usage-cautions"&gt;&lt;a href="#usage-cautions" class="header-anchor"&gt;&lt;/a&gt;Usage Cautions
+&lt;/h3&gt;&lt;p&gt;It&amp;rsquo;s not recommended to use the word_delimiter_graph filter with tokenizers that remove punctuation, such as the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-standard-tokenizer.html" target="_blank" rel="noopener"
+ &gt;Standard tokenizer&lt;/a&gt;. This may prevent the word_delimiter_graph filter from splitting tokens correctly.&lt;/p&gt;
+&lt;p&gt;It may also interfere with the filter&amp;rsquo;s configurable parameters like catenate_all or preserve_original. Instead, it&amp;rsquo;s recommended to use the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
+ &gt;keyword&lt;/a&gt; or &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-whitespace-tokenizer.html" target="_blank" rel="noopener"
+ &gt;whitespace tokenizer&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/en/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter sequence" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter sequence" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="tokenizer"&gt;&lt;a href="#tokenizer" class="header-anchor"&gt;&lt;/a&gt;Tokenizer
+&lt;/h1&gt;&lt;p&gt;A Tokenizer receives a character stream and breaks it into individual tokens (usually tokenized by each word).&lt;/p&gt;
+&lt;p&gt;The most commonly used &lt;code&gt;whitespace&lt;/code&gt; tokenizer splits and tokenizes based on whitespace.&lt;/p&gt;
+&lt;h3 id="whitespace-tokenizer-example"&gt;&lt;a href="#whitespace-tokenizer-example" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer Example
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;// character streams
+Quick brown fox!
+
+// Result
+[Quick, brown, fox!]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="tokenizers-responsibilities"&gt;&lt;a href="#tokenizers-responsibilities" class="header-anchor"&gt;&lt;/a&gt;Tokenizer&amp;rsquo;s Responsibilities
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Ordering and position of each term (used in phrase or word proximity queries)&lt;/li&gt;
+&lt;li&gt;Start and end characters of the original word before transformation are used for search snippet highlighting&lt;/li&gt;
+&lt;li&gt;Token type: &lt;code&gt;&amp;lt;ALPHANUM&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;HANGUL&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;NUM&amp;gt;&lt;/code&gt;, etc. (simple analyzers only provide word token types)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="word-oriented-tokenizer"&gt;&lt;a href="#word-oriented-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Word Oriented Tokenizer
+&lt;/h2&gt;&lt;p&gt;The tokenizers below are used to tokenize full text into individual words.&lt;/p&gt;
+&lt;h3 id="standard-tokenizer"&gt;&lt;a href="#standard-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Standard Tokenizer
+&lt;/h3&gt;&lt;p&gt;The standard tokenizer performs tokenization based on the Unicode Text Segmentation algorithm.&lt;/p&gt;
+&lt;h4 id="configuration"&gt;&lt;a href="#configuration" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example"&gt;&lt;a href="#conversion-example" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="max_token_length-application-example"&gt;&lt;a href="#max_token_length-application-example" class="header-anchor"&gt;&lt;/a&gt;max_token_length Application Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumpe, d, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="letter-tokenizer"&gt;&lt;a href="#letter-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Letter Tokenizer
+&lt;/h3&gt;&lt;p&gt;The letter tokenizer splits and tokenizes at non-letter characters. This is suitable for European languages (English-speaking regions) but not for Asian languages, especially languages where words are not separated by spaces.&lt;/p&gt;
+&lt;h4 id="conversion-example-1"&gt;&lt;a href="#conversion-example-1" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;letter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, QUICK, Brown, Foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="lowercase-tokenizer"&gt;&lt;a href="#lowercase-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Lowercase Tokenizer
+&lt;/h3&gt;&lt;p&gt;The lowercase tokenizer splits and tokenizes at non-letter characters like the letter tokenizer, and additionally converts all strings to lowercase. Functionally, it is efficient as it performs both the letter tokenizer&amp;rsquo;s function and lowercase conversion in one operation.&lt;/p&gt;
+&lt;h4 id="conversion-example-2"&gt;&lt;a href="#conversion-example-2" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lowercase&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ the, quick, brown, foxes, jumped, over, the, lazy, dog, s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="whitespace-tokenizer"&gt;&lt;a href="#whitespace-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Whitespace Tokenizer
+&lt;/h3&gt;&lt;p&gt;The whitespace tokenizer performs tokenization based on whitespace characters.&lt;/p&gt;
+&lt;h4 id="configuration-1"&gt;&lt;a href="#configuration-1" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-3"&gt;&lt;a href="#conversion-example-3" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;whitespace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown-Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone. ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="uax-url-email-tokenizer"&gt;&lt;a href="#uax-url-email-tokenizer" class="header-anchor"&gt;&lt;/a&gt;UAX URL Email Tokenizer
+&lt;/h3&gt;&lt;p&gt;The uax_url_email tokenizer is identical to the standard tokenizer, but with one difference: it recognizes URLs or email addresses and treats them as a single token.&lt;/p&gt;
+&lt;h4 id="configuration-2"&gt;&lt;a href="#configuration-2" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-4"&gt;&lt;a href="#conversion-example-4" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Email me at john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith@global-international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// If using standard tokenizer for the above example, the result would be:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ Email, me, at, john.smith, global, international.com ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="configuration-example"&gt;&lt;a href="#configuration-example" class="header-anchor"&gt;&lt;/a&gt;Configuration Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;uax_url_email&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;max_token_length&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;john.smith@global-international.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result (ignores email format, max_token_length takes priority)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// [ john, smith, globa, l, inter, natio, nal.c, om ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="classic-tokenizer"&gt;&lt;a href="#classic-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Classic Tokenizer
+&lt;/h3&gt;&lt;p&gt;The classic tokenizer performs grammar-based tokenization and is good for English documents. This tokenization method has special handling for abbreviations, company names, email addresses, and internet hostnames. However, these rules don&amp;rsquo;t always work and don&amp;rsquo;t work well for languages other than English.&lt;/p&gt;
+&lt;h4 id="tokenizing-rules"&gt;&lt;a href="#tokenizing-rules" class="header-anchor"&gt;&lt;/a&gt;Tokenizing Rules
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Splits words at most punctuation marks, removing the punctuation. However, dots not followed by whitespace are considered part of the token.&lt;/li&gt;
+&lt;li&gt;Splits words at hyphens, but if the word contains a hyphen, it recognizes it as a product number and doesn&amp;rsquo;t split it (e.g., 123-23).&lt;/li&gt;
+&lt;li&gt;Email and internet hostnames are considered as a single token.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="configuration-3"&gt;&lt;a href="#configuration-3" class="header-anchor"&gt;&lt;/a&gt;Configuration
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;max_token_length&lt;/code&gt;: Splits and tokenizes at strings exceeding the specified length&lt;/li&gt;
+&lt;li&gt;Default = 255&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="conversion-example-5"&gt;&lt;a href="#conversion-example-5" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;classic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;The 2 QUICK Brown-Foxes jumped over the lazy dog&amp;#39;s bone.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog&amp;#39;s, bone ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h3 id="thai-tokenizer"&gt;&lt;a href="#thai-tokenizer" class="header-anchor"&gt;&lt;/a&gt;Thai Tokenizer
+&lt;/h3&gt;&lt;p&gt;The thai tokenizer tokenizes Thai text into words. It uses the Thai segmentation algorithm included in Java. If the input text contains strings in languages other than Thai, the standard tokenizer is applied to those strings.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Warning&lt;/strong&gt;: This tokenization method may not be supported in some JREs. This tokenization method is known to work with Sun/Oracle and OpenJDK. If considering full portability for your application, it&amp;rsquo;s recommended to use the &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/plugins/8.8/analysis-icu-tokenizer.html" target="_blank" rel="noopener"
+ &gt;ICU tokenizer&lt;/a&gt; instead&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h4 id="conversion-example-6"&gt;&lt;a href="#conversion-example-6" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;thai&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;การที่ได้ต้องแสดงว่างานดี&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ การ, ที่, ได้, ต้อง, แสดง, ว่า, งาน, ดี ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-tokenizers.html" target="_blank" rel="noopener"
+ &gt;Tokenizer reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/en/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240202_es_analyzer1/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Character Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter sequence" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer1/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer1/sequence_hu_fc41f98e8e2a0d34.png 800w, https://0andwild.com/posts/240202_es_analyzer1/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter sequence" width="1530"&gt;&lt;/p&gt;
+&lt;h1 id="character-filters"&gt;&lt;a href="#character-filters" class="header-anchor"&gt;&lt;/a&gt;Character Filters
+&lt;/h1&gt;&lt;p&gt;Character Filter is a process that preprocesses the input string before the tokenizer stage.&lt;/p&gt;
+&lt;p&gt;It adds, removes, or replaces characters in strings.&lt;/p&gt;
+&lt;p&gt;Elasticsearch provides the following basic Character Filters and also allows custom filters.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="html-strip-character-filter"&gt;&lt;a href="#html-strip-character-filter" class="header-anchor"&gt;&lt;/a&gt;HTML Strip Character Filter
+&lt;/h2&gt;&lt;p&gt;Converts HTML-formatted input values into decoded values.&lt;/p&gt;
+&lt;h3 id="conversion-example"&gt;&lt;a href="#conversion-example" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;html_strip&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;lt;p&amp;gt;I&amp;amp;apos;m so &amp;lt;b&amp;gt;happy&amp;lt;/b&amp;gt;!&amp;lt;/p&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ \nI&amp;#39;m so happy!\n ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="application-method"&gt;&lt;a href="#application-method" class="header-anchor"&gt;&lt;/a&gt;Application Method
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;/my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;html_strip&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="mapping-character-filter"&gt;&lt;a href="#mapping-character-filter" class="header-anchor"&gt;&lt;/a&gt;Mapping Character Filter
+&lt;/h2&gt;&lt;p&gt;The Mapping Character Filter converts the input string to the corresponding key&amp;rsquo;s value when it matches a character specified as a key.&lt;/p&gt;
+&lt;p&gt;The matching method is greedy, converting to the most matched pattern, and the replacement value can be an empty string.&lt;/p&gt;
+&lt;h3 id="conversion-example-1"&gt;&lt;a href="#conversion-example-1" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;GET&lt;/span&gt; &lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;keyword&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;mapping&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;mappings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٠ =&amp;gt; 0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;١ =&amp;gt; 1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٢ =&amp;gt; 2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٣ =&amp;gt; 3&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٤ =&amp;gt; 4&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٥ =&amp;gt; 5&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٦ =&amp;gt; 6&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٧ =&amp;gt; 7&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٨ =&amp;gt; 8&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;٩ =&amp;gt; 9&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;My license plate is ٢٥٠١٥&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ My license plate is 25015 ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="pattern-replace-character-filter"&gt;&lt;a href="#pattern-replace-character-filter" class="header-anchor"&gt;&lt;/a&gt;Pattern Replace Character Filter
+&lt;/h2&gt;&lt;p&gt;The pattern_replace filter converts strings matching a regular expression to a specified string.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;⚠️ &lt;strong&gt;Warning&lt;/strong&gt;: Regular expressions follow Java regex, and poorly written regex can cause performance degradation or StackOverflow errors, and may suddenly terminate running nodes.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="parameters"&gt;&lt;a href="#parameters" class="header-anchor"&gt;&lt;/a&gt;Parameters
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pattern&lt;/code&gt;: Java regular expression&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;replacement&lt;/code&gt;: String to replace with&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;flags&lt;/code&gt;: Java regular expression flags, separated by &lt;code&gt;|&lt;/code&gt; (e.g., &amp;ldquo;CASE_INSENSITIVE|COMMENTS&amp;rdquo;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="conversion-example-2"&gt;&lt;a href="#conversion-example-2" class="header-anchor"&gt;&lt;/a&gt;Conversion Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analysis&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;tokenizer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;standard&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;my_char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_char_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pattern_replace&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pattern&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;(\\d+)-(?=\\d)&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;replacement&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$1_&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST&lt;/span&gt; &lt;span class="err"&gt;my-index&lt;/span&gt;&lt;span class="mi"&gt;-000001&lt;/span&gt;&lt;span class="err"&gt;/_analyze&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my_analyzer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;My credit card is 123-456-789&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Result -&amp;gt; [ My, credit, card, is, 123_456_789 ]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-charfilters.html" target="_blank" rel="noopener"
+ &gt;Character filters reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>What is ElasticSearch?</title><link>https://0andwild.com/en/posts/240201_es/</link><pubDate>Thu, 01 Feb 2024 21:07:14 +0900</pubDate><guid>https://0andwild.com/en/posts/240201_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is ElasticSearch?" /&gt;&lt;p&gt;Elasticsearch is a Java-based open-source distributed search engine built on Apache Lucene.&lt;/p&gt;
+&lt;p&gt;Through Elasticsearch, you can use the Lucene library (an information retrieval library developed in Java) independently, and perform near real-time storage, search, and analysis of massive amounts of data.&lt;/p&gt;
+&lt;p&gt;Elasticsearch can be used standalone for search purposes, or as part of the &lt;strong&gt;ELK (Elasticsearch / Logstash / Kibana)&lt;/strong&gt; stack.&lt;/p&gt;
+&lt;h3 id="elk-stack-components"&gt;&lt;a href="#elk-stack-components" class="header-anchor"&gt;&lt;/a&gt;ELK Stack Components
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Elasticsearch&lt;/strong&gt;: Searches and aggregates data received from Logstash to obtain necessary information&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logstash&lt;/strong&gt;: Collects, aggregates, and parses logs or transaction data from various sources (DB, CSV files, etc.) and delivers them to Elasticsearch&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kibana&lt;/strong&gt;: Visualizes and monitors data through Elasticsearch&amp;rsquo;s fast search capabilities&lt;/li&gt;
+&lt;/ul&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 The ELK stack is primarily used to collect scattered logs from load-balanced WAS into one place, quickly search for desired data, and visualize it for monitoring purposes.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="elasticsearch-and-rdb-terminology-comparison"&gt;&lt;a href="#elasticsearch-and-rdb-terminology-comparison" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch and RDB Terminology Comparison
+&lt;/h2&gt;&lt;p&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es1.png"&gt;
+&lt;/figure&gt;
+
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es2.png"&gt;
+&lt;/figure&gt;
+&lt;/p&gt;
+&lt;h3 id="elasticsearch-70-allows-only-one-type-per-index"&gt;&lt;a href="#elasticsearch-70-allows-only-one-type-per-index" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch 7.0+ Allows Only One Type Per Index
+&lt;/h3&gt;&lt;p&gt;The reason is that Elasticsearch uses the same Lucene fields for types within a single index (DB). Therefore, even if types are different, fields with the same name are not independent, which can cause various problems. As a result, it was modified so that one index can only have one type.&lt;/p&gt;
+&lt;h4 id="comparison-with-rdb"&gt;&lt;a href="#comparison-with-rdb" class="header-anchor"&gt;&lt;/a&gt;Comparison with RDB
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;In the case of RDB&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A single DB can have multiple tables, and columns with the same name in each table do not affect each other.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;In the case of Elasticsearch&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If there are fields (=columns) with the same name in each type (=table) within one index (=DB), those fields are not independent and are stored in the same Lucene field, requiring the same definition.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="elasticsearch-architecture"&gt;&lt;a href="#elasticsearch-architecture" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Architecture
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/240201_es/es3.png"&gt;
+&lt;/figure&gt;
+
+&lt;h3 id="cluster"&gt;&lt;a href="#cluster" class="header-anchor"&gt;&lt;/a&gt;Cluster
+&lt;/h3&gt;&lt;p&gt;A cluster is the largest system unit in Elasticsearch, consisting of a collection of nodes with at least one or more nodes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Different clusters are maintained as independent systems that cannot access or exchange data&lt;/li&gt;
+&lt;li&gt;Multiple servers can form a single cluster&lt;/li&gt;
+&lt;li&gt;Multiple clusters can exist on a single server&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="node"&gt;&lt;a href="#node" class="header-anchor"&gt;&lt;/a&gt;Node
+&lt;/h3&gt;&lt;p&gt;A node is a single server included in a cluster that stores data and participates in the cluster&amp;rsquo;s indexing and search capabilities. Nodes are classified according to their roles as follows:&lt;/p&gt;
+&lt;h4 id="master-eligible-node"&gt;&lt;a href="#master-eligible-node" class="header-anchor"&gt;&lt;/a&gt;Master-eligible Node
+&lt;/h4&gt;&lt;p&gt;A node that can be selected as a master to control the cluster&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Creating and deleting indices&lt;/li&gt;
+&lt;li&gt;Tracking and managing cluster nodes&lt;/li&gt;
+&lt;li&gt;Selecting shards to allocate when data is input&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="data-node"&gt;&lt;a href="#data-node" class="header-anchor"&gt;&lt;/a&gt;Data Node
+&lt;/h4&gt;&lt;p&gt;A node where data (Documents) is stored and where shards, the spaces for distributed data storage, are placed&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Performs data operations such as CRUD, indexing, searching, and statistics&lt;/li&gt;
+&lt;li&gt;Requires significant resources (CPU, memory, etc.)&lt;/li&gt;
+&lt;li&gt;Requires monitoring and should be separated from master nodes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="ingest-node"&gt;&lt;a href="#ingest-node" class="header-anchor"&gt;&lt;/a&gt;Ingest Node
+&lt;/h4&gt;&lt;p&gt;Executes pre-processing pipelines such as data transformation&lt;/p&gt;
+&lt;h4 id="coordination-only-node"&gt;&lt;a href="#coordination-only-node" class="header-anchor"&gt;&lt;/a&gt;Coordination Only Node
+&lt;/h4&gt;&lt;p&gt;A node that receives user requests and distributes them in a round-robin manner&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Forwards cluster-related requests to the master node&lt;/li&gt;
+&lt;li&gt;Forwards data-related requests to data nodes&lt;/li&gt;
+&lt;li&gt;Performs load balancing role&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="index--shard--replication"&gt;&lt;a href="#index--shard--replication" class="header-anchor"&gt;&lt;/a&gt;Index / Shard / Replication
+&lt;/h3&gt;&lt;h4 id="index"&gt;&lt;a href="#index" class="header-anchor"&gt;&lt;/a&gt;Index
+&lt;/h4&gt;&lt;p&gt;A concept corresponding to a database in RDB&lt;/p&gt;
+&lt;h4 id="shard"&gt;&lt;a href="#shard" class="header-anchor"&gt;&lt;/a&gt;Shard
+&lt;/h4&gt;&lt;p&gt;Data indexed within an index does not exist as a single unit but is divided into multiple parts. A single index is split into multiple shards for scale-out purposes.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;💡 Shards are divided into primary shards and replica shards.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Primary Shard&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The original data&lt;/li&gt;
+&lt;li&gt;Data update requests are sent to the primary shard&lt;/li&gt;
+&lt;li&gt;Updated content is replicated to replica shards&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Replica Shard&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A copy of the primary shard&lt;/li&gt;
+&lt;li&gt;Used as a replacement when the original data is lost, performing a role in overcoming failures&lt;/li&gt;
+&lt;li&gt;By default, assigned to a different node than the primary shard&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="segment"&gt;&lt;a href="#segment" class="header-anchor"&gt;&lt;/a&gt;Segment
+&lt;/h3&gt;&lt;p&gt;A segment is a data structure designed for fast document search in Elasticsearch and is a physical file containing shard data.&lt;/p&gt;
+&lt;h4 id="segment-characteristics"&gt;&lt;a href="#segment-characteristics" class="header-anchor"&gt;&lt;/a&gt;Segment Characteristics
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Each shard consists of multiple segments, enabling efficient search through distributed processing of search requests&lt;/li&gt;
+&lt;li&gt;When searching a shard, each segment is searched first, results are combined, and the final result is returned as the shard&amp;rsquo;s result&lt;/li&gt;
+&lt;li&gt;Data indexed within segments is stored in an inverted index structure, making search speed very fast&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="segment-creation-process"&gt;&lt;a href="#segment-creation-process" class="header-anchor"&gt;&lt;/a&gt;Segment Creation Process
+&lt;/h4&gt;&lt;p&gt;Creating a new segment for every request would generate too many segments, so an &lt;strong&gt;in-memory buffer&lt;/strong&gt; is used to prevent this.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Flush&lt;/strong&gt;: When the content accumulated in the in-memory buffer reaches a certain time or the buffer is full, flush is performed and segments are created in the system cache&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Data becomes searchable from this point&lt;/li&gt;
+&lt;li&gt;In this state, the segment is stored in the system cache, not on disk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Commit&lt;/strong&gt;: After a certain time, segments are stored on physical disk through commit&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Merge&lt;/strong&gt;: Stored segments are merged into one over time&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By merging segments into one, the number of segments to search decreases, improving search performance&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

@@ -1,1 +1,113 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BigQuery on 0AndWild_log</title><link>https://0andwild.com/tags/bigquery/</link><description>Recent content in BigQuery on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 20 Dec 2023 21:50:16 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/bigquery/index.xml" rel="self" type="application/rss+xml"/><item><title>BigQuery Clustering 최적화</title><link>https://0andwild.com/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/posts/231220_bigquery/</guid><description>BigQuery 클러스터링의 개념과 파티셔닝과의 조합을 통한 효율적인 데이터 접근 전략</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231220_bigquery/featured.png"/></item><item><title>BigQuery란?</title><link>https://0andwild.com/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/posts/231218_bigquery/</guid><description>컬럼 기반 데이터베이스인 BigQuery의 주요 특징과 Colossus 기반 분산 처리 구조</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231218_bigquery/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>BigQuery on 0AndWild_log</title><link>https://0andwild.com/tags/bigquery/</link><description>Recent content in BigQuery on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Wed, 20 Dec 2023 21:50:16 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/bigquery/index.xml" rel="self" type="application/rss+xml"/><item><title>BigQuery Clustering 최적화</title><link>https://0andwild.com/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering 최적화" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_3ecc95e8ba98b1db.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Lebanon&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2023-12-01&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Clustering을 통해 BigQuery가 데이터 접근에 있어 더 적은 일을 수행하게 하여 Query 속도를 올릴 수 있음. 하지만 Clustering을 하기 전에 테이블의 데이터 양을 생각하여 클러스터링을 처리하는 비용이 더 안 좋을 수 있을지를 생각하는 것이 좋음.&lt;/p&gt;
+&lt;p&gt;예를 들어 BigQuery의 column based 테이블이 10 rows밖에 데이터가 없다고 생각을 하면 clustering을 하는 비용이 데이터를 풀스캔하는 비용보다 더 많이 나올 것임을 인지해야 함.&lt;/p&gt;
+&lt;p&gt;전 구글 엔지니어의 말을 인용하면 클러스터링을 하기 위한 데이터 그룹당 100MB 미만이라면 클러스터링을 하는 것보다 풀스캔을 하는 것이 더 나을 수 있다고 함.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;참고&lt;/strong&gt;: &lt;a class="link" href="https://stackoverflow.com/questions/52669725/google-bigquery-clustered-table-not-reducing-query-size-when-running-query-with/52674573#52674573" target="_blank" rel="noopener"
+ &gt;Google BigQuery clustered table not reducing query size&lt;/a&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;중요 사항&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;추가적으로 클러스터링을 한 base 컬럼을 query 시에 필터링하지 않으면 아무런 query performance에 아무런 도움이 되지 않음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="example-of-creating-clustered-tables"&gt;&lt;a href="#example-of-creating-clustered-tables" class="header-anchor"&gt;&lt;/a&gt;Example of Creating Clustered Tables
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;TABLE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="n"&gt;myproject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mydataset&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clustered_table&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;DATE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_e4a55682afde7f7.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Clustering 특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;최대 4개의 column까지 클러스터링 가능&lt;/li&gt;
+&lt;li&gt;Partitioning과 다르게 INT64, DATE 타입만 사용할 수 있지 않음&lt;/li&gt;
+&lt;li&gt;STRING과 GEOGRAPHY와 같은 타입도 사용 가능&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_d68a5613875dfcea.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;p&gt;파티셔닝과 클러스터링을 함께 사용하면 더욱 효율적인 데이터 접근이 가능함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;조합 전략&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Partitioning: 날짜 기반 데이터 분할&lt;/li&gt;
+&lt;li&gt;Clustering: 파티션 내부에서 추가적인 정렬&lt;/li&gt;
+&lt;li&gt;쿼리 성능과 비용 최적화&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://medium.com/towards-data-science/add-one-line-of-sql-to-optimise-your-bigquery-tables-304761b048f0" target="_blank" rel="noopener"
+ &gt;Add One Line of SQL to Optimise Your BigQuery Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://towardsdatascience.com/use-the-partitions-luke-a-simple-and-proven-way-to-optimise-your-sql-queries-43e24ea4c5d0" target="_blank" rel="noopener"
+ &gt;Use the Partitions, Luke! A Simple and Proven Way to Optimise Your SQL Queries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>BigQuery란?</title><link>https://0andwild.com/posts/231218_bigquery/</link><pubDate>Mon, 18 Dec 2023 21:37:29 +0900</pubDate><guid>https://0andwild.com/posts/231218_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery란?" /&gt;&lt;h2 id="bigquery-특징"&gt;&lt;a href="#bigquery-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;BigQuery 특징
+&lt;/h2&gt;&lt;h3 id="column-based-database"&gt;&lt;a href="#column-based-database" class="header-anchor"&gt;&lt;/a&gt;Column-based Database
+&lt;/h3&gt;&lt;p&gt;일반적인 로우 단위로 저장이 되는 RDB와 다르게 특정 컬럼의 데이터를 접근할 때 해당 로우를 모두 스캔하지 않고 찾고자 하는 컬럼 파일 하나만 스캔하여 접근.&lt;/p&gt;
+&lt;p&gt;특정 컬럼만을 읽어 개수를 세거나 통계를 내는 분석용 데이터베이스(OLAP) 작업에 유리.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컬럼 단위 스캔으로 빠른 조회&lt;/li&gt;
+&lt;li&gt;분석 쿼리에 최적화&lt;/li&gt;
+&lt;li&gt;스토리지 효율성&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="데이터-처리-구조"&gt;&lt;a href="#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%b2%98%eb%a6%ac-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;데이터 처리 구조
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_fad767db3e02e3de.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Colossus (분산 스토리지)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Google File System(GFS)를 잇는 Google의 클러스터 수준의 파일시스템&lt;/li&gt;
+&lt;li&gt;맨 아래에서 저장소를 제공하고 Jupiter라는 TB급 네트워크 망을 통해 컴퓨터 노드와 통신&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;연산 계층 (Leaf, Mixer1, Mixer0)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;디스크 없이 Colossus에서 읽은 데이터를 처리&lt;/li&gt;
+&lt;li&gt;각각 위의 계층으로 데이터를 올리는 역할&lt;/li&gt;
+&lt;li&gt;분산 병렬 처리를 통한 고속 연산&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-key-no-index"&gt;&lt;a href="#no-key-no-index" class="header-anchor"&gt;&lt;/a&gt;No Key, No Index
+&lt;/h3&gt;&lt;p&gt;키와 인덱스 개념이 존재하지 않음. 풀스캔 only&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인덱스 관리 불필요&lt;/li&gt;
+&lt;li&gt;컬럼 기반 스캔으로 성능 확보&lt;/li&gt;
+&lt;li&gt;대용량 데이터 분석에 최적화&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="no-update-delete"&gt;&lt;a href="#no-update-delete" class="header-anchor"&gt;&lt;/a&gt;No Update, Delete
+&lt;/h3&gt;&lt;p&gt;성능을 위해 추가만 가능하며 한번 입력된 데이터는 수정되거나 삭제될 수 없음.&lt;/p&gt;
+&lt;p&gt;데이터가 잘못 입력된 경우 테이블을 삭제하고 다시 만들어야 함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;제약사항&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;INSERT만 지원&lt;/li&gt;
+&lt;li&gt;UPDATE/DELETE 미지원&lt;/li&gt;
+&lt;li&gt;데이터 수정 시 재생성 필요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
+&lt;/h3&gt;&lt;p&gt;데이터를 3개의 데이터 센터에 복제를 하기에 데이터 쓰기 후 바로 조회가 안 될 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_7243d5dea1f40b1f.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;3중 복제를 통한 고가용성&lt;/li&gt;
+&lt;li&gt;최종 일관성 보장&lt;/li&gt;
+&lt;li&gt;쓰기 후 즉시 읽기 불가능할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://burning-dba.tistory.com/137" target="_blank" rel="noopener"
+ &gt;BigQuery 성능/비용 팁&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://zzsza.github.io/gcp/2020/04/12/bigquery-unnest-array-struct/#bigquery-unnest" target="_blank" rel="noopener"
+ &gt;BigQuery UNNEST, ARRAY, STRUCT 사용 방법&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bcho.tistory.com/1117" target="_blank" rel="noopener"
+ &gt;구글 빅데이터 플랫폼 빅쿼리 아키텍처 소개&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

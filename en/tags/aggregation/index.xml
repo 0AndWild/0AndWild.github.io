@@ -1,1 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Aggregation on 0AndWild_log</title><link>https://0andwild.com/en/tags/aggregation/</link><description>Recent content in Aggregation on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/aggregation/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query Processing Sequence</title><link>https://0andwild.com/en/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240203_es_query/</guid><description>Execution order of Query, Filter, PostFilter in Elasticsearch and their impact on Aggregation</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240203_es_query/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Aggregation on 0AndWild_log</title><link>https://0andwild.com/en/tags/aggregation/</link><description>Recent content in Aggregation on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sat, 03 Feb 2024 21:45:06 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/aggregation/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Query Processing Sequence</title><link>https://0andwild.com/en/posts/240203_es_query/</link><pubDate>Sat, 03 Feb 2024 21:45:06 +0900</pubDate><guid>https://0andwild.com/en/posts/240203_es_query/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Query Processing Sequence" /&gt;&lt;h1 id="elasticsearch-query-processing-sequence"&gt;&lt;a href="#elasticsearch-query-processing-sequence" class="header-anchor"&gt;&lt;/a&gt;Elasticsearch Query Processing Sequence
+&lt;/h1&gt;&lt;h2 id="summary"&gt;&lt;a href="#summary" class="header-anchor"&gt;&lt;/a&gt;Summary
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Filtered Query&lt;/strong&gt; affects both the final search and aggregation results, but &lt;strong&gt;PostFiltered Query&lt;/strong&gt; only affects the final search results and does not affect aggregation.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="query-processing-sequence"&gt;&lt;a href="#query-processing-sequence" class="header-anchor"&gt;&lt;/a&gt;Query Processing Sequence
+&lt;/h2&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;SearchRequest → (Filtered) → Query → (PostFilter) → Result → RescoreQuery
+ ↓
+ Aggregation → AggregationResult
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="804px" data-flex-grow="335" height="191" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence1.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="filter-query-example"&gt;&lt;a href="#filter-query-example" class="header-anchor"&gt;&lt;/a&gt;Filter Query Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filtered&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filter Query affects both search results and Aggregation.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="882px" data-flex-grow="367" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240203_es_query/sequence2.jpg" width="640"&gt;&lt;/p&gt;
+&lt;h3 id="postfilter-query-example"&gt;&lt;a href="#postfilter-query-example" class="header-anchor"&gt;&lt;/a&gt;PostFilter Query Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;post_filter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;term&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;location&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;denver&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;PostFilter Query only affects search results and does not affect Aggregation results.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="rescore-query-parameters"&gt;&lt;a href="#rescore-query-parameters" class="header-anchor"&gt;&lt;/a&gt;Rescore Query Parameters
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;window_size&lt;/strong&gt;: The number of top results to rescore per shard&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;score_mode&lt;/strong&gt;: The method of combining main query score and rescore query scores&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

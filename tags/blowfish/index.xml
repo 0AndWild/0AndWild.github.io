@@ -1,1 +1,1140 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Blowfish on 0AndWild_log</title><link>https://0andwild.com/tags/blowfish/</link><description>Recent content in Blowfish on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 17 Oct 2025 12:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/blowfish/index.xml" rel="self" type="application/rss+xml"/><item><title>Giscus로 Hugo 블로그에 댓글 기능 추가하기</title><link>https://0andwild.com/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.com/posts/251017_comments_giscus/</guid><description>무료로 Markdown 지원하는 댓글 시스템을 10분 만에 추가하는 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251017_comments_giscus/featured.png"/></item><item><title>Hugo markdown 설명서</title><link>https://0andwild.com/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.com/posts/251016_blowfish_markdown/</guid><description>Blowfish 마크다운 문법 설명서</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251016_blowfish_markdown/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Blowfish on 0AndWild_log</title><link>https://0andwild.com/tags/blowfish/</link><description>Recent content in Blowfish on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 17 Oct 2025 12:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/blowfish/index.xml" rel="self" type="application/rss+xml"/><item><title>Giscus로 Hugo 블로그에 댓글 기능 추가하기</title><link>https://0andwild.com/posts/251017_comments_giscus/</link><pubDate>Fri, 17 Oct 2025 12:00:00 +0900</pubDate><guid>https://0andwild.com/posts/251017_comments_giscus/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Giscus로 Hugo 블로그에 댓글 기능 추가하기" /&gt;&lt;h2 id="giscus란"&gt;&lt;a href="#giscus%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;Giscus란?
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Giscus&lt;/strong&gt;는 GitHub Discussions를 백엔드로 사용하는 오픈소스 댓글 시스템입니다.&lt;/p&gt;
+&lt;h3 id="주요-특징"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ed%8a%b9%ec%a7%95" class="header-anchor"&gt;&lt;/a&gt;주요 특징
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;완전 무료&lt;/strong&gt; (GitHub 기능 활용)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;서버 불필요&lt;/strong&gt; (GitHub이 모든 것을 처리)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Markdown 완벽 지원&lt;/strong&gt; (코드 블록, 이미지, 표 등)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;반응(Reactions)&lt;/strong&gt; (👍, ❤️, 😄 등)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;GitHub 알림&lt;/strong&gt; (댓글 달리면 알림 받음)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;다크모드&lt;/strong&gt; (블로그 테마와 자동 동기화)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;데이터 소유&lt;/strong&gt; (본인 저장소에 저장)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="utterances와의-차이점"&gt;&lt;a href="#utterances%ec%99%80%ec%9d%98-%ec%b0%a8%ec%9d%b4%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;Utterances와의 차이점
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;기능&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Utterances&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;백엔드&lt;/td&gt;
+ &lt;td&gt;GitHub Discussions&lt;/td&gt;
+ &lt;td&gt;GitHub Issues&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;반응&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;대댓글&lt;/td&gt;
+ &lt;td&gt;✅ (중첩)&lt;/td&gt;
+ &lt;td&gt;⚠️ (flat)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;댓글 정렬&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;적합성&lt;/td&gt;
+ &lt;td&gt;댓글 전용&lt;/td&gt;
+ &lt;td&gt;이슈 트래킹&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;결론&lt;/strong&gt;: Giscus가 Utterances의 상위 호환입니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="사전-준비"&gt;&lt;a href="#%ec%82%ac%ec%a0%84-%ec%a4%80%eb%b9%84" class="header-anchor"&gt;&lt;/a&gt;사전 준비
+&lt;/h2&gt;&lt;h3 id="필요한-것"&gt;&lt;a href="#%ed%95%84%ec%9a%94%ed%95%9c-%ea%b2%83" class="header-anchor"&gt;&lt;/a&gt;필요한 것
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;GitHub 계정&lt;/li&gt;
+&lt;li&gt;Public GitHub 저장소 (블로그 저장소)&lt;/li&gt;
+&lt;li&gt;Hugo + Blowfish 테마&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="제약사항"&gt;&lt;a href="#%ec%a0%9c%ec%95%bd%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;제약사항
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;⚠️ &lt;strong&gt;Public 저장소만 가능&lt;/strong&gt; (Private 저장소는 Discussions 기능 제한)&lt;/li&gt;
+&lt;li&gt;⚠️ &lt;strong&gt;GitHub 계정 필요&lt;/strong&gt; (익명 댓글 불가)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="1단계-github-discussions-활성화"&gt;&lt;a href="#1%eb%8b%a8%ea%b3%84-github-discussions-%ed%99%9c%ec%84%b1%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1단계: GitHub Discussions 활성화
+&lt;/h2&gt;&lt;h3 id="11-저장소-설정-페이지-이동"&gt;&lt;a href="#11-%ec%a0%80%ec%9e%a5%ec%86%8c-%ec%84%a4%ec%a0%95-%ed%8e%98%ec%9d%b4%ec%a7%80-%ec%9d%b4%eb%8f%99" class="header-anchor"&gt;&lt;/a&gt;1.1 저장소 설정 페이지 이동
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;GitHub에서 블로그 저장소 접속&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;예: https://github.com/0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Settings&lt;/strong&gt; 탭 클릭&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="12-discussions-활성화"&gt;&lt;a href="#12-discussions-%ed%99%9c%ec%84%b1%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1.2 Discussions 활성화
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;페이지를 아래로 스크롤하여 &lt;strong&gt;Features&lt;/strong&gt; 섹션 찾기&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Discussions&lt;/strong&gt; 체크박스를 ✅ 체크&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;자동으로 저장됨&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="13-확인"&gt;&lt;a href="#13-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;1.3 확인
+&lt;/h3&gt;&lt;p&gt;저장소 상단에 &lt;strong&gt;Discussions&lt;/strong&gt; 탭이 생성되었는지 확인&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Code | Issues | Pull requests | Discussions | ← 새로 생김!
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="2단계-giscus-app-설치"&gt;&lt;a href="#2%eb%8b%a8%ea%b3%84-giscus-app-%ec%84%a4%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;2단계: Giscus App 설치
+&lt;/h2&gt;&lt;h3 id="21-giscus-github-app-설치"&gt;&lt;a href="#21-giscus-github-app-%ec%84%a4%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;2.1 Giscus GitHub App 설치
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/apps/giscus" target="_blank" rel="noopener"
+ &gt;https://github.com/apps/giscus&lt;/a&gt; 접속&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install&lt;/strong&gt; 버튼 클릭&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;권한 선택:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;All repositories&lt;/strong&gt; (모든 저장소)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Only select repositories&lt;/strong&gt; (특정 저장소만 - 권장)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;블로그 저장소 선택:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install&lt;/strong&gt; 클릭&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="22-권한-확인"&gt;&lt;a href="#22-%ea%b6%8c%ed%95%9c-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;2.2 권한 확인
+&lt;/h3&gt;&lt;p&gt;Giscus가 요청하는 권한:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Read access to discussions&lt;/strong&gt; (토론 읽기)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Write access to discussions&lt;/strong&gt; (토론 쓰기)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Read access to metadata&lt;/strong&gt; (메타데이터 읽기)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3단계-giscus-설정-생성"&gt;&lt;a href="#3%eb%8b%a8%ea%b3%84-giscus-%ec%84%a4%ec%a0%95-%ec%83%9d%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;3단계: Giscus 설정 생성
+&lt;/h2&gt;&lt;h3 id="31-giscus-웹사이트-접속"&gt;&lt;a href="#31-giscus-%ec%9b%b9%ec%82%ac%ec%9d%b4%ed%8a%b8-%ec%a0%91%ec%86%8d" class="header-anchor"&gt;&lt;/a&gt;3.1 Giscus 웹사이트 접속
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://giscus.app/ko" target="_blank" rel="noopener"
+ &gt;https://giscus.app/ko&lt;/a&gt; 방문&lt;/p&gt;
+&lt;h3 id="32-저장소-연결"&gt;&lt;a href="#32-%ec%a0%80%ec%9e%a5%ec%86%8c-%ec%97%b0%ea%b2%b0" class="header-anchor"&gt;&lt;/a&gt;3.2 저장소 연결
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;저장소&lt;/strong&gt; 섹션에 입력:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;0AndWild/0AndWild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;아래에 성공 메시지가 표시되어야 함:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;✅ 성공! 이 저장소는 모든 조건을 만족합니다.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;만약 오류가 뜨면:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Discussions 활성화 확인&lt;/li&gt;
+&lt;li&gt;Giscus App 설치 확인&lt;/li&gt;
+&lt;li&gt;저장소가 Public인지 확인&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="33-페이지--discussion-연결-방식"&gt;&lt;a href="#33-%ed%8e%98%ec%9d%b4%ec%a7%80--discussion-%ec%97%b0%ea%b2%b0-%eb%b0%a9%ec%8b%9d" class="header-anchor"&gt;&lt;/a&gt;3.3 페이지 ↔️ Discussion 연결 방식
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Discussion 카테고리&lt;/strong&gt; 섹션에서 선택:&lt;/p&gt;
+&lt;h4 id="권장-pathname-경로명"&gt;&lt;a href="#%ea%b6%8c%ec%9e%a5-pathname-%ea%b2%bd%eb%a1%9c%eb%aa%85" class="header-anchor"&gt;&lt;/a&gt;권장: &lt;code&gt;pathname&lt;/code&gt; (경로명)
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;매핑: pathname 선택
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;각 블로그 포스트의 경로가 Discussion 제목이 됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;예시&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;포스트: &lt;code&gt;/posts/giscus-guide/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Discussion 제목: &lt;code&gt;posts/giscus-guide&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="대안들"&gt;&lt;a href="#%eb%8c%80%ec%95%88%eb%93%a4" class="header-anchor"&gt;&lt;/a&gt;대안들:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;URL&lt;/code&gt;: 전체 URL 사용 (도메인 변경 시 문제)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;title&lt;/code&gt;: 포스트 제목 사용 (제목 변경 시 문제)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;og:title&lt;/code&gt;: OpenGraph 제목&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;specific term&lt;/code&gt;: 직접 지정&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;추천&lt;/strong&gt;: &lt;code&gt;pathname&lt;/code&gt; 사용&lt;/p&gt;
+&lt;h3 id="34-discussion-카테고리-선택"&gt;&lt;a href="#34-discussion-%ec%b9%b4%ed%85%8c%ea%b3%a0%eb%a6%ac-%ec%84%a0%ed%83%9d" class="header-anchor"&gt;&lt;/a&gt;3.4 Discussion 카테고리 선택
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Discussion 카테고리&lt;/strong&gt; 드롭다운에서 선택:&lt;/p&gt;
+&lt;h4 id="권장-announcements"&gt;&lt;a href="#%ea%b6%8c%ec%9e%a5-announcements" class="header-anchor"&gt;&lt;/a&gt;권장: &lt;code&gt;Announcements&lt;/code&gt;
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;카테고리: Announcements 선택
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;관리자만 새 Discussion 생성 가능&lt;/li&gt;
+&lt;li&gt;댓글은 누구나 가능&lt;/li&gt;
+&lt;li&gt;블로그 포스트용으로 최적&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="대안-general"&gt;&lt;a href="#%eb%8c%80%ec%95%88-general" class="header-anchor"&gt;&lt;/a&gt;대안: &lt;code&gt;General&lt;/code&gt;
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;누구나 Discussion 생성 가능&lt;/li&gt;
+&lt;li&gt;더 개방적&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;추천&lt;/strong&gt;: &lt;code&gt;Announcements&lt;/code&gt; (블로그에 적합)&lt;/p&gt;
+&lt;h3 id="35-기능-선택"&gt;&lt;a href="#35-%ea%b8%b0%eb%8a%a5-%ec%84%a0%ed%83%9d" class="header-anchor"&gt;&lt;/a&gt;3.5 기능 선택
+&lt;/h3&gt;&lt;h4 id="반응-활성화"&gt;&lt;a href="#%eb%b0%98%ec%9d%91-%ed%99%9c%ec%84%b1%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;반응 활성화
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;✅ 반응 활성화
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;사용자가 👍, ❤️, 😄 등으로 반응 가능&lt;/p&gt;
+&lt;h4 id="메타데이터-보내기"&gt;&lt;a href="#%eb%a9%94%ed%83%80%eb%8d%b0%ec%9d%b4%ed%84%b0-%eb%b3%b4%eb%82%b4%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;메타데이터 보내기
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;□ 메타데이터 보내기 (체크 해제 권장)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;불필요한 기능, 꺼두는 것이 좋음&lt;/p&gt;
+&lt;h4 id="댓글-입력란-위치"&gt;&lt;a href="#%eb%8c%93%ea%b8%80-%ec%9e%85%eb%a0%a5%eb%9e%80-%ec%9c%84%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;댓글 입력란 위치
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;⚪ 댓글 위에
+⚪ 댓글 아래 (권장)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;권장&lt;/strong&gt;: 댓글 아래&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;기존 댓글을 먼저 읽고 작성하도록 유도&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="느긋한-로딩"&gt;&lt;a href="#%eb%8a%90%ea%b8%8b%ed%95%9c-%eb%a1%9c%eb%94%a9" class="header-anchor"&gt;&lt;/a&gt;느긋한 로딩
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;✅ 느긋한 로딩
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;페이지 로딩 속도 향상 (권장)&lt;/p&gt;
+&lt;h3 id="36-테마-선택"&gt;&lt;a href="#36-%ed%85%8c%eb%a7%88-%ec%84%a0%ed%83%9d" class="header-anchor"&gt;&lt;/a&gt;3.6 테마 선택
+&lt;/h3&gt;&lt;h4 id="권장-preferred_color_scheme"&gt;&lt;a href="#%ea%b6%8c%ec%9e%a5-preferred_color_scheme" class="header-anchor"&gt;&lt;/a&gt;권장: &lt;code&gt;preferred_color_scheme&lt;/code&gt;
+&lt;/h4&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;테마: preferred_color_scheme
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;동작&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;사용자의 시스템 설정에 따라 자동 전환&lt;/li&gt;
+&lt;li&gt;다크모드 ↔️ 라이트모드 자동&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="대안"&gt;&lt;a href="#%eb%8c%80%ec%95%88" class="header-anchor"&gt;&lt;/a&gt;대안:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;light&lt;/code&gt;: 항상 밝은 테마&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dark&lt;/code&gt;: 항상 어두운 테마&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;transparent_dark&lt;/code&gt;: 투명 다크&lt;/li&gt;
+&lt;li&gt;기타 GitHub 테마들&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;추천&lt;/strong&gt;: &lt;code&gt;preferred_color_scheme&lt;/code&gt; (자동 전환)&lt;/p&gt;
+&lt;h3 id="37-언어-설정"&gt;&lt;a href="#37-%ec%96%b8%ec%96%b4-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;3.7 언어 설정
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;언어: ko (한국어)
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id="4단계-생성된-코드-복사"&gt;&lt;a href="#4%eb%8b%a8%ea%b3%84-%ec%83%9d%ec%84%b1%eb%90%9c-%ec%bd%94%eb%93%9c-%eb%b3%b5%ec%82%ac" class="header-anchor"&gt;&lt;/a&gt;4단계: 생성된 코드 복사
+&lt;/h2&gt;&lt;h3 id="41-스크립트-복사"&gt;&lt;a href="#41-%ec%8a%a4%ed%81%ac%eb%a6%bd%ed%8a%b8-%eb%b3%b5%ec%82%ac" class="header-anchor"&gt;&lt;/a&gt;4.1 스크립트 복사
+&lt;/h3&gt;&lt;p&gt;페이지 하단에 &lt;strong&gt;Enable giscus&lt;/strong&gt; 섹션에서 생성된 코드 복사:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;ko&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-loading&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;lazy&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="42-중요한-값들"&gt;&lt;a href="#42-%ec%a4%91%ec%9a%94%ed%95%9c-%ea%b0%92%eb%93%a4" class="header-anchor"&gt;&lt;/a&gt;4.2 중요한 값들
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;data-repo-id&lt;/code&gt;: 저장소 고유 ID (자동 생성)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data-category-id&lt;/code&gt;: 카테고리 고유 ID (자동 생성)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이 값들은 본인의 저장소마다 다르므로, 반드시 Giscus 웹사이트에서 생성된 코드를 사용해야 합니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="5단계-blowfish-테마에-통합"&gt;&lt;a href="#5%eb%8b%a8%ea%b3%84-blowfish-%ed%85%8c%eb%a7%88%ec%97%90-%ed%86%b5%ed%95%a9" class="header-anchor"&gt;&lt;/a&gt;5단계: Blowfish 테마에 통합
+&lt;/h2&gt;&lt;h3 id="51-디렉토리-생성"&gt;&lt;a href="#51-%eb%94%94%eb%a0%89%ed%86%a0%eb%a6%ac-%ec%83%9d%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;5.1 디렉토리 생성
+&lt;/h3&gt;&lt;p&gt;터미널에서 블로그 루트 디렉토리로 이동 후:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p layouts/partials
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="52-commentshtml-파일-생성"&gt;&lt;a href="#52-commentshtml-%ed%8c%8c%ec%9d%bc-%ec%83%9d%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;5.2 comments.html 파일 생성
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;touch layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;또는 IDE/에디터에서 직접 생성:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;layouts/
+ └── partials/
+ └── comments.html ← 새로 생성
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="53-giscus-코드-삽입"&gt;&lt;a href="#53-giscus-%ec%bd%94%eb%93%9c-%ec%82%bd%ec%9e%85" class="header-anchor"&gt;&lt;/a&gt;5.3 Giscus 코드 삽입
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;layouts/partials/comments.html&lt;/code&gt; 파일에 다음 내용 추가:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- Giscus 댓글 시스템 --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;ko&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-loading&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;lazy&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;⚠️ &lt;strong&gt;주의&lt;/strong&gt;: 위의 &lt;code&gt;data-repo-id&lt;/code&gt;와 &lt;code&gt;data-category-id&lt;/code&gt; 값을 &lt;strong&gt;본인의 값으로 교체&lt;/strong&gt;해야 합니다!&lt;/p&gt;
+&lt;h3 id="54-paramstoml-설정"&gt;&lt;a href="#54-paramstoml-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;5.4 params.toml 설정
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;config/_default/params.toml&lt;/code&gt; 파일을 열고 &lt;code&gt;[article]&lt;/code&gt; 섹션에 추가:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c"&gt;# 이 줄 추가 또는 확인&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;# ... 기타 설정들&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이미 &lt;code&gt;showComments&lt;/code&gt; 항목이 있다면 &lt;code&gt;true&lt;/code&gt;로 설정되어 있는지 확인하세요.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="6단계-로컬-테스트"&gt;&lt;a href="#6%eb%8b%a8%ea%b3%84-%eb%a1%9c%ec%bb%ac-%ed%85%8c%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;6단계: 로컬 테스트
+&lt;/h2&gt;&lt;h3 id="61-hugo-서버-실행"&gt;&lt;a href="#61-hugo-%ec%84%9c%eb%b2%84-%ec%8b%a4%ed%96%89" class="header-anchor"&gt;&lt;/a&gt;6.1 Hugo 서버 실행
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="62-브라우저에서-확인"&gt;&lt;a href="#62-%eb%b8%8c%eb%9d%bc%ec%9a%b0%ec%a0%80%ec%97%90%ec%84%9c-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;6.2 브라우저에서 확인
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;http://localhost:1313
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;포스트 페이지 하단에 Giscus 댓글 위젯이 표시되어야 합니다.&lt;/p&gt;
+&lt;h3 id="63-테스트-댓글-작성"&gt;&lt;a href="#63-%ed%85%8c%ec%8a%a4%ed%8a%b8-%eb%8c%93%ea%b8%80-%ec%9e%91%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;6.3 테스트 댓글 작성
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;GitHub으로 로그인&lt;/strong&gt; 버튼 클릭&lt;/li&gt;
+&lt;li&gt;GitHub OAuth 인증&lt;/li&gt;
+&lt;li&gt;테스트 댓글 작성&lt;/li&gt;
+&lt;li&gt;댓글이 표시되는지 확인&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="64-github-discussions-확인"&gt;&lt;a href="#64-github-discussions-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;6.4 GitHub Discussions 확인
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;GitHub 저장소 → &lt;strong&gt;Discussions&lt;/strong&gt; 탭&lt;/li&gt;
+&lt;li&gt;Announcements 카테고리에 새 Discussion 생성되었는지 확인&lt;/li&gt;
+&lt;li&gt;Discussion 제목이 포스트 경로인지 확인&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="7단계-배포"&gt;&lt;a href="#7%eb%8b%a8%ea%b3%84-%eb%b0%b0%ed%8f%ac" class="header-anchor"&gt;&lt;/a&gt;7단계: 배포
+&lt;/h2&gt;&lt;h3 id="71-git에-커밋"&gt;&lt;a href="#71-git%ec%97%90-%ec%bb%a4%eb%b0%8b" class="header-anchor"&gt;&lt;/a&gt;7.1 Git에 커밋
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add config/_default/params.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;Add Giscus comments system&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="72-github에-푸시"&gt;&lt;a href="#72-github%ec%97%90-%ed%91%b8%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;7.2 GitHub에 푸시
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push origin main
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="73-github-actions-확인"&gt;&lt;a href="#73-github-actions-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;7.3 GitHub Actions 확인
+&lt;/h3&gt;&lt;p&gt;GitHub Actions가 자동으로 빌드 및 배포를 진행합니다.&lt;/p&gt;
+&lt;p&gt;배포 상태 확인:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;GitHub 저장소 → Actions 탭
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="74-배포된-사이트-확인"&gt;&lt;a href="#74-%eb%b0%b0%ed%8f%ac%eb%90%9c-%ec%82%ac%ec%9d%b4%ed%8a%b8-%ed%99%95%ec%9d%b8" class="header-anchor"&gt;&lt;/a&gt;7.4 배포된 사이트 확인
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;https://0andwild.github.io
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;포스트 페이지에 댓글 위젯이 정상적으로 표시되는지 확인하세요.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="고급-설정"&gt;&lt;a href="#%ea%b3%a0%ea%b8%89-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;고급 설정
+&lt;/h2&gt;&lt;h3 id="다크모드-및-언어-동적-설정-권장"&gt;&lt;a href="#%eb%8b%a4%ed%81%ac%eb%aa%a8%eb%93%9c-%eb%b0%8f-%ec%96%b8%ec%96%b4-%eb%8f%99%ec%a0%81-%ec%84%a4%ec%a0%95-%ea%b6%8c%ec%9e%a5" class="header-anchor"&gt;&lt;/a&gt;다크모드 및 언어 동적 설정 (권장)
+&lt;/h3&gt;&lt;p&gt;Blowfish 테마의 다크모드 토글과 언어 전환에 따라 Giscus가 자동으로 변경되도록 설정하는 완전한 방법입니다.&lt;/p&gt;
+&lt;h4 id="완전한-동적-설정"&gt;&lt;a href="#%ec%99%84%ec%a0%84%ed%95%9c-%eb%8f%99%ec%a0%81-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;완전한 동적 설정
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;layouts/partials/comments.html&lt;/code&gt; 전체 코드:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- Giscus Comments with Dynamic Theme and Language --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{ $lang := .Site.Language.Lang }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{ $translationKey := .File.TranslationBaseName }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Get current theme (dark/light)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_tritanopia&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_tritanopia&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Get language from Hugo template
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;currentLang&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{{ $lang }}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Use file directory path for unified comments across languages
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Example: &amp;#34;posts/subscription_alert&amp;#34; for both index.ko.md and index.en.md
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;discussionId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{{ .File.Dir | replaceRE &amp;#34;^content/&amp;#34; &amp;#34;&amp;#34; | replaceRE &amp;#34;/$&amp;#34; &amp;#34;&amp;#34; }}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Wait for DOM to be ready
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;readyState&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;loading&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;DOMContentLoaded&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;initGiscus&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Create and insert Giscus script with dynamic settings
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;script&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createElement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;script&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app/client.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-repo&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0AndWild/0AndWild.github.io&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-repo-id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;R_kgDOQAqZFA&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-category&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;General&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-category-id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;DIC_kwDOQAqZFM4CwwRg&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-mapping&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;specific&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-term&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;discussionId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-strict&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-reactions-enabled&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-emit-metadata&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-input-position&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bottom&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-theme&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-lang&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;currentLang&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-loading&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;lazy&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;crossorigin&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;anonymous&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Find giscus container or create one
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;container&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.giscus-container&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;currentScript&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;parentElement&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;container&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;container&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;appendChild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Monitor theme changes and update Giscus
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;iframe&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;iframe.giscus-frame&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contentWindow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;postMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setConfig&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;catch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;error&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Giscus theme update delayed, will retry...&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Watch for theme changes using MutationObserver
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;observer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MutationObserver&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributeName&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Delay update to ensure iframe is ready
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Start observing after a short delay
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(()&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;observer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;observe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;attributeFilter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Update theme when Giscus iframe loads
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;!==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Giscus is ready, update theme
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;})();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;/* Ensure Giscus iframe has proper height and displays all content */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-container&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;min-height&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-container&lt;/span&gt; &lt;span class="nt"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus-frame&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;width&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="kt"&gt;%&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;border&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;none&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;min-height&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c"&gt;/* Make sure comment actions are visible */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;giscus&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;overflow&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;visible&lt;/span&gt; &lt;span class="cp"&gt;!important&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;giscus-container&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="동작-방식-설명"&gt;&lt;a href="#%eb%8f%99%ec%9e%91-%eb%b0%a9%ec%8b%9d-%ec%84%a4%eb%aa%85" class="header-anchor"&gt;&lt;/a&gt;동작 방식 설명
+&lt;/h4&gt;&lt;h5 id="1-언어-동적-설정"&gt;&lt;a href="#1-%ec%96%b8%ec%96%b4-%eb%8f%99%ec%a0%81-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;1. &lt;strong&gt;언어 동적 설정&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;:=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Site&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Language&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;currentLang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Hugo 템플릿에서 현재 페이지 언어 가져오기&lt;/li&gt;
+&lt;li&gt;한국어 페이지: &lt;code&gt;ko&lt;/code&gt;, 영어 페이지: &lt;code&gt;en&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Giscus에 해당 언어로 설정&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;결과&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한국어 페이지 → Giscus UI가 한국어로 표시&lt;/li&gt;
+&lt;li&gt;영어 페이지 → Giscus UI가 영어로 표시&lt;/li&gt;
+&lt;li&gt;언어 전환 시 페이지 리로드되면서 자동으로 변경&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="2-다크모드-동적-설정"&gt;&lt;a href="#2-%eb%8b%a4%ed%81%ac%eb%aa%a8%eb%93%9c-%eb%8f%99%ec%a0%81-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;2. &lt;strong&gt;다크모드 동적 설정&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_tritanopia&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_tritanopia&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Blowfish 테마는 다크모드 시 &lt;code&gt;&amp;lt;html class=&amp;quot;dark&amp;quot;&amp;gt;&lt;/code&gt; 추가&lt;/li&gt;
+&lt;li&gt;이를 감지하여 테마 결정&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dark_tritanopia&lt;/code&gt; / &lt;code&gt;light_tritanopia&lt;/code&gt; 테마 사용 (색맹 친화적)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;결과&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;페이지 로드 시: 현재 테마 상태로 Giscus 로드&lt;/li&gt;
+&lt;li&gt;다크모드 토글 클릭 시: 실시간으로 Giscus 테마 변경&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="3-언어별-댓글-통합"&gt;&lt;a href="#3-%ec%96%b8%ec%96%b4%eb%b3%84-%eb%8c%93%ea%b8%80-%ed%86%b5%ed%95%a9" class="header-anchor"&gt;&lt;/a&gt;3. &lt;strong&gt;언어별 댓글 통합&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;discussionId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;{{&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;File&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Dir&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;replaceRE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;^content/&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;replaceRE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;/$&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;파일 디렉토리 경로를 Discussion ID로 사용&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;content/posts/subscription_alert/index.ko.md&lt;/code&gt; → &lt;code&gt;posts/subscription_alert&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;content/posts/subscription_alert/index.en.md&lt;/code&gt; → &lt;code&gt;posts/subscription_alert&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;같은 ID이므로 한국어/영어 버전이 같은 댓글 공유&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;결과&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한국어 포스트에서 작성한 댓글&lt;/li&gt;
+&lt;li&gt;영어 포스트에서도 동일하게 표시&lt;/li&gt;
+&lt;li&gt;포스트별로는 별도 Discussion 생성&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id="4-실시간-테마-변경-감지"&gt;&lt;a href="#4-%ec%8b%a4%ec%8b%9c%ea%b0%84-%ed%85%8c%eb%a7%88-%eb%b3%80%ea%b2%bd-%ea%b0%90%ec%a7%80" class="header-anchor"&gt;&lt;/a&gt;4. &lt;strong&gt;실시간 테마 변경 감지&lt;/strong&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;observer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MutationObserver&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;mutations&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;forEach&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mutation&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributeName&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;class&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;updateGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;MutationObserver&lt;/code&gt;로 HTML 클래스 변경 감지&lt;/li&gt;
+&lt;li&gt;다크모드 토글 클릭 시 즉시 감지&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;postMessage&lt;/code&gt;로 Giscus iframe에 테마 변경 명령 전송&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="테스트-방법"&gt;&lt;a href="#%ed%85%8c%ec%8a%a4%ed%8a%b8-%eb%b0%a9%eb%b2%95" class="header-anchor"&gt;&lt;/a&gt;테스트 방법
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 1. 로컬 서버 실행&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 2. 브라우저에서 확인&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;http://localhost:1313/posts/subscription_alert/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;테스트 항목&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;✅ 페이지 로드 시 현재 테마(라이트/다크)로 Giscus 표시&lt;/li&gt;
+&lt;li&gt;✅ 다크모드 토글 클릭 시 Giscus 테마 즉시 변경&lt;/li&gt;
+&lt;li&gt;✅ 언어 전환 (ko → en) 시 Giscus 언어 변경&lt;/li&gt;
+&lt;li&gt;✅ 한국어/영어 페이지에서 같은 댓글 표시&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="테마-옵션-변경"&gt;&lt;a href="#%ed%85%8c%eb%a7%88-%ec%98%b5%ec%85%98-%eb%b3%80%ea%b2%bd" class="header-anchor"&gt;&lt;/a&gt;테마 옵션 변경
+&lt;/h4&gt;&lt;p&gt;다른 테마를 사용하려면 &lt;code&gt;getGiscusTheme()&lt;/code&gt; 함수 수정:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 기본 테마
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 고대비 테마
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_high_contrast&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light_high_contrast&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// GitHub 스타일 테마
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getGiscusTheme&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;classList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contains&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;isDark&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark_dimmed&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;사용 가능한 테마&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;light&lt;/code&gt; / &lt;code&gt;dark&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;light_high_contrast&lt;/code&gt; / &lt;code&gt;dark_high_contrast&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;light_tritanopia&lt;/code&gt; / &lt;code&gt;dark_tritanopia&lt;/code&gt; (색맹 친화적)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dark_dimmed&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;transparent_dark&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;preferred_color_scheme&lt;/code&gt; (시스템 설정 따름)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="정적-테마-설정-간단한-방법"&gt;&lt;a href="#%ec%a0%95%ec%a0%81-%ed%85%8c%eb%a7%88-%ec%84%a4%ec%a0%95-%ea%b0%84%eb%8b%a8%ed%95%9c-%eb%b0%a9%eb%b2%95" class="header-anchor"&gt;&lt;/a&gt;정적 테마 설정 (간단한 방법)
+&lt;/h4&gt;&lt;p&gt;동적 변경이 필요 없다면 정적으로 설정 가능:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_kgDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;General&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_kwDOxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;ko&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;장점&lt;/strong&gt;: 간단함
+&lt;strong&gt;단점&lt;/strong&gt;: 실시간 테마 변경 불가, 언어별 댓글 분리됨&lt;/p&gt;
+&lt;h3 id="포스트별-댓글-숨기기"&gt;&lt;a href="#%ed%8f%ac%ec%8a%a4%ed%8a%b8%eb%b3%84-%eb%8c%93%ea%b8%80-%ec%88%a8%ea%b8%b0%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;포스트별 댓글 숨기기
+&lt;/h3&gt;&lt;p&gt;특정 포스트에서만 댓글을 숨기려면, 해당 포스트의 front matter에:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;댓글 없는 포스트&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;showComments&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 이 포스트만 댓글 숨김&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="카테고리별-댓글-분리"&gt;&lt;a href="#%ec%b9%b4%ed%85%8c%ea%b3%a0%eb%a6%ac%eb%b3%84-%eb%8c%93%ea%b8%80-%eb%b6%84%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;카테고리별 댓글 분리
+&lt;/h3&gt;&lt;p&gt;다른 카테고리의 포스트에 다른 Discussion 카테고리를 사용하려면:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- 조건부 카테고리 설정 --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;category&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;categories&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Tutorial&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;DIC_kwDOxxxxTutorial&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;DIC_kwDOxxxxGeneral&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{{&lt;/span&gt; &lt;span class="nx"&gt;end&lt;/span&gt; &lt;span class="p"&gt;}};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;{{ category }}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;...&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="문제-해결"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c-%ed%95%b4%ea%b2%b0" class="header-anchor"&gt;&lt;/a&gt;문제 해결
+&lt;/h2&gt;&lt;h3 id="댓글-위젯이-표시되지-않음"&gt;&lt;a href="#%eb%8c%93%ea%b8%80-%ec%9c%84%ec%a0%af%ec%9d%b4-%ed%91%9c%ec%8b%9c%eb%90%98%ec%a7%80-%ec%95%8a%ec%9d%8c" class="header-anchor"&gt;&lt;/a&gt;댓글 위젯이 표시되지 않음
+&lt;/h3&gt;&lt;h4 id="원인-1-discussions-미활성화"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-1-discussions-%eb%af%b8%ed%99%9c%ec%84%b1%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;원인 1: Discussions 미활성화
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;해결: GitHub 저장소 → Settings → Discussions 체크
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="원인-2-giscus-app-미설치"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-2-giscus-app-%eb%af%b8%ec%84%a4%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;원인 2: Giscus App 미설치
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;해결: https://github.com/apps/giscus 에서 Install
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="원인-3-저장소-id-오류"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-3-%ec%a0%80%ec%9e%a5%ec%86%8c-id-%ec%98%a4%eb%a5%98" class="header-anchor"&gt;&lt;/a&gt;원인 3: 저장소 ID 오류
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;해결: giscus.app에서 코드 재생성
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="원인-4-showcomments-설정-누락"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-4-showcomments-%ec%84%a4%ec%a0%95-%eb%88%84%eb%9d%bd" class="header-anchor"&gt;&lt;/a&gt;원인 4: showComments 설정 누락
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# config/_default/params.toml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c"&gt;# 확인&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="로그인-버튼만-보이고-댓글-못-씀"&gt;&lt;a href="#%eb%a1%9c%ea%b7%b8%ec%9d%b8-%eb%b2%84%ed%8a%bc%eb%a7%8c-%eb%b3%b4%ec%9d%b4%ea%b3%a0-%eb%8c%93%ea%b8%80-%eb%aa%bb-%ec%94%80" class="header-anchor"&gt;&lt;/a&gt;로그인 버튼만 보이고 댓글 못 씀
+&lt;/h3&gt;&lt;h4 id="원인-github-oauth-승인-필요"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-github-oauth-%ec%8a%b9%ec%9d%b8-%ed%95%84%ec%9a%94" class="header-anchor"&gt;&lt;/a&gt;원인: GitHub OAuth 승인 필요
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. &lt;span class="s2"&gt;&amp;#34;GitHub으로 로그인&amp;#34;&lt;/span&gt; 클릭
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. OAuth 권한 승인
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 저장소로 리다이렉트
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. 댓글 작성 가능
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="댓글이-저장되지-않음"&gt;&lt;a href="#%eb%8c%93%ea%b8%80%ec%9d%b4-%ec%a0%80%ec%9e%a5%eb%90%98%ec%a7%80-%ec%95%8a%ec%9d%8c" class="header-anchor"&gt;&lt;/a&gt;댓글이 저장되지 않음
+&lt;/h3&gt;&lt;h4 id="원인-저장소-권한-문제"&gt;&lt;a href="#%ec%9b%90%ec%9d%b8-%ec%a0%80%ec%9e%a5%ec%86%8c-%ea%b6%8c%ed%95%9c-%eb%ac%b8%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;원인: 저장소 권한 문제
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;확인 사항:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. 저장소가 Public인지
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Giscus App 권한에 저장소 포함되어 있는지
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Discussion 카테고리가 존재하는지
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="다크모드가-동기화-안-됨"&gt;&lt;a href="#%eb%8b%a4%ed%81%ac%eb%aa%a8%eb%93%9c%ea%b0%80-%eb%8f%99%ea%b8%b0%ed%99%94-%ec%95%88-%eb%90%a8" class="header-anchor"&gt;&lt;/a&gt;다크모드가 동기화 안 됨
+&lt;/h3&gt;&lt;h4 id="해결-javascript-동기화-코드-추가"&gt;&lt;a href="#%ed%95%b4%ea%b2%b0-javascript-%eb%8f%99%ea%b8%b0%ed%99%94-%ec%bd%94%eb%93%9c-%ec%b6%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;해결: JavaScript 동기화 코드 추가
+&lt;/h4&gt;&lt;p&gt;위의 &amp;ldquo;고급 설정 &amp;gt; 다크모드 자동 전환&amp;rdquo; 참고&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="giscus-관리"&gt;&lt;a href="#giscus-%ea%b4%80%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;Giscus 관리
+&lt;/h2&gt;&lt;h3 id="댓글-관리"&gt;&lt;a href="#%eb%8c%93%ea%b8%80-%ea%b4%80%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;댓글 관리
+&lt;/h3&gt;&lt;h4 id="github-discussions에서-관리"&gt;&lt;a href="#github-discussions%ec%97%90%ec%84%9c-%ea%b4%80%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;GitHub Discussions에서 관리
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub 저장소 → Discussions 탭
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 해당 Discussion 클릭
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 관리 작업:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 댓글 수정 &lt;span class="o"&gt;(&lt;/span&gt;본인 댓글만&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 댓글 삭제 &lt;span class="o"&gt;(&lt;/span&gt;관리자&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 사용자 차단 &lt;span class="o"&gt;(&lt;/span&gt;관리자&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Discussion 잠금 &lt;span class="o"&gt;(&lt;/span&gt;관리자&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="스팸-댓글-처리"&gt;&lt;a href="#%ec%8a%a4%ed%8c%b8-%eb%8c%93%ea%b8%80-%ec%b2%98%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;스팸 댓글 처리
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub Discussions에서 스팸 댓글 찾기
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 댓글 옆 ... 메뉴 → &lt;span class="s2"&gt;&amp;#34;Delete&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 사용자 차단: 프로필 → Block user
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="알림-설정"&gt;&lt;a href="#%ec%95%8c%eb%a6%bc-%ec%84%a4%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;알림 설정
+&lt;/h3&gt;&lt;h4 id="github-알림으로-댓글-알림-받기"&gt;&lt;a href="#github-%ec%95%8c%eb%a6%bc%ec%9c%bc%eb%a1%9c-%eb%8c%93%ea%b8%80-%ec%95%8c%eb%a6%bc-%eb%b0%9b%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;GitHub 알림으로 댓글 알림 받기
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub → Settings → Notifications
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Watching에 저장소 추가
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 이메일로 알림 받기 설정
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="특정-discussion만-알림-받기"&gt;&lt;a href="#%ed%8a%b9%ec%a0%95-discussion%eb%a7%8c-%ec%95%8c%eb%a6%bc-%eb%b0%9b%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;특정 Discussion만 알림 받기
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Discussions 탭 → 해당 Discussion
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 오른쪽 &lt;span class="s2"&gt;&amp;#34;Subscribe&amp;#34;&lt;/span&gt; 버튼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. &lt;span class="s2"&gt;&amp;#34;Notify me&amp;#34;&lt;/span&gt; 선택
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="통계-및-분석"&gt;&lt;a href="#%ed%86%b5%ea%b3%84-%eb%b0%8f-%eb%b6%84%ec%84%9d" class="header-anchor"&gt;&lt;/a&gt;통계 및 분석
+&lt;/h2&gt;&lt;h3 id="댓글-통계-보기"&gt;&lt;a href="#%eb%8c%93%ea%b8%80-%ed%86%b5%ea%b3%84-%eb%b3%b4%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;댓글 통계 보기
+&lt;/h3&gt;&lt;p&gt;GitHub Discussions에서:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Discussions 탭
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 카테고리별 Discussion 수 확인
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 각 Discussion의 댓글 수 확인
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="github-insights-활용"&gt;&lt;a href="#github-insights-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;GitHub Insights 활용
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GitHub 저장소 → Insights → Community
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;→ Discussions 활동 확인
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="비용-및-제한사항"&gt;&lt;a href="#%eb%b9%84%ec%9a%a9-%eb%b0%8f-%ec%a0%9c%ed%95%9c%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;비용 및 제한사항
+&lt;/h2&gt;&lt;h3 id="비용"&gt;&lt;a href="#%eb%b9%84%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;비용
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;완전 무료&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GitHub 계정만 있으면 사용 가능&lt;/li&gt;
+&lt;li&gt;저장소 크기 제한 내에서 무제한 댓글&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="제한사항"&gt;&lt;a href="#%ec%a0%9c%ed%95%9c%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;제한사항
+&lt;/h3&gt;&lt;h4 id="github-api-rate-limit"&gt;&lt;a href="#github-api-rate-limit" class="header-anchor"&gt;&lt;/a&gt;GitHub API Rate Limit
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;시간당 60회 (미인증)&lt;/li&gt;
+&lt;li&gt;시간당 5,000회 (인증)&lt;/li&gt;
+&lt;li&gt;Giscus는 캐싱으로 최적화되어 있어 문제 없음&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="저장소-크기"&gt;&lt;a href="#%ec%a0%80%ec%9e%a5%ec%86%8c-%ed%81%ac%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;저장소 크기
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;GitHub Free: 저장소당 1GB&lt;/li&gt;
+&lt;li&gt;텍스트 댓글만으로는 제한 도달 불가능&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="discussions-제한"&gt;&lt;a href="#discussions-%ec%a0%9c%ed%95%9c" class="header-anchor"&gt;&lt;/a&gt;Discussions 제한
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;없음 (무제한)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="대안-비교"&gt;&lt;a href="#%eb%8c%80%ec%95%88-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;대안 비교
+&lt;/h2&gt;&lt;h3 id="giscus-vs-utterances"&gt;&lt;a href="#giscus-vs-utterances" class="header-anchor"&gt;&lt;/a&gt;Giscus vs Utterances
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;항목&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Utterances&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;백엔드&lt;/td&gt;
+ &lt;td&gt;Discussions&lt;/td&gt;
+ &lt;td&gt;Issues&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;반응&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;대댓글&lt;/td&gt;
+ &lt;td&gt;중첩 지원&lt;/td&gt;
+ &lt;td&gt;Flat&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;추천&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐⭐⭐&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;결론&lt;/strong&gt;: Giscus 사용 권장&lt;/p&gt;
+&lt;h3 id="giscus-vs-disqus"&gt;&lt;a href="#giscus-vs-disqus" class="header-anchor"&gt;&lt;/a&gt;Giscus vs Disqus
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;항목&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Disqus&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;비용&lt;/td&gt;
+ &lt;td&gt;무료&lt;/td&gt;
+ &lt;td&gt;무료 (광고)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;광고&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;익명 댓글&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅ (Guest)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Markdown&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;데이터 소유&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;추천&lt;/td&gt;
+ &lt;td&gt;개발자 블로그&lt;/td&gt;
+ &lt;td&gt;일반 블로그&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="마이그레이션-가이드"&gt;&lt;a href="#%eb%a7%88%ec%9d%b4%ea%b7%b8%eb%a0%88%ec%9d%b4%ec%85%98-%ea%b0%80%ec%9d%b4%eb%93%9c" class="header-anchor"&gt;&lt;/a&gt;마이그레이션 가이드
+&lt;/h2&gt;&lt;h3 id="utterances--giscus"&gt;&lt;a href="#utterances--giscus" class="header-anchor"&gt;&lt;/a&gt;Utterances → Giscus
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub Issues를 Discussions로 변환
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 수동 작업 필요 &lt;span class="o"&gt;(&lt;/span&gt;자동화 없음&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 또는 Issues 그대로 두고 Giscus 새로 시작
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. comments.html 파일 교체
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Utterances 코드 삭제
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - Giscus 코드 추가
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 배포
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="disqus--giscus"&gt;&lt;a href="#disqus--giscus" class="header-anchor"&gt;&lt;/a&gt;Disqus → Giscus
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Disqus 데이터 Export &lt;span class="o"&gt;(&lt;/span&gt;XML&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. GitHub Discussions로 수동 이전
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 자동화 도구 없음
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 스크립트 직접 작성 필요
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 또는 새로 시작 권장
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="추가-리소스"&gt;&lt;a href="#%ec%b6%94%ea%b0%80-%eb%a6%ac%ec%86%8c%ec%8a%a4" class="header-anchor"&gt;&lt;/a&gt;추가 리소스
+&lt;/h2&gt;&lt;h3 id="공식-문서"&gt;&lt;a href="#%ea%b3%b5%ec%8b%9d-%eb%ac%b8%ec%84%9c" class="header-anchor"&gt;&lt;/a&gt;공식 문서
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://giscus.app/ko" target="_blank" rel="noopener"
+ &gt;Giscus 공식 사이트&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/giscus/giscus" target="_blank" rel="noopener"
+ &gt;Giscus GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="커뮤니티"&gt;&lt;a href="#%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0" class="header-anchor"&gt;&lt;/a&gt;커뮤니티
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/giscus/giscus/discussions" target="_blank" rel="noopener"
+ &gt;Giscus Discussions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://blowfish.page/docs/" target="_blank" rel="noopener"
+ &gt;Blowfish 문서&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="체크리스트"&gt;&lt;a href="#%ec%b2%b4%ed%81%ac%eb%a6%ac%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;체크리스트
+&lt;/h2&gt;&lt;p&gt;설치 완료 확인:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; GitHub Discussions 활성화&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Giscus App 설치&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; &lt;code&gt;layouts/partials/comments.html&lt;/code&gt; 생성&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Giscus 코드 삽입 (본인의 ID로)&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; &lt;code&gt;params.toml&lt;/code&gt;에 &lt;code&gt;showComments = true&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 로컬 테스트 완료&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; GitHub에 푸시&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 배포된 사이트에서 확인&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 테스트 댓글 작성&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; GitHub Discussions에 생성 확인&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="결론"&gt;&lt;a href="#%ea%b2%b0%eb%a1%a0" class="header-anchor"&gt;&lt;/a&gt;결론
+&lt;/h2&gt;&lt;p&gt;Giscus는 Hugo/GitHub Pages 블로그에 가장 적합한 댓글 시스템입니다:&lt;/p&gt;
+&lt;h3 id="장점-정리"&gt;&lt;a href="#%ec%9e%a5%ec%a0%90-%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;장점 정리
+&lt;/h3&gt;&lt;p&gt;✅ 완전 무료
+✅ 설정 간단 (10분)
+✅ 서버 불필요
+✅ Markdown 완벽 지원
+✅ GitHub 통합
+✅ 데이터 소유&lt;/p&gt;
+&lt;h3 id="단점"&gt;&lt;a href="#%eb%8b%a8%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;단점
+&lt;/h3&gt;&lt;p&gt;❌ GitHub 계정 필수 (익명 불가)
+❌ 기술 블로그에 적합 (일반 사용자는 허들 있음)&lt;/p&gt;
+&lt;h3 id="추천-대상"&gt;&lt;a href="#%ec%b6%94%ec%b2%9c-%eb%8c%80%ec%83%81" class="header-anchor"&gt;&lt;/a&gt;추천 대상
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ 개발자 블로그&lt;/li&gt;
+&lt;li&gt;✅ 기술 문서&lt;/li&gt;
+&lt;li&gt;✅ 오픈소스 프로젝트&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Hugo markdown 설명서</title><link>https://0andwild.com/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.com/posts/251016_blowfish_markdown/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Hugo markdown 설명서" /&gt;&lt;!-- 본문 작성 가이드 --&gt;
+&lt;h2 id="제목-h2"&gt;&lt;a href="#%ec%a0%9c%eb%aa%a9-h2" class="header-anchor"&gt;&lt;/a&gt;제목 (H2)
+&lt;/h2&gt;&lt;h3 id="소제목-h3"&gt;&lt;a href="#%ec%86%8c%ec%a0%9c%eb%aa%a9-h3" class="header-anchor"&gt;&lt;/a&gt;소제목 (H3)
+&lt;/h3&gt;&lt;p&gt;일반 텍스트입니다. &lt;strong&gt;굵게&lt;/strong&gt;, &lt;em&gt;기울임&lt;/em&gt;, &lt;del&gt;취소선&lt;/del&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="이미지-삽입"&gt;&lt;a href="#%ec%9d%b4%eb%af%b8%ec%a7%80-%ec%82%bd%ec%9e%85" class="header-anchor"&gt;&lt;/a&gt;이미지 삽입
+&lt;/h2&gt;&lt;h3 id="방법-1-로컬-이미지"&gt;&lt;a href="#%eb%b0%a9%eb%b2%95-1-%eb%a1%9c%ec%bb%ac-%ec%9d%b4%eb%af%b8%ec%a7%80" class="header-anchor"&gt;&lt;/a&gt;방법 1: 로컬 이미지
+&lt;/h3&gt;&lt;p&gt;포스트 폴더 내에 이미지 파일을 넣고 사용:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![&lt;span class="nt"&gt;이미지 설명&lt;/span&gt;](&lt;span class="na"&gt;image.jpg&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="방법-2-외부-이미지-url"&gt;&lt;a href="#%eb%b0%a9%eb%b2%95-2-%ec%99%b8%eb%b6%80-%ec%9d%b4%eb%af%b8%ec%a7%80-url" class="header-anchor"&gt;&lt;/a&gt;방법 2: 외부 이미지 URL
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![&lt;span class="nt"&gt;이미지 설명&lt;/span&gt;](&lt;span class="na"&gt;https://example.com/image.jpg&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="방법-3-html-태그-크기-조정-가능"&gt;&lt;a href="#%eb%b0%a9%eb%b2%95-3-html-%ed%83%9c%ea%b7%b8-%ed%81%ac%ea%b8%b0-%ec%a1%b0%ec%a0%95-%ea%b0%80%eb%8a%a5" class="header-anchor"&gt;&lt;/a&gt;방법 3: HTML 태그 (크기 조정 가능)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;img&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;image.jpg&amp;#34;&lt;/span&gt; &lt;span class="na"&gt;alt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;이미지 설명&amp;#34;&lt;/span&gt; &lt;span class="na"&gt;width&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;500&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="캐러셀-이미지-슬라이드-효과"&gt;&lt;a href="#%ec%ba%90%eb%9f%ac%ec%85%80-%ec%9d%b4%eb%af%b8%ec%a7%80-%ec%8a%ac%eb%9d%bc%ec%9d%b4%eb%93%9c-%ed%9a%a8%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;캐러셀 이미지 (슬라이드 효과)
+&lt;/h3&gt;&lt;h3 id="169"&gt;&lt;a href="#169" class="header-anchor"&gt;&lt;/a&gt;16:9
+&lt;/h3&gt;&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="hahahugoshortcode67s1hbhb"&gt;&lt;a href="#hahahugoshortcode67s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
+&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
+
+&lt;/h2&gt;&lt;h2 id="코드-삽입"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%ec%82%bd%ec%9e%85" class="header-anchor"&gt;&lt;/a&gt;코드 삽입
+&lt;/h2&gt;&lt;h3 id="인라인-코드"&gt;&lt;a href="#%ec%9d%b8%eb%9d%bc%ec%9d%b8-%ec%bd%94%eb%93%9c" class="header-anchor"&gt;&lt;/a&gt;인라인 코드
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;inline code&lt;/code&gt; 형식으로 작성&lt;/p&gt;
+&lt;h3 id="코드-블록"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%eb%b8%94%eb%a1%9d" class="header-anchor"&gt;&lt;/a&gt;코드 블록
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;package&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;fmt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;Println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Hello, World!&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Hello, World!&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run -d -p 8080:80 nginx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="링크"&gt;&lt;a href="#%eb%a7%81%ed%81%ac" class="header-anchor"&gt;&lt;/a&gt;링크
+&lt;/h2&gt;&lt;h3 id="기본-링크"&gt;&lt;a href="#%ea%b8%b0%eb%b3%b8-%eb%a7%81%ed%81%ac" class="header-anchor"&gt;&lt;/a&gt;기본 링크
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://example.com" target="_blank" rel="noopener"
+ &gt;링크 텍스트&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="참조-스타일-링크"&gt;&lt;a href="#%ec%b0%b8%ec%a1%b0-%ec%8a%a4%ed%83%80%ec%9d%bc-%eb%a7%81%ed%81%ac" class="header-anchor"&gt;&lt;/a&gt;참조 스타일 링크
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://example.com" title="링크 설명"
+ target="_blank" rel="noopener"
+ &gt;링크 텍스트&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="article-참조"&gt;&lt;a href="#article-%ec%b0%b8%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;article 참조
+&lt;/h3&gt;&lt;a class="stack-article-card" href="https://0andwild.com/docs/welcome/"&gt;
+ &lt;span class="stack-article-card__title"&gt;/docs/welcome/&lt;/span&gt;&lt;span&gt;Open linked article&lt;/span&gt;&lt;/a&gt;
+
+&lt;hr&gt;
+&lt;h2 id="리스트"&gt;&lt;a href="#%eb%a6%ac%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;리스트
+&lt;/h2&gt;&lt;h3 id="순서-없는-리스트"&gt;&lt;a href="#%ec%88%9c%ec%84%9c-%ec%97%86%eb%8a%94-%eb%a6%ac%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;순서 없는 리스트
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;항목 1&lt;/li&gt;
+&lt;li&gt;항목 2
+&lt;ul&gt;
+&lt;li&gt;하위 항목 2-1&lt;/li&gt;
+&lt;li&gt;하위 항목 2-2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;항목 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="순서-있는-리스트"&gt;&lt;a href="#%ec%88%9c%ec%84%9c-%ec%9e%88%eb%8a%94-%eb%a6%ac%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;순서 있는 리스트
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;첫 번째&lt;/li&gt;
+&lt;li&gt;두 번째&lt;/li&gt;
+&lt;li&gt;세 번째&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="체크리스트"&gt;&lt;a href="#%ec%b2%b4%ed%81%ac%eb%a6%ac%ec%8a%a4%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;체크리스트
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 할 일 1&lt;/li&gt;
+&lt;li&gt;&lt;input checked="" disabled="" type="checkbox"&gt; 완료된 일&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; 할 일 2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="인용문"&gt;&lt;a href="#%ec%9d%b8%ec%9a%a9%eb%ac%b8" class="header-anchor"&gt;&lt;/a&gt;인용문
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;인용문 내용입니다.
+여러 줄도 가능합니다.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="표-table"&gt;&lt;a href="#%ed%91%9c-table" class="header-anchor"&gt;&lt;/a&gt;표 (Table)
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;항목&lt;/th&gt;
+ &lt;th&gt;설명&lt;/th&gt;
+ &lt;th&gt;비고&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;A&lt;/td&gt;
+ &lt;td&gt;설명 A&lt;/td&gt;
+ &lt;td&gt;비고 A&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;B&lt;/td&gt;
+ &lt;td&gt;설명 B&lt;/td&gt;
+ &lt;td&gt;비고 B&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="링크-임베드-shortcodes"&gt;&lt;a href="#%eb%a7%81%ed%81%ac-%ec%9e%84%eb%b2%a0%eb%93%9c-shortcodes" class="header-anchor"&gt;&lt;/a&gt;링크 임베드 (Shortcodes)
+&lt;/h2&gt;&lt;h3 id="youtube-영상"&gt;&lt;a href="#youtube-%ec%98%81%ec%83%81" class="header-anchor"&gt;&lt;/a&gt;YouTube 영상
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; youtube VIDEO_ID &amp;gt;}}&lt;/p&gt;
+&lt;h3 id="twitterx"&gt;&lt;a href="#twitterx" class="header-anchor"&gt;&lt;/a&gt;Twitter/X
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; twitter user=&amp;ldquo;username&amp;rdquo; id=&amp;ldquo;tweet_id&amp;rdquo; &amp;gt;}}&lt;/p&gt;
+&lt;h3 id="github-gist"&gt;&lt;a href="#github-gist" class="header-anchor"&gt;&lt;/a&gt;GitHub Gist
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; gist username gist_id &amp;gt;}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="알림-박스-blowfish-alert"&gt;&lt;a href="#%ec%95%8c%eb%a6%bc-%eb%b0%95%ec%8a%a4-blowfish-alert" class="header-anchor"&gt;&lt;/a&gt;알림 박스 (Blowfish Alert)
+&lt;/h2&gt;&lt;p&gt;{{&amp;lt; alert &amp;ldquo;circle-info&amp;rdquo; &amp;gt;}}
+정보 알림입니다.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;p&gt;{{&amp;lt; alert &amp;ldquo;lightbulb&amp;rdquo; &amp;gt;}}
+팁이나 아이디어입니다.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;p&gt;{{&amp;lt; alert &amp;ldquo;triangle-exclamation&amp;rdquo; &amp;gt;}}
+경고 메시지입니다.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="접기펼치기-details"&gt;&lt;a href="#%ec%a0%91%ea%b8%b0%ed%8e%bc%ec%b9%98%ea%b8%b0-details" class="header-anchor"&gt;&lt;/a&gt;접기/펼치기 (Details)
+&lt;/h2&gt;&lt;details&gt;
+&lt;summary&gt;클릭하여 펼치기&lt;/summary&gt;
+&lt;p&gt;숨겨진 내용이 여기에 표시됩니다.&lt;/p&gt;
+&lt;/details&gt;
+&lt;hr&gt;
+&lt;h2 id="주석"&gt;&lt;a href="#%ec%a3%bc%ec%84%9d" class="header-anchor"&gt;&lt;/a&gt;주석
+&lt;/h2&gt;&lt;!-- 이 부분은 화면에 표시되지 않습니다 --&gt;
+&lt;hr&gt;
+&lt;h2 id="수평선"&gt;&lt;a href="#%ec%88%98%ed%8f%89%ec%84%a0" class="header-anchor"&gt;&lt;/a&gt;수평선
+&lt;/h2&gt;&lt;p&gt;위아래로 구분선을 만들 때 사용:&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="각주"&gt;&lt;a href="#%ea%b0%81%ec%a3%bc" class="header-anchor"&gt;&lt;/a&gt;각주
+&lt;/h2&gt;&lt;p&gt;텍스트에 각주&lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;를 추가할 수 있습니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="그래프-차트"&gt;&lt;a href="#%ea%b7%b8%eb%9e%98%ed%94%84-%ec%b0%a8%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;그래프 차트
+&lt;/h3&gt;&lt;div class="stack-chart"&gt;
+ &lt;canvas id="stack-chart-3"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+ (function () {
+ const ctx = document.getElementById("stack-chart-3");
+ if (!ctx || typeof Chart === "undefined") return;
+ new Chart(ctx, { 
+type: 'bar',
+data: {
+ labels: ['Tomato', 'Blueberry', 'Banana', 'Lime', 'Orange'],
+ datasets: [{
+ label: '# of votes',
+ data: [12, 19, 3, 5, 3],
+ }]
+}
+ });
+ })();
+&lt;/script&gt;
+
+&lt;hr&gt;
+&lt;h3 id="mermaid-차트"&gt;&lt;a href="#mermaid-%ec%b0%a8%ed%8a%b8" class="header-anchor"&gt;&lt;/a&gt;Mermaid 차트
+&lt;/h3&gt;&lt;pre class="mermaid" style="visibility:hidden"&gt;
+graph LR;
+A[Lemons]--&gt;B[Lemonade];
+B--&gt;C[Profit]
+&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h3 id="swatched-color-showcase"&gt;&lt;a href="#swatched-color-showcase" class="header-anchor"&gt;&lt;/a&gt;Swatched (color showcase)
+&lt;/h3&gt;&lt;div class="stack-swatch-grid"&gt;&lt;div class="stack-swatch" style="background: #64748b;"&gt;
+ &lt;span&gt;#64748b&lt;/span&gt;
+ &lt;/div&gt;&lt;div class="stack-swatch" style="background: #3b82f6;"&gt;
+ &lt;span&gt;#3b82f6&lt;/span&gt;
+ &lt;/div&gt;&lt;div class="stack-swatch" style="background: #06b6d4;"&gt;
+ &lt;span&gt;#06b6d4&lt;/span&gt;
+ &lt;/div&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="typelt"&gt;&lt;a href="#typelt" class="header-anchor"&gt;&lt;/a&gt;TypeLt
+&lt;/h3&gt;&lt;p&gt;(Ex1)&lt;/p&gt;
+&amp;lt;p id="stack-typeit-6" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/p&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-6");
+ if (!target) return;
+
+ const lines = "[\"Lorem ipsum dolor sit amet\"]";
+ const speed = "65";
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;p&gt;(Ex2)&lt;/p&gt;
+&amp;lt;h1 id="stack-typeit-7" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/h1&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-7");
+ if (!target) return;
+
+ const lines = "[\"Lorem ipsum dolor sit amet, \",\"consectetur adipiscing elit.\"]";
+ const speed = "65";
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;p&gt;(Ex3)&lt;/p&gt;
+&amp;lt;h3 id="stack-typeit-8" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/h3&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-8");
+ if (!target) return;
+
+ const lines = "[\"\\\"Frankly, my dear, I don't give a damn.\\\" Gone with the Wind (1939)\",\"\\\"I'm gonna make him an offer he can't refuse.\\\" The Godfather (1972)\",\"\\\"Toto, I've a feeling we're not in Kansas anymore.\\\" The Wizard of Oz (1939)\"]";
+ const speed = 50 ;
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;hr&gt;
+&lt;h3 id="youtube-lite"&gt;&lt;a href="#youtube-lite" class="header-anchor"&gt;&lt;/a&gt;Youtube Lite
+&lt;/h3&gt;&lt;div class="stack-youtube-lite"&gt;
+ &lt;iframe
+ src="https://www.youtube.com/embed/SgXhGb-7QbU"
+ title="Blowfish-tools demo"
+ loading="lazy"
+ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+ referrerpolicy="strict-origin-when-cross-origin"
+ allowfullscreen&gt;
+ &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;작성 팁:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Front matter의 &lt;code&gt;draft: true&lt;/code&gt;를 &lt;code&gt;false&lt;/code&gt;로 변경하면 배포됩니다&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;description&lt;/code&gt;과 &lt;code&gt;summary&lt;/code&gt;를 작성하면 SEO에 도움이 됩니다&lt;/li&gt;
+&lt;li&gt;이미지는 포스트 폴더에 함께 넣는 것을 권장합니다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="footnotes" role="doc-endnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;각주 내용입니다.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</description></item></channel></rss>

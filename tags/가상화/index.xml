@@ -1,1 +1,200 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>가상화 on 0AndWild_log</title><link>https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/</link><description>Recent content in 가상화 on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/index.xml" rel="self" type="application/rss+xml"/><item><title>도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류</title><link>https://0andwild.com/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/posts/221024_about_docker/</guid><description>Docker는 애플리케이션을 컨테이너로 패키징하여 다양한 환경에서 안정적으로 실행할 수 있게 해주는 오픈소스 플랫폼입니다. 호스트 가상화, 하이퍼바이저 가상화, 컨테이너 가상화의 차이점과 각각의 장단점을 비교하고, Docker 컨테이너의 효율성과 활용 방법을 정리합니다.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221024_about_docker/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>가상화 on 0AndWild_log</title><link>https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/</link><description>Recent content in 가상화 on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/index.xml" rel="self" type="application/rss+xml"/><item><title>도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류</title><link>https://0andwild.com/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/posts/221024_about_docker/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure1.png"
+ alt="docker"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-lead"&gt;
+ Docker는 &lt;strong&gt;오픈소스 컨테이너화 플랫폼&lt;/strong&gt;으로, 코드와 의존성을 패키징하여 다양한 컴퓨팅 환경에서 애플리케이션을 빠르고 안정적으로 실행할 수 있게 해줍니다.
+&lt;/div&gt;
+
+&lt;h2 id="-docker란"&gt;&lt;a href="#-docker%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;🐳 Docker란?
+&lt;/h2&gt;&lt;p&gt;Docker의 핵심 개념은 크게 두 가지입니다: &lt;strong&gt;컨테이너(Container)&lt;strong/&gt; 와 &lt;strong&gt;이미지(Image)&lt;strong/&gt;&lt;/p&gt;
+&lt;h3 id="docker-image-도커-이미지"&gt;&lt;a href="#docker-image-%eb%8f%84%ec%bb%a4-%ec%9d%b4%eb%af%b8%ec%a7%80" class="header-anchor"&gt;&lt;/a&gt;Docker Image (도커 이미지)
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;Docker Image&lt;/strong&gt;는 애플리케이션 실행에 필요한 코드, 런타임, 시스템 도구, 시스템 라이브러리, 설정 등을 포함하는 &lt;strong&gt;경량의 독립적인 소프트웨어 패키지&lt;/strong&gt;입니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="실제-사용-예시"&gt;&lt;a href="#%ec%8b%a4%ec%a0%9c-%ec%82%ac%ec%9a%a9-%ec%98%88%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;실제 사용 예시
+&lt;/h3&gt;&lt;p&gt;기존 방식으로 Linux에 Jenkins를 설치한다면:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo apt-get install jenkins
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 명령어를 실행하면 여러 의존성 패키지들을 함께 다운로드해야 합니다.&lt;/p&gt;
+&lt;p&gt;반면 Docker를 사용하면:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker pull jenkins/jenkins:lts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;필요한 모든 구성 요소가 포함된 사전 구성된 이미지를 한 번에 다운로드할 수 있습니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-docker-registry--docker-hub"&gt;&lt;a href="#-docker-registry--docker-hub" class="header-anchor"&gt;&lt;/a&gt;📦 Docker Registry &amp;amp; Docker Hub
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;Docker Registry&lt;/strong&gt;는 Docker 이미지를 공유하는 저장소 역할을 합니다. &amp;ldquo;Docker용 GitHub&amp;quot;라고 생각하면 쉽습니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt;는 공식 Docker 레지스트리로, 벤더가 제공하는 공식 이미지들을 제공합니다.&lt;/p&gt;
+&lt;h3 id="동작-흐름"&gt;&lt;a href="#%eb%8f%99%ec%9e%91-%ed%9d%90%eb%a6%84" class="header-anchor"&gt;&lt;/a&gt;동작 흐름
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;사용자가 레지스트리에서 이미지를 다운로드&lt;/li&gt;
+&lt;li&gt;이미지를 컨테이너로 실행&lt;/li&gt;
+&lt;li&gt;하나의 컴퓨터에서 여러 개의 격리된 환경 구성 가능&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="-container-virtualization-컨테이너-가상화"&gt;&lt;a href="#-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;🔄 Container Virtualization (컨테이너 가상화)
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure2.png"
+ alt="Containerized"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;컨테이너 기술은 &amp;ldquo;하나의 시스템 내에서 여러 개의 격리된 인스턴스를 실행할 수 있게 하는 서버 가상화 방식&amp;quot;으로, 각 컨테이너는 사용자에게 개별 서버처럼 보입니다.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;중요한 점:&lt;/strong&gt;
+컨테이너는 Docker만의 전유물이 아닙니다. OpenVZ, Libvirt, LXC 등 다양한 컨테이너 기술이 존재합니다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-가상화-방식의-종류"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d%ec%9d%98-%ec%a2%85%eb%a5%98" class="header-anchor"&gt;&lt;/a&gt;🖥️ 가상화 방식의 종류
+&lt;/h2&gt;&lt;h3 id="1-host-virtualization-호스트-가상화"&gt;&lt;a href="#1-host-virtualization-%ed%98%b8%ec%8a%a4%ed%8a%b8-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1. Host Virtualization (호스트 가상화)
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure3.png"
+ alt="Hosted Vitualization Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+Guest OS가 Host OS 위에서 가상화 소프트웨어를 통해 실행됩니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;예시: VM Workstation, VMware Player, VirtualBox 등&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;설치 및 구성이 간단함&lt;/li&gt;
+&lt;li&gt;하드웨어 에뮬레이션으로 최소한의 호스트 요구사항&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OS 위에 OS를 실행하므로 리소스 집약적&lt;/li&gt;
+&lt;li&gt;성능 오버헤드가 큼&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="2-hypervisor-virtualization-하이퍼바이저-가상화"&gt;&lt;a href="#2-hypervisor-virtualization-%ed%95%98%ec%9d%b4%ed%8d%bc%eb%b0%94%ec%9d%b4%ec%a0%80-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;2. Hypervisor Virtualization (하이퍼바이저 가상화)
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure4.png"
+ alt="HypervisorVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;하이퍼바이저 가상화의 두 가지 접근 방식:&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id="1-full-virtualization-전가상화"&gt;&lt;a href="#1-full-virtualization-%ec%a0%84%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1) Full Virtualization (전가상화)
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS가 하드웨어에 직접 접근하지 않고 하이퍼바이저를 통해 접근&lt;/li&gt;
+&lt;li&gt;더 안정적이지만 성능 오버헤드 존재&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-paravirtualization-반가상화"&gt;&lt;a href="#2-paravirtualization-%eb%b0%98%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;2) Paravirtualization (반가상화)
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS가 하이퍼바이저를 통해 하드웨어에 직접 접근&lt;/li&gt;
+&lt;li&gt;더 빠르지만 OS 수정 필요&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Host OS가 없어 더 효율적&lt;/li&gt;
+&lt;li&gt;리소스를 더 효과적으로 활용&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;시작 시간이 느림&lt;/li&gt;
+&lt;li&gt;각 VM이 독립적인 OS를 실행하므로 여전히 리소스 소모가 큼&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="3-container-virtualization-컨테이너-가상화-"&gt;&lt;a href="#3-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94-" class="header-anchor"&gt;&lt;/a&gt;3. Container Virtualization (컨테이너 가상화) ⭐
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure5.png"
+ alt="ContainerVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
+애플리케이션들이 호스트 OS 커널을 공유하면서도 격리된 환경을 유지합니다.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;장점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;경량&lt;/strong&gt;: 일반적으로 수십 MB (VM은 수십 GB)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;빠른 시작 속도&lt;/strong&gt;: 별도의 OS 부팅이 필요 없음&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;적은 리소스 사용&lt;/strong&gt;: 시스템 리소스를 효율적으로 활용&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;높은 밀도&lt;/strong&gt;: 같은 하드웨어에서 더 많은 컨테이너 실행 가능&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;단점:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;호스트 시스템과 동일한 OS 환경이 필요함&lt;/li&gt;
+&lt;li&gt;크로스 플랫폼 배포가 어려울 수 있음 (예: Linux 컨테이너는 Linux 호스트 필요)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="-가상화-방식-비교"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;📊 가상화 방식 비교
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;구분&lt;/th&gt;
+ &lt;th&gt;호스트 가상화&lt;/th&gt;
+ &lt;th&gt;하이퍼바이저 가상화&lt;/th&gt;
+ &lt;th&gt;컨테이너 가상화&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;용량&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;수십 GB&lt;/td&gt;
+ &lt;td&gt;수십 GB&lt;/td&gt;
+ &lt;td&gt;수십 MB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;시작 속도&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;느림&lt;/td&gt;
+ &lt;td&gt;느림&lt;/td&gt;
+ &lt;td&gt;매우 빠름&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;리소스 사용&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;td&gt;낮음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;격리 수준&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;이식성&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;낮음&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;td&gt;높음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;설정 난이도&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;쉬움&lt;/td&gt;
+ &lt;td&gt;어려움&lt;/td&gt;
+ &lt;td&gt;중간&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-정리"&gt;&lt;a href="#-%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;💡 정리
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Docker 컨테이너 가상화의 핵심 가치:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;효율성&lt;/strong&gt;: 기존 가상화 방식보다 훨씬 적은 리소스로 동일한 기능 제공&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;속도&lt;/strong&gt;: 애플리케이션을 몇 초 안에 시작하고 중지 가능&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;일관성&lt;/strong&gt;: 개발, 테스트, 프로덕션 환경에서 동일하게 실행&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;확장성&lt;/strong&gt;: 필요에 따라 컨테이너를 쉽게 추가하거나 제거&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Docker는 현대적인 애플리케이션 개발과 배포의 핵심 도구로, DevOps와 마이크로서비스 아키텍처의 기반이 되고 있습니다.&lt;/p&gt;</description></item></channel></rss>

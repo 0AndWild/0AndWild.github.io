@@ -1,1 +1,340 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Markdown on 0AndWild_log</title><link>https://0andwild.com/en/tags/markdown/</link><description>Recent content in Markdown on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Thu, 16 Oct 2025 18:36:52 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/markdown/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo Markdown Guide</title><link>https://0andwild.com/en/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.com/en/posts/251016_blowfish_markdown/</guid><description>Blowfish Markdown Syntax Guide</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251016_blowfish_markdown/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Markdown on 0AndWild_log</title><link>https://0andwild.com/en/tags/markdown/</link><description>Recent content in Markdown on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Thu, 16 Oct 2025 18:36:52 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/markdown/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo Markdown Guide</title><link>https://0andwild.com/en/posts/251016_blowfish_markdown/</link><pubDate>Thu, 16 Oct 2025 18:36:52 +0900</pubDate><guid>https://0andwild.com/en/posts/251016_blowfish_markdown/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Hugo Markdown Guide" /&gt;&lt;!-- Content Writing Guide --&gt;
+&lt;h2 id="heading-h2"&gt;&lt;a href="#heading-h2" class="header-anchor"&gt;&lt;/a&gt;Heading (H2)
+&lt;/h2&gt;&lt;h3 id="subheading-h3"&gt;&lt;a href="#subheading-h3" class="header-anchor"&gt;&lt;/a&gt;Subheading (H3)
+&lt;/h3&gt;&lt;p&gt;Regular text. &lt;strong&gt;Bold&lt;/strong&gt;, &lt;em&gt;Italic&lt;/em&gt;, &lt;del&gt;Strikethrough&lt;/del&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="images"&gt;&lt;a href="#images" class="header-anchor"&gt;&lt;/a&gt;Images
+&lt;/h2&gt;&lt;h3 id="method-1-local-image"&gt;&lt;a href="#method-1-local-image" class="header-anchor"&gt;&lt;/a&gt;Method 1: Local Image
+&lt;/h3&gt;&lt;p&gt;Place image file in the post folder:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![&lt;span class="nt"&gt;Image description&lt;/span&gt;](&lt;span class="na"&gt;image.jpg&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="method-2-external-image-url"&gt;&lt;a href="#method-2-external-image-url" class="header-anchor"&gt;&lt;/a&gt;Method 2: External Image URL
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![&lt;span class="nt"&gt;Image description&lt;/span&gt;](&lt;span class="na"&gt;https://example.com/image.jpg&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="method-3-html-tag-with-size-control"&gt;&lt;a href="#method-3-html-tag-with-size-control" class="header-anchor"&gt;&lt;/a&gt;Method 3: HTML Tag (with size control)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;img&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;image.jpg&amp;#34;&lt;/span&gt; &lt;span class="na"&gt;alt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Image description&amp;#34;&lt;/span&gt; &lt;span class="na"&gt;width&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;500&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="carousel-images-slideshow"&gt;&lt;a href="#carousel-images-slideshow" class="header-anchor"&gt;&lt;/a&gt;Carousel Images (Slideshow)
+&lt;/h3&gt;&lt;h3 id="169"&gt;&lt;a href="#169" class="header-anchor"&gt;&lt;/a&gt;16:9
+&lt;/h3&gt;&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="hahahugoshortcode66s1hbhb"&gt;&lt;a href="#hahahugoshortcode66s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
+&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
+
+&lt;/h2&gt;&lt;h2 id="code-blocks"&gt;&lt;a href="#code-blocks" class="header-anchor"&gt;&lt;/a&gt;Code Blocks
+&lt;/h2&gt;&lt;h3 id="inline-code"&gt;&lt;a href="#inline-code" class="header-anchor"&gt;&lt;/a&gt;Inline Code
+&lt;/h3&gt;&lt;p&gt;Use &lt;code&gt;inline code&lt;/code&gt; format&lt;/p&gt;
+&lt;h3 id="code-blocks-1"&gt;&lt;a href="#code-blocks-1" class="header-anchor"&gt;&lt;/a&gt;Code Blocks
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-go" data-lang="go"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;package&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;fmt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;Println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Hello, World!&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Hello, World!&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run -d -p 8080:80 nginx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="links"&gt;&lt;a href="#links" class="header-anchor"&gt;&lt;/a&gt;Links
+&lt;/h2&gt;&lt;h3 id="basic-link"&gt;&lt;a href="#basic-link" class="header-anchor"&gt;&lt;/a&gt;Basic Link
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://example.com" target="_blank" rel="noopener"
+ &gt;Link text&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="reference-style-link"&gt;&lt;a href="#reference-style-link" class="header-anchor"&gt;&lt;/a&gt;Reference Style Link
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://example.com" title="Link description"
+ target="_blank" rel="noopener"
+ &gt;Link text&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="article-reference"&gt;&lt;a href="#article-reference" class="header-anchor"&gt;&lt;/a&gt;Article Reference
+&lt;/h3&gt;&lt;a class="stack-article-card" href="https://0andwild.com/docs/welcome/"&gt;
+ &lt;span class="stack-article-card__title"&gt;/docs/welcome/&lt;/span&gt;&lt;span&gt;Open linked article&lt;/span&gt;&lt;/a&gt;
+
+&lt;hr&gt;
+&lt;h2 id="lists"&gt;&lt;a href="#lists" class="header-anchor"&gt;&lt;/a&gt;Lists
+&lt;/h2&gt;&lt;h3 id="unordered-list"&gt;&lt;a href="#unordered-list" class="header-anchor"&gt;&lt;/a&gt;Unordered List
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Item 1&lt;/li&gt;
+&lt;li&gt;Item 2
+&lt;ul&gt;
+&lt;li&gt;Sub-item 2-1&lt;/li&gt;
+&lt;li&gt;Sub-item 2-2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Item 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="ordered-list"&gt;&lt;a href="#ordered-list" class="header-anchor"&gt;&lt;/a&gt;Ordered List
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;First&lt;/li&gt;
+&lt;li&gt;Second&lt;/li&gt;
+&lt;li&gt;Third&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="checklist"&gt;&lt;a href="#checklist" class="header-anchor"&gt;&lt;/a&gt;Checklist
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Todo 1&lt;/li&gt;
+&lt;li&gt;&lt;input checked="" disabled="" type="checkbox"&gt; Completed&lt;/li&gt;
+&lt;li&gt;&lt;input disabled="" type="checkbox"&gt; Todo 2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="blockquote"&gt;&lt;a href="#blockquote" class="header-anchor"&gt;&lt;/a&gt;Blockquote
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;This is a blockquote.
+Multiple lines are supported.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="table"&gt;&lt;a href="#table" class="header-anchor"&gt;&lt;/a&gt;Table
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Item&lt;/th&gt;
+ &lt;th&gt;Description&lt;/th&gt;
+ &lt;th&gt;Note&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;A&lt;/td&gt;
+ &lt;td&gt;Description A&lt;/td&gt;
+ &lt;td&gt;Note A&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;B&lt;/td&gt;
+ &lt;td&gt;Description B&lt;/td&gt;
+ &lt;td&gt;Note B&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="embedded-links-shortcodes"&gt;&lt;a href="#embedded-links-shortcodes" class="header-anchor"&gt;&lt;/a&gt;Embedded Links (Shortcodes)
+&lt;/h2&gt;&lt;h3 id="youtube-video"&gt;&lt;a href="#youtube-video" class="header-anchor"&gt;&lt;/a&gt;YouTube Video
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; youtube VIDEO_ID &amp;gt;}}&lt;/p&gt;
+&lt;h3 id="twitterx"&gt;&lt;a href="#twitterx" class="header-anchor"&gt;&lt;/a&gt;Twitter/X
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; twitter user=&amp;ldquo;username&amp;rdquo; id=&amp;ldquo;tweet_id&amp;rdquo; &amp;gt;}}&lt;/p&gt;
+&lt;h3 id="github-gist"&gt;&lt;a href="#github-gist" class="header-anchor"&gt;&lt;/a&gt;GitHub Gist
+&lt;/h3&gt;&lt;p&gt;{{&amp;lt; gist username gist_id &amp;gt;}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="alert-boxes-blowfish-alert"&gt;&lt;a href="#alert-boxes-blowfish-alert" class="header-anchor"&gt;&lt;/a&gt;Alert Boxes (Blowfish Alert)
+&lt;/h2&gt;&lt;p&gt;{{&amp;lt; alert &amp;ldquo;circle-info&amp;rdquo; &amp;gt;}}
+Information alert.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;p&gt;{{&amp;lt; alert &amp;ldquo;lightbulb&amp;rdquo; &amp;gt;}}
+Tips and ideas.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;p&gt;{{&amp;lt; alert &amp;ldquo;triangle-exclamation&amp;rdquo; &amp;gt;}}
+Warning message.
+{{&amp;lt; /alert &amp;gt;}}&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="collapsible-details"&gt;&lt;a href="#collapsible-details" class="header-anchor"&gt;&lt;/a&gt;Collapsible (Details)
+&lt;/h2&gt;&lt;details&gt;
+&lt;summary&gt;Click to expand&lt;/summary&gt;
+&lt;p&gt;Hidden content appears here.&lt;/p&gt;
+&lt;/details&gt;
+&lt;hr&gt;
+&lt;h2 id="comments"&gt;&lt;a href="#comments" class="header-anchor"&gt;&lt;/a&gt;Comments
+&lt;/h2&gt;&lt;!-- This part is not displayed on screen --&gt;
+&lt;hr&gt;
+&lt;h2 id="horizontal-rule"&gt;&lt;a href="#horizontal-rule" class="header-anchor"&gt;&lt;/a&gt;Horizontal Rule
+&lt;/h2&gt;&lt;p&gt;Use to create dividing lines:&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="footnotes"&gt;&lt;a href="#footnotes" class="header-anchor"&gt;&lt;/a&gt;Footnotes
+&lt;/h2&gt;&lt;p&gt;You can add footnotes&lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt; to text.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="chart"&gt;&lt;a href="#chart" class="header-anchor"&gt;&lt;/a&gt;Chart
+&lt;/h3&gt;&lt;div class="stack-chart"&gt;
+ &lt;canvas id="stack-chart-3"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+ (function () {
+ const ctx = document.getElementById("stack-chart-3");
+ if (!ctx || typeof Chart === "undefined") return;
+ new Chart(ctx, { 
+type: 'bar',
+data: {
+ labels: ['Tomato', 'Blueberry', 'Banana', 'Lime', 'Orange'],
+ datasets: [{
+ label: '# of votes',
+ data: [12, 19, 3, 5, 3],
+ }]
+}
+ });
+ })();
+&lt;/script&gt;
+
+&lt;hr&gt;
+&lt;h3 id="mermaid-diagram"&gt;&lt;a href="#mermaid-diagram" class="header-anchor"&gt;&lt;/a&gt;Mermaid Diagram
+&lt;/h3&gt;&lt;pre class="mermaid" style="visibility:hidden"&gt;
+graph LR;
+A[Lemons]--&gt;B[Lemonade];
+B--&gt;C[Profit]
+&lt;/pre&gt;
+&lt;hr&gt;
+&lt;h3 id="swatches-color-showcase"&gt;&lt;a href="#swatches-color-showcase" class="header-anchor"&gt;&lt;/a&gt;Swatches (color showcase)
+&lt;/h3&gt;&lt;div class="stack-swatch-grid"&gt;&lt;div class="stack-swatch" style="background: #64748b;"&gt;
+ &lt;span&gt;#64748b&lt;/span&gt;
+ &lt;/div&gt;&lt;div class="stack-swatch" style="background: #3b82f6;"&gt;
+ &lt;span&gt;#3b82f6&lt;/span&gt;
+ &lt;/div&gt;&lt;div class="stack-swatch" style="background: #06b6d4;"&gt;
+ &lt;span&gt;#06b6d4&lt;/span&gt;
+ &lt;/div&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="typeit"&gt;&lt;a href="#typeit" class="header-anchor"&gt;&lt;/a&gt;TypeIt
+&lt;/h3&gt;&lt;p&gt;(Ex1)&lt;/p&gt;
+&amp;lt;p id="stack-typeit-6" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/p&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-6");
+ if (!target) return;
+
+ const lines = "[\"Lorem ipsum dolor sit amet\"]";
+ const speed = "65";
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;p&gt;(Ex2)&lt;/p&gt;
+&amp;lt;h1 id="stack-typeit-7" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/h1&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-7");
+ if (!target) return;
+
+ const lines = "[\"Lorem ipsum dolor sit amet,\",\"consectetur adipiscing elit.\"]";
+ const speed = "65";
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;p&gt;(Ex3)&lt;/p&gt;
+&amp;lt;h3 id="stack-typeit-8" class="stack-typeit stack-typeit-cursor"&gt;&amp;lt;/h3&gt;
+&lt;script&gt;
+ (function () {
+ const target = document.getElementById("stack-typeit-8");
+ if (!target) return;
+
+ const lines = "[\"\\\"Frankly, my dear, I don't give a damn.\\\" Gone with the Wind (1939)\",\"\\\"I'm gonna make him an offer he can't refuse.\\\" The Godfather (1972)\",\"\\\"Toto, I've a feeling we're not in Kansas anymore.\\\" The Wizard of Oz (1939)\"]";
+ const speed = 50 ;
+ const shouldLoop = false;
+ let lineIndex = 0;
+ let charIndex = 0;
+ let deleting = false;
+
+ function tick() {
+ const line = lines[lineIndex] || "";
+ if (!deleting) {
+ target.textContent = line.slice(0, charIndex + 1);
+ charIndex += 1;
+ if (charIndex === line.length) {
+ deleting = true;
+ setTimeout(tick, 1200);
+ return;
+ }
+ } else {
+ target.textContent = line.slice(0, Math.max(charIndex - 1, 0));
+ charIndex -= 1;
+ if (charIndex &lt;= 0) {
+ deleting = false;
+ lineIndex = (lineIndex + 1) % lines.length;
+ if (!shouldLoop &amp;&amp; lineIndex === 0) {
+ target.textContent = lines[lines.length - 1] || "";
+ target.classList.remove("stack-typeit-cursor");
+ return;
+ }
+ }
+ }
+ setTimeout(tick, deleting ? speed / 2 : speed);
+ }
+
+ tick();
+ })();
+&lt;/script&gt;
+
+&lt;hr&gt;
+&lt;h3 id="youtube-lite"&gt;&lt;a href="#youtube-lite" class="header-anchor"&gt;&lt;/a&gt;Youtube Lite
+&lt;/h3&gt;&lt;div class="stack-youtube-lite"&gt;
+ &lt;iframe
+ src="https://www.youtube.com/embed/SgXhGb-7QbU"
+ title="Blowfish-tools demo"
+ loading="lazy"
+ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+ referrerpolicy="strict-origin-when-cross-origin"
+ allowfullscreen&gt;
+ &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Writing Tips:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Change &lt;code&gt;draft: true&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt; in front matter to publish&lt;/li&gt;
+&lt;li&gt;Writing &lt;code&gt;description&lt;/code&gt; and &lt;code&gt;summary&lt;/code&gt; helps with SEO&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s recommended to place images in the post folder&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="footnotes" role="doc-endnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;This is the footnote content.&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</description></item></channel></rss>

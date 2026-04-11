@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pagination on 0AndWild_log</title><link>https://0andwild.com/tags/pagination/</link><description>Recent content in Pagination on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Tue, 06 Feb 2024 21:16:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/pagination/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>From/Size, Search After, Scroll 등 Elasticsearch의 페이지네이션 방식을 비교하고 PIT(Point In Time)를 활용한 안정적인 페이징 구현 방법</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/240206_es/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pagination on 0AndWild_log</title><link>https://0andwild.com/tags/pagination/</link><description>Recent content in Pagination on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Tue, 06 Feb 2024 21:16:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/pagination/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch Pagination Technique</title><link>https://0andwild.com/posts/240206_es/</link><pubDate>Tue, 06 Feb 2024 21:16:24 +0900</pubDate><guid>https://0andwild.com/posts/240206_es/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Pagination Technique" /&gt;&lt;h2 id="elasticsearch-pagination-3가지-옵션"&gt;&lt;a href="#elasticsearch-pagination-3%ea%b0%80%ec%a7%80-%ec%98%b5%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;ElasticSearch Pagination 3가지 옵션
+&lt;/h2&gt;&lt;h3 id="1-fromsize-pagination"&gt;&lt;a href="#1-fromsize-pagination" class="header-anchor"&gt;&lt;/a&gt;1. From/Size Pagination
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;from&lt;/code&gt; + &lt;code&gt;size&lt;/code&gt; = offset 방식으로 그때그때 메모리에 적재하여 검색을 함. 최대 10,000건까지 지원&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-modules.html#index-max-result-window" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;index.max_result_window&lt;/code&gt;&lt;/a&gt; 옵션을 사용하여 10,000건 이상을 로드할 수 있지만 추천하지 않음&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;간단한 구현&lt;/li&gt;
+&lt;li&gt;최대 10,000건 제한&lt;/li&gt;
+&lt;li&gt;Deep pagination 시 성능 저하&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="2-search-after"&gt;&lt;a href="#2-search-after" class="header-anchor"&gt;&lt;/a&gt;2. Search After
+&lt;/h3&gt;&lt;p&gt;Pagination이 최대 10,000건까지 페이징 처리할 수 있는 한계를 극복할 수 있음. 일반적인 커서 방식과 유사함.&lt;/p&gt;
+&lt;p&gt;검색 결과의 &lt;code&gt;sort&lt;/code&gt; 조건 필드를 키 값으로 사용하며 그 다음부터 조회를 함.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;단점&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;search-after&lt;/code&gt;만 사용할 경우 중간에 인덱싱이 업데이트되거나 하면 응답 결과가 불규칙해질 수 있음.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PIT(Point In Time)와 함께 사용&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이를 보완하기 위해 PIT(Point In Time)를 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;POST /my-index-000001/_pit?keep_alive&lt;span class="o"&gt;=&lt;/span&gt;1m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위 요청을 통해 해당 인덱스의 현재 시점의 스냅샷을 찍어두고 다음과 같이 &lt;code&gt;id&lt;/code&gt; 값으로 사용함&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;size&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;my_sort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;desc&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;search_after&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;{{pit_value}}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;중간에 인덱스에 변경사항이 있어도 스냅샷을 기준으로 응답 결과가 반환됨.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;keep_alive&lt;/code&gt;는 해당 PIT의 유효기간과 같음. 최신 시점을 기준으로 PIT를 관리하는 것이 권장됨.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;10,000건 이상 페이징 가능&lt;/li&gt;
+&lt;li&gt;커서 기반 방식&lt;/li&gt;
+&lt;li&gt;PIT와 함께 사용 시 일관된 결과 보장&lt;/li&gt;
+&lt;li&gt;Deep pagination에 효율적&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="3-scroll"&gt;&lt;a href="#3-scroll" class="header-anchor"&gt;&lt;/a&gt;3. Scroll
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: ES 공식 문서에 따라 Scroll 방식 대신 Search After 방식을 권장함&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;대량 데이터 추출용&lt;/li&gt;
+&lt;li&gt;실시간 검색에는 부적합&lt;/li&gt;
+&lt;li&gt;현재는 Search After + PIT 조합을 권장&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="참고-자료"&gt;&lt;a href="#%ec%b0%b8%ea%b3%a0-%ec%9e%90%eb%a3%8c" class="header-anchor"&gt;&lt;/a&gt;참고 자료
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opster.com/guides/elasticsearch/how-tos/elasticsearch-pagination-techniques/" target="_blank" rel="noopener"
+ &gt;Elasticsearch Pagination Techniques: SearchAfter, Scroll, Pagination &amp;amp; PIT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://danawalab.github.io/elastic/2023/02/13/Search-After.html" target="_blank" rel="noopener"
+ &gt;Elasticsearch Search After 성능 체크&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after" target="_blank" rel="noopener"
+ &gt;Paginate search results | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html" target="_blank" rel="noopener"
+ &gt;Point in time API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
+ &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

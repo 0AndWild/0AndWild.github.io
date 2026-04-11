@@ -1,1 +1,1040 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Static Site on 0AndWild_log</title><link>https://0andwild.com/en/tags/static-site/</link><description>Recent content in Static Site on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Fri, 17 Oct 2025 11:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/static-site/index.xml" rel="self" type="application/rss+xml"/><item><title>Complete Guide to Comment Systems for Static Blogs</title><link>https://0andwild.com/en/posts/251017_comments_guide/</link><pubDate>Fri, 17 Oct 2025 11:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/251017_comments_guide/</guid><description>Pros, cons, and implementation methods for all comment systems: Giscus, Utterances, Remark42, Disqus, and more</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/251017_comments_guide/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Static Site on 0AndWild_log</title><link>https://0andwild.com/en/tags/static-site/</link><description>Recent content in Static Site on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 17 Oct 2025 11:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/static-site/index.xml" rel="self" type="application/rss+xml"/><item><title>Complete Guide to Comment Systems for Static Blogs</title><link>https://0andwild.com/en/posts/251017_comments_guide/</link><pubDate>Fri, 17 Oct 2025 11:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/251017_comments_guide/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Complete Guide to Comment Systems for Static Blogs" /&gt;&lt;h2 id="overview"&gt;&lt;a href="#overview" class="header-anchor"&gt;&lt;/a&gt;Overview
+&lt;/h2&gt;&lt;p&gt;This guide provides a comprehensive comparison of all methods to add comment functionality to blogs built with static site generators (Hugo). We present solutions for various requirements including &lt;strong&gt;anonymous comments&lt;/strong&gt;, &lt;strong&gt;GitHub login&lt;/strong&gt;, and &lt;strong&gt;social logins&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="comment-system-classification"&gt;&lt;a href="#comment-system-classification" class="header-anchor"&gt;&lt;/a&gt;Comment System Classification
+&lt;/h2&gt;&lt;h3 id="by-authentication-method"&gt;&lt;a href="#by-authentication-method" class="header-anchor"&gt;&lt;/a&gt;By Authentication Method
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Authentication&lt;/th&gt;
+ &lt;th&gt;Systems&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;GitHub Only&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Giscus, Utterances&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Anonymous Supported&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Remark42, Commento, Comentario, HashOver&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Anonymous + Social Login&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Remark42, Commento, Disqus&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Social Login Only&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Disqus, Hyvor Talk&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="by-hosting-method"&gt;&lt;a href="#by-hosting-method" class="header-anchor"&gt;&lt;/a&gt;By Hosting Method
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Hosting&lt;/th&gt;
+ &lt;th&gt;Systems&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;SaaS (No Management)&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Giscus, Utterances, Disqus, Hyvor Talk&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Self-Hosted&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Remark42, Commento, Comentario, HashOver&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Hybrid&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Cusdis (Free Vercel deployment)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="1-giscus-highly-recommended---for-github-users"&gt;&lt;a href="#1-giscus-highly-recommended---for-github-users" class="header-anchor"&gt;&lt;/a&gt;1. Giscus (Highly Recommended - For GitHub Users)
+&lt;/h2&gt;&lt;h3 id="concept"&gt;&lt;a href="#concept" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Comment system using GitHub Discussions as backend&lt;/p&gt;
+&lt;h3 id="how-it-works"&gt;&lt;a href="#how-it-works" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;1. User visits blog
+ ↓
+2. Giscus widget loads
+ ↓
+3. Login with GitHub OAuth
+ ↓
+4. Write comment
+ ↓
+5. Auto-saved to GitHub Discussions
+ ↓
+6. Displayed on blog in real-time
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages"&gt;&lt;a href="#advantages" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Completely free&lt;/strong&gt; (leverages GitHub features)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;No server required&lt;/strong&gt; (GitHub handles backend)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Data ownership&lt;/strong&gt; (stored in your repository)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Markdown support&lt;/strong&gt; (code blocks, images, etc.)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Reactions support&lt;/strong&gt; (👍, ❤️, etc.)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Notifications&lt;/strong&gt; (comment alerts via GitHub notifications)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Dark mode&lt;/strong&gt; (syncs with blog theme)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Spam prevention&lt;/strong&gt; (requires GitHub account)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Easy management&lt;/strong&gt; (manage in GitHub Discussions)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Searchable&lt;/strong&gt; (search comments via GitHub search)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages"&gt;&lt;a href="#disadvantages" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;No anonymous comments&lt;/strong&gt; (GitHub account required)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Best for tech blogs&lt;/strong&gt; (general users may not have GitHub accounts)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;GitHub dependency&lt;/strong&gt; (comments unavailable during GitHub outages)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty"&gt;&lt;a href="#implementation-difficulty" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐ (2/5)&lt;/p&gt;
+&lt;h3 id="setup-method"&gt;&lt;a href="#setup-method" class="header-anchor"&gt;&lt;/a&gt;Setup Method
+&lt;/h3&gt;&lt;h4 id="step-1-enable-github-discussions"&gt;&lt;a href="#step-1-enable-github-discussions" class="header-anchor"&gt;&lt;/a&gt;Step 1: Enable GitHub Discussions
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. GitHub Repository → Settings
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Features section → Check Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="step-2-configure-giscus"&gt;&lt;a href="#step-2-configure-giscus" class="header-anchor"&gt;&lt;/a&gt;Step 2: Configure Giscus
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;Visit &lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;giscus.app&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Enter repository: &lt;code&gt;username/repository&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select settings:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Page ↔️ Discussion mapping&lt;/strong&gt;: &lt;code&gt;pathname&lt;/code&gt; (recommended)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Discussion category&lt;/strong&gt;: &lt;code&gt;Announcements&lt;/code&gt; or &lt;code&gt;General&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Features&lt;/strong&gt;: Reactions, comments above&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Theme&lt;/strong&gt;: Match your blog theme&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="step-3-add-to-blowfish"&gt;&lt;a href="#step-3-add-to-blowfish" class="header-anchor"&gt;&lt;/a&gt;Step 3: Add to Blowfish
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;YOUR_REPO_ID&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;YOUR_CATEGORY_ID&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;en&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="step-4-configure-paramstoml"&gt;&lt;a href="#step-4-configure-paramstoml" class="header-anchor"&gt;&lt;/a&gt;Step 4: Configure params.toml
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="theme-synchronization-dark-mode"&gt;&lt;a href="#theme-synchronization-dark-mode" class="header-anchor"&gt;&lt;/a&gt;Theme Synchronization (Dark Mode)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;script&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Change Giscus theme when blog theme changes
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;giscusTheme&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;querySelector&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;iframe.giscus-frame&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;giscusTheme&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;documentElement&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getAttribute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data-theme&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;giscusTheme&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;contentWindow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;postMessage&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;giscus&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setConfig&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;theme&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dark&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://giscus.app&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/script&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="cost"&gt;&lt;a href="#cost" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Completely free&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="recommended-for"&gt;&lt;a href="#recommended-for" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Developer blogs&lt;/li&gt;
+&lt;li&gt;✅ Technical documentation&lt;/li&gt;
+&lt;li&gt;✅ Open source project blogs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="2-utterances"&gt;&lt;a href="#2-utterances" class="header-anchor"&gt;&lt;/a&gt;2. Utterances
+&lt;/h2&gt;&lt;h3 id="concept-1"&gt;&lt;a href="#concept-1" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Comment system using GitHub Issues as backend (predecessor of Giscus)&lt;/p&gt;
+&lt;h3 id="how-it-works-1"&gt;&lt;a href="#how-it-works-1" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;1. GitHub OAuth login
+ ↓
+2. Write comment
+ ↓
+3. Save to GitHub Issues (each post = 1 Issue)
+ ↓
+4. Display on blog
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages-1"&gt;&lt;a href="#advantages-1" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Completely free&lt;/li&gt;
+&lt;li&gt;✅ Lightweight (TypeScript)&lt;/li&gt;
+&lt;li&gt;✅ Simple setup&lt;/li&gt;
+&lt;li&gt;✅ Markdown support&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-1"&gt;&lt;a href="#disadvantages-1" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;Uses Issues&lt;/strong&gt; (less suitable than Discussions)&lt;/li&gt;
+&lt;li&gt;❌ Fewer features than Giscus&lt;/li&gt;
+&lt;li&gt;❌ No anonymous comments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="giscus-vs-utterances"&gt;&lt;a href="#giscus-vs-utterances" class="header-anchor"&gt;&lt;/a&gt;Giscus vs Utterances
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Feature&lt;/th&gt;
+ &lt;th&gt;Giscus&lt;/th&gt;
+ &lt;th&gt;Utterances&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Backend&lt;/td&gt;
+ &lt;td&gt;Discussions&lt;/td&gt;
+ &lt;td&gt;Issues&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Reactions&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Nested Replies&lt;/td&gt;
+ &lt;td&gt;✅ (nested)&lt;/td&gt;
+ &lt;td&gt;⚠️ (flat)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Suitability&lt;/td&gt;
+ &lt;td&gt;Comment-specific&lt;/td&gt;
+ &lt;td&gt;Issue tracking&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;: Giscus is a superior alternative to Utterances&lt;/p&gt;
+&lt;h3 id="implementation-difficulty-1"&gt;&lt;a href="#implementation-difficulty-1" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐ (2/5)&lt;/p&gt;
+&lt;h3 id="setup-method-1"&gt;&lt;a href="#setup-method-1" class="header-anchor"&gt;&lt;/a&gt;Setup Method
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://utteranc.es/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;username/repository&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;issue-term&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;github-light&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="recommended-for-1"&gt;&lt;a href="#recommended-for-1" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Unless there&amp;rsquo;s a specific reason, &lt;strong&gt;use Giscus instead&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="3-remark42-highly-recommended---anonymous--social-login"&gt;&lt;a href="#3-remark42-highly-recommended---anonymous--social-login" class="header-anchor"&gt;&lt;/a&gt;3. Remark42 (Highly Recommended - Anonymous + Social Login)
+&lt;/h2&gt;&lt;h3 id="concept-2"&gt;&lt;a href="#concept-2" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Open-source self-hosted comment system supporting anonymous and various social logins&lt;/p&gt;
+&lt;h3 id="how-it-works-2"&gt;&lt;a href="#how-it-works-2" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;1. Deploy Remark42 server (Docker)
+ ↓
+2. Insert Remark42 script on blog
+ ↓
+3. User chooses:
+ - Write anonymous comment
+ - Login with GitHub/Google/Twitter and write
+ ↓
+4. Save to Remark42 DB
+ ↓
+5. Display on blog
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages-2"&gt;&lt;a href="#advantages-2" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Anonymous comments supported&lt;/strong&gt; (can be toggled on/off)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Various social logins&lt;/strong&gt; (GitHub, Google, Facebook, Twitter, Email)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Completely free&lt;/strong&gt; (open source)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;No ads&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Data ownership&lt;/strong&gt; (your server)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Markdown support&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Comment edit/delete&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Admin mode&lt;/strong&gt; (approve/block/delete comments)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Notifications&lt;/strong&gt; (Email/Telegram)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Import/Export&lt;/strong&gt; (migrate from other systems)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Voting&lt;/strong&gt; (upvote/downvote)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Spam filter&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-2"&gt;&lt;a href="#disadvantages-2" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;Self-hosting required&lt;/strong&gt; (Docker server)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Maintenance responsibility&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Hosting costs&lt;/strong&gt; ($5/month~, free tier possible)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty-2"&gt;&lt;a href="#implementation-difficulty-2" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐⭐⭐ (4/5)&lt;/p&gt;
+&lt;h3 id="hosting-options"&gt;&lt;a href="#hosting-options" class="header-anchor"&gt;&lt;/a&gt;Hosting Options
+&lt;/h3&gt;&lt;h4 id="option-1-railway-recommended"&gt;&lt;a href="#option-1-railway-recommended" class="header-anchor"&gt;&lt;/a&gt;Option 1: Railway (Recommended)
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Sign up &lt;span class="k"&gt;for&lt;/span&gt; Railway.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. &lt;span class="s2"&gt;&amp;#34;New Project&amp;#34;&lt;/span&gt; → &lt;span class="s2"&gt;&amp;#34;Deploy from GitHub&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Select Remark42 Docker image
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Configure environment variables:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - &lt;span class="nv"&gt;REMARK_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;https://your-remark42.railway.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - &lt;span class="nv"&gt;SECRET&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;your-random-secret
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - &lt;span class="nv"&gt;AUTH_ANON&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;# Allow anonymous comments&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - &lt;span class="nv"&gt;AUTH_GITHUB_CID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;your_client_id
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - &lt;span class="nv"&gt;AUTH_GITHUB_CSEC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;your_client_secret
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Railway Free Tier&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$5 credit per month&lt;/li&gt;
+&lt;li&gt;Sufficient for small blogs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="option-2-flyio"&gt;&lt;a href="#option-2-flyio" class="header-anchor"&gt;&lt;/a&gt;Option 2: Fly.io
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# fly.toml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;my-remark42&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[&lt;/span&gt;build&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;image&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;umputun/remark42:latest&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;[&lt;/span&gt;env&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;REMARK_URL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://my-remark42.fly.dev&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;AUTH_ANON&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;AUTH_GITHUB_CID&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;xxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;AUTH_GITHUB_CSEC&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;xxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fly launch
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fly deploy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Fly.io Free Tier&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;3 apps&lt;/li&gt;
+&lt;li&gt;Sufficient for small blogs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="option-3-docker-compose-vps"&gt;&lt;a href="#option-3-docker-compose-vps" class="header-anchor"&gt;&lt;/a&gt;Option 3: Docker Compose (VPS)
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# docker-compose.yml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3.8&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;remark42&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;umputun/remark42:latest&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;always&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;REMARK_URL=https://remark.your-blog.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;SECRET=your-secret-key-change-this&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;AUTH_ANON=true &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# Allow anonymous&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;AUTH_GITHUB_CID=xxx &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# GitHub login&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;AUTH_GITHUB_CSEC=xxx&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;AUTH_GOOGLE_CID=xxx &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# Google login&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;AUTH_GOOGLE_CSEC=xxx&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;ADMIN_SHARED_ID=github_username &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# Admin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;./data:/srv/var&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s2"&gt;&amp;#34;8080:8080&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker-compose up -d
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="blog-embed-code"&gt;&lt;a href="#blog-embed-code" class="header-anchor"&gt;&lt;/a&gt;Blog Embed Code
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;remark42&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;remark_config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;host&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://your-remark42.railway.app&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;site_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0andwild-blog&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;components&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;embed&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;locale&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;en&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;max_shown_comments&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;simple_view&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;no_footer&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createElement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;script&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;remark_config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;host&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/web/&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;defer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;head&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;appendChild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="nx"&gt;remark_config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;components&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;embed&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="anonymous--github-simultaneous-configuration"&gt;&lt;a href="#anonymous--github-simultaneous-configuration" class="header-anchor"&gt;&lt;/a&gt;Anonymous + GitHub Simultaneous Configuration
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Environment variables&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_ANON&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;# Allow anonymous&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_GITHUB_CID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;xxx &lt;span class="c1"&gt;# GitHub OAuth App ID&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_GITHUB_CSEC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;xxx &lt;span class="c1"&gt;# GitHub OAuth App Secret&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ANON_VOTE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;false&lt;/span&gt; &lt;span class="c1"&gt;# Disable voting for anonymous (spam prevention)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Users can choose:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;ldquo;Comment anonymously&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Login with GitHub&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="admin-features"&gt;&lt;a href="#admin-features" class="header-anchor"&gt;&lt;/a&gt;Admin Features
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Designate admin&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ADMIN_SHARED_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;github_yourusername
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Or by email&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ADMIN_SHARED_EMAIL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;you@example.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Admin capabilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Delete comments&lt;/li&gt;
+&lt;li&gt;Block users&lt;/li&gt;
+&lt;li&gt;Pin comments&lt;/li&gt;
+&lt;li&gt;Read-only mode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cost-1"&gt;&lt;a href="#cost-1" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Railway&lt;/strong&gt;: Free or $5/month&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fly.io&lt;/strong&gt;: Free tier available&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;VPS (DigitalOcean, etc.)&lt;/strong&gt;: $5/month~&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="recommended-for-2"&gt;&lt;a href="#recommended-for-2" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Want both anonymous and social login&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ Users comfortable with Docker&lt;/li&gt;
+&lt;li&gt;✅ Want complete data control&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="4-commento--comentario"&gt;&lt;a href="#4-commento--comentario" class="header-anchor"&gt;&lt;/a&gt;4. Commento / Comentario
+&lt;/h2&gt;&lt;h3 id="concept-3"&gt;&lt;a href="#concept-3" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Privacy-focused lightweight comment system&lt;/p&gt;
+&lt;h3 id="commento-vs-comentario"&gt;&lt;a href="#commento-vs-comentario" class="header-anchor"&gt;&lt;/a&gt;Commento vs Comentario
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Item&lt;/th&gt;
+ &lt;th&gt;Commento&lt;/th&gt;
+ &lt;th&gt;Comentario&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Status&lt;/td&gt;
+ &lt;td&gt;Development stopped&lt;/td&gt;
+ &lt;td&gt;Actively developed (Commento fork)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;License&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;td&gt;MIT&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Language&lt;/td&gt;
+ &lt;td&gt;Go&lt;/td&gt;
+ &lt;td&gt;Go&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Recommend&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;: Comentario recommended&lt;/p&gt;
+&lt;h3 id="comentario-advantages"&gt;&lt;a href="#comentario-advantages" class="header-anchor"&gt;&lt;/a&gt;Comentario Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Anonymous comments supported&lt;/li&gt;
+&lt;li&gt;✅ Social logins (GitHub, Google, GitLab, SSO)&lt;/li&gt;
+&lt;li&gt;✅ Lightweight (Go-based)&lt;/li&gt;
+&lt;li&gt;✅ Privacy-focused&lt;/li&gt;
+&lt;li&gt;✅ Markdown support&lt;/li&gt;
+&lt;li&gt;✅ Voting feature&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-3"&gt;&lt;a href="#disadvantages-3" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ Self-hosting required&lt;/li&gt;
+&lt;li&gt;❌ Fewer features than Remark42&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty-3"&gt;&lt;a href="#implementation-difficulty-3" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐⭐⭐ (4/5)&lt;/p&gt;
+&lt;h3 id="docker-deployment"&gt;&lt;a href="#docker-deployment" class="header-anchor"&gt;&lt;/a&gt;Docker Deployment
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;3.8&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;comentario&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;registry.gitlab.com/comentario/comentario&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s2"&gt;&amp;#34;8080:8080&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;COMENTARIO_ORIGIN=https://comments.your-blog.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;COMENTARIO_BIND=0.0.0.0:8080&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;COMENTARIO_POSTGRES=postgres://user:pass@db/comentario&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;depends_on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;db&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;db&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;postgres:15&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;POSTGRES_DB=comentario&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;POSTGRES_USER=comentario&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;POSTGRES_PASSWORD=change-this&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;postgres_data:/var/lib/postgresql/data&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;postgres_data&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="blog-embed"&gt;&lt;a href="#blog-embed" class="header-anchor"&gt;&lt;/a&gt;Blog Embed
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;defer&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://comments.your-blog.com/js/commento.js&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;commento&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="recommended-for-3"&gt;&lt;a href="#recommended-for-3" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Alternative to Remark42&lt;/li&gt;
+&lt;li&gt;Want simpler system&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="5-disqus-traditional-saas"&gt;&lt;a href="#5-disqus-traditional-saas" class="header-anchor"&gt;&lt;/a&gt;5. Disqus (Traditional SaaS)
+&lt;/h2&gt;&lt;h3 id="concept-4"&gt;&lt;a href="#concept-4" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Oldest and most widely used cloud comment system&lt;/p&gt;
+&lt;h3 id="how-it-works-3"&gt;&lt;a href="#how-it-works-3" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;1. Create Disqus account and register site
+ ↓
+2. Insert Disqus script on blog
+ ↓
+3. User chooses:
+ - Guest (anonymous - requires email)
+ - Disqus account
+ - Facebook/Twitter/Google login
+ ↓
+4. Save to Disqus server
+ ↓
+5. Display on blog
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages-3"&gt;&lt;a href="#advantages-3" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Extremely simple setup&lt;/strong&gt; (5 minutes)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;No server required&lt;/strong&gt; (SaaS)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Guest mode&lt;/strong&gt; (comment with just email)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Social logins&lt;/strong&gt; (Facebook, Twitter, Google)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Powerful admin tools&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Spam filter&lt;/strong&gt; (Akismet integration)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Mobile apps&lt;/strong&gt; (iOS/Android)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Analytics/Statistics&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-4"&gt;&lt;a href="#disadvantages-4" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;Shows ads&lt;/strong&gt; (free plan)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Heavy&lt;/strong&gt; (script size)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Privacy concerns&lt;/strong&gt; (data tracking)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;No data ownership&lt;/strong&gt; (Disqus servers)&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;No GitHub login&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;❌ &lt;strong&gt;Ad removal cost&lt;/strong&gt; ($11.99/month~)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty-4"&gt;&lt;a href="#implementation-difficulty-4" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐ (1/5) - Easiest&lt;/p&gt;
+&lt;h3 id="setup-method-2"&gt;&lt;a href="#setup-method-2" class="header-anchor"&gt;&lt;/a&gt;Setup Method
+&lt;/h3&gt;&lt;h4 id="step-1-register-disqus-site"&gt;&lt;a href="#step-1-register-disqus-site" class="header-anchor"&gt;&lt;/a&gt;Step 1: Register Disqus Site
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Sign up at disqus.com
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Select &lt;span class="s2"&gt;&amp;#34;I want to install Disqus on my site&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Enter Website Name &lt;span class="o"&gt;(&lt;/span&gt;e.g., andwild-blog&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Select Category
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;5. Select Plan &lt;span class="o"&gt;(&lt;/span&gt;Basic - Free&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="step-2-configure-blowfish"&gt;&lt;a href="#step-2-configure-blowfish" class="header-anchor"&gt;&lt;/a&gt;Step 2: Configure Blowfish
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# config/_default/config.toml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;services&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;disqus&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;shortname&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;andwild-blog&amp;#34;&lt;/span&gt; &lt;span class="c"&gt;# Name created in Step 1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# config/_default/params.toml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Hugo has built-in Disqus support, so comments display automatically!&lt;/p&gt;
+&lt;h4 id="step-3-allow-guest-comments"&gt;&lt;a href="#step-3-allow-guest-comments" class="header-anchor"&gt;&lt;/a&gt;Step 3: Allow Guest Comments
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Disqus Dashboard → Settings → Community
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;→ Guest Commenting: Allow guests to comment &lt;span class="o"&gt;(&lt;/span&gt;check&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="ad-removal-methods"&gt;&lt;a href="#ad-removal-methods" class="header-anchor"&gt;&lt;/a&gt;Ad Removal Methods
+&lt;/h3&gt;&lt;h4 id="method-1-paid-plan-1199month"&gt;&lt;a href="#method-1-paid-plan-1199month" class="header-anchor"&gt;&lt;/a&gt;Method 1: Paid Plan ($11.99/month~)
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Plus Plan: No ads&lt;/li&gt;
+&lt;li&gt;Pro Plan: No ads + advanced features&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="method-2-hide-with-css-not-recommended---may-violate-terms"&gt;&lt;a href="#method-2-hide-with-css-not-recommended---may-violate-terms" class="header-anchor"&gt;&lt;/a&gt;Method 2: Hide with CSS (Not recommended - may violate terms)
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-css" data-lang="css"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;/* Not recommended: May violate Disqus terms */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;#&lt;/span&gt;&lt;span class="nn"&gt;disqus_thread&lt;/span&gt; &lt;span class="nt"&gt;iframe&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nt"&gt;src&lt;/span&gt;&lt;span class="o"&gt;*=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;ads&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;display&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;none&lt;/span&gt; &lt;span class="cp"&gt;!important&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="cost-2"&gt;&lt;a href="#cost-2" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Free&lt;/strong&gt;: With ads&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Plus&lt;/strong&gt;: $11.99/month (no ads)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pro&lt;/strong&gt;: $89/month (advanced features)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="recommended-for-4"&gt;&lt;a href="#recommended-for-4" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Want to add comments quickly&lt;/li&gt;
+&lt;li&gt;✅ Non-technical bloggers&lt;/li&gt;
+&lt;li&gt;✅ Don&amp;rsquo;t mind ads&lt;/li&gt;
+&lt;li&gt;❌ Not recommended for privacy-conscious users&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="6-cusdis-free-vercel-deployment"&gt;&lt;a href="#6-cusdis-free-vercel-deployment" class="header-anchor"&gt;&lt;/a&gt;6. Cusdis (Free Vercel Deployment)
+&lt;/h2&gt;&lt;h3 id="concept-5"&gt;&lt;a href="#concept-5" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Lightweight open-source comment system, deployable to Vercel for free&lt;/p&gt;
+&lt;h3 id="how-it-works-4"&gt;&lt;a href="#how-it-works-4" class="header-anchor"&gt;&lt;/a&gt;How It Works
+&lt;/h3&gt;&lt;pre tabindex="0"&gt;&lt;code&gt;1. Deploy Cusdis to Vercel (1-Click)
+ ↓
+2. Connect PostgreSQL (Vercel free)
+ ↓
+3. Add site in dashboard
+ ↓
+4. Insert script on blog
+ ↓
+5. Users comment with email + name
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="advantages-4"&gt;&lt;a href="#advantages-4" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ &lt;strong&gt;Completely free&lt;/strong&gt; (Vercel free tier)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Anonymous comments&lt;/strong&gt; (just email + name)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Lightweight&lt;/strong&gt; (50KB)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Simple setup&lt;/strong&gt; (Vercel 1-Click deploy)&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Privacy-focused&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;✅ &lt;strong&gt;Open source&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-5"&gt;&lt;a href="#disadvantages-5" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ No Markdown support&lt;/li&gt;
+&lt;li&gt;❌ No social login&lt;/li&gt;
+&lt;li&gt;❌ Simple features&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty-5"&gt;&lt;a href="#implementation-difficulty-5" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐⭐ (3/5)&lt;/p&gt;
+&lt;h3 id="setup-method-3"&gt;&lt;a href="#setup-method-3" class="header-anchor"&gt;&lt;/a&gt;Setup Method
+&lt;/h3&gt;&lt;h4 id="step-1-deploy-to-vercel"&gt;&lt;a href="#step-1-deploy-to-vercel" class="header-anchor"&gt;&lt;/a&gt;Step 1: Deploy to Vercel
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Visit https://cusdis.com/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Click &lt;span class="s2"&gt;&amp;#34;Deploy with Vercel&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Connect GitHub
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Add PostgreSQL &lt;span class="o"&gt;(&lt;/span&gt;Vercel Storage&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;5. Deployment &lt;span class="nb"&gt;complete&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="step-2-add-site"&gt;&lt;a href="#step-2-add-site" class="header-anchor"&gt;&lt;/a&gt;Step 2: Add Site
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Access deployed Cusdis dashboard
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Click &lt;span class="s2"&gt;&amp;#34;Add Website&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Enter Domain: 0andwild.github.io
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Copy App ID
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="step-3-blog-embed"&gt;&lt;a href="#step-3-blog-embed" class="header-anchor"&gt;&lt;/a&gt;Step 3: Blog Embed
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;cusdis_thread&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://your-cusdis.vercel.app&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-app-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;YOUR_APP_ID&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-page-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;{{ .File.UniqueID }}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-page-url&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;{{ .Permalink }}&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-page-title&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;{{ .Title }}&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;async&lt;/span&gt; &lt;span class="na"&gt;defer&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://your-cusdis.vercel.app/js/cusdis.es.js&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="cost-3"&gt;&lt;a href="#cost-3" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Completely free&lt;/strong&gt; (Vercel free tier)&lt;/p&gt;
+&lt;h3 id="recommended-for-5"&gt;&lt;a href="#recommended-for-5" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Need only simple anonymous comments&lt;/li&gt;
+&lt;li&gt;✅ Want completely free solution&lt;/li&gt;
+&lt;li&gt;✅ Have Vercel experience&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="7-hashover"&gt;&lt;a href="#7-hashover" class="header-anchor"&gt;&lt;/a&gt;7. HashOver
+&lt;/h2&gt;&lt;h3 id="concept-6"&gt;&lt;a href="#concept-6" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;PHP-based fully anonymous comment system&lt;/p&gt;
+&lt;h3 id="advantages-5"&gt;&lt;a href="#advantages-5" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ Fully anonymous (no information needed)&lt;/li&gt;
+&lt;li&gt;✅ PHP + flat file (no DB required)&lt;/li&gt;
+&lt;li&gt;✅ Open source&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-6"&gt;&lt;a href="#disadvantages-6" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ Requires PHP (unsuitable for static sites)&lt;/li&gt;
+&lt;li&gt;❌ No GitHub login&lt;/li&gt;
+&lt;li&gt;❌ Old project&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="implementation-difficulty-6"&gt;&lt;a href="#implementation-difficulty-6" class="header-anchor"&gt;&lt;/a&gt;Implementation Difficulty
+&lt;/h3&gt;&lt;p&gt;⭐⭐⭐⭐ (4/5)&lt;/p&gt;
+&lt;h3 id="recommended-for-6"&gt;&lt;a href="#recommended-for-6" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;Not recommended for static blogs&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Consider only if you have a PHP server&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="8-hyvor-talk-premium-saas"&gt;&lt;a href="#8-hyvor-talk-premium-saas" class="header-anchor"&gt;&lt;/a&gt;8. Hyvor Talk (Premium SaaS)
+&lt;/h2&gt;&lt;h3 id="concept-7"&gt;&lt;a href="#concept-7" class="header-anchor"&gt;&lt;/a&gt;Concept
+&lt;/h3&gt;&lt;p&gt;Ad-free premium comment system&lt;/p&gt;
+&lt;h3 id="advantages-6"&gt;&lt;a href="#advantages-6" class="header-anchor"&gt;&lt;/a&gt;Advantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;✅ No ads&lt;/li&gt;
+&lt;li&gt;✅ Anonymous comments supported&lt;/li&gt;
+&lt;li&gt;✅ Social logins&lt;/li&gt;
+&lt;li&gt;✅ Powerful spam filter&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="disadvantages-7"&gt;&lt;a href="#disadvantages-7" class="header-anchor"&gt;&lt;/a&gt;Disadvantages
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;❌ &lt;strong&gt;Paid&lt;/strong&gt; ($5/month~)&lt;/li&gt;
+&lt;li&gt;❌ No GitHub login&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cost-4"&gt;&lt;a href="#cost-4" class="header-anchor"&gt;&lt;/a&gt;Cost
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Starter&lt;/strong&gt;: $5/month (1 site)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pro&lt;/strong&gt;: $15/month (3 sites)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="recommended-for-7"&gt;&lt;a href="#recommended-for-7" class="header-anchor"&gt;&lt;/a&gt;Recommended For
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Paid alternative to Disqus&lt;/li&gt;
+&lt;li&gt;Want ad-free SaaS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="comparison-tables"&gt;&lt;a href="#comparison-tables" class="header-anchor"&gt;&lt;/a&gt;Comparison Tables
+&lt;/h2&gt;&lt;h3 id="by-authentication-method-1"&gt;&lt;a href="#by-authentication-method-1" class="header-anchor"&gt;&lt;/a&gt;By Authentication Method
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;System&lt;/th&gt;
+ &lt;th&gt;Anonymous&lt;/th&gt;
+ &lt;th&gt;GitHub&lt;/th&gt;
+ &lt;th&gt;Google&lt;/th&gt;
+ &lt;th&gt;Other Social&lt;/th&gt;
+ &lt;th&gt;Difficulty&lt;/th&gt;
+ &lt;th&gt;Cost&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Giscus&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;⭐⭐&lt;/td&gt;
+ &lt;td&gt;Free&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Utterances&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;⭐⭐&lt;/td&gt;
+ &lt;td&gt;Free&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Remark42&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐⭐&lt;/td&gt;
+ &lt;td&gt;$5/mo&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Comentario&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐⭐&lt;/td&gt;
+ &lt;td&gt;$5/mo&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Disqus&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⭐&lt;/td&gt;
+ &lt;td&gt;Free (ads)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Cusdis&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;⭐⭐⭐&lt;/td&gt;
+ &lt;td&gt;Free&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Hyvor Talk&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⭐&lt;/td&gt;
+ &lt;td&gt;$5/mo&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="by-features"&gt;&lt;a href="#by-features" class="header-anchor"&gt;&lt;/a&gt;By Features
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;System&lt;/th&gt;
+ &lt;th&gt;Markdown&lt;/th&gt;
+ &lt;th&gt;Reactions&lt;/th&gt;
+ &lt;th&gt;Voting&lt;/th&gt;
+ &lt;th&gt;Notifications&lt;/th&gt;
+ &lt;th&gt;Admin&lt;/th&gt;
+ &lt;th&gt;Spam Filter&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Giscus&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Remark42&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Disqus&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Cusdis&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;❌&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;td&gt;✅&lt;/td&gt;
+ &lt;td&gt;⚠️&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="by-hosting"&gt;&lt;a href="#by-hosting" class="header-anchor"&gt;&lt;/a&gt;By Hosting
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;System&lt;/th&gt;
+ &lt;th&gt;Hosting&lt;/th&gt;
+ &lt;th&gt;Data Location&lt;/th&gt;
+ &lt;th&gt;Dependency&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Giscus&lt;/td&gt;
+ &lt;td&gt;GitHub&lt;/td&gt;
+ &lt;td&gt;GitHub Discussions&lt;/td&gt;
+ &lt;td&gt;GitHub&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Remark42&lt;/td&gt;
+ &lt;td&gt;Self&lt;/td&gt;
+ &lt;td&gt;Your server&lt;/td&gt;
+ &lt;td&gt;Docker&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Disqus&lt;/td&gt;
+ &lt;td&gt;Disqus&lt;/td&gt;
+ &lt;td&gt;Disqus servers&lt;/td&gt;
+ &lt;td&gt;Disqus&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Cusdis&lt;/td&gt;
+ &lt;td&gt;Vercel&lt;/td&gt;
+ &lt;td&gt;Vercel DB&lt;/td&gt;
+ &lt;td&gt;Vercel&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="selection-guide"&gt;&lt;a href="#selection-guide" class="header-anchor"&gt;&lt;/a&gt;Selection Guide
+&lt;/h2&gt;&lt;h3 id="scenario-based-recommendations"&gt;&lt;a href="#scenario-based-recommendations" class="header-anchor"&gt;&lt;/a&gt;Scenario-Based Recommendations
+&lt;/h3&gt;&lt;h4 id="1-developer-blog-targeting-github-users"&gt;&lt;a href="#1-developer-blog-targeting-github-users" class="header-anchor"&gt;&lt;/a&gt;1. &amp;ldquo;Developer blog, targeting GitHub users&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Giscus&lt;/strong&gt; ⭐⭐⭐⭐⭐&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Free, simple, Markdown support&lt;/li&gt;
+&lt;li&gt;GitHub integration makes notifications convenient&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-general-blog-anonymous-comments-essential"&gt;&lt;a href="#2-general-blog-anonymous-comments-essential" class="header-anchor"&gt;&lt;/a&gt;2. &amp;ldquo;General blog, anonymous comments essential&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Cusdis&lt;/strong&gt; (simple) or &lt;strong&gt;Remark42&lt;/strong&gt; (advanced)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cusdis: 5-minute setup, completely free&lt;/li&gt;
+&lt;li&gt;Remark42: More features, includes social login&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="3-both-anonymous--github-login"&gt;&lt;a href="#3-both-anonymous--github-login" class="header-anchor"&gt;&lt;/a&gt;3. &amp;ldquo;Both anonymous + GitHub login&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Remark42&lt;/strong&gt; ⭐⭐⭐⭐⭐&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only option supporting both&lt;/li&gt;
+&lt;li&gt;Powerful admin features&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="4-no-technical-skills-quick-setup"&gt;&lt;a href="#4-no-technical-skills-quick-setup" class="header-anchor"&gt;&lt;/a&gt;4. &amp;ldquo;No technical skills, quick setup&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Disqus&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;5-minute setup&lt;/li&gt;
+&lt;li&gt;Accept ads&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="5-completely-free--dont-want-server-management"&gt;&lt;a href="#5-completely-free--dont-want-server-management" class="header-anchor"&gt;&lt;/a&gt;5. &amp;ldquo;Completely free + don&amp;rsquo;t want server management&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Giscus&lt;/strong&gt; (GitHub) or &lt;strong&gt;Cusdis&lt;/strong&gt; (anonymous)&lt;/p&gt;
+&lt;h4 id="6-privacy-is-top-priority"&gt;&lt;a href="#6-privacy-is-top-priority" class="header-anchor"&gt;&lt;/a&gt;6. &amp;ldquo;Privacy is top priority&amp;rdquo;
+&lt;/h4&gt;&lt;p&gt;→ &lt;strong&gt;Remark42&lt;/strong&gt; or &lt;strong&gt;Comentario&lt;/strong&gt; (self-hosted)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Complete data control&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="practical-implementation-blowfish--giscus"&gt;&lt;a href="#practical-implementation-blowfish--giscus" class="header-anchor"&gt;&lt;/a&gt;Practical Implementation: Blowfish + Giscus
+&lt;/h2&gt;&lt;h3 id="complete-setup-process"&gt;&lt;a href="#complete-setup-process" class="header-anchor"&gt;&lt;/a&gt;Complete Setup Process
+&lt;/h3&gt;&lt;h4 id="1-enable-github-discussions"&gt;&lt;a href="#1-enable-github-discussions" class="header-anchor"&gt;&lt;/a&gt;1. Enable GitHub Discussions
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GitHub Repository → Settings → Features → Check Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="2-install-giscus-app"&gt;&lt;a href="#2-install-giscus-app" class="header-anchor"&gt;&lt;/a&gt;2. Install Giscus App
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Visit https://github.com/apps/giscus → Install
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;→ Select repository
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="3-generate-giscus-configuration"&gt;&lt;a href="#3-generate-giscus-configuration" class="header-anchor"&gt;&lt;/a&gt;3. Generate Giscus Configuration
+&lt;/h4&gt;&lt;p&gt;At &lt;a class="link" href="https://giscus.app" target="_blank" rel="noopener"
+ &gt;giscus.app&lt;/a&gt;:&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;Repository: 0AndWild/0AndWild.github.io
+Mapping: pathname
+Category: Announcements
+Theme: preferred_color_scheme
+Language: en
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Copy generated code&lt;/p&gt;
+&lt;h4 id="4-create-file"&gt;&lt;a href="#4-create-file" class="header-anchor"&gt;&lt;/a&gt;4. Create File
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Create directory (if not exists)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p layouts/partials
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Create file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;touch layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="5-insert-code"&gt;&lt;a href="#5-insert-code" class="header-anchor"&gt;&lt;/a&gt;5. Insert Code
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;https://giscus.app/client.js&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0AndWild/0AndWild.github.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-repo-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;R_xxxxxxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Announcements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-category-id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;DIC_xxxxxxxxxxxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-mapping&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;pathname&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-strict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-reactions-enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-emit-metadata&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-input-position&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;bottom&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;preferred_color_scheme&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;data-lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;en&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;crossorigin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;anonymous&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="na"&gt;async&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="6-modify-paramstoml"&gt;&lt;a href="#6-modify-paramstoml" class="header-anchor"&gt;&lt;/a&gt;6. Modify params.toml
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="7-local-testing"&gt;&lt;a href="#7-local-testing" class="header-anchor"&gt;&lt;/a&gt;7. Local Testing
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Check at http://localhost:1313&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="8-deploy"&gt;&lt;a href="#8-deploy" class="header-anchor"&gt;&lt;/a&gt;8. Deploy
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add .
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;Add Giscus comments&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="practical-implementation-blowfish--remark42-railway"&gt;&lt;a href="#practical-implementation-blowfish--remark42-railway" class="header-anchor"&gt;&lt;/a&gt;Practical Implementation: Blowfish + Remark42 (Railway)
+&lt;/h2&gt;&lt;h3 id="complete-setup-process-1"&gt;&lt;a href="#complete-setup-process-1" class="header-anchor"&gt;&lt;/a&gt;Complete Setup Process
+&lt;/h3&gt;&lt;h4 id="1-create-github-oauth-app"&gt;&lt;a href="#1-create-github-oauth-app" class="header-anchor"&gt;&lt;/a&gt;1. Create GitHub OAuth App
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Application name: AndWild Blog Comments
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Homepage URL: https://0andwild.github.io
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Authorization callback URL: https://your-remark42.railway.app/auth/github/callback
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;After creation:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Copy Client ID
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Generate and copy Client Secret
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="2-deploy-to-railway"&gt;&lt;a href="#2-deploy-to-railway" class="header-anchor"&gt;&lt;/a&gt;2. Deploy to Railway
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Sign up &lt;span class="k"&gt;for&lt;/span&gt; railway.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. &lt;span class="s2"&gt;&amp;#34;New Project&amp;#34;&lt;/span&gt; → &lt;span class="s2"&gt;&amp;#34;Deploy Docker Image&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Image: umputun/remark42:latest
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. Add environment variables:
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;REMARK_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;https://your-project.railway.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;SECRET&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;randomly-generated-secret-key-change-this
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;SITE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0andwild-blog
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_ANON&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_GITHUB_CID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;your_github_client_id
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;AUTH_GITHUB_CSEC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;your_github_client_secret
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ADMIN_SHARED_ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;github_yourusername
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="3-verify-deployment"&gt;&lt;a href="#3-verify-deployment" class="header-anchor"&gt;&lt;/a&gt;3. Verify Deployment
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Railway automatically generates URL:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://your-project.railway.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Access in browser to verify Remark42 UI
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="4-configure-blowfish"&gt;&lt;a href="#4-configure-blowfish" class="header-anchor"&gt;&lt;/a&gt;4. Configure Blowfish
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p layouts/partials
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;touch layouts/partials/comments.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-html" data-lang="html"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;lt;!-- layouts/partials/comments.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;remark42&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;remark_config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;host&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://your-project.railway.app&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;site_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0andwild-blog&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;components&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;embed&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;light&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;locale&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;en&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createElement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;script&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;remark_config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;host&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/web/&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.js&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;defer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;head&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;d&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;appendChild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="nx"&gt;remark_config&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;components&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;embed&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="5-paramstoml"&gt;&lt;a href="#5-paramstoml" class="header-anchor"&gt;&lt;/a&gt;5. params.toml
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;article&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;showComments&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id="6-test-and-deploy"&gt;&lt;a href="#6-test-and-deploy" class="header-anchor"&gt;&lt;/a&gt;6. Test and Deploy
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;hugo server -D
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# After verification&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add .
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;Add Remark42 comments&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="migration-guide"&gt;&lt;a href="#migration-guide" class="header-anchor"&gt;&lt;/a&gt;Migration Guide
+&lt;/h2&gt;&lt;h3 id="disqus--giscus"&gt;&lt;a href="#disqus--giscus" class="header-anchor"&gt;&lt;/a&gt;Disqus → Giscus
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Export data from Disqus &lt;span class="o"&gt;(&lt;/span&gt;XML&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Manual migration to GitHub Discussions
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;(&lt;/span&gt;No automation script, manual work required&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="disqus--remark42"&gt;&lt;a href="#disqus--remark42" class="header-anchor"&gt;&lt;/a&gt;Disqus → Remark42
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. Disqus XML Export
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. Remark42 Admin → Import → Select Disqus
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. Upload XML file
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;h3 id="final-recommendations"&gt;&lt;a href="#final-recommendations" class="header-anchor"&gt;&lt;/a&gt;Final Recommendations
+&lt;/h3&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Situation&lt;/th&gt;
+ &lt;th&gt;Recommended System&lt;/th&gt;
+ &lt;th&gt;Reason&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Developer blog&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Giscus&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Free, GitHub integration, Markdown&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;General blog (anonymous needed)&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Cusdis&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Free, simple, anonymous&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Both anonymous + social&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Remark42&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Flexible, all features&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Quick setup&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Disqus&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;5-minute completion (accept ads)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Complete control&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;strong&gt;Remark42&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Self-hosted, customizable&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="personal-recommendation-0andwild-blog"&gt;&lt;a href="#personal-recommendation-0andwild-blog" class="header-anchor"&gt;&lt;/a&gt;Personal Recommendation (0AndWild Blog)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Giscus&lt;/strong&gt; recommended&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Perfect fit for GitHub Pages blog&lt;/li&gt;
+&lt;li&gt;Tech blog&amp;rsquo;s main audience is GitHub users&lt;/li&gt;
+&lt;li&gt;Free, simple, no maintenance&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Alternative&lt;/strong&gt;: Remark42 (when anonymous comments desired)&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="quick-start"&gt;&lt;a href="#quick-start" class="header-anchor"&gt;&lt;/a&gt;Quick Start
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Start with Giscus&lt;/strong&gt; (10 minutes)&lt;/li&gt;
+&lt;li&gt;Collect user feedback&lt;/li&gt;
+&lt;li&gt;Consider &lt;strong&gt;switching to Remark42&lt;/strong&gt; if many requests for anonymous comments&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Comment systems can be changed later, so strongly recommend starting with Giscus!&lt;/p&gt;</description></item></channel></rss>

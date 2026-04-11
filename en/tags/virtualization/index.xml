@@ -1,1 +1,200 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Virtualization on 0AndWild_log</title><link>https://0andwild.com/en/tags/virtualization/</link><description>Recent content in Virtualization on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/virtualization/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Docker? Docker Container and Types of Virtualization</title><link>https://0andwild.com/en/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/221024_about_docker/</guid><description>Docker is an open-source platform that packages applications into containers, enabling them to run reliably across different environments. We&amp;rsquo;ll compare the differences and pros/cons of host virtualization, hypervisor virtualization, and container virtualization, and explore the efficiency and usage of Docker containers.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221024_about_docker/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Virtualization on 0AndWild_log</title><link>https://0andwild.com/en/tags/virtualization/</link><description>Recent content in Virtualization on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/virtualization/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Docker? Docker Container and Types of Virtualization</title><link>https://0andwild.com/en/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/221024_about_docker/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is Docker? Docker Container and Types of Virtualization" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure1.png"
+ alt="docker"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-lead"&gt;
+ Docker is an &lt;strong&gt;open-source containerization platform&lt;/strong&gt; that enables applications to run quickly and reliably across different computing environments by packaging code and dependencies.
+&lt;/div&gt;
+
+&lt;h2 id="-what-is-docker"&gt;&lt;a href="#-what-is-docker" class="header-anchor"&gt;&lt;/a&gt;🐳 What is Docker?
+&lt;/h2&gt;&lt;p&gt;Docker&amp;rsquo;s core concepts are broadly divided into two: &lt;strong&gt;Container&lt;/strong&gt; and &lt;strong&gt;Image&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="docker-image"&gt;&lt;a href="#docker-image" class="header-anchor"&gt;&lt;/a&gt;Docker Image
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;A &lt;strong&gt;Docker Image&lt;/strong&gt; is a &lt;strong&gt;lightweight, standalone software package&lt;/strong&gt; that includes code, runtime, system tools, system libraries, and configurations necessary for running an application.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="real-world-example"&gt;&lt;a href="#real-world-example" class="header-anchor"&gt;&lt;/a&gt;Real-World Example
+&lt;/h3&gt;&lt;p&gt;If you were to install Jenkins on Linux using the traditional method:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ sudo apt-get install jenkins
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Running this command requires downloading multiple dependency packages together.&lt;/p&gt;
+&lt;p&gt;However, using Docker:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ docker pull jenkins/jenkins:lts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can download a pre-configured image containing all necessary components at once.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-docker-registry--docker-hub"&gt;&lt;a href="#-docker-registry--docker-hub" class="header-anchor"&gt;&lt;/a&gt;📦 Docker Registry &amp;amp; Docker Hub
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;Docker Registry&lt;/strong&gt; serves as a repository for sharing Docker images. Think of it as &amp;ldquo;GitHub for Docker.&amp;rdquo;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt; is the official Docker registry, providing official images from vendors.&lt;/p&gt;
+&lt;h3 id="workflow"&gt;&lt;a href="#workflow" class="header-anchor"&gt;&lt;/a&gt;Workflow
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Users download images from the registry&lt;/li&gt;
+&lt;li&gt;Run images as containers&lt;/li&gt;
+&lt;li&gt;Configure multiple isolated environments on a single computer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="-container-virtualization"&gt;&lt;a href="#-container-virtualization" class="header-anchor"&gt;&lt;/a&gt;🔄 Container Virtualization
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure2.png"
+ alt="Containerized"&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Container technology is &amp;ldquo;a server virtualization method that enables running multiple isolated instances within a single system,&amp;rdquo; where each container appears as an individual server to users.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Important Note:&lt;/strong&gt;
+Containers are not exclusive to Docker. Various container technologies exist, including OpenVZ, Libvirt, and LXC.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-types-of-virtualization"&gt;&lt;a href="#-types-of-virtualization" class="header-anchor"&gt;&lt;/a&gt;🖥️ Types of Virtualization
+&lt;/h2&gt;&lt;h3 id="1-host-virtualization"&gt;&lt;a href="#1-host-virtualization" class="header-anchor"&gt;&lt;/a&gt;1. Host Virtualization
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure3.png"
+ alt="Hosted Vitualization Architecture"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
+Guest OS runs on top of Host OS through virtualization software.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Examples: VM Workstation, VMware Player, VirtualBox, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Advantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Simple installation and configuration&lt;/li&gt;
+&lt;li&gt;Minimal host requirements through hardware emulation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Disadvantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Resource-intensive due to running OS on top of OS&lt;/li&gt;
+&lt;li&gt;Significant performance overhead&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="2-hypervisor-virtualization"&gt;&lt;a href="#2-hypervisor-virtualization" class="header-anchor"&gt;&lt;/a&gt;2. Hypervisor Virtualization
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure4.png"
+ alt="HypervisorVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
+Software is installed and runs directly on hardware without a Host OS.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Two Approaches to Hypervisor Virtualization:&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id="1-full-virtualization"&gt;&lt;a href="#1-full-virtualization" class="header-anchor"&gt;&lt;/a&gt;1) Full Virtualization
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS accesses hardware through the hypervisor, not directly&lt;/li&gt;
+&lt;li&gt;More stable but has performance overhead&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="2-paravirtualization"&gt;&lt;a href="#2-paravirtualization" class="header-anchor"&gt;&lt;/a&gt;2) Paravirtualization
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Guest OS directly accesses hardware through the hypervisor&lt;/li&gt;
+&lt;li&gt;Faster but requires OS modifications&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Advantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;More efficient without Host OS&lt;/li&gt;
+&lt;li&gt;Better resource utilization&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Disadvantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Slow startup time&lt;/li&gt;
+&lt;li&gt;Still consumes significant resources as each VM runs an independent OS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h3 id="3-container-virtualization-"&gt;&lt;a href="#3-container-virtualization-" class="header-anchor"&gt;&lt;/a&gt;3. Container Virtualization ⭐
+&lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure5.png"
+ alt="ContainerVirtualization"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
+Applications share the host OS kernel while maintaining isolated environments.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;📝&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Advantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Lightweight&lt;/strong&gt;: Typically tens of MB (VMs are tens of GB)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fast startup&lt;/strong&gt;: No need to boot a separate OS&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Low resource usage&lt;/strong&gt;: Efficient utilization of system resources&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;High density&lt;/strong&gt;: Run more containers on the same hardware&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Disadvantages:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Requires the same OS environment as the host system&lt;/li&gt;
+&lt;li&gt;Cross-platform deployment can be challenging (e.g., Linux containers require Linux host)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="-virtualization-comparison"&gt;&lt;a href="#-virtualization-comparison" class="header-anchor"&gt;&lt;/a&gt;📊 Virtualization Comparison
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Category&lt;/th&gt;
+ &lt;th&gt;Host Virtualization&lt;/th&gt;
+ &lt;th&gt;Hypervisor Virtualization&lt;/th&gt;
+ &lt;th&gt;Container Virtualization&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Size&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Tens of GB&lt;/td&gt;
+ &lt;td&gt;Tens of GB&lt;/td&gt;
+ &lt;td&gt;Tens of MB&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Startup Speed&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Slow&lt;/td&gt;
+ &lt;td&gt;Slow&lt;/td&gt;
+ &lt;td&gt;Very Fast&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Resource Usage&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;High&lt;/td&gt;
+ &lt;td&gt;Medium&lt;/td&gt;
+ &lt;td&gt;Low&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Isolation Level&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;High&lt;/td&gt;
+ &lt;td&gt;High&lt;/td&gt;
+ &lt;td&gt;Medium&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Portability&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Low&lt;/td&gt;
+ &lt;td&gt;Medium&lt;/td&gt;
+ &lt;td&gt;High&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;strong&gt;Setup Difficulty&lt;/strong&gt;&lt;/td&gt;
+ &lt;td&gt;Easy&lt;/td&gt;
+ &lt;td&gt;Hard&lt;/td&gt;
+ &lt;td&gt;Medium&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-summary"&gt;&lt;a href="#-summary" class="header-anchor"&gt;&lt;/a&gt;💡 Summary
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Core Value of Docker Container Virtualization:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Efficiency&lt;/strong&gt;: Provides the same functionality with far fewer resources than traditional virtualization&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Speed&lt;/strong&gt;: Start and stop applications in seconds&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Consistency&lt;/strong&gt;: Runs identically across development, testing, and production environments&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Scalability&lt;/strong&gt;: Easy to add or remove containers as needed&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Docker is a core tool for modern application development and deployment, serving as the foundation for DevOps and microservices architecture.&lt;/p&gt;</description></item></channel></rss>

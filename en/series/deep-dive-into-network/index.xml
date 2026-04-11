@@ -1,1 +1,183 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Dive Into Network on 0AndWild_log</title><link>https://0andwild.com/en/series/deep-dive-into-network/</link><description>Recent content in Deep Dive Into Network on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 05 Oct 2022 17:34:36 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/series/deep-dive-into-network/index.xml" rel="self" type="application/rss+xml"/><item><title>Private IP/Public IP? Private Network/Public Network? VPN?</title><link>https://0andwild.com/en/posts/221005_about_ip/</link><pubDate>Wed, 05 Oct 2022 17:34:36 +0900</pubDate><guid>https://0andwild.com/en/posts/221005_about_ip/</guid><description>Learn the differences between private and public IPs, the role of NAT (Network Address Translation), and how VPNs work. From the concept of private networks that solved IPv4 address exhaustion to NAT functions in routers and practical VPN use cases, we&amp;rsquo;ll explore the core concepts of networking.</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/221005_about_ip/featured.jpg"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Dive Into Network on 0AndWild_log</title><link>https://0andwild.com/en/series/deep-dive-into-network/</link><description>Recent content in Deep Dive Into Network on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 05 Oct 2022 17:34:36 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/series/deep-dive-into-network/index.xml" rel="self" type="application/rss+xml"/><item><title>Private IP/Public IP? Private Network/Public Network? VPN?</title><link>https://0andwild.com/en/posts/221005_about_ip/</link><pubDate>Wed, 05 Oct 2022 17:34:36 +0900</pubDate><guid>https://0andwild.com/en/posts/221005_about_ip/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Private IP/Public IP? Private Network/Public Network? VPN?" /&gt;&lt;div class="stack-lead"&gt;
+ Private networks and public networks - I&amp;rsquo;ve heard these terms somewhere, but I wanted to organize these concepts since I didn&amp;rsquo;t fully understand them.
+&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/featured.jpg"
+ alt="public ip vs private ip"&gt;&lt;figcaption&gt;
+ &lt;p&gt;The relationship between private and public IPs&lt;/p&gt;
+ &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;You might be confused when you first see the diagram above, but after reading the entire article, you&amp;rsquo;ll be able to understand it with an &amp;ldquo;Aha!&amp;rdquo; moment.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 id="-2011-ipv4-address-exhaustion-declared"&gt;&lt;a href="#-2011-ipv4-address-exhaustion-declared" class="header-anchor"&gt;&lt;/a&gt;📅 2011, IPv4 Address Exhaustion Declared
+&lt;/h2&gt;&lt;p&gt;The Internet Assigned Numbers Authority (&lt;code&gt;IANA&lt;/code&gt;), which manages internet addresses, declared that there would be no more IPv4 allocations. While IPv4 can use approximately &lt;strong&gt;4.3 billion&lt;/strong&gt; limited addresses, the rapid increase in internet demand exhausted the IPv4 addresses allocated to each continent.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;strong&gt;IANA (Internet Assigned Numbers Authority)&lt;/strong&gt; is an organization that manages IP addresses, top-level domains, etc. It is currently managed by ICANN.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="but-how-are-we-still-using-ipv4"&gt;&lt;a href="#but-how-are-we-still-using-ipv4" class="header-anchor"&gt;&lt;/a&gt;But How Are We Still Using IPv4?
+&lt;/h3&gt;&lt;p&gt;So here we are in 2022, 11 years after IPv4 ran out, and we&amp;rsquo;re still using IPv4 just fine. How is this possible?&lt;/p&gt;
+&lt;p&gt;IPv6 was developed long ago and is gradually being commercialized. Nevertheless, IPv4 usage is still much more prevalent, so how has it been maintained well until now, 11 years later?&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;This is thanks to &lt;strong&gt;Private Networks&lt;/strong&gt;.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 id="-what-is-a-private-network"&gt;&lt;a href="#-what-is-a-private-network" class="header-anchor"&gt;&lt;/a&gt;🔌 What is a Private Network?
+&lt;/h2&gt;&lt;p&gt;A private network refers to a network that uses a specific range of IPv4 addresses within limited spaces such as homes and businesses, rather than on the public internet. &lt;strong&gt;Private IP ranges&lt;/strong&gt; that belong to private networks can only be used within the &lt;strong&gt;private network (internal network)&lt;/strong&gt;, so they cannot be used on the &lt;strong&gt;public network (external network, internet)&lt;/strong&gt;.&lt;/p&gt;
+&lt;figure class="max-w-4xl"&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure2_en.png"
+ alt="private ip"&gt;&lt;figcaption&gt;
+ &lt;p&gt;Private IP ranges&lt;/p&gt;
+ &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h2 id="hahahugoshortcode27s6hbhb-what-is-a-public-ip"&gt;&lt;a href="#hahahugoshortcode27s6hbhb-what-is-a-public-ip" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; What is a Public IP?
+&lt;/h2&gt;&lt;p&gt;A public IP is necessary for different PCs to communicate with each other over the internet and is used for purposes such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Building website servers&lt;/li&gt;
+&lt;li&gt;PC internet connection&lt;/li&gt;
+&lt;li&gt;Communication via the internet&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Each country has an organization that manages public IPs. In Korea, the &lt;strong&gt;Korea Internet &amp;amp; Security Agency (KISA)&lt;/strong&gt; manages them.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure3.jpeg"
+ alt="public ip"&gt;&lt;figcaption&gt;
+ &lt;p&gt;Public IP address system&lt;/p&gt;
+ &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;hr&gt;
+&lt;h3 id="-concept-summary"&gt;&lt;a href="#-concept-summary" class="header-anchor"&gt;&lt;/a&gt;💡 Concept Summary
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Private networks can only be used &lt;strong&gt;within limited spaces&lt;/strong&gt; such as homes or businesses.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So how do we communicate with other PCs that don&amp;rsquo;t use the same private network as us?&lt;/p&gt;
+&lt;p&gt;We need a &lt;code&gt;public IP&lt;/code&gt;!&lt;/p&gt;
+&lt;p&gt;In other words, &lt;strong&gt;special measures&lt;/strong&gt; are needed to communicate with the public internet from a private network. Private IPs are regulated to be used only within private networks, so private IPs cannot be used on the public internet.&lt;/p&gt;
+&lt;h2 id="-nat-network-address-translation"&gt;&lt;a href="#-nat-network-address-translation" class="header-anchor"&gt;&lt;/a&gt;🔄 NAT (Network Address Translation)
+&lt;/h2&gt;&lt;p&gt;To address this, &lt;strong&gt;Network Address Translation (NAT)&lt;/strong&gt; was devised as a method to convert IP addresses.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;What is NAT?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It refers to a technology that sends and receives network traffic through a router while rewriting TCP/UDP port numbers and source and destination IP addresses of IP packets. Since changes occur in packets, IP and &lt;strong&gt;TCP/UDP checksums&lt;/strong&gt; must also be recalculated and rewritten.&lt;/p&gt;
+&lt;p&gt;The reason for using NAT is usually to allow &lt;strong&gt;multiple hosts belonging to a private network to access the internet using a single public IP address&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In other words, it means converting to the IP used in the public/private network when communicating from a private network to a public network and vice versa. According to the above explanation, converting TCP/UDP port numbers of IP packets is actually because NAT includes not only IP addresses but also port conversion!&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s called &lt;code&gt;PAT&lt;/code&gt; or &lt;code&gt;NAPT&lt;/code&gt; &lt;strong&gt;(Port Address Translation)&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id="-router-functions"&gt;&lt;a href="#-router-functions" class="header-anchor"&gt;&lt;/a&gt;📡 Router Functions
+&lt;/h2&gt;&lt;p&gt;These days, most homes have routers installed and in use (e.g., iptime, olleh, etc.).&lt;/p&gt;
+&lt;p&gt;These routers have various functions.&lt;/p&gt;
+&lt;h3 id="1-dhcp-server-function"&gt;&lt;a href="#1-dhcp-server-function" class="header-anchor"&gt;&lt;/a&gt;1. DHCP Server Function
+&lt;/h3&gt;&lt;p&gt;First, there&amp;rsquo;s a &lt;code&gt;DHCP&lt;/code&gt; (Dynamic Host Configuration Protocol) server function that assigns IPs to various devices connected through a single router.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Dynamic Host Configuration Protocol (DHCP)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;DHCP is an IP standard that simplifies host IP configuration management. It provides a method to &lt;strong&gt;dynamically assign&lt;/strong&gt; IP addresses and other related configuration details to DHCP-enabled clients on the network using a DHCP server.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Through this, smart devices and PCs inside the house connected to the router are each assigned a private IP.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--warning"&gt;
+ &lt;div class="stack-alert__icon"&gt;⚠️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Why are they assigned private IPs?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you go back to the very first explanation, you&amp;rsquo;ll understand&amp;hellip;?!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since the number of IP allocations is limited, we can&amp;rsquo;t assign a public IP to every home, or rather, every device, so we &lt;strong&gt;assign private IPs to build a private network&lt;/strong&gt;! By building a private network this way, communication is possible internally, but we still can&amp;rsquo;t communicate with the external internet.&lt;/p&gt;
+&lt;h3 id="2-nat-function"&gt;&lt;a href="#2-nat-function" class="header-anchor"&gt;&lt;/a&gt;2. NAT Function
+&lt;/h3&gt;&lt;p&gt;That&amp;rsquo;s why routers have a &lt;strong&gt;NAT function&lt;/strong&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Function to convert private IPs to public IPs&lt;/li&gt;
+&lt;li&gt;Build their own mapping table and manage pre-conversion and post-conversion values with a NAT table&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Of course, the router doesn&amp;rsquo;t have its own public IP! The router &lt;strong&gt;uses the public IP range&lt;/strong&gt; provided by &lt;strong&gt;internet service providers (KT, SKT, LG, etc.)&lt;/strong&gt;!&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr&gt;
+&lt;h2 id="hahahugoshortcode27s14hbhb-what-is-a-vpn-virtual-private-network"&gt;&lt;a href="#hahahugoshortcode27s14hbhb-what-is-a-vpn-virtual-private-network" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; What is a VPN (Virtual Private Network)?
+&lt;/h2&gt;&lt;p&gt;Going further, let&amp;rsquo;s learn about VPNs, which we may have used but don&amp;rsquo;t know exactly what role they play!&lt;/p&gt;
+&lt;div class="stack-lead"&gt;
+ VPN stands for &lt;strong&gt;Virtual Private Network&lt;/strong&gt;, which, as the name suggests, is a private network but a virtual one.
+&lt;/div&gt;
+
+&lt;div class="stack-alert stack-alert--important"&gt;
+ &lt;div class="stack-alert__icon"&gt;🔥&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;The VPN I knew was something that changes IPs or fakes IPs for illegal purposes&amp;hellip; 🤔&lt;/p&gt;
+&lt;p&gt;I thought it was something like that, but it&amp;rsquo;s &lt;strong&gt;half right and half wrong&lt;/strong&gt;!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="the-true-meaning-of-vpn"&gt;&lt;a href="#the-true-meaning-of-vpn" class="header-anchor"&gt;&lt;/a&gt;The True Meaning of VPN
+&lt;/h3&gt;&lt;p&gt;VPN refers to being able to use an external computer &lt;strong&gt;as if it were connected to an internal network (private network)&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The reason why the IP changes when using VPN can also be understood if you think carefully about private/public networks mentioned above.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;The IP changes because you&amp;rsquo;ve &lt;strong&gt;connected to the internal network (private network)&lt;/strong&gt; through VPN!&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="-vpn-use-cases"&gt;&lt;a href="#-vpn-use-cases" class="header-anchor"&gt;&lt;/a&gt;💼 VPN Use Cases
+&lt;/h3&gt;&lt;h4 id="1-remote-worktelecommuting"&gt;&lt;a href="#1-remote-worktelecommuting" class="header-anchor"&gt;&lt;/a&gt;1. Remote Work/Telecommuting
+&lt;/h4&gt;&lt;p&gt;Through this, companies with private networks set up VPN servers, and through external public IP addresses and configured IDs/passwords, you can &lt;strong&gt;access the company&amp;rsquo;s private network from anywhere&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="2-remote-computer-access"&gt;&lt;a href="#2-remote-computer-access" class="header-anchor"&gt;&lt;/a&gt;2. Remote Computer Access
+&lt;/h4&gt;&lt;p&gt;Similarly, for personal computers, through VPN setup, if you know the external public IP address, you can &lt;strong&gt;access your computer in Seoul from Jeju Island&lt;/strong&gt; through VPN from anywhere.&lt;/p&gt;
+&lt;h4 id="3-bypassing-geographical-restrictions"&gt;&lt;a href="#3-bypassing-geographical-restrictions" class="header-anchor"&gt;&lt;/a&gt;3. Bypassing Geographical Restrictions
+&lt;/h4&gt;&lt;p&gt;When a website in a certain country blocks access from our country&amp;rsquo;s IP, we cannot access that site. To access this site, we need to approach with an IP address from a country other than ours. At this time, through VPN, we can bypass the blocked firewall &lt;strong&gt;as if we&amp;rsquo;re accessing from an internal network in another country&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="4-firewall-bypass-mechanism"&gt;&lt;a href="#4-firewall-bypass-mechanism" class="header-anchor"&gt;&lt;/a&gt;4. Firewall Bypass Mechanism
+&lt;/h4&gt;&lt;div class="stack-alert stack-alert--warning"&gt;
+ &lt;div class="stack-alert__icon"&gt;⚠️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;p&gt;&lt;strong&gt;Hypothetical Scenario&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If a company blocks access to SNS during work hours as an internal policy, we connect through VPN set up at home or an overseas VPN. Then we can access SNS.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Why does this work?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The moment you connect to VPN, a &lt;strong&gt;virtual tunnel&lt;/strong&gt; is formed, and packets sent for communication between tunnels are broken down into smaller pieces and undergo &lt;strong&gt;encryption&lt;/strong&gt; and &lt;strong&gt;encapsulation&lt;/strong&gt;. At this time, although it passes through the company&amp;rsquo;s firewall, because it&amp;rsquo;s an encrypted/encapsulated packet, the firewall cannot detect that you&amp;rsquo;re trying to access SNS through VPN, so it lets the packet pass through.&lt;/p&gt;
+&lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure4.png"
+ alt="vpn"&gt;&lt;figcaption&gt;
+ &lt;p&gt;VPN tunneling structure&lt;/p&gt;
+ &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;hr&gt;
+&lt;h2 id="-vpn-summary"&gt;&lt;a href="#-vpn-summary" class="header-anchor"&gt;&lt;/a&gt;📋 VPN Summary
+&lt;/h2&gt;&lt;h3 id="-advantages"&gt;&lt;a href="#-advantages" class="header-anchor"&gt;&lt;/a&gt;👍 Advantages
+&lt;/h3&gt;&lt;div class="stack-alert stack-alert--caution"&gt;
+ &lt;div class="stack-alert__icon"&gt;✅&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;ul&gt;
+&lt;li&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🔒&lt;/span&gt; &lt;strong&gt;Data security&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;🔒 &lt;strong&gt;Online privacy protection&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;📍 &lt;strong&gt;IP address change&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;🛡️ &lt;strong&gt;Personal protection&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;🚀 &lt;strong&gt;Bandwidth throttling prevention&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="-disadvantages"&gt;&lt;a href="#-disadvantages" class="header-anchor"&gt;&lt;/a&gt;👎 Disadvantages
+&lt;/h3&gt;&lt;p&gt;While VPN has many advantages as mentioned above, it also has disadvantages.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--warning"&gt;
+ &lt;div class="stack-alert__icon"&gt;⚠️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;&lt;ul&gt;
+&lt;li&gt;🐢 Devices connected to VPN must communicate with the VPN server using encryption, so &lt;strong&gt;network speed is very slow&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;⚠️ Some VPNs with low reliability exist&lt;/li&gt;
+&lt;li&gt;💰 You must &lt;strong&gt;pay&lt;/strong&gt; to use VPNs with high security&lt;/li&gt;
+&lt;li&gt;🚫 &lt;strong&gt;Not available&lt;/strong&gt; in some countries&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description></item></channel></rss>

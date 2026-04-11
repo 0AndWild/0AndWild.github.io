@@ -1,1 +1,51 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Partitioning on 0AndWild_log</title><link>https://0andwild.com/en/tags/partitioning/</link><description>Recent content in Partitioning on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>© 2026 gunyoung.Park</copyright><lastBuildDate>Wed, 20 Dec 2023 21:50:16 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/partitioning/index.xml" rel="self" type="application/rss+xml"/><item><title>BigQuery Clustering Optimization</title><link>https://0andwild.com/en/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/en/posts/231220_bigquery/</guid><description>BigQuery clustering concepts and efficient data access strategies through combination with partitioning</description><media:content xmlns:media="http://search.yahoo.com/mrss/" url="https://0andwild.com/posts/231220_bigquery/featured.png"/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Partitioning on 0AndWild_log</title><link>https://0andwild.com/en/tags/partitioning/</link><description>Recent content in Partitioning on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 20 Dec 2023 21:50:16 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/partitioning/index.xml" rel="self" type="application/rss+xml"/><item><title>BigQuery Clustering Optimization</title><link>https://0andwild.com/en/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/en/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering Optimization" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_3ecc95e8ba98b1db.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Lebanon&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2023-12-01&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Through clustering, BigQuery can perform less work in accessing data, thereby increasing query speed. However, before clustering, it&amp;rsquo;s good to consider the amount of data in the table and whether the cost of processing clustering might be worse.&lt;/p&gt;
+&lt;p&gt;For example, if a BigQuery column-based table has only 10 rows of data, you should recognize that the cost of clustering will be higher than the cost of doing a full scan.&lt;/p&gt;
+&lt;p&gt;Quoting a former Google engineer, if the data group for clustering is less than 100MB, doing a full scan might be better than clustering.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Reference&lt;/strong&gt;: &lt;a class="link" href="https://stackoverflow.com/questions/52669725/google-bigquery-clustered-table-not-reducing-query-size-when-running-query-with/52674573#52674573" target="_blank" rel="noopener"
+ &gt;Google BigQuery clustered table not reducing query size&lt;/a&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important Note&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Additionally, if you don&amp;rsquo;t filter on the clustered base column during query time, it provides no help to query performance whatsoever.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="example-of-creating-clustered-tables"&gt;&lt;a href="#example-of-creating-clustered-tables" class="header-anchor"&gt;&lt;/a&gt;Example of Creating Clustered Tables
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;TABLE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="n"&gt;myproject&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mydataset&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clustered_table&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;registration_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;DATE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_e4a55682afde7f7.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Clustering Features&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can cluster up to 4 columns maximum&lt;/li&gt;
+&lt;li&gt;Unlike partitioning, not limited to INT64 and DATE types only&lt;/li&gt;
+&lt;li&gt;Can also use types like STRING and GEOGRAPHY&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_d68a5613875dfcea.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;p&gt;Using partitioning and clustering together enables more efficient data access.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Combination Strategy&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Partitioning: Date-based data division&lt;/li&gt;
+&lt;li&gt;Clustering: Additional sorting within partitions&lt;/li&gt;
+&lt;li&gt;Query performance and cost optimization&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="references"&gt;&lt;a href="#references" class="header-anchor"&gt;&lt;/a&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://medium.com/towards-data-science/add-one-line-of-sql-to-optimise-your-bigquery-tables-304761b048f0" target="_blank" rel="noopener"
+ &gt;Add One Line of SQL to Optimise Your BigQuery Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://towardsdatascience.com/use-the-partitions-luke-a-simple-and-proven-way-to-optimise-your-sql-queries-43e24ea4c5d0" target="_blank" rel="noopener"
+ &gt;Use the Partitions, Luke! A Simple and Proven Way to Optimise Your SQL Queries&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
