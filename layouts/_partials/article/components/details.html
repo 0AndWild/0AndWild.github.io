@@ -1,5 +1,6 @@
 {{- $IsList := .IsList -}}
 {{- $Page := .Page -}}
+{{- $targetURL := partial "helper/page-target.html" $Page -}}
 <div class="article-details">
     {{ if $Page.Params.categories }}
     <header class="article-category">
@@ -16,7 +17,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="{{ $Page.RelPermalink }}">
+            <a href="{{ $targetURL }}">
                 {{- $Page.Title -}}
             </a>
         </h2>

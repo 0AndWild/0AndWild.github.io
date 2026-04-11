@@ -24,6 +24,17 @@
 {{ end }}
 
 {{ define "main" }}
+    {{ if .Params.externalUrl }}
+        {{- $externalURL := .Params.externalUrl -}}
+        <article class="main-article">
+            <section class="article-content">
+                <script>
+                    window.location.replace({{ printf "%q" $externalURL | safeJS }});
+                </script>
+                <p>Redirecting to <a href="{{ $externalURL }}">{{ $externalURL }}</a>.</p>
+            </section>
+        </article>
+    {{ else }}
     {{ partial "article/article.html" . }}
 
     {{ if .Params.links }}
@@ -40,8 +51,9 @@
 
     {{ partialCached "article/components/photoswipe" . }}
     {{ partial "article/components/mermaid" . }}
+    {{ end }}
 {{ end }}
 
 {{ define "right-sidebar" }}
-    {{ if .Scratch.Get "hasWidget" }}{{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}{{ end }}
+    {{ if and (not .Params.externalUrl) (.Scratch.Get "hasWidget") }}{{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}{{ end }}
 {{ end }}
