@@ -119,7 +119,7 @@
                                         {{ $target = . }}
                                     {{ end }}
                                 {{ end }}
-                                <option value="{{ $target.RelPermalink }}" {{ if eq $target.Language.Lang $currentLanguageCode }}selected{{ end }}>{{ .Language.LanguageName }}</option>
+                                <option value="{{ $target.RelPermalink }}" {{ if eq $target.Language.Lang $currentLanguageCode }}selected{{ end }}>{{ .Language.Label }}</option>
                             {{ end }}
                         </select>
                     </li>

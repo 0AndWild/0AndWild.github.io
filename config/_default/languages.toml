@@ -1,6 +1,6 @@
 [ko]
-    languageCode = "ko-KR"
-    languageName = "한국어"
+    locale = "ko-KR"
+    label = "한국어"
     title = "0AndWild_log"
     weight = 1
 
@@ -8,8 +8,8 @@
         subtitle = "Deep Dive into Backend"
 
 [en]
-    languageCode = "en-US"
-    languageName = "English"
+    locale = "en-US"
+    label = "English"
     title = "0AndWild_log"
     weight = 2
 
