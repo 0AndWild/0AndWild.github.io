@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JPA on 0AndWild_log</title><link>https://0andwild.com/tags/jpa/</link><description>Recent content in JPA on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Wed, 06 May 2026 22:27:39 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/jpa/index.xml" rel="self" type="application/rss+xml"/><item><title>JPA 프로그래밍 1장 정리</title><link>https://0andwild.com/posts/260506_jpa_programming/</link><pubDate>Wed, 06 May 2026 22:27:39 +0900</pubDate><guid>https://0andwild.com/posts/260506_jpa_programming/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post JPA 프로그래밍 1장 정리" /&gt;&lt;h2 id="서론"&gt;&lt;a href="#%ec%84%9c%eb%a1%a0" class="header-anchor"&gt;&lt;/a&gt;서론
+&lt;/h2&gt;&lt;p&gt;과거에는 JDBC API를 직접 작성하거나 iBatis, 현재의 MyBatis, 스프링의 JdbcTemplate 같은 SQL Mapper를 사용해서 데이터베이스 접근 코드를 작성했음. 이런 도구들은 JDBC API를 직접 다루는 부담을 많이 줄여줬지만, 여전히 CRUD용 SQL은 반복해서 작성해야 했음.&lt;/p&gt;
+&lt;p&gt;JPA는 이런 반복을 줄이고 객체 중심으로 애플리케이션을 설계할 수 있도록 도와주는 자바 진영의 ORM 표준임. 실제 구현체로는 Hibernate가 가장 널리 사용되고, Spring에서는 Spring Data JPA를 통해 JPA를 더 편하게 사용할 수 있도록 지원함.&lt;/p&gt;
+&lt;p&gt;이번 글에서는 JPA가 왜 등장했는지 이해하기 위해 SQL 중심 개발의 문제, 객체와 관계형 데이터베이스의 패러다임 불일치, 그리고 JPA가 Spring 애플리케이션 안에서 어떤 위치에 있는지 정리해보려 함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="sql을-직접-다룰-때의-문제"&gt;&lt;a href="#sql%ec%9d%84-%ec%a7%81%ec%a0%91-%eb%8b%a4%eb%a3%b0-%eb%95%8c%ec%9d%98-%eb%ac%b8%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;SQL을 직접 다룰 때의 문제
+&lt;/h2&gt;&lt;p&gt;DAO에서 JDBC API를 숨기는 데 성공하더라도 SQL 중심 개발의 문제는 여전히 남음. 애플리케이션의 엔티티와 테이블은 강하게 연결되어 있기 때문에 엔티티에 작은 변경이 생기면 DAO 코드와 SQL 대부분을 함께 수정해야 하는 상황이 생김.&lt;/p&gt;
+&lt;p&gt;예를 들어 회원 테이블에 필드 하나가 추가되면 조회 SQL, 저장 SQL, 수정 SQL, 결과 매핑 코드까지 줄줄이 손봐야 할 수 있음. 데이터 접근 기술을 한 계층으로 분리했더라도 실제 개발 흐름은 여전히 SQL에 끌려가게 됨.&lt;/p&gt;
+&lt;p&gt;이 방식의 문제는 크게 세 가지로 볼 수 있음.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;진정한 의미의 계층 분리가 어려움.&lt;/li&gt;
+&lt;li&gt;엔티티를 신뢰하기 어려움.&lt;/li&gt;
+&lt;li&gt;SQL에 의존적인 개발을 피하기 어려움.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;특히 엔티티를 신뢰하기 어렵다는 점이 중요함. 어떤 조회 SQL을 사용했는지에 따라 엔티티 안에 들어 있는 연관 객체의 범위가 달라질 수 있기 때문임. 결국 개발자는 객체를 다루는 것이 아니라, 어떤 SQL로 조회했는지를 계속 기억해야 함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="객체와-관계형-데이터베이스의-패러다임-불일치"&gt;&lt;a href="#%ea%b0%9d%ec%b2%b4%ec%99%80-%ea%b4%80%ea%b3%84%ed%98%95-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%b2%a0%ec%9d%b4%ec%8a%a4%ec%9d%98-%ed%8c%a8%eb%9f%ac%eb%8b%a4%ec%9e%84-%eb%b6%88%ec%9d%bc%ec%b9%98" class="header-anchor"&gt;&lt;/a&gt;객체와 관계형 데이터베이스의 패러다임 불일치
+&lt;/h2&gt;&lt;p&gt;객체가 단순한 값만 가지고 있다면 파일이나 데이터베이스에 저장하는 일이 크게 어렵지 않음. 하지만 실제 객체는 다른 객체를 참조하거나, 상속 구조를 가지거나, 다형성을 활용함.&lt;/p&gt;
+&lt;p&gt;예를 들어 &lt;code&gt;Member&lt;/code&gt;가 &lt;code&gt;Team&lt;/code&gt;을 참조한다고 해보겠음. 회원을 저장할 때 회원 객체만 저장하면 회원이 참조하던 팀 정보를 잃어버릴 수 있음. 그렇다고 객체 그래프 전체를 매번 통째로 저장하고 조회하는 것도 현실적이지 않음.&lt;/p&gt;
+&lt;p&gt;자바는 객체를 파일로 저장하는 직렬화와 다시 객체로 복구하는 역직렬화를 지원하지만, 직렬화된 객체를 검색하고 부분적으로 조회하기는 어려움. 그래서 현실적으로는 관계형 데이터베이스를 사용하게 되는데, 여기서 문제가 생김.&lt;/p&gt;
+&lt;p&gt;객체는 참조, 추상화, 상속, 다형성을 중심으로 모델링함. 반면 관계형 데이터베이스는 테이블, 로우, 컬럼, 외래 키를 중심으로 데이터를 구조화함. 둘은 지향하는 목적과 표현 방식이 다름. 이것을 객체와 관계형 데이터베이스의 패러다임 불일치라고 함.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="객체-그래프-탐색의-한계"&gt;&lt;a href="#%ea%b0%9d%ec%b2%b4-%ea%b7%b8%eb%9e%98%ed%94%84-%ed%83%90%ec%83%89%ec%9d%98-%ed%95%9c%ea%b3%84" class="header-anchor"&gt;&lt;/a&gt;객체 그래프 탐색의 한계
+&lt;/h2&gt;&lt;p&gt;책에 나온 예시를 바탕으로 다음과 같은 연관관계가 있다고 가정해보겠음.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Member 객체 그래프 연관관계" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/object-graph-relationship.svg"&gt;&lt;/p&gt;
+&lt;p&gt;SQL을 직접 다루면 처음 실행한 SQL에 따라 객체 그래프를 어디까지 탐색할 수 있는지가 정해짐. &lt;code&gt;Member&lt;/code&gt;만 조회한 SQL이었다면 &lt;code&gt;Team&lt;/code&gt;이나 &lt;code&gt;Order&lt;/code&gt;를 바로 신뢰하고 사용할 수 없음. 필요한 연관 객체까지 조인해서 가져왔는지 개발자가 알고 있어야 함.&lt;/p&gt;
+&lt;p&gt;그렇다고 &lt;code&gt;Member&lt;/code&gt;와 연관된 모든 객체를 항상 데이터베이스에서 조회해 애플리케이션 메모리에 올리는 것도 비현실적임. 결국 필요한 범위에 따라 여러 조회 메서드를 만들어야 함.&lt;/p&gt;
+&lt;p&gt;예를 들면 이런 식임.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithTeam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithOrders&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithOrdersAndDelivery&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;조회 메서드가 많아질수록 서비스 로직은 객체 모델보다 SQL 조회 범위에 더 의존하게 됨. 객체지향적으로 코드를 작성하고 싶어도, 실제로는 SQL이 허용한 범위 안에서만 객체를 사용할 수 있는 셈임.&lt;/p&gt;
+&lt;p&gt;JPA는 이 문제를 완화하기 위해 연관된 객체를 실제 사용하는 시점에 필요한 SQL을 실행할 수 있음. 이를 지연 로딩이라고 함.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Order&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;order&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getOrder&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;order&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getOrderDate&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// Order를 사용하는 시점에 SELECT SQL 실행&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;즉, JPA를 사용하면 객체 그래프를 탐색하는 코드와 데이터베이스 조회 시점을 어느 정도 분리할 수 있음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="동일성과-동등성-비교-문제"&gt;&lt;a href="#%eb%8f%99%ec%9d%bc%ec%84%b1%ea%b3%bc-%eb%8f%99%eb%93%b1%ec%84%b1-%eb%b9%84%ea%b5%90-%eb%ac%b8%ec%a0%9c" class="header-anchor"&gt;&lt;/a&gt;동일성과 동등성 비교 문제
+&lt;/h2&gt;&lt;p&gt;관계형 데이터베이스는 기본 키 값으로 각 로우를 구분함. 반면 자바 객체에는 두 가지 비교 방식이 있음.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;동일성 비교: &lt;code&gt;==&lt;/code&gt;를 사용해 객체 인스턴스의 주소 값을 비교함.&lt;/li&gt;
+&lt;li&gt;동등성 비교: &lt;code&gt;equals()&lt;/code&gt;를 사용해 객체 내부의 값을 비교함.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;JDBC API를 직접 사용해 같은 회원을 두 번 조회하면 어떻게 될까?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sql&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;SELECT * FROM MEMBER WHERE MEMBER_ID = ?&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// JDBC API, SQL 실행&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;(...);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberDAO&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberDAO&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;두 객체는 같은 데이터베이스 로우에서 조회되었지만 자바 객체로는 서로 다른 인스턴스임. 따라서 동일성 비교 결과는 &lt;code&gt;false&lt;/code&gt;가 됨.&lt;/p&gt;
+&lt;p&gt;JPA는 같은 트랜잭션 안에서 같은 엔티티를 조회하면 같은 객체 인스턴스를 반환하는 것을 보장함.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이것이 가능한 이유는 JPA가 영속성 컨텍스트를 통해 엔티티를 관리하기 때문임. 같은 트랜잭션 안에서 이미 관리 중인 엔티티가 있다면 데이터베이스를 다시 조회하지 않고 기존 객체를 재사용할 수 있음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="spring에서-jpa는-어디에-위치할까"&gt;&lt;a href="#spring%ec%97%90%ec%84%9c-jpa%eb%8a%94-%ec%96%b4%eb%94%94%ec%97%90-%ec%9c%84%ec%b9%98%ed%95%a0%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;Spring에서 JPA는 어디에 위치할까?
+&lt;/h2&gt;&lt;p&gt;Spring 애플리케이션에서 JPA를 사용할 때는 보통 Spring Data JPA, JPA API, Hibernate, JDBC API가 계층적으로 함께 동작함.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spring Data JPA와 JPA 계층 구조" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_b9478daec2a72090.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_2d320f4084f2d59b.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
+&lt;p&gt;위 구조를 단순하게 보면 다음과 같음.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;애플리케이션의 서비스 계층은 Repository를 사용함.&lt;/li&gt;
+&lt;li&gt;Spring Data JPA Repository는 반복적인 CRUD 구현을 대신 만들어줌.&lt;/li&gt;
+&lt;li&gt;Repository 내부에서는 JPA API를 사용함.&lt;/li&gt;
+&lt;li&gt;JPA API의 대표적인 구현체로 Hibernate가 동작함.&lt;/li&gt;
+&lt;li&gt;Hibernate는 JDBC API를 통해 실제 데이터베이스와 통신함.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;여기서 JPA는 구현체가 아니라 표준 명세임. 인터페이스와 규칙의 모음이라고 볼 수 있음. Hibernate는 그 JPA 명세를 구현한 ORM 프레임워크임. Spring Data JPA는 JPA를 더 편하게 사용하도록 Repository 추상화를 제공하는 기술임.&lt;/p&gt;
+&lt;p&gt;따라서 Spring Data JPA와 JPA, Hibernate의 관계를 헷갈리지 않는 것이 중요함.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Spring Data JPA: Repository 추상화와 반복 코드 제거
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JPA: 자바 ORM 표준 명세
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Hibernate: JPA 구현체
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JDBC API: 데이터베이스와 통신하는 저수준 API
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Database: 실제 데이터 저장소
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;JPA를 공부할 때는 먼저 표준 명세가 해결하려는 문제를 이해하고, 그다음 Hibernate가 제공하는 구체적인 기능을 알아가는 편이 좋음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="jpa란-무엇인가"&gt;&lt;a href="#jpa%eb%9e%80-%eb%ac%b4%ec%97%87%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;JPA란 무엇인가?
+&lt;/h2&gt;&lt;p&gt;JPA는 Java Persistence API의 약자로, 자바 진영의 ORM 기술 표준임. 애플리케이션과 JDBC API 사이에서 동작하며 객체와 관계형 데이터베이스를 매핑해줌.&lt;/p&gt;
+&lt;p&gt;ORM은 Object-Relational Mapping의 약자임. 객체와 관계형 데이터베이스를 매핑한다는 뜻임. ORM 프레임워크를 사용하면 객체를 데이터베이스에 저장할 때 &lt;code&gt;INSERT SQL&lt;/code&gt;을 직접 작성하는 대신, 객체를 자바 컬렉션에 저장하듯이 다룰 수 있음. 그러면 ORM 프레임워크가 적절한 SQL을 생성해 데이터베이스에 저장함.&lt;/p&gt;
+&lt;p&gt;JPA는 API 표준 명세이기 때문에 JPA만으로 동작하는 것은 아님. JPA를 구현한 ORM 프레임워크가 필요함. 대표적인 구현체로는 Hibernate, EclipseLink, DataNucleus가 있고, 이 중 Hibernate가 가장 대중적으로 사용됨.&lt;/p&gt;
+&lt;p&gt;JPA 표준은 일반적이고 공통적인 기능의 모음임. 따라서 JPA의 기본 개념을 먼저 이해하고, 필요에 따라 Hibernate가 제공하는 추가 기능을 학습하면 됨.&lt;/p&gt;
+&lt;p&gt;JPA 버전의 흐름은 다음과 같음.&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;버전&lt;/th&gt;
+ &lt;th&gt;연도&lt;/th&gt;
+ &lt;th&gt;주요 내용&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 1.0&lt;/td&gt;
+ &lt;td&gt;2006년&lt;/td&gt;
+ &lt;td&gt;초기 버전. 복합 키와 연관관계 기능이 부족했음&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 2.0&lt;/td&gt;
+ &lt;td&gt;2009년&lt;/td&gt;
+ &lt;td&gt;대부분의 ORM 기능 포함, Criteria 추가&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 2.1&lt;/td&gt;
+ &lt;td&gt;2013년&lt;/td&gt;
+ &lt;td&gt;스토어드 프로시저 접근, 컨버터, 엔티티 그래프 추가&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="jpa를-사용하는-이유"&gt;&lt;a href="#jpa%eb%a5%bc-%ec%82%ac%ec%9a%a9%ed%95%98%eb%8a%94-%ec%9d%b4%ec%9c%a0" class="header-anchor"&gt;&lt;/a&gt;JPA를 사용하는 이유
+&lt;/h2&gt;&lt;h3 id="생산성"&gt;&lt;a href="#%ec%83%9d%ec%82%b0%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;생산성
+&lt;/h3&gt;&lt;p&gt;JPA를 사용하면 객체를 저장할 때 SQL과 JDBC API 코드를 직접 반복해서 작성하지 않아도 됨. 저장할 객체를 JPA에 전달하면 JPA가 적절한 SQL을 생성하고 실행함.&lt;/p&gt;
+&lt;p&gt;또한 JPA는 &lt;code&gt;CREATE TABLE&lt;/code&gt; 같은 DDL을 자동으로 생성하는 기능도 제공함. 이 기능을 활용하면 데이터베이스 설계 중심에서 객체 설계 중심으로 개발 흐름을 옮겨갈 수 있음.&lt;/p&gt;
+&lt;h3 id="유지보수"&gt;&lt;a href="#%ec%9c%a0%ec%a7%80%eb%b3%b4%ec%88%98" class="header-anchor"&gt;&lt;/a&gt;유지보수
+&lt;/h3&gt;&lt;p&gt;SQL을 직접 다루면 엔티티 필드가 변경될 때 관련 SQL과 JDBC API 코드를 모두 수정해야 할 수 있음. 반면 JPA를 사용하면 필드 변경에 따른 반복적인 SQL 수정 부담이 줄어듦.&lt;/p&gt;
+&lt;p&gt;물론 JPA를 사용한다고 데이터베이스 설계나 쿼리 최적화를 몰라도 되는 것은 아님. 하지만 최소한 단순 CRUD와 객체 매핑을 반복해서 작성하는 부담은 크게 줄일 수 있음.&lt;/p&gt;
+&lt;h3 id="성능"&gt;&lt;a href="#%ec%84%b1%eb%8a%a5" class="header-anchor"&gt;&lt;/a&gt;성능
+&lt;/h3&gt;&lt;p&gt;같은 트랜잭션 안에서 같은 회원을 두 번 조회한다고 해보겠음. JDBC API를 직접 사용하면 같은 &lt;code&gt;SELECT&lt;/code&gt; SQL을 두 번 실행할 수 있음. 반면 JPA는 첫 번째 조회 결과를 영속성 컨텍스트에 보관하고, 두 번째 조회에서는 이미 관리 중인 객체를 재사용할 수 있음.&lt;/p&gt;
+&lt;p&gt;또한 Hibernate는 SQL 힌트, 지연 로딩, 쓰기 지연, 변경 감지 같은 기능을 제공함. 이런 기능들은 상황에 따라 성능 최적화에 도움을 줄 수 있음.&lt;/p&gt;
+&lt;h3 id="데이터-접근-추상화와-벤더-독립성"&gt;&lt;a href="#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%a0%91%ea%b7%bc-%ec%b6%94%ec%83%81%ed%99%94%ec%99%80-%eb%b2%a4%eb%8d%94-%eb%8f%85%eb%a6%bd%ec%84%b1" class="header-anchor"&gt;&lt;/a&gt;데이터 접근 추상화와 벤더 독립성
+&lt;/h3&gt;&lt;p&gt;관계형 데이터베이스는 같은 기능도 벤더마다 문법이나 사용 방식이 다른 경우가 많음. 특정 데이터베이스에 맞춘 SQL을 많이 작성하면 다른 데이터베이스로 이전하기 어려워짐.&lt;/p&gt;
+&lt;p&gt;JPA는 애플리케이션과 데이터베이스 사이에 추상화된 데이터 접근 계층을 제공함. 데이터베이스를 변경해야 할 때도 JPA에게 사용하는 데이터베이스 방언을 알려주면 많은 부분을 그대로 유지할 수 있음.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="정리"&gt;&lt;a href="#%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;정리
+&lt;/h2&gt;&lt;p&gt;JPA는 단순히 SQL 작성을 줄여주는 도구가 아님. 객체와 관계형 데이터베이스 사이의 패러다임 불일치를 완화하고, 객체 모델을 더 자연스럽게 유지할 수 있도록 도와주는 ORM 표준임.&lt;/p&gt;
+&lt;p&gt;Spring에서 JPA를 사용할 때는 Spring Data JPA가 Repository 구현 부담을 줄여주고, JPA API는 표준 인터페이스 역할을 하며, Hibernate가 실제 ORM 구현체로 동작함. 그리고 최종적으로는 JDBC API를 통해 데이터베이스와 통신함.&lt;/p&gt;
+&lt;p&gt;JPA를 제대로 이해하려면 먼저 “왜 SQL 중심 개발이 불편했는가”를 이해해야 함. 그 지점이 보이면 JPA가 제공하는 지연 로딩, 영속성 컨텍스트, 동일성 보장, 변경 감지 같은 기능들이 왜 필요한지도 자연스럽게 연결됨.&lt;/p&gt;</description></item></channel></rss>
