@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Programming on 0AndWild_log</title><link>https://0andwild.com/en/series/programming/</link><description>Recent content in Programming on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 31 Aug 2022 20:02:58 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/series/programming/index.xml" rel="self" type="application/rss+xml"/><item><title>Understanding Object-Oriented and Procedural Programming</title><link>https://0andwild.com/en/posts/220831_about_oop/</link><pubDate>Wed, 31 Aug 2022 20:02:58 +0900</pubDate><guid>https://0andwild.com/en/posts/220831_about_oop/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Understanding Object-Oriented and Procedural Programming" /&gt;&lt;h2 id="object-oriented-programming-oop-vs-procedural-programming-pp"&gt;&lt;a href="#object-oriented-programming-oop-vs-procedural-programming-pp" class="header-anchor"&gt;&lt;/a&gt;Object-Oriented Programming (OOP) vs Procedural Programming (PP)
+&lt;/h2&gt;&lt;p&gt;Object-oriented languages and procedural languages are &lt;strong&gt;not opposing concepts&lt;/strong&gt;. So what exactly are object-oriented and procedural languages?&lt;/p&gt;
+&lt;p&gt;We typically refer to languages like Java, Python, and C# as object-oriented languages, while C is called a procedural language. However, this merely indicates what these languages &lt;strong&gt;orient toward&lt;/strong&gt; - it doesn&amp;rsquo;t mean C can only do procedural programming or that Java and Python can only do object-oriented programming.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Regardless of which language you use, you can write procedural code. Conversely, you can write object-oriented code even in C.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id="the-misconception-of-procedural-oriented"&gt;&lt;a href="#the-misconception-of-procedural-oriented" class="header-anchor"&gt;&lt;/a&gt;The Misconception of &amp;ldquo;Procedural-Oriented&amp;rdquo;
+&lt;/h2&gt;&lt;p&gt;In fact, calling something a &lt;strong&gt;procedural-oriented language&lt;/strong&gt; is incorrect. All programming languages are based on procedures, so saying they &amp;ldquo;orient toward&amp;rdquo; procedures doesn&amp;rsquo;t make sense.&lt;/p&gt;
+&lt;p&gt;To use an analogy:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It&amp;rsquo;s like saying weightlifting is a sport that &lt;strong&gt;orients toward&lt;/strong&gt; barbells, when in reality it&amp;rsquo;s a sport &lt;strong&gt;based on&lt;/strong&gt; using barbells.&lt;/li&gt;
+&lt;li&gt;Should we do weightlifting with dumbbells instead&amp;hellip;?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In other words, the correct term is &lt;strong&gt;&amp;lsquo;Procedural Programming&amp;rsquo;&lt;/strong&gt;, not &lt;strong&gt;&amp;lsquo;Procedural-Oriented&amp;rsquo;&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="stack-alert stack-alert--tip"&gt;
+ &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Object-Oriented Programming (OOP) and Procedural Programming (PP) simply represent &lt;strong&gt;different approaches&lt;/strong&gt; to programming - they are not opposing concepts!&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="key-differences"&gt;&lt;a href="#key-differences" class="header-anchor"&gt;&lt;/a&gt;Key Differences
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Procedural Programming&lt;/strong&gt;: Creates functions centered around data&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Object-Oriented Programming&lt;/strong&gt;: Bundles data and functions (behaviors) together into objects&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="criteria-for-distinguishing-procedural-and-object-oriented-languages"&gt;&lt;a href="#criteria-for-distinguishing-procedural-and-object-oriented-languages" class="header-anchor"&gt;&lt;/a&gt;Criteria for Distinguishing Procedural and Object-Oriented Languages
+&lt;/h2&gt;&lt;p&gt;There are various ways to distinguish them, but broadly speaking, they can be categorized as follows:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Does it support encapsulation, polymorphism, and class inheritance?&lt;/li&gt;
+&lt;li&gt;Can it restrict data access?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Generally, languages that satisfy these criteria are considered to have &lt;strong&gt;stronger object-oriented characteristics&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="procedural-programming"&gt;&lt;a href="#procedural-programming" class="header-anchor"&gt;&lt;/a&gt;Procedural Programming
+&lt;/h2&gt;&lt;p&gt;Procedural programming literally means structuring code &lt;strong&gt;procedurally&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s an approach where you identify the sequence of data operations and create functions for necessary features, executing them procedurally (in order).&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="object-oriented-programming"&gt;&lt;a href="#object-oriented-programming" class="header-anchor"&gt;&lt;/a&gt;Object-Oriented Programming
+&lt;/h2&gt;&lt;p&gt;Object-oriented programming bundles functionalities into &lt;strong&gt;objects&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;In other words, you create individual objects, each bundling the behaviors (functions) and data they can handle.&lt;/p&gt;
+&lt;h3 id="example"&gt;&lt;a href="#example" class="header-anchor"&gt;&lt;/a&gt;Example
+&lt;/h3&gt;&lt;p&gt;Imagine implementing a ride-hailing service:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Car Object&lt;/strong&gt;: Bundles all the behaviors (functions) a car can perform&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Driver Object&lt;/strong&gt;: Bundles all the behaviors a driver can perform&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Passenger Object&lt;/strong&gt;: Bundles all the behaviors a passenger can perform&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The algorithm is constructed through interactions between these objects by calling their methods and fields.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="so-which-approach-is-better"&gt;&lt;a href="#so-which-approach-is-better" class="header-anchor"&gt;&lt;/a&gt;So Which Approach is Better?
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--note"&gt;
+ &lt;div class="stack-alert__icon"&gt;ℹ️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;There&amp;rsquo;s no definitive answer. Use what fits your needs and your preferred style.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id="programming-in-the-past"&gt;&lt;a href="#programming-in-the-past" class="header-anchor"&gt;&lt;/a&gt;Programming in the Past
+&lt;/h3&gt;&lt;p&gt;In the past, we didn&amp;rsquo;t need hardware and software on the scale we do today. Old languages like &lt;strong&gt;C, Fortran, and COBOL&lt;/strong&gt; - representative procedural languages - were widely used.&lt;/p&gt;
+&lt;h3 id="modern-programming"&gt;&lt;a href="#modern-programming" class="header-anchor"&gt;&lt;/a&gt;Modern Programming
+&lt;/h3&gt;&lt;p&gt;As we entered the modern era, software development accelerated and code became increasingly complex.&lt;/p&gt;
+&lt;p&gt;This led to tangled algorithms, and code became difficult or impossible for humans to understand - resulting in &lt;strong&gt;spaghetti code&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Object-oriented programming&lt;/strong&gt; emerged as an alternative to address these issues.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="why-is-object-oriented-programming-dominant"&gt;&lt;a href="#why-is-object-oriented-programming-dominant" class="header-anchor"&gt;&lt;/a&gt;Why is Object-Oriented Programming Dominant?
+&lt;/h2&gt;&lt;p&gt;Currently, object-oriented programming is predominantly used. The reasons are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For complex programs, using procedural programming makes code &lt;strong&gt;more prone to tangling&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;In terms of scalability, it offers &lt;strong&gt;fewer advantages for maintenance&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="pros-and-cons-of-procedural-programming"&gt;&lt;a href="#pros-and-cons-of-procedural-programming" class="header-anchor"&gt;&lt;/a&gt;Pros and Cons of Procedural Programming
+&lt;/h2&gt;&lt;h3 id="pros"&gt;&lt;a href="#pros" class="header-anchor"&gt;&lt;/a&gt;Pros
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Program directly without creating objects or classes&lt;/li&gt;
+&lt;li&gt;Create functions for needed features to call and reuse instead of copy-pasting&lt;/li&gt;
+&lt;li&gt;Easy to trace program flow&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cons"&gt;&lt;a href="#cons" class="header-anchor"&gt;&lt;/a&gt;Cons
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Difficult to modify due to tight coupling between code sections (high cohesion makes additions and modifications difficult)&lt;/li&gt;
+&lt;li&gt;Difficult to debug (error checking)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="pros-and-cons-of-object-oriented-programming"&gt;&lt;a href="#pros-and-cons-of-object-oriented-programming" class="header-anchor"&gt;&lt;/a&gt;Pros and Cons of Object-Oriented Programming
+&lt;/h2&gt;&lt;h3 id="pros-1"&gt;&lt;a href="#pros-1" class="header-anchor"&gt;&lt;/a&gt;Pros
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Easier maintenance through modularization and encapsulation&lt;/li&gt;
+&lt;li&gt;Code is easier to understand due to similarity with the real world&lt;/li&gt;
+&lt;li&gt;Objects themselves are self-contained programs that can be reused in other programs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="cons-1"&gt;&lt;a href="#cons-1" class="header-anchor"&gt;&lt;/a&gt;Cons
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Most object-oriented programs tend to be relatively slower and use more memory&lt;/li&gt;
+&lt;li&gt;Requires significant time in the design phase to make code understandable through real-world analogies&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="theres-no-right-answer-use-the-right-tool-for-the-job"&gt;&lt;a href="#theres-no-right-answer-use-the-right-tool-for-the-job" class="header-anchor"&gt;&lt;/a&gt;There&amp;rsquo;s No Right Answer! Use the Right Tool for the Job
+&lt;/h2&gt;&lt;h3 id="when-to-use-procedural-programming"&gt;&lt;a href="#when-to-use-procedural-programming" class="header-anchor"&gt;&lt;/a&gt;When to Use Procedural Programming
+&lt;/h3&gt;&lt;p&gt;Typically used when the project scope is small and there&amp;rsquo;s little need for code reuse.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Benefits:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The program itself is lighter&lt;/li&gt;
+&lt;li&gt;Requires less development time and personnel compared to object-oriented approach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="when-to-use-object-oriented-programming"&gt;&lt;a href="#when-to-use-object-oriented-programming" class="header-anchor"&gt;&lt;/a&gt;When to Use Object-Oriented Programming
+&lt;/h3&gt;&lt;p&gt;For large-scale projects where code needs to be reused, object-oriented programming is suitable (excluding initial development costs).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Benefits:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;More stable from a maintenance perspective&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="conclusion"&gt;&lt;a href="#conclusion" class="header-anchor"&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;div class="stack-alert stack-alert--warning"&gt;
+ &lt;div class="stack-alert__icon"&gt;⚠️&lt;/div&gt;
+ &lt;div class="stack-alert__content"&gt;Today we explored object-oriented programming and procedural programming.
+While I don&amp;rsquo;t yet have deep knowledge of these topics, by researching various sources, I&amp;rsquo;ve gained a broad understanding of object-oriented and procedural programming. Next time, I&amp;rsquo;ll dive deeper into these concepts!&lt;/div&gt;
+&lt;/div&gt;
+</description></item></channel></rss>
