@@ -1,4 +1,141 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 0AndWild_log</title><link>https://0andwild.com/en/posts/</link><description>Recent content in Posts on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Fri, 20 Feb 2026 22:35:24 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Customizing the BaekjoonHub Chrome Extension" /&gt;&lt;h1 id="why-i-ended-up-customizing-baekjoonhub"&gt;&lt;a href="#why-i-ended-up-customizing-baekjoonhub" class="header-anchor"&gt;&lt;/a&gt;Why I Ended Up Customizing BaekjoonHub
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 0AndWild_log</title><link>https://0andwild.com/en/posts/</link><description>Recent content in Posts on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Wed, 06 May 2026 22:27:39 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Summary of JPA Programming Chapter 1</title><link>https://0andwild.com/en/posts/260506_jpa_programming/</link><pubDate>Wed, 06 May 2026 22:27:39 +0900</pubDate><guid>https://0andwild.com/en/posts/260506_jpa_programming/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Summary of JPA Programming Chapter 1" /&gt;&lt;h2 id="introduction"&gt;&lt;a href="#introduction" class="header-anchor"&gt;&lt;/a&gt;Introduction
+&lt;/h2&gt;&lt;p&gt;In the past, database access code was often written directly with the JDBC API or through SQL Mapper tools such as iBatis, modern MyBatis, or Spring&amp;rsquo;s &lt;code&gt;JdbcTemplate&lt;/code&gt;. These tools reduced some of the burden of handling the JDBC API itself, but CRUD SQL still had to be written repeatedly.&lt;/p&gt;
+&lt;p&gt;JPA is the standard ORM specification in the Java ecosystem that helps reduce that repetition and makes it easier to design applications around objects. Hibernate is the most widely used implementation, and in Spring applications, Spring Data JPA makes JPA more convenient to use.&lt;/p&gt;
+&lt;p&gt;In this post, I want to summarize why JPA appeared in the first place by looking at the problems of SQL-centric development, the paradigm mismatch between objects and relational databases, and where JPA sits inside a Spring application.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="problems-with-writing-sql-directly"&gt;&lt;a href="#problems-with-writing-sql-directly" class="header-anchor"&gt;&lt;/a&gt;Problems with Writing SQL Directly
+&lt;/h2&gt;&lt;p&gt;Even if a DAO successfully hides the JDBC API, the core problems of SQL-centric development still remain. Because application entities and database tables are tightly coupled, even a small change to an entity can force changes across DAO code and a large amount of SQL.&lt;/p&gt;
+&lt;p&gt;For example, if a new field is added to the member table, you may have to update the select SQL, insert SQL, update SQL, and result mapping code together. Even when data access has been separated into its own layer, the real development flow is still dragged around by SQL.&lt;/p&gt;
+&lt;p&gt;This approach can be summarized into three major problems:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;It is hard to achieve true layer separation.&lt;/li&gt;
+&lt;li&gt;It is hard to trust entities.&lt;/li&gt;
+&lt;li&gt;It is hard to avoid SQL-dependent development.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The second point is especially important. Depending on which SQL query was used, the scope of related objects inside the entity can change. In other words, developers are not really working with objects. They are constantly forced to remember which SQL was used to load them.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="the-paradigm-mismatch-between-objects-and-relational-databases"&gt;&lt;a href="#the-paradigm-mismatch-between-objects-and-relational-databases" class="header-anchor"&gt;&lt;/a&gt;The Paradigm Mismatch Between Objects and Relational Databases
+&lt;/h2&gt;&lt;p&gt;If an object only contains simple values, storing it in a file or a database is not especially difficult. But real objects reference other objects, have inheritance structures, and rely on polymorphism.&lt;/p&gt;
+&lt;p&gt;Suppose &lt;code&gt;Member&lt;/code&gt; references &lt;code&gt;Team&lt;/code&gt;. If you save only the member object, you may lose the team information it was pointing to. But storing and loading the entire object graph every time is not realistic either.&lt;/p&gt;
+&lt;p&gt;Java supports serialization and deserialization, which make it possible to save objects to files and restore them later. But serialized objects are difficult to search and partially query. So in practice, we end up using relational databases, and that is where the problem begins.&lt;/p&gt;
+&lt;p&gt;Objects are modeled around references, abstraction, inheritance, and polymorphism. Relational databases structure data around tables, rows, columns, and foreign keys. Their goals and representation styles are different. This is what people mean by the paradigm mismatch between objects and relational databases.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="limits-of-object-graph-navigation"&gt;&lt;a href="#limits-of-object-graph-navigation" class="header-anchor"&gt;&lt;/a&gt;Limits of Object Graph Navigation
+&lt;/h2&gt;&lt;p&gt;Based on the example from the book, assume we have relationships like the following:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Member object graph relationship" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/object-graph-relationship.svg"&gt;&lt;/p&gt;
+&lt;p&gt;When you work directly with SQL, the very first SQL query determines how far you can safely navigate the object graph. If the SQL only loaded &lt;code&gt;Member&lt;/code&gt;, you cannot immediately trust and use &lt;code&gt;Team&lt;/code&gt; or &lt;code&gt;Order&lt;/code&gt;. The developer has to know whether those related objects were joined and loaded as part of the query.&lt;/p&gt;
+&lt;p&gt;Of course, loading every object related to &lt;code&gt;Member&lt;/code&gt; into application memory every time would also be unrealistic. In the end, you often create multiple query methods depending on how much data is needed.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithTeam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithOrders&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;findMemberWithOrdersAndDelivery&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;As these query methods multiply, service logic becomes more dependent on SQL fetch scope than on the object model itself. Even if you want to write object-oriented code, in practice you are limited to whatever range the SQL happened to load.&lt;/p&gt;
+&lt;p&gt;JPA helps reduce this problem by allowing related objects to be loaded at the moment they are actually used. This is called lazy loading.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Order&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;order&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getOrder&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;order&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getOrderDate&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// SELECT SQL runs when Order is actually accessed&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In short, JPA makes it possible to separate object graph navigation from the exact timing of database queries to some degree.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="identity-vs-equality-comparison"&gt;&lt;a href="#identity-vs-equality-comparison" class="header-anchor"&gt;&lt;/a&gt;Identity vs Equality Comparison
+&lt;/h2&gt;&lt;p&gt;Relational databases distinguish rows by primary key values. Java objects, however, have two different comparison concepts.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Identity comparison uses &lt;code&gt;==&lt;/code&gt; to compare object references.&lt;/li&gt;
+&lt;li&gt;Equality comparison uses &lt;code&gt;equals()&lt;/code&gt; to compare values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;What happens if you load the same member twice through the JDBC API?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;public&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sql&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;SELECT * FROM MEMBER WHERE MEMBER_ID = ?&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// JDBC API, execute SQL&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;(...);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberDAO&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberDAO&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMember&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Even though both objects came from the same database row, they are still different Java object instances. So identity comparison returns &lt;code&gt;false&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;JPA guarantees that if the same entity is loaded within the same transaction, it returns the same object instance.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-java" data-lang="java"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;jpa&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Member&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;memberId&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;member1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;member2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;// true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is possible because JPA manages entities through the persistence context. If an entity with the same identity is already being managed in the current transaction, JPA can reuse the existing object instead of loading it again from the database.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="where-does-jpa-sit-in-a-spring-application"&gt;&lt;a href="#where-does-jpa-sit-in-a-spring-application" class="header-anchor"&gt;&lt;/a&gt;Where Does JPA Sit in a Spring Application?
+&lt;/h2&gt;&lt;p&gt;When you use JPA in a Spring application, the overall flow usually involves Spring Data JPA, the JPA API, Hibernate, and the JDBC API working together in layers.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spring Data JPA and JPA layered structure" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_b9478daec2a72090.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_2d320f4084f2d59b.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
+&lt;p&gt;If we simplify the structure, it looks like this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The application service layer uses repositories.&lt;/li&gt;
+&lt;li&gt;Spring Data JPA repositories generate repetitive CRUD implementations for you.&lt;/li&gt;
+&lt;li&gt;Inside the repository layer, the JPA API is used.&lt;/li&gt;
+&lt;li&gt;Hibernate commonly acts as the JPA implementation.&lt;/li&gt;
+&lt;li&gt;Hibernate communicates with the actual database through the JDBC API.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The important point is that JPA itself is not an implementation. It is a standard specification. You can think of it as a set of interfaces and rules. Hibernate is the ORM framework that implements the JPA specification. Spring Data JPA is the technology that provides repository abstractions to make JPA more convenient.&lt;/p&gt;
+&lt;p&gt;So it is important not to confuse the roles of Spring Data JPA, JPA, and Hibernate.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Spring Data JPA: Repository abstraction and repetitive code reduction
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JPA: Standard Java ORM specification
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Hibernate: JPA implementation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JDBC API: Low-level API for communicating with the database
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Database: The actual data store
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When studying JPA, it is usually better to first understand the problems the standard is trying to solve, and then learn the concrete features that Hibernate provides on top of that.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="what-is-jpa"&gt;&lt;a href="#what-is-jpa" class="header-anchor"&gt;&lt;/a&gt;What Is JPA?
+&lt;/h2&gt;&lt;p&gt;JPA stands for Java Persistence API. It is the standard ORM technology in the Java ecosystem. It sits between the application and the JDBC API and maps objects to relational databases.&lt;/p&gt;
+&lt;p&gt;ORM stands for Object-Relational Mapping. It means mapping objects and relational databases to one another. With an ORM framework, instead of directly writing &lt;code&gt;INSERT SQL&lt;/code&gt; every time you store an object, you can work with objects almost as if you were storing them in a Java collection. The ORM framework then generates the appropriate SQL and saves the data to the database.&lt;/p&gt;
+&lt;p&gt;Because JPA is only an API specification, it cannot run by itself. You need an ORM framework that implements JPA. Common implementations include Hibernate, EclipseLink, and DataNucleus, with Hibernate being the most widely used.&lt;/p&gt;
+&lt;p&gt;The JPA standard is a collection of general and common ORM capabilities. So it makes sense to first understand the core concepts of JPA, and then learn additional Hibernate-specific features as needed.&lt;/p&gt;
+&lt;p&gt;The evolution of JPA versions looks like this:&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;Version&lt;/th&gt;
+ &lt;th&gt;Year&lt;/th&gt;
+ &lt;th&gt;Main Changes&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 1.0&lt;/td&gt;
+ &lt;td&gt;2006&lt;/td&gt;
+ &lt;td&gt;Initial version. Composite keys and relationship features were limited&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 2.0&lt;/td&gt;
+ &lt;td&gt;2009&lt;/td&gt;
+ &lt;td&gt;Included most core ORM features and added Criteria&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;JPA 2.1&lt;/td&gt;
+ &lt;td&gt;2013&lt;/td&gt;
+ &lt;td&gt;Added stored procedure access, converters, and entity graphs&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="why-use-jpa"&gt;&lt;a href="#why-use-jpa" class="header-anchor"&gt;&lt;/a&gt;Why Use JPA?
+&lt;/h2&gt;&lt;h3 id="productivity"&gt;&lt;a href="#productivity" class="header-anchor"&gt;&lt;/a&gt;Productivity
+&lt;/h3&gt;&lt;p&gt;With JPA, you do not need to repeatedly write SQL and JDBC API code every time you store an object. You pass the object to JPA, and JPA generates and executes the appropriate SQL.&lt;/p&gt;
+&lt;p&gt;JPA also provides features such as automatic DDL generation for statements like &lt;code&gt;CREATE TABLE&lt;/code&gt;. This helps shift the development flow from database-first design toward object-first design.&lt;/p&gt;
+&lt;h3 id="maintainability"&gt;&lt;a href="#maintainability" class="header-anchor"&gt;&lt;/a&gt;Maintainability
+&lt;/h3&gt;&lt;p&gt;When you work directly with SQL, changing an entity field can force you to update a large amount of related SQL and JDBC mapping code. With JPA, the repetitive burden of maintaining basic CRUD SQL can be greatly reduced.&lt;/p&gt;
+&lt;p&gt;Of course, using JPA does not mean you can ignore database design or query optimization. But it does remove much of the repetitive work involved in simple CRUD and object mapping.&lt;/p&gt;
+&lt;h3 id="performance"&gt;&lt;a href="#performance" class="header-anchor"&gt;&lt;/a&gt;Performance
+&lt;/h3&gt;&lt;p&gt;Suppose you load the same member twice within the same transaction. With plain JDBC, the same &lt;code&gt;SELECT&lt;/code&gt; SQL may be executed twice. JPA, on the other hand, can keep the first result in the persistence context and reuse the managed entity on the second lookup.&lt;/p&gt;
+&lt;p&gt;Hibernate also provides features such as SQL hints, lazy loading, write-behind, and dirty checking. Depending on the situation, these features can help with performance optimization.&lt;/p&gt;
+&lt;h3 id="data-access-abstraction-and-vendor-independence"&gt;&lt;a href="#data-access-abstraction-and-vendor-independence" class="header-anchor"&gt;&lt;/a&gt;Data Access Abstraction and Vendor Independence
+&lt;/h3&gt;&lt;p&gt;Relational databases often differ in syntax and behavior even for similar features. If you write too much database-specific SQL, moving to another database becomes difficult.&lt;/p&gt;
+&lt;p&gt;JPA provides an abstracted data access layer between the application and the database. If the database changes, many parts of the application can remain intact as long as JPA is configured with the proper dialect.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="wrap-up"&gt;&lt;a href="#wrap-up" class="header-anchor"&gt;&lt;/a&gt;Wrap-up
+&lt;/h2&gt;&lt;p&gt;JPA is not just a tool for reducing SQL writing. It is an ORM standard designed to reduce the paradigm mismatch between objects and relational databases and help applications preserve a more natural object model.&lt;/p&gt;
+&lt;p&gt;In Spring, Spring Data JPA reduces the burden of repository implementation, the JPA API acts as the standard interface, Hibernate works as the actual ORM implementation, and JDBC is still used underneath to talk to the database.&lt;/p&gt;
+&lt;p&gt;To really understand JPA, it helps to start with a simple question: why did SQL-centric development feel uncomfortable in the first place? Once that becomes clear, features such as lazy loading, the persistence context, identity guarantees, and dirty checking make much more sense.&lt;/p&gt;</description></item><item><title>Customizing the BaekjoonHub Chrome Extension</title><link>https://0andwild.com/en/posts/260220_baekjoonhub/</link><pubDate>Fri, 20 Feb 2026 22:35:24 +0900</pubDate><guid>https://0andwild.com/en/posts/260220_baekjoonhub/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Customizing the BaekjoonHub Chrome Extension" /&gt;&lt;h1 id="why-i-ended-up-customizing-baekjoonhub"&gt;&lt;a href="#why-i-ended-up-customizing-baekjoonhub" class="header-anchor"&gt;&lt;/a&gt;Why I Ended Up Customizing BaekjoonHub
 &lt;/h1&gt;&lt;p&gt;As I started using Baekjoon more seriously, I discovered the &lt;code&gt;BaekjoonHub&lt;/code&gt; extension.&lt;br&gt;
 It was convenient because it could automatically upload solutions to GitHub, but there were still several pain points for my actual workflow.&lt;/p&gt;
 &lt;p&gt;So I first checked issues in the official repository.&lt;br&gt;
@@ -6258,7 +6395,7 @@ Applications share the host OS kernel while maintaining isolated environments.&l
  &lt;/figcaption&gt;
 &lt;/figure&gt;
 
-&lt;h2 id="hahahugoshortcode26s6hbhb-what-is-a-public-ip"&gt;&lt;a href="#hahahugoshortcode26s6hbhb-what-is-a-public-ip" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; What is a Public IP?
+&lt;h2 id="hahahugoshortcode27s6hbhb-what-is-a-public-ip"&gt;&lt;a href="#hahahugoshortcode27s6hbhb-what-is-a-public-ip" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; What is a Public IP?
 &lt;/h2&gt;&lt;p&gt;A public IP is necessary for different PCs to communicate with each other over the internet and is used for purposes such as:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Building website servers&lt;/li&gt;
@@ -6331,7 +6468,7 @@ Applications share the host OS kernel while maintaining isolated environments.&l
 &lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode26s14hbhb-what-is-a-vpn-virtual-private-network"&gt;&lt;a href="#hahahugoshortcode26s14hbhb-what-is-a-vpn-virtual-private-network" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; What is a VPN (Virtual Private Network)?
+&lt;h2 id="hahahugoshortcode27s14hbhb-what-is-a-vpn-virtual-private-network"&gt;&lt;a href="#hahahugoshortcode27s14hbhb-what-is-a-vpn-virtual-private-network" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; What is a VPN (Virtual Private Network)?
 &lt;/h2&gt;&lt;p&gt;Going further, let&amp;rsquo;s learn about VPNs, which we may have used but don&amp;rsquo;t know exactly what role they play!&lt;/p&gt;
 &lt;div class="stack-lead"&gt;
  VPN stands for &lt;strong&gt;Virtual Private Network&lt;/strong&gt;, which, as the name suggests, is a private network but a virtual one.

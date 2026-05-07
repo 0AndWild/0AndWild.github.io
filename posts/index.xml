@@ -6399,7 +6399,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
  &lt;/figcaption&gt;
 &lt;/figure&gt;
 
-&lt;h2 id="hahahugoshortcode27s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode27s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
+&lt;h2 id="hahahugoshortcode26s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode26s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
 &lt;/h2&gt;&lt;p&gt;인터넷 상에서 서로 다른 PC끼리 통신하기 위해 필요한 IP로써 다음과 같은 용도로 사용됩니다:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;홈페이지 서버 구축&lt;/li&gt;
@@ -6472,7 +6472,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode27s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode27s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
+&lt;h2 id="hahahugoshortcode26s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode26s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
 &lt;/h2&gt;&lt;p&gt;그럼 더 나아가 우리가 사용은 해봤을 수 있지만 정확히 어떤 역할을 하는지 잘 모르는 VPN에 대해 알아봅시다!&lt;/p&gt;
 &lt;div class="stack-lead"&gt;
  VPN은 &lt;strong&gt;가상 사설망&lt;/strong&gt;으로 이름 그대로 사설망이지만 가상인 사설망을 말합니다.
