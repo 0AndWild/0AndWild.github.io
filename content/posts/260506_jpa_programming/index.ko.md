@@ -7,7 +7,7 @@ categories = ["JPA", "Spring"]
 tags = ["JPA", "Spring Data JPA", "Hibernate", "ORM", "Java"]
 series = ["JPA 프로그래밍"]
 series_order = 1
-image = "featured-jpa-hibernate.png"
+
 
 draft = false
 +++
