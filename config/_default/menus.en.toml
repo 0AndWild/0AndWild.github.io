@@ -7,13 +7,6 @@
     icon = "pencil"
 
 [[main]]
-  identifier = "posts_all"
-  parent = "posts"
-  name = "All"
-  pageRef = "posts"
-  weight = 11
-
-[[main]]
   identifier = "categories"
   parent = "posts"
   name = "Categories"
@@ -36,34 +29,31 @@
 
 [[main]]
   identifier = "archives"
-  name = "Archives"
+  parent = "posts"
+  name = "All"
   pageRef = "page/archives"
-  weight = 20
+  weight = 11
 
   [main.params]
     icon = "archives"
 
 [[main]]
-  identifier = "about"
-  name = "About"
-  weight = 30
+  identifier = "about_me"
+  name = "About me"
+  pageRef = "about"
+  weight = 1
 
   [main.params]
     icon = "user"
 
 [[main]]
-  identifier = "about_me"
-  parent = "about"
-  name = "About me"
-  pageRef = "about"
-  weight = 31
-
-[[main]]
   identifier = "life_log"
-  parent = "about"
-  name = "Life Log"
+  name = "My story"
   pageRef = "life_log"
-  weight = 32
+  weight = 2
+
+  [main.params]
+    icon = "book"
 
 [[main]]
   identifier = "search"
