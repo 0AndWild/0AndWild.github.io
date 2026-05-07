@@ -11,8 +11,6 @@ series_order = 1
 draft = false
 +++
 
-## Introduction
-
 In the past, database access code was often written directly with the JDBC API or through SQL Mapper tools such as iBatis, modern MyBatis, or Spring's `JdbcTemplate`. These tools reduced some of the burden of handling the JDBC API itself, but CRUD SQL still had to be written repeatedly.
 
 JPA is the standard ORM specification in the Java ecosystem that helps reduce that repetition and makes it easier to design applications around objects. Hibernate is the most widely used implementation, and in Spring applications, Spring Data JPA makes JPA more convenient to use.

@@ -12,8 +12,6 @@ series_order = 1
 draft = false
 +++
 
-## 서론
-
 과거에는 JDBC API를 직접 작성하거나 iBatis, 현재의 MyBatis, 스프링의 JdbcTemplate 같은 SQL Mapper를 사용해서 데이터베이스 접근 코드를 작성했음. 이런 도구들은 JDBC API를 직접 다루는 부담을 많이 줄여줬지만, 여전히 CRUD용 SQL은 반복해서 작성해야 했음.
 
 JPA는 이런 반복을 줄이고 객체 중심으로 애플리케이션을 설계할 수 있도록 도와주는 자바 진영의 ORM 표준임. 실제 구현체로는 Hibernate가 가장 널리 사용되고, Spring에서는 Spring Data JPA를 통해 JPA를 더 편하게 사용할 수 있도록 지원함.
