@@ -5,7 +5,7 @@ description = "Comprehensive comparison of all comment systems available for Hug
 summary = "Pros, cons, and implementation methods for all comment systems: Giscus, Utterances, Remark42, Disqus, and more"
 categories = ["Blog", "Tutorial"]
 tags = ["Hugo", "Comments", "GitHub Pages", "Giscus", "Static Site"]
-series = ["Hugo"]
+series = ["Blog"]
 series_order = 4
 
 draft = false

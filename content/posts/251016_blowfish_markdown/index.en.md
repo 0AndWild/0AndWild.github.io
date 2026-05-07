@@ -5,7 +5,7 @@ description = "Blowfish Markdown Syntax Guide"
 summary = "Blowfish Markdown Syntax Guide"
 categories = ["Blowfish"]
 tags = ["Blowfish", "Hugo", "Markdown"]
-series = ["Hugo"]
+series = ["Blog"]
 series_order = 2
 
 draft = false

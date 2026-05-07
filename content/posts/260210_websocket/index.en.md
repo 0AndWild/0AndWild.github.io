@@ -5,7 +5,7 @@ description = ""
 summary = "Let’s walk through RFC 6455 to understand what WebSocket is and how the WebSocket protocol works."
 categories = ["Websocket", "RFC6455"]
 tags = []
-series = ["Websocket"]
+series = ["WebSocket"]
 series_order = 2
 
 draft = false

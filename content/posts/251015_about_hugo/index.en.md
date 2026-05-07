@@ -5,7 +5,7 @@ description = "The reasons and selection criteria for migrating my tech blog fro
 summary = "Moving to Hugo for better markdown compatibility, Open API support ended, and improved developer experience"
 categories = ["Blog"]
 tags = ["Hugo", "GitHub Pages", "Blog", "Migration"]
-series = []
+series = ["Blog"]
 series_order = 1
 
 draft = false

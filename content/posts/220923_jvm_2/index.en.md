@@ -5,7 +5,7 @@ description = "Explore JVM's core components: Class Loader, Execution Engine, Ga
 summary = "An in-depth analysis of JVM's 4 core components and the 5 memory areas of Runtime Data Areas (Method, Heap, Stack, PC Register, Native Method Stack)."
 categories = ["Java", "Programming"]
 tags = ["JVM", "Java", "Class Loader", "Garbage Collector", "Memory Management", "Runtime Data Areas"]
-series = ["Deep Dive into JVM"]
+series = ["Java"]
 series_order = 2
 
 draft = false

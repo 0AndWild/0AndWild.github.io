@@ -5,7 +5,7 @@ description = "Elasticsearch에서 제공하는 하이라이터 종류와 오프
 summary = "Unified, Plain, FVH 등 Elasticsearch의 3가지 하이라이터 방식과 Postings List, Term Vectors를 활용한 효율적인 오프셋 전략"
 categories = ["Backend"]
 tags = ["Elasticsearch", "Highlighting", "Search", "Performance"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 8
 
 draft = false

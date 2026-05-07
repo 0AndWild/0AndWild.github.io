@@ -5,7 +5,7 @@ description = "Tstory에서 Hugo & GitHub Pages로 기술 블로그를 마이그
 summary = "마크다운 호환성, Open API 지원 종료, 그리고 더 나은 개발자 경험을 위해 Hugo로 블로그를 옮긴 이야기"
 categories = ["Blog"]
 tags = ["Hugo", "GitHub Pages", "Blog", "Migration"]
-series = ["Hugo"]
+series = ["Blog"]
 series_order = 1
 
 draft = false

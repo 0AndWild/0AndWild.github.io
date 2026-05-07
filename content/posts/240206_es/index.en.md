@@ -5,7 +5,7 @@ description = "Three pagination techniques provided by Elasticsearch and their c
 summary = "Comparing Elasticsearch pagination methods including From/Size, Search After, and Scroll, with stable paging implementation using PIT (Point In Time)"
 categories = ["Backend"]
 tags = ["Elasticsearch", "Pagination", "Search After", "PIT", "Performance"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 7
 
 draft = false

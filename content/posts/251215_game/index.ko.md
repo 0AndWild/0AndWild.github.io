@@ -5,7 +5,7 @@ description = "파이썬으로 드론을 제어해 농작물 재배를 자동화
 summary = "개발자를 위한 스팀 게임 추천글....?"
 categories = ["Game"]
 tags = ["코딩게임", "파이썬", "자동화", "스팀", "농부는대체되었다"]
-series = []
+series = ["Game"]
 series_order = 1
 
 draft = false

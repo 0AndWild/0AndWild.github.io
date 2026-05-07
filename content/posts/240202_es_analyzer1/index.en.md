@@ -5,7 +5,7 @@ description = "Types and operation of Character Filters in Elasticsearch."
 summary = "Various types and configuration methods of Character Filters that compose Elasticsearch Analyzer"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Character Filter", "Text Analysis"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 2
 
 draft = false

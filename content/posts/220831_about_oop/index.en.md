@@ -5,7 +5,7 @@ description = "Comparing the differences, pros and cons of OOP and Procedural Pr
 summary = "Learn about the concepts, differences, and advantages/disadvantages of Object-Oriented Programming and Procedural Programming, and understand when to use each approach."
 categories = ["Programming"]
 tags = ["OOP", "Procedural Programming", "Programming Paradigm"]
-series = ["Programming Basics"]
+series = ["Programming"]
 series_order = 1
 
 draft = false

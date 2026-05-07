@@ -5,7 +5,7 @@ description = "An overview of Elasticsearch, an open-source distributed search e
 summary = "Explore Elasticsearch fundamentals, the ELK stack, comparison with RDB, and core architecture including clusters, nodes, and shards."
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "ELK", "Search Engine", "Lucene", "Distributed System"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 1
 
 draft = false

@@ -24,12 +24,6 @@ showAuthor: true
 layoutBackgroundHeaderSpace: false
 ---
 
-# About This Blog
-
-Welcome to **0AndWild Tech Blog**! This is a space where I share my thoughts, experiences, and learnings about backend development, infrastructure, and various technologies.
-
-## Who Am I?
-
 A backend developer with 3 years of experience, passionate about exploring new technologies and solving complex problems.
 
 ### My Values

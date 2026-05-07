@@ -5,7 +5,7 @@ description = "Elasticsearch의 Query, Filter, PostFilter의 처리 순서와 �
 summary = "Elasticsearch에서 Query, Filter, PostFilter의 실행 순서와 Aggregation에 미치는 영향"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Query", "Filter", "PostFilter", "Aggregation"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 5
 
 draft = false

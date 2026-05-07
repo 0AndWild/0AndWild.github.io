@@ -5,7 +5,7 @@ description = "A summary of the limits of JDBC and SQL-centric development, the 
 summary = "A practical overview of why JPA is used, including SQL-centric development pain points, object-relational mismatch, and identity comparison."
 categories = ["JPA", "Spring"]
 tags = ["JPA", "Spring Data JPA", "Hibernate", "ORM", "Java"]
-series = ["JPA Programming"]
+series = ["JPA"]
 series_order = 1
 
 draft = false

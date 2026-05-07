@@ -5,7 +5,7 @@ description = "Types and operation of Token Filters in Elasticsearch."
 summary = "Types and configuration methods of Token Filters that compose Elasticsearch Analyzer."
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Token Filter", "Text Analysis"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 4
 
 draft = false

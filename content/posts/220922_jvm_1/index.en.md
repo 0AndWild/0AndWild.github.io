@@ -5,7 +5,7 @@ description = "Explore how JVM works and its role in Java execution. Learn about
 summary = "A deep dive into the core concepts and operating principles of the Java Virtual Machine. Understand the complete process of how source code is converted to bytecode and executed as machine code through the JIT compiler."
 categories = ["Java", "Programming"]
 tags = ["JVM", "Java"]
-series = ["Deep Dive into JVM"]
+series = ["Java"]
 series_order = 1
 
 draft = false

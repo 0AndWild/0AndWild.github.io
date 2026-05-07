@@ -5,7 +5,7 @@ description = "Apache Lucene 기반의 오픈소스 분산 검색 엔진 Elastic
 summary = "Elasticsearch의 기본 개념, ELK 스택, RDB와의 비교, 그리고 클러스터/노드/샤드 등 핵심 구조."
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "ELK", "검색엔진", "Lucene", "분산시스템"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 1
 
 draft = false

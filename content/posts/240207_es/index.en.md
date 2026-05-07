@@ -5,7 +5,7 @@ description = "Types of highlighters and offset strategies provided by Elasticse
 summary = "Three Elasticsearch highlighter methods including Unified, Plain, and FVH, along with efficient offset strategies using Postings List and Term Vectors"
 categories = ["Backend"]
 tags = ["Elasticsearch", "Highlighting", "Search", "Performance"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 8
 
 draft = false

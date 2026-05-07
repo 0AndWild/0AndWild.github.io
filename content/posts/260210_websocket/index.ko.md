@@ -5,7 +5,7 @@ description = ""
 summary = "웹소켓이 무엇인지와 웹소켓 프로토콜은 어떻게 동작을 하는지 RFC 6455 문서를 살펴보며 알아가보자"
 categories = ["Websocket", "RFC6455"]
 tags = []
-series = ["Websocket"]
+series = ["WebSocket"]
 series_order = 2
 
 draft = false

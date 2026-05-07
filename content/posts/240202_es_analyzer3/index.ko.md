@@ -5,7 +5,7 @@ description = "Elasticsearch의 Token Filter 종류와 동작 방식."
 summary = "Elasticsearch Analyzer를 구성하는 Token Filter의 종류와 설정 방법."
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Token Filter", "텍스트 분석"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 4
 
 draft = false

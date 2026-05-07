@@ -5,7 +5,7 @@ description = "Elasticsearch의 Tokenizer 종류와 동작 방식."
 summary = "Elasticsearch Analyzer를 구성하는 Tokenizer의 다양한 종류와 설정 방법"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Tokenizer", "텍스트 분석"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 3
 
 draft = false

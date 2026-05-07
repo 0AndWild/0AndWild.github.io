@@ -5,7 +5,7 @@ description = "Learn about the differences between Swagger and OpenAPI Generator
 summary = "API documentation automation and code generation using OpenAPI Generator"
 categories = ["Backend"]
 tags = ["Swagger", "OpenAPI", "API", "Documentation", "Code Generation"]
-series = ["Swagger OAS(Open API Specification)"]
+series = ["Swagger"]
 series_order = 1
 
 draft = false

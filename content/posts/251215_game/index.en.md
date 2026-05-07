@@ -5,7 +5,7 @@ description = "A unique coding game where you automate crop farming by controlli
 summary = "Steam game recommendation for developers...?"
 categories = ["Game"]
 tags = ["coding-game", "python", "automation", "steam", "the-farmer-was-replaced"]
-series = []
+series = ["Game"]
 series_order = 1
 
 draft = false

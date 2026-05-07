@@ -5,7 +5,7 @@ description = "OOP와 절차적 프로그래밍의 차이점과 장단점 비교
 summary = "객체지향 프로그래밍과 절차적 프로그래밍의 개념, 차이점, 장단점을 알아보고 언제 어떤 방식을 사용해야 하는지 정리합니다."
 categories = ["Programming"]
 tags = ["OOP", "절차적 프로그래밍", "프로그래밍 패러다임"]
-series = ["Programming Basics"]
+series = ["Programming"]
 series_order = 1
 
 draft = false

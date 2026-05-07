@@ -5,7 +5,7 @@ description = ""
 summary = "웹소켓 이전의 양방향 통신에 대해 RFC 6202 문서를 읽어보고 HTTP long polling 과 Http streaming 에 대해 알아가보자"
 categories = ["Websocket", "HTTP long polling", "Http streaming", "RFC6202"]
 tags = []
-series = ["Websocket"]
+series = ["WebSocket"]
 series_order = 1
 
 draft = false

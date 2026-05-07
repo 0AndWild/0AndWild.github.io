@@ -5,7 +5,7 @@ description = "Let's easily understand private networks, NAT, and VPN operation 
 summary = "Learn the differences between private and public IPs, the role of NAT (Network Address Translation), and how VPNs work. From the concept of private networks that solved IPv4 address exhaustion to NAT functions in routers and practical VPN use cases, we'll explore the core concepts of networking."
 categories = ["Network"]
 tags = ["IP", "NAT", "VPN", "Network", "Private Network", "Public Network", "DHCP", "IPv4"]
-series = ["Deep Dive into Network"]
+series = ["Network"]
 series_order = 1
 
 draft = false

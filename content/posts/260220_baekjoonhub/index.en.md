@@ -5,7 +5,7 @@ description = "Why I customized the BaekjoonHub extension for my workflow and wh
 summary = "Implemented Base Directory support, tier path granularity, directory name normalization, Java Main/package automation, and bulk upload."
 categories = ["Baekjoon", "Chrome Extension"]
 tags = ["BaekjoonHub", "Chrome Extension", "GitHub", "Java", "Automation", "Customization"]
-series = []
+series = ["Baekjoon"]
 series_order = 1
 
 draft = false

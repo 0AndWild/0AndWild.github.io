@@ -5,7 +5,7 @@ description = "Learn about Docker concepts, container virtualization technology,
 summary = "Docker is an open-source platform that packages applications into containers, enabling them to run reliably across different environments. We'll compare the differences and pros/cons of host virtualization, hypervisor virtualization, and container virtualization, and explore the efficiency and usage of Docker containers."
 categories = ["Docker"]
 tags = ["Docker", "Container", "Virtualization", "DevOps"]
-series = ["Deep Dive into Docker"]
+series = ["Docker"]
 series_order = 1
 
 draft = false

@@ -5,7 +5,7 @@ description = "Types and operation of Tokenizers in Elasticsearch."
 summary = "Various types and configuration methods of Tokenizers that compose Elasticsearch Analyzer"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Tokenizer", "Text Analysis"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 3
 
 draft = false

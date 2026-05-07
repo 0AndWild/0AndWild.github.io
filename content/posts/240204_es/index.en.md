@@ -5,7 +5,7 @@ description = "Various methods to implement autocomplete search in Elasticsearch
 summary = "Comparing Elasticsearch autocomplete implementation methods like Edge N-Gram, Search-as-you-type, and Completion Suggester with guidelines for optimal choices"
 categories = ["Backend"]
 tags = ["Elasticsearch", "Search", "Autocomplete", "N-gram", "Suggester"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 6
 
 draft = false

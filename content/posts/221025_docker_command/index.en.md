@@ -5,7 +5,7 @@ description = "A comprehensive guide on installing Docker in Ubuntu environment 
 summary = "A practical guide detailing essential commands and options from Docker installation to image management and container execution"
 categories = ["Docker"]
 tags = ["Docker", "Container", "DevOps", "Ubuntu", "Installation", "CLI"]
-series = ["Deep Dive into Docker"]
+series = ["Docker"]
 series_order = 2
 
 draft = false

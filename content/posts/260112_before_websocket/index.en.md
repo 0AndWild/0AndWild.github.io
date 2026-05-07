@@ -5,7 +5,7 @@ description = ""
 summary = "Let's explore HTTP long polling and HTTP streaming by reading RFC 6202 about bidirectional communication before WebSocket"
 categories = ["Websocket", "HTTP long polling", "Http streaming", "RFC6202"]
 tags = []
-series = ["Websocket"]
+series = ["WebSocket"]
 series_order = 1
 
 draft = false

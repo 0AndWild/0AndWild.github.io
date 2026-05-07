@@ -5,7 +5,7 @@ description = "Elasticsearch의 Character Filter 종류와 동작 방식."
 summary = "Elasticsearch Analyzer를 구성하는 Character Filter의 다양한 종류와 설정 방법"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Analyzer", "Character Filter", "텍스트 분석"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 2
 
 draft = false

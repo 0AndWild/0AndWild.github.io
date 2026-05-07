@@ -5,7 +5,7 @@ description = "Processing sequence and operation of Query, Filter, and PostFilte
 summary = "Execution order of Query, Filter, PostFilter in Elasticsearch and their impact on Aggregation"
 categories = ["ElasticSearch"]
 tags = ["Elasticsearch", "Query", "Filter", "PostFilter", "Aggregation"]
-series = ["ElasticSearch"]
+series = ["Elasticsearch"]
 series_order = 5
 
 draft = false

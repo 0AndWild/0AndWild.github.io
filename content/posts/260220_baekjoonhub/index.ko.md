@@ -5,7 +5,7 @@ description = "BaekjoonHub 익스텐션을 작업 흐름에 맞게 커스텀한 
 summary = "Base Directory 추가, 티어 경로 세분화, 디렉토리명 정규화, Java Main/package 자동화, 벌크 업로드 기능을 구현했음."
 categories = ["Baekjoon", "Chrome Extension"]
 tags = ["BaekjoonHub", "Chrome Extension", "GitHub", "Java", "자동화", "커스텀"]
-series = []
+series = ["Baekjoon"]
 series_order = 1
 
 draft = false

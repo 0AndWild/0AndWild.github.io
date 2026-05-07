@@ -5,7 +5,7 @@ description = "A comprehensive guide on ParameterObject handling with Springdoc 
 summary = "Complete guide to Springdoc's @ParameterObject usage and Swagger annotation reference"
 categories = ["Backend"]
 tags = ["Spring", "Springdoc", "Swagger", "OpenAPI", "API Documentation"]
-series = ["Swagger OAS(Open API Specification)"]
+series = ["Swagger"]
 series_order = 2
 
 draft = false
