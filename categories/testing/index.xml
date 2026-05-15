@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Testing on 0AndWild_log</title><link>https://0andwild.com/categories/testing/</link><description>Recent content in Testing on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 15 May 2026 12:28:45 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/testing/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Double 그게 뭔데?</title><link>https://0andwild.com/posts/260515_test_double/</link><pubDate>Fri, 15 May 2026 12:28:45 +0900</pubDate><guid>https://0andwild.com/posts/260515_test_double/</guid><description>&lt;p&gt;테스트 코드에 대한 공부를 하면서 &lt;code&gt;Test Double&lt;/code&gt;이라는 개념을 마주쳤다. 처음 봤을 때는 이름부터 좀 낯설었다. 테스트는 알겠는데, 더블은 또 뭔가 싶었다.&lt;/p&gt;
-&lt;p&gt;영화에서 위험한 장면을 배우 대신 수행하는 스턴트 더블을 떠올리면 조금 감이 온다. 테스트 더블도 비슷하다. 테스트에서 진짜 객체를 그대로 쓰기 어렵거나, 쓰고 싶지 않을 때 대신 세우는 대역이다.&lt;/p&gt;
-&lt;p&gt;Test Double이 무엇인지, 어떤 상황에서 쓰는지, 반대로 언제는 사용하는 것을 조심해야 하는지 정리해보려 한다.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Testing on 0AndWild_log</title><link>https://0andwild.com/categories/testing/</link><description>Recent content in Testing on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 15 May 2026 12:28:45 +0900</lastBuildDate><atom:link href="https://0andwild.com/categories/testing/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Double 그게 뭔데?</title><link>https://0andwild.com/posts/260515_test_double/</link><pubDate>Fri, 15 May 2026 12:28:45 +0900</pubDate><guid>https://0andwild.com/posts/260515_test_double/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Test Double 그게 뭔데?" /&gt;&lt;p&gt;테스트 코드에 대한 공부를 하면서 &lt;code&gt;Test Double&lt;/code&gt;이라는 개념을 마주쳤다. 처음 봤을 때는 테스트는 알겠는데 더블은 또 뭔가 싶었다.&lt;/p&gt;
+&lt;p&gt;더블이 익숙하지 않을텐데 예시로 영화에서 얼굴이 드러나지 않도록 다른 배우를 대신하는 사람을 스턴트 더블 이라 부른다.
+테스트 더블도 비슷하다. 테스트에서 진짜 객체를 그대로 쓰기 어렵거나, 쓰고 싶지 않을 때 대신 세우는 대역이다.&lt;/p&gt;
+&lt;p&gt;오늘은 Test Double이 무엇인지, 어떤 상황에서 쓰는지, 반대로 언제는 사용하는 것을 조심해야 하는지 정리해보려 한다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="그래서-test-double이-뭔데"&gt;&lt;a href="#%ea%b7%b8%eb%9e%98%ec%84%9c-test-double%ec%9d%b4-%eb%ad%94%eb%8d%b0" class="header-anchor"&gt;&lt;/a&gt;그래서 Test Double이 뭔데?
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://en.wikipedia.org/wiki/Test_double" target="_blank" rel="noopener"
@@ -29,13 +30,17 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;val&lt;/span&gt; &lt;span class="py"&gt;success&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Boolean&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;OrderService&lt;/code&gt;를 테스트하고 싶은데, 테스트를 실행할 때마다 실제 결제 API를 호출하면 꽤 곤란하다. 테스트 한 번 돌렸을 뿐인데 카드가 긁히면 그건 테스트가 아니라 사고다.&lt;/p&gt;
-&lt;p&gt;그래서 테스트에서는 진짜 &lt;code&gt;PaymentGateway&lt;/code&gt; 대신 테스트용 &lt;code&gt;PaymentGateway&lt;/code&gt;를 넣을 수 있다.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img1.png"
+ alt="응 진짜 결제 된거야~" width="500"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;그래서 테스트에서는 진짜 &lt;code&gt;PaymentGateway&lt;/code&gt; 대신 테스트용 &lt;code&gt;PaymentGateway&lt;/code&gt;를 넣는 것이다.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;StubPaymentGateway&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;PaymentGateway&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;override&lt;/span&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;pay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;orderId&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;amount&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;PaymentResult&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;PaymentResult&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;test-transaction&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이렇게 하면 &lt;code&gt;OrderService&lt;/code&gt;는 자신이 진짜 결제 API를 사용하는지, 테스트용 결제 API를 사용하는지 모른다. 그냥 &lt;code&gt;PaymentGateway&lt;/code&gt;라는 인터페이스를 통해 요청할 뿐이다.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이렇게 하면 &lt;code&gt;OrderService&lt;/code&gt;는 자신이 진짜 결제 API를 사용하는지 테스트용 결제 API를 사용하는지 모른다. 그냥 &lt;code&gt;PaymentGateway&lt;/code&gt;라는 인터페이스를 통해 요청할 뿐이다.&lt;/p&gt;
 &lt;p&gt;여기서 &lt;code&gt;StubPaymentGateway&lt;/code&gt;가 Test Double이다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="왜-굳이-가짜를-세울까"&gt;&lt;a href="#%ec%99%9c-%ea%b5%b3%ec%9d%b4-%ea%b0%80%ec%a7%9c%eb%a5%bc-%ec%84%b8%ec%9a%b8%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;왜 굳이 가짜를 세울까?
@@ -50,7 +55,11 @@
 &lt;li&gt;실패 상황을 의도적으로 재현해야 하는 경우&lt;/li&gt;
 &lt;li&gt;테스트 대상만 독립적으로 확인하고 싶은 경우&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;예를 들어 결제 실패 상황을 테스트하고 싶다고 해보자. 실제 결제 서버가 마침 실패해주기를 기다릴 수는 없다. 그런 일은 필요할 때는 안 일어나고, 배포 직후에 일어나는 편이다.&lt;/p&gt;
+&lt;p&gt;예를 들어 결제 실패 상황을 테스트하고 싶다고 해보자. 실제 결제 서버가 마침 실패해주기를 기다릴 수는 없다. 그런 일은 보통 필요할 때는 안 일어나고 배포 직후에 일어나는 편이다.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img2.png"
+ alt="실패는 운영환경에서 일어난다 (?)" width="500"&gt;
+&lt;/figure&gt;
+
 &lt;p&gt;테스트에서는 실패하는 대역을 직접 만들면 된다.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;FailingPaymentGateway&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;PaymentGateway&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;override&lt;/span&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;pay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;orderId&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;amount&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;PaymentResult&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -60,7 +69,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 결제 실패 상황을 언제든지 재현할 수 있다. 테스트 더블의 가장 큰 장점은 여기에 있다. 테스트 환경을 내가 통제할 수 있게 만들어준다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="test-double의-종류"&gt;&lt;a href="#test-double%ec%9d%98-%ec%a2%85%eb%a5%98" class="header-anchor"&gt;&lt;/a&gt;Test Double의 종류
-&lt;/h2&gt;&lt;p&gt;Test Double이라는 큰 분류 안에는 여러 종류가 있다. 이름이 조금 헷갈리지만, 각각의 목적을 기준으로 보면 이해하기 쉽다.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;Test Double이라는 큰 분류 안에는 여러 종류가 있다. 이름이 조금 헷갈리지만 각각의 목적을 기준으로 보면 이해하기 쉽다.&lt;/p&gt;
 &lt;p&gt;대표적으로는 다음 다섯 가지가 자주 언급된다.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Dummy&lt;/li&gt;
@@ -71,8 +80,8 @@
 &lt;/ol&gt;
 &lt;hr&gt;
 &lt;h2 id="dummy-필요해서-넣지만-사용하지는-않는-값"&gt;&lt;a href="#dummy-%ed%95%84%ec%9a%94%ed%95%b4%ec%84%9c-%eb%84%a3%ec%a7%80%eb%a7%8c-%ec%82%ac%ec%9a%a9%ed%95%98%ec%a7%80%eb%8a%94-%ec%95%8a%eb%8a%94-%ea%b0%92" class="header-anchor"&gt;&lt;/a&gt;Dummy: 필요해서 넣지만 사용하지는 않는 값
-&lt;/h2&gt;&lt;p&gt;Dummy는 테스트를 실행하기 위해 인자로 넘기긴 하지만, 실제 테스트 흐름에서는 사용되지 않는 객체이다.&lt;/p&gt;
-&lt;p&gt;예를 들어 회원 가입 서비스가 알림 발송기를 생성자에서 요구한다고 해보자. 그런데 지금 테스트하고 싶은 것은 회원 이름 검증이고, 알림 발송은 관심사가 아니라고 하자.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;Dummy는 테스트를 실행하기 위해 인자로 넘기긴 하지만 실제 테스트 흐름에서는 사용되지 않는 객체이다.&lt;/p&gt;
+&lt;p&gt;예를 들어 회원 가입 서비스가 알림 발송기를 생성자에서 요구한다고 해보자. 그런데 지금 테스트하고 싶은 것은 회원 이름 검증이고 알림 발송은 관심사가 아니라고 하자.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="nc"&gt;NotificationSender&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
@@ -93,7 +102,12 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Dummy는 말 그대로 자리 채우기용이다. 테스트 대상이 요구하니까 넣어주지만, 그 객체의 동작은 테스트의 관심사가 아니다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="stub-정해진-답을-돌려주는-대역"&gt;&lt;a href="#stub-%ec%a0%95%ed%95%b4%ec%a7%84-%eb%8b%b5%ec%9d%84-%eb%8f%8c%eb%a0%a4%ec%a3%bc%eb%8a%94-%eb%8c%80%ec%97%ad" class="header-anchor"&gt;&lt;/a&gt;Stub: 정해진 답을 돌려주는 대역
-&lt;/h2&gt;&lt;p&gt;Stub은 테스트에서 필요한 값을 미리 정해두고 그대로 반환하는 대역이다.&lt;/p&gt;
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img3.jpg"
+ alt="면접의 신" width="500"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Stub은 테스트에서 필요한 값을 미리 정해두고 그대로 반환하는 대역이다.&lt;/p&gt;
+&lt;p&gt;면접 예상 질문만 외운 지원자처럼 준비된 질문에 답벽을 척 하고 내놓는다.&lt;/p&gt;
 &lt;p&gt;사용자 등급에 따라 할인을 계산하는 서비스가 있다고 해보자.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="nc"&gt;UserRepository&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;findGrade&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;userId&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Long&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;
@@ -119,9 +133,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;테스트는 이렇게 작성할 수 있다.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.Test&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.assertEquals&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DiscountServiceTest&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nd"&gt;@Test&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;`VIP 사용자는 20퍼센트 할인을 받는다`&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -132,11 +144,10 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;assertEquals&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Stub은 질문을 받으면 미리 준비한 답을 내놓는 대역이다. 면접 예상 질문만 외운 지원자처럼, 예상한 질문에는 아주 침착하다.&lt;/p&gt;
-&lt;hr&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
 &lt;h2 id="fake-단순하지만-실제처럼-동작하는-구현체"&gt;&lt;a href="#fake-%eb%8b%a8%ec%88%9c%ed%95%98%ec%a7%80%eb%a7%8c-%ec%8b%a4%ec%a0%9c%ec%b2%98%eb%9f%bc-%eb%8f%99%ec%9e%91%ed%95%98%eb%8a%94-%ea%b5%ac%ed%98%84%ec%b2%b4" class="header-anchor"&gt;&lt;/a&gt;Fake: 단순하지만 실제처럼 동작하는 구현체
 &lt;/h2&gt;&lt;p&gt;Fake는 실제 구현처럼 동작하지만, 프로덕션에서 쓰기에는 부족한 단순한 구현체이다.&lt;/p&gt;
-&lt;p&gt;가장 흔한 예시는 인메모리 저장소이다. 실제 서비스에서는 데이터베이스를 쓰지만, 테스트에서는 메모리 컬렉션으로 비슷하게 동작하게 만들 수 있다.&lt;/p&gt;
+&lt;p&gt;가장 흔한 예시는 인메모리 저장소이다. 실제 서비스에서는 데이터베이스를 쓰지만 테스트에서는 메모리 컬렉션으로 비슷하게 동작하게 만들 수 있다.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;data&lt;/span&gt; &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;val&lt;/span&gt; &lt;span class="py"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Long&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;val&lt;/span&gt; &lt;span class="py"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;
@@ -159,9 +170,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 Fake는 실제 데이터베이스처럼 저장하고 조회할 수 있다. 하지만 트랜잭션, 동시성, 쿼리 최적화 같은 것은 없다. 테스트에 필요한 만큼만 실제처럼 행동한다.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.Test&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.assertEquals&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;FakeUserStoreTest&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nd"&gt;@Test&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;`저장한 사용자를 다시 조회한다`&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -173,9 +182,13 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;assertEquals&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;findById&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1L&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="fake는-꽤-유용하지만-조심할-점도-있다-fake가-실제-구현과-너무-달라지면-테스트는-통과하는데-실제-서비스는-실패할-수-있다"&gt;&lt;a href="#fake%eb%8a%94-%ea%bd%a4-%ec%9c%a0%ec%9a%a9%ed%95%98%ec%a7%80%eb%a7%8c-%ec%a1%b0%ec%8b%ac%ed%95%a0-%ec%a0%90%eb%8f%84-%ec%9e%88%eb%8b%a4-fake%ea%b0%80-%ec%8b%a4%ec%a0%9c-%ea%b5%ac%ed%98%84%ea%b3%bc-%eb%84%88%eb%ac%b4-%eb%8b%ac%eb%9d%bc%ec%a7%80%eb%a9%b4-%ed%85%8c%ec%8a%a4%ed%8a%b8%eb%8a%94-%ed%86%b5%ea%b3%bc%ed%95%98%eb%8a%94%eb%8d%b0-%ec%8b%a4%ec%a0%9c-%ec%84%9c%eb%b9%84%ec%8a%a4%eb%8a%94-%ec%8b%a4%ed%8c%a8%ed%95%a0-%ec%88%98-%ec%9e%88%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;Fake는 꽤 유용하지만 조심할 점도 있다. Fake가 실제 구현과 너무 달라지면 테스트는 통과하는데 실제 서비스는 실패할 수 있다.
-&lt;/h2&gt;&lt;h2 id="spy-무슨-일이-있었는지-기록하는-대역"&gt;&lt;a href="#spy-%eb%ac%b4%ec%8a%a8-%ec%9d%bc%ec%9d%b4-%ec%9e%88%ec%97%88%eb%8a%94%ec%a7%80-%ea%b8%b0%eb%a1%9d%ed%95%98%eb%8a%94-%eb%8c%80%ec%97%ad" class="header-anchor"&gt;&lt;/a&gt;Spy: 무슨 일이 있었는지 기록하는 대역
-&lt;/h2&gt;&lt;p&gt;Spy는 호출 여부나 호출 횟수 같은 정보를 기록하는 대역이다.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Fake는 꽤 유용하지만 조심할 점도 있다. Fake가 실제 구현과 너무 달라지면 테스트는 통과하는데 실제 서비스는 실패할 수 있다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="spy-무슨-일이-있었는지-기록하는-대역"&gt;&lt;a href="#spy-%eb%ac%b4%ec%8a%a8-%ec%9d%bc%ec%9d%b4-%ec%9e%88%ec%97%88%eb%8a%94%ec%a7%80-%ea%b8%b0%eb%a1%9d%ed%95%98%eb%8a%94-%eb%8c%80%ec%97%ad" class="header-anchor"&gt;&lt;/a&gt;Spy: 무슨 일이 있었는지 기록하는 대역
+&lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img4.png" width="500"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Spy는 호출 여부나 호출 횟수 같은 정보를 기록하는 대역이다.&lt;/p&gt;
 &lt;p&gt;예를 들어 주문이 완료되면 알림을 보내야 한다고 해보자.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;interface&lt;/span&gt; &lt;span class="nc"&gt;OrderNotifier&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;notify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;orderId&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -189,9 +202,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이때 알림이 실제로 발송되었는지보다, 알림 발송 요청이 일어났는지를 확인하고 싶을 수 있다. 그러면 Mockito의 &lt;code&gt;spy&lt;/code&gt;를 사용할 수 있다.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;org.mockito.Mockito&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.Test&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;OrderCompleteServiceTest&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nd"&gt;@Test&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;`주문 완료 시 알림을 보낸다`&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -207,14 +218,11 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nc"&gt;Mockito&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;verify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;notifier&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;notify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;order-1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Spy는 테스트가 끝난 뒤 &amp;ldquo;방금 무슨 일이 있었는지&amp;quot;를 확인할 수 있게 해준다.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Spy는 테스트가 끝난 뒤 방금 무슨 일이 있었는지 를 확인할 수 있게 해준다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="mock-기대한-상호작용이-있었는지-검증하는-대역"&gt;&lt;a href="#mock-%ea%b8%b0%eb%8c%80%ed%95%9c-%ec%83%81%ed%98%b8%ec%9e%91%ec%9a%a9%ec%9d%b4-%ec%9e%88%ec%97%88%eb%8a%94%ec%a7%80-%ea%b2%80%ec%a6%9d%ed%95%98%eb%8a%94-%eb%8c%80%ec%97%ad" class="header-anchor"&gt;&lt;/a&gt;Mock: 기대한 상호작용이 있었는지 검증하는 대역
-&lt;/h2&gt;&lt;p&gt;Mock은 보통 어떤 메서드가 어떤 인자로 호출되었는지를 검증하는 데 사용한다. Kotlin에서는 Mockito 같은 라이브러리를 사용할 수 있다.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;org.mockito.Mockito&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.Test&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;kotlin.test.assertTrue&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/h2&gt;&lt;p&gt;Mock은 보통 어떤 메서드가 어떤 인자로 호출되었는지를 검증하는 데 사용한다. Mockito 같은 라이브러리를 사용할 수 있다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;OrderServiceMockTest&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nd"&gt;@Test&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;`결제 요청을 결제 게이트웨이에 전달한다`&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -233,7 +241,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Mock은 강력하다. 하지만 강력한 도구일수록 손이 가는 대로 쓰면 테스트가 구현 세부사항에 딱 붙어버린다.&lt;/p&gt;
 &lt;p&gt;예를 들어 내부 메서드를 몇 번 호출했는지, 어떤 순서로 호출했는지까지 과하게 검증하면 리팩터링이 어려워진다. 기능은 그대로인데 내부 구현을 조금 바꿨다는 이유로 테스트가 우르르 깨질 수 있다.&lt;/p&gt;
-&lt;p&gt;테스트는 제품의 동작을 지켜줘야지, 코드의 현재 모양을 박제하는 데 집중하면 곤란하다.&lt;/p&gt;
+&lt;p&gt;테스트는 제품의 동작을 지켜줘야지 코드의 현재 모양을 박제하는 데 집중하면 곤란하다.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="언제-사용하면-좋을까"&gt;&lt;a href="#%ec%96%b8%ec%a0%9c-%ec%82%ac%ec%9a%a9%ed%95%98%eb%a9%b4-%ec%a2%8b%ec%9d%84%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;언제 사용하면 좋을까?
 &lt;/h2&gt;&lt;p&gt;Test Double은 테스트를 빠르고 안정적으로 만들고 싶을 때 유용하다. 특히 테스트 대상의 핵심 로직과 외부 의존성을 분리하고 싶을 때 효과가 크다.&lt;/p&gt;
@@ -245,7 +253,7 @@
 &lt;/h3&gt;&lt;p&gt;모든 테스트가 외부 API를 전부 붙이고 실행된다면 테스트 피드백이 느려진다. 테스트가 느리면 개발자는 테스트를 덜 실행하게 된다. 결국 테스트가 있어도 잘 안 보게 되는 문서처럼 변한다.&lt;/p&gt;
 &lt;p&gt;단위 테스트에서는 Test Double로 빠르게 검증하고, 실제 연동은 별도의 통합 테스트에서 확인하는 식으로 나눌 수 있다.&lt;/p&gt;
 &lt;h3 id="실패-상황을-재현해야-할-때"&gt;&lt;a href="#%ec%8b%a4%ed%8c%a8-%ec%83%81%ed%99%a9%ec%9d%84-%ec%9e%ac%ed%98%84%ed%95%b4%ec%95%bc-%ed%95%a0-%eb%95%8c" class="header-anchor"&gt;&lt;/a&gt;실패 상황을 재현해야 할 때
-&lt;/h3&gt;&lt;p&gt;실패 상황은 실제 환경에서 기다리기 어렵지만, 테스트에서는 반드시 확인해야 한다. 외부 API가 실패했을 때 재시도하는지, 예외를 적절히 변환하는지, 사용자에게 어떤 결과를 돌려주는지 같은 것들이다.&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;실패 상황은 실제 환경에서 기다리기 어렵지만 테스트에서는 반드시 확인해야 한다. 외부 API가 실패했을 때 재시도하는지, 예외를 적절히 변환하는지, 사용자에게 어떤 결과를 돌려주는지 같은 것들이다.&lt;/p&gt;
 &lt;p&gt;이때 Test Double을 사용하면 원하는 실패를 정확한 타이밍에 만들 수 있다.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TimeoutPaymentGateway&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;PaymentGateway&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;override&lt;/span&gt; &lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;pay&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;orderId&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;amount&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;PaymentResult&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -265,7 +273,7 @@
 &lt;h3 id="테스트가-구현-방식에-너무-의존할-때"&gt;&lt;a href="#%ed%85%8c%ec%8a%a4%ed%8a%b8%ea%b0%80-%ea%b5%ac%ed%98%84-%eb%b0%a9%ec%8b%9d%ec%97%90-%eb%84%88%eb%ac%b4-%ec%9d%98%ec%a1%b4%ed%95%a0-%eb%95%8c" class="header-anchor"&gt;&lt;/a&gt;테스트가 구현 방식에 너무 의존할 때
 &lt;/h3&gt;&lt;p&gt;Mock을 사용하면 &lt;strong&gt;어떤 메서드가 호출되었는지&lt;/strong&gt; 를 쉽게 검증할 수 있다. 하지만 사용자의 관점에서 중요한 것은 보통 내부 메서드 호출 여부가 아니라 결과이다.&lt;/p&gt;
 &lt;p&gt;예를 들어 할인 계산 테스트에서 &lt;code&gt;findGrade()&lt;/code&gt;가 정확히 한 번 호출되었는지보다 VIP 사용자의 할인율이 20퍼센트인지가 더 중요할 수 있다.&lt;/p&gt;
-&lt;p&gt;상호작용 자체가 요구사항이면 검증해야 한다. 예를 들어 &amp;ldquo;주문 완료 시 알림을 반드시 발송한다&amp;quot;는 요구사항이라면 알림 발송 호출을 검증할 수 있다. 하지만 단지 현재 구현이 그렇게 되어 있다는 이유로 내부 호출을 검증하면 테스트가 쉽게 깨진다.&lt;/p&gt;
+&lt;p&gt;상호작용 자체가 요구사항이면 검증해야 한다. 예를 들어 &lt;strong&gt;주문 완료 시 알림을 반드시 발송한다&lt;/strong&gt; 는 요구사항이라면 알림 발송 호출을 검증할 수 있다. 하지만 단지 현재 구현이 그렇게 되어 있다는 이유로 내부 호출을 검증하면 테스트가 쉽게 깨진다.&lt;/p&gt;
 &lt;h3 id="fake가-실제-구현과-다르게-행동할-때"&gt;&lt;a href="#fake%ea%b0%80-%ec%8b%a4%ec%a0%9c-%ea%b5%ac%ed%98%84%ea%b3%bc-%eb%8b%a4%eb%a5%b4%ea%b2%8c-%ed%96%89%eb%8f%99%ed%95%a0-%eb%95%8c" class="header-anchor"&gt;&lt;/a&gt;Fake가 실제 구현과 다르게 행동할 때
 &lt;/h3&gt;&lt;p&gt;인메모리 Fake는 편하지만 실제 데이터베이스와 완전히 같지는 않다. 예를 들어 실제 데이터베이스에는 유니크 제약 조건이 있는데 Fake에는 없다면, 테스트에서는 통과하고 운영에서는 실패할 수 있다.&lt;/p&gt;
 &lt;p&gt;Fake를 사용할 때는 &lt;strong&gt;이 Fake가 실제 구현의 어떤 부분을 흉내 내고 어떤 부분은 흉내 내지 않는지&lt;/strong&gt; 를 알고 있어야 한다.&lt;/p&gt;
