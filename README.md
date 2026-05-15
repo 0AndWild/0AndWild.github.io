@@ -4,7 +4,6 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-> Hugo와 GitHub Pages로 구동되는 개인 기술 블로그입니다. Blowfish 테마를 사용합니다.
 
 ## 📖
 
