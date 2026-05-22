@@ -1,5 +1,5 @@
 +++
-title = '야 너두 할 수 있어 ! ㄷㄷㄷㄷ'
+title = '야 너두 할 수 있어 ! ㄷㄷㄷ'
 date = '2026-05-22T17:00:00+09:00'
 description = "DDD(Domain-Driven Design)의 핵심 개념과 도메인 경계 나누는 법을 정리."
 summary = ""
