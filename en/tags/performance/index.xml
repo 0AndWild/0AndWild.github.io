@@ -142,7 +142,7 @@
 &lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.17/scroll-api.html" target="_blank" rel="noopener"
  &gt;Scroll API | Elasticsearch Guide [7.17]&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>BigQuery Clustering Optimization</title><link>https://0andwild.com/en/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/en/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering Optimization" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_3ecc95e8ba98b1db.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_cacbaf612b63631e.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
@@ -167,7 +167,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_e4a55682afde7f7.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_ab6767dc827f0c0c.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Clustering Features&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Can cluster up to 4 columns maximum&lt;/li&gt;
@@ -176,7 +176,7 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_d68a5613875dfcea.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_e28be72eabbd04e8.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
 &lt;p&gt;Using partitioning and clustering together enables more efficient data access.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Combination Strategy&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -192,7 +192,7 @@
 &lt;li&gt;&lt;a class="link" href="https://towardsdatascience.com/use-the-partitions-luke-a-simple-and-proven-way-to-optimise-your-sql-queries-43e24ea4c5d0" target="_blank" rel="noopener"
  &gt;Use the Partitions, Luke! A Simple and Proven Way to Optimise Your SQL Queries&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>What is Nginx? Evolution and Architecture of Web Servers</title><link>https://0andwild.com/en/posts/221025_about_nginx/</link><pubDate>Tue, 25 Oct 2022 19:17:04 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_about_nginx/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is Nginx? Evolution and Architecture of Web Servers" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/featured.png"
- alt="Nginx logo"&gt;
+			alt="Nginx logo"&gt;
 &lt;/figure&gt;
 
 &lt;h2 id="what-is-nginx"&gt;&lt;a href="#what-is-nginx" class="header-anchor"&gt;&lt;/a&gt;What is Nginx?
@@ -214,7 +214,7 @@
 &lt;/div&gt;
 
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure1.png"
- alt="Apache&amp;#39;s thread-based architecture - one thread per connection"&gt;
+			alt="Apache&amp;#39;s thread-based architecture - one thread per connection"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="apaches-architectural-limitations"&gt;&lt;a href="#apaches-architectural-limitations" class="header-anchor"&gt;&lt;/a&gt;Apache&amp;rsquo;s Architectural Limitations
@@ -240,7 +240,7 @@
 &lt;p&gt;Due to these issues, Apache was &lt;strong&gt;unsuitable for large-scale concurrent connection environments&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id="the-birth-of-nginx"&gt;&lt;a href="#the-birth-of-nginx" class="header-anchor"&gt;&lt;/a&gt;The Birth of Nginx
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure2.png"
- alt="Igor Sysoev - Nginx Developer"&gt;
+			alt="Igor Sysoev - Nginx Developer"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;In 2002, Russian developer &lt;strong&gt;Igor Sysoev&lt;/strong&gt; began developing Nginx to solve this problem, releasing the first version in 2004.&lt;/p&gt;
@@ -260,7 +260,7 @@
 &lt;hr&gt;
 &lt;h2 id="nginx-internal-architecture"&gt;&lt;a href="#nginx-internal-architecture" class="header-anchor"&gt;&lt;/a&gt;Nginx Internal Architecture
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure3.png"
- alt="Event-Driven Nginx Architecture"&gt;
+			alt="Event-Driven Nginx Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;Nginx consists of &lt;strong&gt;1 Master Process&lt;/strong&gt; and &lt;strong&gt;multiple Worker Processes&lt;/strong&gt;.&lt;/p&gt;
@@ -361,13 +361,13 @@
 &lt;hr&gt;
 &lt;h2 id="key-nginx-features"&gt;&lt;a href="#key-nginx-features" class="header-anchor"&gt;&lt;/a&gt;Key Nginx Features
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure4.png"
- alt="Nginx Key Features Diagram"&gt;
+			alt="Nginx Key Features Diagram"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="1-reverse-proxy"&gt;&lt;a href="#1-reverse-proxy" class="header-anchor"&gt;&lt;/a&gt;1. Reverse Proxy
 &lt;/h3&gt;&lt;p&gt;A reverse proxy acts as an &lt;strong&gt;intermediary&lt;/strong&gt; between clients and backend servers.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure5.png"
- alt="Reverse Proxy Architecture"&gt;
+			alt="Reverse Proxy Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="key-benefits"&gt;&lt;a href="#key-benefits" class="header-anchor"&gt;&lt;/a&gt;Key Benefits
@@ -392,7 +392,7 @@
 &lt;h3 id="2-load-balancing"&gt;&lt;a href="#2-load-balancing" class="header-anchor"&gt;&lt;/a&gt;2. Load Balancing
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Distributes traffic&lt;/strong&gt; across multiple backend servers to balance load evenly.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure6.png"
- alt="Load Balancing Architecture"&gt;
+			alt="Load Balancing Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="load-balancing-algorithms"&gt;&lt;a href="#load-balancing-algorithms" class="header-anchor"&gt;&lt;/a&gt;Load Balancing Algorithms
@@ -449,7 +449,7 @@
 &lt;h3 id="3-ssltls-termination"&gt;&lt;a href="#3-ssltls-termination" class="header-anchor"&gt;&lt;/a&gt;3. SSL/TLS Termination
 &lt;/h3&gt;&lt;p&gt;Nginx handles &lt;strong&gt;HTTPS communication with clients&lt;/strong&gt; and &lt;strong&gt;HTTP communication with backend&lt;/strong&gt;.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure7.png"
- alt="SSL Termination Architecture"&gt;
+			alt="SSL Termination Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="key-benefits-1"&gt;&lt;a href="#key-benefits-1" class="header-anchor"&gt;&lt;/a&gt;Key Benefits

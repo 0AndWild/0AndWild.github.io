@@ -45,7 +45,7 @@
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_452cc5b05f4a468f.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_6eeea157fdec0966.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
 &lt;h3 id="1-method-area"&gt;&lt;a href="#1-method-area" class="header-anchor"&gt;&lt;/a&gt;(1) Method Area
 &lt;/h3&gt;&lt;p&gt;Created when the JVM starts, it stores runtime constant pools, field and method code, static variables, method bytecode, etc. for each class and interface read by the JVM.&lt;/p&gt;
 &lt;div class="stack-alert stack-alert--tip"&gt;
@@ -222,22 +222,22 @@ so I wanted to dig deeper into how it works and what role it plays.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;h3 id="advantages-and-disadvantages"&gt;&lt;a href="#advantages-and-disadvantages" class="header-anchor"&gt;&lt;/a&gt;Advantages and Disadvantages
 &lt;/h3&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Category&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Simple program modification&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Execution speed is slower than compiled languages&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Category&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Simple program modification&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Execution speed is slower than compiled languages&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;div class="stack-alert stack-alert--tip"&gt;
  &lt;div class="stack-alert__icon"&gt;💡&lt;/div&gt;

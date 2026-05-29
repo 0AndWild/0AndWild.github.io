@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Virtualization on 0AndWild_log</title><link>https://0andwild.com/en/tags/virtualization/</link><description>Recent content in Virtualization on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/tags/virtualization/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Docker? Docker Container and Types of Virtualization</title><link>https://0andwild.com/en/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/en/posts/221024_about_docker/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is Docker? Docker Container and Types of Virtualization" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure1.png"
- alt="docker"&gt;
+			alt="docker"&gt;
 &lt;/figure&gt;
 
 &lt;div class="stack-lead"&gt;
@@ -38,7 +38,7 @@
 &lt;hr&gt;
 &lt;h2 id="-container-virtualization"&gt;&lt;a href="#-container-virtualization" class="header-anchor"&gt;&lt;/a&gt;🔄 Container Virtualization
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure2.png"
- alt="Containerized"&gt;
+			alt="Containerized"&gt;
 &lt;/figure&gt;
 
 &lt;div class="stack-alert stack-alert--caution"&gt;
@@ -52,7 +52,7 @@ Containers are not exclusive to Docker. Various container technologies exist, in
 &lt;h2 id="-types-of-virtualization"&gt;&lt;a href="#-types-of-virtualization" class="header-anchor"&gt;&lt;/a&gt;🖥️ Types of Virtualization
 &lt;/h2&gt;&lt;h3 id="1-host-virtualization"&gt;&lt;a href="#1-host-virtualization" class="header-anchor"&gt;&lt;/a&gt;1. Host Virtualization
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure3.png"
- alt="Hosted Vitualization Architecture"&gt;
+			alt="Hosted Vitualization Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
@@ -78,7 +78,7 @@ Guest OS runs on top of Host OS through virtualization software.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id="2-hypervisor-virtualization"&gt;&lt;a href="#2-hypervisor-virtualization" class="header-anchor"&gt;&lt;/a&gt;2. Hypervisor Virtualization
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure4.png"
- alt="HypervisorVirtualization"&gt;
+			alt="HypervisorVirtualization"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
@@ -112,7 +112,7 @@ Software is installed and runs directly on hardware without a Host OS.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id="3-container-virtualization-"&gt;&lt;a href="#3-container-virtualization-" class="header-anchor"&gt;&lt;/a&gt;3. Container Virtualization ⭐
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure5.png"
- alt="ContainerVirtualization"&gt;
+			alt="ContainerVirtualization"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;Structure:&lt;/strong&gt;
@@ -137,52 +137,52 @@ Applications share the host OS kernel while maintaining isolated environments.&l
 &lt;hr&gt;
 &lt;h2 id="-virtualization-comparison"&gt;&lt;a href="#-virtualization-comparison" class="header-anchor"&gt;&lt;/a&gt;📊 Virtualization Comparison
 &lt;/h2&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Category&lt;/th&gt;
- &lt;th&gt;Host Virtualization&lt;/th&gt;
- &lt;th&gt;Hypervisor Virtualization&lt;/th&gt;
- &lt;th&gt;Container Virtualization&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Size&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Tens of GB&lt;/td&gt;
- &lt;td&gt;Tens of GB&lt;/td&gt;
- &lt;td&gt;Tens of MB&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Startup Speed&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Slow&lt;/td&gt;
- &lt;td&gt;Slow&lt;/td&gt;
- &lt;td&gt;Very Fast&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Resource Usage&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;High&lt;/td&gt;
- &lt;td&gt;Medium&lt;/td&gt;
- &lt;td&gt;Low&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Isolation Level&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;High&lt;/td&gt;
- &lt;td&gt;High&lt;/td&gt;
- &lt;td&gt;Medium&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Portability&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Low&lt;/td&gt;
- &lt;td&gt;Medium&lt;/td&gt;
- &lt;td&gt;High&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;Setup Difficulty&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;Easy&lt;/td&gt;
- &lt;td&gt;Hard&lt;/td&gt;
- &lt;td&gt;Medium&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Category&lt;/th&gt;
+					&lt;th&gt;Host Virtualization&lt;/th&gt;
+					&lt;th&gt;Hypervisor Virtualization&lt;/th&gt;
+					&lt;th&gt;Container Virtualization&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Size&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Tens of GB&lt;/td&gt;
+					&lt;td&gt;Tens of GB&lt;/td&gt;
+					&lt;td&gt;Tens of MB&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Startup Speed&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Slow&lt;/td&gt;
+					&lt;td&gt;Slow&lt;/td&gt;
+					&lt;td&gt;Very Fast&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Resource Usage&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;High&lt;/td&gt;
+					&lt;td&gt;Medium&lt;/td&gt;
+					&lt;td&gt;Low&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Isolation Level&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;High&lt;/td&gt;
+					&lt;td&gt;High&lt;/td&gt;
+					&lt;td&gt;Medium&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Portability&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Low&lt;/td&gt;
+					&lt;td&gt;Medium&lt;/td&gt;
+					&lt;td&gt;High&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Setup Difficulty&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Easy&lt;/td&gt;
+					&lt;td&gt;Hard&lt;/td&gt;
+					&lt;td&gt;Medium&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;hr&gt;
 &lt;h2 id="-summary"&gt;&lt;a href="#-summary" class="header-anchor"&gt;&lt;/a&gt;💡 Summary

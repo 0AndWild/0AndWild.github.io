@@ -31,7 +31,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;OrderService&lt;/code&gt;를 테스트하고 싶은데, 테스트를 실행할 때마다 실제 결제 API를 호출하면 꽤 곤란하다. 테스트 한 번 돌렸을 뿐인데 카드가 긁히면 그건 테스트가 아니라 사고다.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img1.png"
- alt="응 진짜 결제 된거야~" width="500"&gt;
+			alt="응 진짜 결제 된거야~" width="500"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;그래서 테스트에서는 진짜 &lt;code&gt;PaymentGateway&lt;/code&gt; 대신 테스트용 &lt;code&gt;PaymentGateway&lt;/code&gt;를 넣는 것이다.&lt;/p&gt;
@@ -57,7 +57,7 @@
 &lt;/ol&gt;
 &lt;p&gt;예를 들어 결제 실패 상황을 테스트하고 싶다고 해보자. 실제 결제 서버가 마침 실패해주기를 기다릴 수는 없다. 그런 일은 보통 필요할 때는 안 일어나고 배포 직후에 일어나는 편이다.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img2.png"
- alt="실패는 운영환경에서 일어난다 (?)" width="500"&gt;
+			alt="실패는 운영환경에서 일어난다 (?)" width="500"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;테스트에서는 실패하는 대역을 직접 만들면 된다.&lt;/p&gt;
@@ -103,7 +103,7 @@
 &lt;hr&gt;
 &lt;h2 id="stub-정해진-답을-돌려주는-대역"&gt;&lt;a href="#stub-%ec%a0%95%ed%95%b4%ec%a7%84-%eb%8b%b5%ec%9d%84-%eb%8f%8c%eb%a0%a4%ec%a3%bc%eb%8a%94-%eb%8c%80%ec%97%ad" class="header-anchor"&gt;&lt;/a&gt;Stub: 정해진 답을 돌려주는 대역
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260515_test_double/img3.jpg"
- alt="면접의 신" width="500"&gt;
+			alt="면접의 신" width="500"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;Stub은 테스트에서 필요한 값을 미리 정해두고 그대로 반환하는 대역이다.&lt;/p&gt;

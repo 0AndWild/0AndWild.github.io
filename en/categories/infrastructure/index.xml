@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Infrastructure on 0AndWild_log</title><link>https://0andwild.com/en/categories/infrastructure/</link><description>Recent content in Infrastructure on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 25 Oct 2022 19:17:04 +0900</lastBuildDate><atom:link href="https://0andwild.com/en/categories/infrastructure/index.xml" rel="self" type="application/rss+xml"/><item><title>What is Nginx? Evolution and Architecture of Web Servers</title><link>https://0andwild.com/en/posts/221025_about_nginx/</link><pubDate>Tue, 25 Oct 2022 19:17:04 +0900</pubDate><guid>https://0andwild.com/en/posts/221025_about_nginx/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post What is Nginx? Evolution and Architecture of Web Servers" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/featured.png"
- alt="Nginx logo"&gt;
+			alt="Nginx logo"&gt;
 &lt;/figure&gt;
 
 &lt;h2 id="what-is-nginx"&gt;&lt;a href="#what-is-nginx" class="header-anchor"&gt;&lt;/a&gt;What is Nginx?
@@ -21,7 +21,7 @@
 &lt;/div&gt;
 
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure1.png"
- alt="Apache&amp;#39;s thread-based architecture - one thread per connection"&gt;
+			alt="Apache&amp;#39;s thread-based architecture - one thread per connection"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="apaches-architectural-limitations"&gt;&lt;a href="#apaches-architectural-limitations" class="header-anchor"&gt;&lt;/a&gt;Apache&amp;rsquo;s Architectural Limitations
@@ -47,7 +47,7 @@
 &lt;p&gt;Due to these issues, Apache was &lt;strong&gt;unsuitable for large-scale concurrent connection environments&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id="the-birth-of-nginx"&gt;&lt;a href="#the-birth-of-nginx" class="header-anchor"&gt;&lt;/a&gt;The Birth of Nginx
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure2.png"
- alt="Igor Sysoev - Nginx Developer"&gt;
+			alt="Igor Sysoev - Nginx Developer"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;In 2002, Russian developer &lt;strong&gt;Igor Sysoev&lt;/strong&gt; began developing Nginx to solve this problem, releasing the first version in 2004.&lt;/p&gt;
@@ -67,7 +67,7 @@
 &lt;hr&gt;
 &lt;h2 id="nginx-internal-architecture"&gt;&lt;a href="#nginx-internal-architecture" class="header-anchor"&gt;&lt;/a&gt;Nginx Internal Architecture
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure3.png"
- alt="Event-Driven Nginx Architecture"&gt;
+			alt="Event-Driven Nginx Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;Nginx consists of &lt;strong&gt;1 Master Process&lt;/strong&gt; and &lt;strong&gt;multiple Worker Processes&lt;/strong&gt;.&lt;/p&gt;
@@ -168,13 +168,13 @@
 &lt;hr&gt;
 &lt;h2 id="key-nginx-features"&gt;&lt;a href="#key-nginx-features" class="header-anchor"&gt;&lt;/a&gt;Key Nginx Features
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure4.png"
- alt="Nginx Key Features Diagram"&gt;
+			alt="Nginx Key Features Diagram"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="1-reverse-proxy"&gt;&lt;a href="#1-reverse-proxy" class="header-anchor"&gt;&lt;/a&gt;1. Reverse Proxy
 &lt;/h3&gt;&lt;p&gt;A reverse proxy acts as an &lt;strong&gt;intermediary&lt;/strong&gt; between clients and backend servers.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure5.png"
- alt="Reverse Proxy Architecture"&gt;
+			alt="Reverse Proxy Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="key-benefits"&gt;&lt;a href="#key-benefits" class="header-anchor"&gt;&lt;/a&gt;Key Benefits
@@ -199,7 +199,7 @@
 &lt;h3 id="2-load-balancing"&gt;&lt;a href="#2-load-balancing" class="header-anchor"&gt;&lt;/a&gt;2. Load Balancing
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Distributes traffic&lt;/strong&gt; across multiple backend servers to balance load evenly.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure6.png"
- alt="Load Balancing Architecture"&gt;
+			alt="Load Balancing Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="load-balancing-algorithms"&gt;&lt;a href="#load-balancing-algorithms" class="header-anchor"&gt;&lt;/a&gt;Load Balancing Algorithms
@@ -256,7 +256,7 @@
 &lt;h3 id="3-ssltls-termination"&gt;&lt;a href="#3-ssltls-termination" class="header-anchor"&gt;&lt;/a&gt;3. SSL/TLS Termination
 &lt;/h3&gt;&lt;p&gt;Nginx handles &lt;strong&gt;HTTPS communication with clients&lt;/strong&gt; and &lt;strong&gt;HTTP communication with backend&lt;/strong&gt;.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure7.png"
- alt="SSL Termination Architecture"&gt;
+			alt="SSL Termination Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="key-benefits-1"&gt;&lt;a href="#key-benefits-1" class="header-anchor"&gt;&lt;/a&gt;Key Benefits

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>가상화 on 0AndWild_log</title><link>https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/</link><description>Recent content in 가상화 on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/%EA%B0%80%EC%83%81%ED%99%94/index.xml" rel="self" type="application/rss+xml"/><item><title>도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류</title><link>https://0andwild.com/posts/221024_about_docker/</link><pubDate>Mon, 24 Oct 2022 00:00:00 +0900</pubDate><guid>https://0andwild.com/posts/221024_about_docker/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 도커(Docker)란? &amp; Docker Container 그리고 가상화 방식의 종류" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure1.png"
- alt="docker"&gt;
+			alt="docker"&gt;
 &lt;/figure&gt;
 
 &lt;div class="stack-lead"&gt;
@@ -38,7 +38,7 @@
 &lt;hr&gt;
 &lt;h2 id="-container-virtualization-컨테이너-가상화"&gt;&lt;a href="#-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;🔄 Container Virtualization (컨테이너 가상화)
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure2.png"
- alt="Containerized"&gt;
+			alt="Containerized"&gt;
 &lt;/figure&gt;
 
 &lt;div class="stack-alert stack-alert--caution"&gt;
@@ -52,7 +52,7 @@
 &lt;h2 id="-가상화-방식의-종류"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d%ec%9d%98-%ec%a2%85%eb%a5%98" class="header-anchor"&gt;&lt;/a&gt;🖥️ 가상화 방식의 종류
 &lt;/h2&gt;&lt;h3 id="1-host-virtualization-호스트-가상화"&gt;&lt;a href="#1-host-virtualization-%ed%98%b8%ec%8a%a4%ed%8a%b8-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;1. Host Virtualization (호스트 가상화)
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure3.png"
- alt="Hosted Vitualization Architecture"&gt;
+			alt="Hosted Vitualization Architecture"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
@@ -78,7 +78,7 @@ Guest OS가 Host OS 위에서 가상화 소프트웨어를 통해 실행됩니�
 &lt;hr&gt;
 &lt;h3 id="2-hypervisor-virtualization-하이퍼바이저-가상화"&gt;&lt;a href="#2-hypervisor-virtualization-%ed%95%98%ec%9d%b4%ed%8d%bc%eb%b0%94%ec%9d%b4%ec%a0%80-%ea%b0%80%ec%83%81%ed%99%94" class="header-anchor"&gt;&lt;/a&gt;2. Hypervisor Virtualization (하이퍼바이저 가상화)
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure4.png"
- alt="HypervisorVirtualization"&gt;
+			alt="HypervisorVirtualization"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
@@ -112,7 +112,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;hr&gt;
 &lt;h3 id="3-container-virtualization-컨테이너-가상화-"&gt;&lt;a href="#3-container-virtualization-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88-%ea%b0%80%ec%83%81%ed%99%94-" class="header-anchor"&gt;&lt;/a&gt;3. Container Virtualization (컨테이너 가상화) ⭐
 &lt;/h3&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221024_about_docker/figure5.png"
- alt="ContainerVirtualization"&gt;
+			alt="ContainerVirtualization"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;&lt;strong&gt;구조:&lt;/strong&gt;
@@ -137,52 +137,52 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;hr&gt;
 &lt;h2 id="-가상화-방식-비교"&gt;&lt;a href="#-%ea%b0%80%ec%83%81%ed%99%94-%eb%b0%a9%ec%8b%9d-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;📊 가상화 방식 비교
 &lt;/h2&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;구분&lt;/th&gt;
- &lt;th&gt;호스트 가상화&lt;/th&gt;
- &lt;th&gt;하이퍼바이저 가상화&lt;/th&gt;
- &lt;th&gt;컨테이너 가상화&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;용량&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;수십 GB&lt;/td&gt;
- &lt;td&gt;수십 GB&lt;/td&gt;
- &lt;td&gt;수십 MB&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;시작 속도&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;느림&lt;/td&gt;
- &lt;td&gt;느림&lt;/td&gt;
- &lt;td&gt;매우 빠름&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;리소스 사용&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;높음&lt;/td&gt;
- &lt;td&gt;중간&lt;/td&gt;
- &lt;td&gt;낮음&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;격리 수준&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;높음&lt;/td&gt;
- &lt;td&gt;높음&lt;/td&gt;
- &lt;td&gt;중간&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;이식성&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;낮음&lt;/td&gt;
- &lt;td&gt;중간&lt;/td&gt;
- &lt;td&gt;높음&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;&lt;strong&gt;설정 난이도&lt;/strong&gt;&lt;/td&gt;
- &lt;td&gt;쉬움&lt;/td&gt;
- &lt;td&gt;어려움&lt;/td&gt;
- &lt;td&gt;중간&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;구분&lt;/th&gt;
+					&lt;th&gt;호스트 가상화&lt;/th&gt;
+					&lt;th&gt;하이퍼바이저 가상화&lt;/th&gt;
+					&lt;th&gt;컨테이너 가상화&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;용량&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;수십 GB&lt;/td&gt;
+					&lt;td&gt;수십 GB&lt;/td&gt;
+					&lt;td&gt;수십 MB&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;시작 속도&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;느림&lt;/td&gt;
+					&lt;td&gt;느림&lt;/td&gt;
+					&lt;td&gt;매우 빠름&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;리소스 사용&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;높음&lt;/td&gt;
+					&lt;td&gt;중간&lt;/td&gt;
+					&lt;td&gt;낮음&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;격리 수준&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;높음&lt;/td&gt;
+					&lt;td&gt;높음&lt;/td&gt;
+					&lt;td&gt;중간&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;이식성&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;낮음&lt;/td&gt;
+					&lt;td&gt;중간&lt;/td&gt;
+					&lt;td&gt;높음&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;설정 난이도&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;쉬움&lt;/td&gt;
+					&lt;td&gt;어려움&lt;/td&gt;
+					&lt;td&gt;중간&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;hr&gt;
 &lt;h2 id="-정리"&gt;&lt;a href="#-%ec%a0%95%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;💡 정리

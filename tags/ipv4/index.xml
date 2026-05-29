@@ -3,9 +3,9 @@
 &lt;/div&gt;
 
 &lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/featured.jpg"
- alt="public ip vs private ip"&gt;&lt;figcaption&gt;
- &lt;p&gt;사설 IP와 공인 IP의 관계&lt;/p&gt;
- &lt;/figcaption&gt;
+			alt="public ip vs private ip"&gt;&lt;figcaption&gt;
+			&lt;p&gt;사설 IP와 공인 IP의 관계&lt;/p&gt;
+		&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 &lt;div class="stack-alert stack-alert--note"&gt;
@@ -31,12 +31,12 @@
 &lt;h2 id="-사설망private-network이란"&gt;&lt;a href="#-%ec%82%ac%ec%84%a4%eb%a7%9dprivate-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;🔌 사설망(Private Network)이란?
 &lt;/h2&gt;&lt;p&gt;사설망은 IPv4 중 특정 대역을 공인 인터넷이 아닌 가정, 기업 등의 한정된 공간에 사용한 네트워크를 의미합니다. 사설망에 소속된 IP인 &lt;strong&gt;사설 IP 대역&lt;/strong&gt;은 오로지 &lt;strong&gt;사설망(내부망)&lt;/strong&gt;에서만 사용이 가능하기 때문에 &lt;strong&gt;공인망(외부망, 인터넷)&lt;/strong&gt;에선 사용을 할 수 없습니다.&lt;/p&gt;
 &lt;figure class="max-w-4xl"&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure2_ko.png"
- alt="private ip"&gt;&lt;figcaption&gt;
- &lt;p&gt;사설 IP 대역&lt;/p&gt;
- &lt;/figcaption&gt;
+			alt="private ip"&gt;&lt;figcaption&gt;
+			&lt;p&gt;사설 IP 대역&lt;/p&gt;
+		&lt;/figcaption&gt;
 &lt;/figure&gt;
 
-&lt;h2 id="hahahugoshortcode26s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode26s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
+&lt;h2 id="hahahugoshortcode27s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode27s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
 &lt;/h2&gt;&lt;p&gt;인터넷 상에서 서로 다른 PC끼리 통신하기 위해 필요한 IP로써 다음과 같은 용도로 사용됩니다:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;홈페이지 서버 구축&lt;/li&gt;
@@ -49,9 +49,9 @@
 &lt;/div&gt;
 
 &lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure3.jpeg"
- alt="public ip"&gt;&lt;figcaption&gt;
- &lt;p&gt;공인 IP 주소 체계&lt;/p&gt;
- &lt;/figcaption&gt;
+			alt="public ip"&gt;&lt;figcaption&gt;
+			&lt;p&gt;공인 IP 주소 체계&lt;/p&gt;
+		&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 &lt;hr&gt;
@@ -109,7 +109,7 @@
 &lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode26s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode26s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
+&lt;h2 id="hahahugoshortcode27s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode27s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
 &lt;/h2&gt;&lt;p&gt;그럼 더 나아가 우리가 사용은 해봤을 수 있지만 정확히 어떤 역할을 하는지 잘 모르는 VPN에 대해 알아봅시다!&lt;/p&gt;
 &lt;div class="stack-lead"&gt;
  VPN은 &lt;strong&gt;가상 사설망&lt;/strong&gt;으로 이름 그대로 사설망이지만 가상인 사설망을 말합니다.
@@ -148,9 +148,9 @@
 &lt;p&gt;&lt;strong&gt;왜 이러는 걸까요?&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;VPN을 연결하는 순간 &lt;strong&gt;가상의 터널&lt;/strong&gt;이 형성되고 터널 간의 통신을 위해 보내는 패킷들을 잘게 나누고 &lt;strong&gt;암호화&lt;/strong&gt;와 &lt;strong&gt;캡슐화&lt;/strong&gt;를 합니다. 이때 회사의 방화벽을 거치게 되지만 암호화/캡슐화된 패킷이기 때문에 내가 VPN을 통해 접속하려는 곳이 SNS인지 알아차리지 못하기 때문에 패킷을 그대로 통과시키게 됩니다.&lt;/p&gt;
 &lt;figure&gt;&lt;img src="https://0andwild.com/posts/221005_about_ip/figure4.png"
- alt="vpn"&gt;&lt;figcaption&gt;
- &lt;p&gt;VPN 터널링 구조&lt;/p&gt;
- &lt;/figcaption&gt;
+			alt="vpn"&gt;&lt;figcaption&gt;
+			&lt;p&gt;VPN 터널링 구조&lt;/p&gt;
+		&lt;/figcaption&gt;
 &lt;/figure&gt;
 
 &lt;hr&gt;

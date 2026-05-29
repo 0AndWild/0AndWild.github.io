@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Nginx on 0AndWild_log</title><link>https://0andwild.com/series/nginx/</link><description>Recent content in Nginx on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Tue, 25 Oct 2022 19:17:04 +0900</lastBuildDate><atom:link href="https://0andwild.com/series/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx란 무엇일까? 웹 서버의 진화와 구조</title><link>https://0andwild.com/posts/221025_about_nginx/</link><pubDate>Tue, 25 Oct 2022 19:17:04 +0900</pubDate><guid>https://0andwild.com/posts/221025_about_nginx/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Nginx란 무엇일까? 웹 서버의 진화와 구조" /&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/featured.png"
- alt="Nginx 로고"&gt;
+			alt="Nginx 로고"&gt;
 &lt;/figure&gt;
 
 &lt;h2 id="nginx란"&gt;&lt;a href="#nginx%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;Nginx란?
@@ -21,7 +21,7 @@
 &lt;/div&gt;
 
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure1.png"
- alt="Apache의 스레드 기반 구조 - 하나의 커넥션 당 하나의 스레드를 점유"&gt;
+			alt="Apache의 스레드 기반 구조 - 하나의 커넥션 당 하나의 스레드를 점유"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="apache의-구조적-한계"&gt;&lt;a href="#apache%ec%9d%98-%ea%b5%ac%ec%a1%b0%ec%a0%81-%ed%95%9c%ea%b3%84" class="header-anchor"&gt;&lt;/a&gt;Apache의 구조적 한계
@@ -47,7 +47,7 @@
 &lt;p&gt;이러한 문제로 인해 Apache는 &lt;strong&gt;대규모 동시 접속 환경에 부적합&lt;/strong&gt;했습니다.&lt;/p&gt;
 &lt;h2 id="nginx의-탄생"&gt;&lt;a href="#nginx%ec%9d%98-%ed%83%84%ec%83%9d" class="header-anchor"&gt;&lt;/a&gt;Nginx의 탄생
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure2.png"
- alt="Igor Sysoev - Nginx 개발자"&gt;
+			alt="Igor Sysoev - Nginx 개발자"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;2002년, 러시아의 개발자 **이고르 시쇼브(Igor Sysoev)**가 이 문제를 해결하기 위해 Nginx 개발을 시작했고, 2004년 첫 릴리즈를 공개했습니다.&lt;/p&gt;
@@ -67,7 +67,7 @@
 &lt;hr&gt;
 &lt;h2 id="nginx의-내부-구조"&gt;&lt;a href="#nginx%ec%9d%98-%eb%82%b4%eb%b6%80-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;Nginx의 내부 구조
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure3.png"
- alt="Event-Driven 방식의 Nginx 구조"&gt;
+			alt="Event-Driven 방식의 Nginx 구조"&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;Nginx는 &lt;strong&gt;1개의 Master Process&lt;/strong&gt;와 &lt;strong&gt;여러 개의 Worker Process&lt;/strong&gt;로 구성됩니다.&lt;/p&gt;
@@ -168,13 +168,13 @@
 &lt;hr&gt;
 &lt;h2 id="nginx의-주요-기능"&gt;&lt;a href="#nginx%ec%9d%98-%ec%a3%bc%ec%9a%94-%ea%b8%b0%eb%8a%a5" class="header-anchor"&gt;&lt;/a&gt;Nginx의 주요 기능
 &lt;/h2&gt;&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure4.png"
- alt="Nginx 주요 기능 다이어그램"&gt;
+			alt="Nginx 주요 기능 다이어그램"&gt;
 &lt;/figure&gt;
 
 &lt;h3 id="1-리버스-프록시-reverse-proxy"&gt;&lt;a href="#1-%eb%a6%ac%eb%b2%84%ec%8a%a4-%ed%94%84%eb%a1%9d%ec%8b%9c-reverse-proxy" class="header-anchor"&gt;&lt;/a&gt;1. 리버스 프록시 (Reverse Proxy)
 &lt;/h3&gt;&lt;p&gt;리버스 프록시는 클라이언트와 백엔드 서버 사이에서 &lt;strong&gt;중계자&lt;/strong&gt; 역할을 합니다.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure5.png"
- alt="리버스 프록시 구조"&gt;
+			alt="리버스 프록시 구조"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="주요-이점"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ec%9d%b4%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;주요 이점
@@ -199,7 +199,7 @@
 &lt;h3 id="2-로드-밸런싱-load-balancing"&gt;&lt;a href="#2-%eb%a1%9c%eb%93%9c-%eb%b0%b8%eb%9f%b0%ec%8b%b1-load-balancing" class="header-anchor"&gt;&lt;/a&gt;2. 로드 밸런싱 (Load Balancing)
 &lt;/h3&gt;&lt;p&gt;여러 백엔드 서버로 &lt;strong&gt;트래픽을 분산&lt;/strong&gt;하여 부하를 균등하게 배분합니다.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure6.png"
- alt="로드 밸런싱 구조"&gt;
+			alt="로드 밸런싱 구조"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="로드-밸런싱-알고리즘"&gt;&lt;a href="#%eb%a1%9c%eb%93%9c-%eb%b0%b8%eb%9f%b0%ec%8b%b1-%ec%95%8c%ea%b3%a0%eb%a6%ac%ec%a6%98" class="header-anchor"&gt;&lt;/a&gt;로드 밸런싱 알고리즘
@@ -256,7 +256,7 @@
 &lt;h3 id="3-ssltls-터미네이션"&gt;&lt;a href="#3-ssltls-%ed%84%b0%eb%af%b8%eb%84%a4%ec%9d%b4%ec%85%98" class="header-anchor"&gt;&lt;/a&gt;3. SSL/TLS 터미네이션
 &lt;/h3&gt;&lt;p&gt;Nginx가 &lt;strong&gt;클라이언트와 HTTPS 통신&lt;/strong&gt;, &lt;strong&gt;백엔드와 HTTP 통신&lt;/strong&gt;을 담당합니다.&lt;/p&gt;
 &lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/221025_about_nginx/figure7.png"
- alt="SSL 터미네이션 구조"&gt;
+			alt="SSL 터미네이션 구조"&gt;
 &lt;/figure&gt;
 
 &lt;h4 id="주요-이점-1"&gt;&lt;a href="#%ec%a3%bc%ec%9a%94-%ec%9d%b4%ec%a0%90-1" class="header-anchor"&gt;&lt;/a&gt;주요 이점

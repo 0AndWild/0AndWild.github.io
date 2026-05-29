@@ -16,7 +16,7 @@
 &lt;/h3&gt;&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode66s1hbhb"&gt;&lt;a href="#hahahugoshortcode66s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
+&lt;h2 id="hahahugoshortcode68s1hbhb"&gt;&lt;a href="#hahahugoshortcode68s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
 &lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
 
 &lt;/h2&gt;&lt;h2 id="code-blocks"&gt;&lt;a href="#code-blocks" class="header-anchor"&gt;&lt;/a&gt;Code Blocks
@@ -82,25 +82,25 @@ Multiple lines are supported.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="table"&gt;&lt;a href="#table" class="header-anchor"&gt;&lt;/a&gt;Table
 &lt;/h2&gt;&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;Item&lt;/th&gt;
- &lt;th&gt;Description&lt;/th&gt;
- &lt;th&gt;Note&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;A&lt;/td&gt;
- &lt;td&gt;Description A&lt;/td&gt;
- &lt;td&gt;Note A&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;B&lt;/td&gt;
- &lt;td&gt;Description B&lt;/td&gt;
- &lt;td&gt;Note B&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Item&lt;/th&gt;
+					&lt;th&gt;Description&lt;/th&gt;
+					&lt;th&gt;Note&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;A&lt;/td&gt;
+					&lt;td&gt;Description A&lt;/td&gt;
+					&lt;td&gt;Note A&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;B&lt;/td&gt;
+					&lt;td&gt;Description B&lt;/td&gt;
+					&lt;td&gt;Note B&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;hr&gt;
 &lt;h2 id="embedded-links-shortcodes"&gt;&lt;a href="#embedded-links-shortcodes" class="header-anchor"&gt;&lt;/a&gt;Embedded Links (Shortcodes)
