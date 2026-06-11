@@ -1,0 +1,7 @@
+{{- $width := .Get "width" | default "760px" -}}
+<div class="mermaid-box" style="max-width: {{ $width | safeCSS }}; margin: 1.5rem auto; overflow-x: auto;">
+  <pre class="mermaid" style="visibility:hidden">
+{{- .Inner | safeHTML -}}
+  </pre>
+</div>
+{{- .Page.Store.Set "hasMermaid" true -}}

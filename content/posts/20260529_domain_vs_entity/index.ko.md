@@ -1,5 +1,5 @@
 +++
-title = '20260529_domain_vs_entity'
+title = 'domain_vs_entity'
 date = '2026-05-29T12:43:19+09:00'
 description = "도메인 모델과 DB Entity를 분리하면서 얻은 점과 고민한 점"
 summary = "Kotlin Spring JPA 프로젝트에서 도메인 모델과 DB Entity를 분리한 이유와 실제 적용 방식"
