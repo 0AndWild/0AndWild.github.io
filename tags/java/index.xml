@@ -66,7 +66,7 @@
 &lt;hr&gt;
 &lt;h2 id="spring에서-jpa는-어디에-위치할까"&gt;&lt;a href="#spring%ec%97%90%ec%84%9c-jpa%eb%8a%94-%ec%96%b4%eb%94%94%ec%97%90-%ec%9c%84%ec%b9%98%ed%95%a0%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;Spring에서 JPA는 어디에 위치할까?
 &lt;/h2&gt;&lt;p&gt;Spring 애플리케이션에서 JPA를 사용할 때는 보통 Spring Data JPA, JPA API, Hibernate, JDBC API가 계층적으로 함께 동작함.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Spring Data JPA와 JPA 계층 구조" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_77f4718916ce58c5.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_a76cc511dfb2516a.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spring Data JPA와 JPA 계층 구조" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_441c3375fff21a8f.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_86d7ecee82a135a6.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
 &lt;p&gt;위 구조를 단순하게 보면 다음과 같음.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;애플리케이션의 서비스 계층은 Repository를 사용함.&lt;/li&gt;
@@ -212,7 +212,7 @@
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_6eeea157fdec0966.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_bfa5b77340b9b736.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
 &lt;h3 id="1-method-area"&gt;&lt;a href="#1-method-area" class="header-anchor"&gt;&lt;/a&gt;(1) Method Area
 &lt;/h3&gt;&lt;p&gt;JVM이 시작될 때 생성되고 JVM이 읽은 각각의 클래스와 인터페이스에 대한 런타임 상수 풀, 필드 및 메서드 코드, 정적 변수, 메서드의 바이트 코드 등을 보관한다.&lt;/p&gt;
 &lt;div class="stack-alert stack-alert--tip"&gt;

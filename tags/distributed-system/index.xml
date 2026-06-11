@@ -10,7 +10,7 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id="데이터-처리-구조"&gt;&lt;a href="#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%b2%98%eb%a6%ac-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;데이터 처리 구조
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_64fb45c9fa29b5f6.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_b089fff4b4392b96.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Colossus (분산 스토리지)&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Google File System(GFS)를 잇는 Google의 클러스터 수준의 파일시스템&lt;/li&gt;
@@ -44,7 +44,7 @@
 &lt;hr&gt;
 &lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
 &lt;/h3&gt;&lt;p&gt;데이터를 3개의 데이터 센터에 복제를 하기에 데이터 쓰기 후 바로 조회가 안 될 수 있음.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_2cc410cfc5a45bc3.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_5f9a9d22de1df7ce.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;3중 복제를 통한 고가용성&lt;/li&gt;

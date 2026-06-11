@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pessimistic-Lock on 0AndWild_log</title><link>https://0andwild.com/tags/pessimistic-lock/</link><description>Recent content in Pessimistic-Lock on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 12 Jun 2026 05:50:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/pessimistic-lock/index.xml" rel="self" type="application/rss+xml"/><item><title>주문 정합성을 위해 비관적 락을 선택한 이유</title><link>https://0andwild.com/posts/20260612_order_consistency_lock_design/</link><pubDate>Fri, 12 Jun 2026 05:50:00 +0900</pubDate><guid>https://0andwild.com/posts/20260612_order_consistency_lock_design/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 주문 정합성을 위해 비관적 락을 선택한 이유" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+&lt;/h2&gt;&lt;p&gt;주문에서 가장 피하고 싶었던 실패는 명확했다.&lt;/p&gt;
+&lt;p&gt;쿠폰 한 장으로 주문이 두 번 성공하거나, 재고보다 많은 주문이 성공하는 것이다.&lt;/p&gt;
+&lt;p&gt;그래서 주문 흐름에서는 낙관적 락의 충돌 감지보다 비관적 락의 선점과 직렬화를 선택했다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;&lt;a href="#overview" class="header-anchor"&gt;&lt;/a&gt;Overview
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;목표:
+&lt;ul&gt;
+&lt;li&gt;주문 저장, 재고 차감, 쿠폰 사용을 하나의 트랜잭션으로 묶는다.&lt;/li&gt;
+&lt;li&gt;동일 쿠폰은 동시에 요청되어도 한 번만 사용되게 한다.&lt;/li&gt;
+&lt;li&gt;동일 상품은 동시에 주문되어도 실제 재고 수량만큼만 성공하게 한다.&lt;/li&gt;
+&lt;li&gt;실패하면 주문 재고 쿠폰 중 일부만 반영되는 상태를 만들지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="문제-상황"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c-%ec%83%81%ed%99%a9" class="header-anchor"&gt;&lt;/a&gt;문제 상황
+&lt;/h2&gt;&lt;p&gt;트랜잭션은 한 요청 안의 원자성을 보장한다.&lt;/p&gt;
+&lt;p&gt;하지만 여러 요청이 같은 데이터를 동시에 읽고 수정하는 문제까지 자동으로 해결해주지는 않는다.&lt;/p&gt;
+&lt;p&gt;같은 쿠폰으로 두 주문이 동시에 들어오면 둘 다 &lt;code&gt;AVAILABLE&lt;/code&gt;을 읽을 수 있다.&lt;/p&gt;
+&lt;p&gt;재고 5개인 상품에 10명이 동시에 주문하면 5건보다 많은 주문이 성공할 수도 있다.&lt;/p&gt;
+&lt;p&gt;이 문제는 나중에 감지해서 보정하기보다, 주문이 만들어지는 순간 막는 편이 낫다고 봤다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="주문-처리-흐름"&gt;&lt;a href="#%ec%a3%bc%eb%ac%b8-%ec%b2%98%eb%a6%ac-%ed%9d%90%eb%a6%84" class="header-anchor"&gt;&lt;/a&gt;주문 처리 흐름
+&lt;/h2&gt;&lt;p&gt;주문 생성은 다음 흐름으로 처리한다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 600px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart TD
+ A["주문 요청"] --&gt; B["사용자 인증"]
+ B --&gt; C["요청 상품 ID 정렬"]
+ C --&gt; D["쿠폰 발급 row 비관적 락 조회"]
+ C --&gt; E["재고 row 비관적 락 조회"]
+ D --&gt; F["상품 / 브랜드 조회"]
+ E --&gt; F
+ F --&gt; G["도메인 규칙 검증"]
+ G --&gt; H{"검증 성공?"}
+ H -- "아니오" --&gt; R["트랜잭션 롤백"]
+ H -- "예" --&gt; I["재고 차감"]
+ I --&gt; J["쿠폰 USED 처리"]
+ J --&gt; K["주문 저장"]
+ K --&gt; L["트랜잭션 커밋"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;핵심은 쿠폰과 재고를 먼저 잠근 뒤 검증과 변경을 같은 트랜잭션에서 끝내는 것이다.&lt;/p&gt;
+&lt;p&gt;검증이 실패하면 주문도 저장되지 않고 쿠폰과 재고도 변경되지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="technical-decisions"&gt;&lt;a href="#technical-decisions" class="header-anchor"&gt;&lt;/a&gt;Technical Decisions
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;기술/설계 항목&lt;/th&gt;
+					&lt;th&gt;선택한 대안&lt;/th&gt;
+					&lt;th&gt;선택 이유 Rationale&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;주문 트랜잭션 경계&lt;/td&gt;
+					&lt;td&gt;OrderFacade.placeOrder&lt;/td&gt;
+					&lt;td&gt;사용자 인증부터 재고 쿠폰 주문 저장까지 하나의 유즈케이스로 원자성을 보장하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;쿠폰 동시성 제어&lt;/td&gt;
+					&lt;td&gt;CouponIssue row 비관적 락&lt;/td&gt;
+					&lt;td&gt;같은 발급 쿠폰은 한 번만 사용되어야 하므로 검증과 USED 처리를 직렬화하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;재고 동시성 제어&lt;/td&gt;
+					&lt;td&gt;Inventory row 비관적 락&lt;/td&gt;
+					&lt;td&gt;재고 수량보다 많은 주문 성공을 막고 차감 결과를 명확히 하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;여러 상품 주문&lt;/td&gt;
+					&lt;td&gt;productId 정렬 후 락 조회&lt;/td&gt;
+					&lt;td&gt;여러 row를 잠글 때 락 획득 순서를 맞춰 데드락 가능성을 줄이기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;좋아요 수&lt;/td&gt;
+					&lt;td&gt;ProductStat row 비관적 락&lt;/td&gt;
+					&lt;td&gt;동시에 좋아요/취소 요청이 들어와도 likeCount Lost Update를 막기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;쿠폰 조건&lt;/td&gt;
+					&lt;td&gt;CouponIssue에 스냅샷 저장&lt;/td&gt;
+					&lt;td&gt;발급 당시 사용자에게 약속한 할인 조건을 주문 시점에도 유지하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="왜-비관적-락인가"&gt;&lt;a href="#%ec%99%9c-%eb%b9%84%ea%b4%80%ec%a0%81-%eb%9d%bd%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;왜 비관적 락인가
+&lt;/h2&gt;&lt;p&gt;주문에서 쿠폰과 재고는 경합이 발생했을 때 실패 비용이 크다.&lt;/p&gt;
+&lt;p&gt;쿠폰 중복 사용은 돈과 직접 연결되고, 초과 주문은 품절 이후에도 주문이 성공한 상태를 만든다.&lt;/p&gt;
+&lt;p&gt;낙관적 락은 충돌을 뒤늦게 감지한다.&lt;/p&gt;
+&lt;p&gt;그 방식이 맞는 경우도 있지만, 이 흐름에서는 충돌을 감지한 뒤 재시도할지 실패시킬지, 사용자에게 어떤 응답을 줄지까지 추가로 정해야 했다.&lt;/p&gt;
+&lt;p&gt;반면 비관적 락은 같은 CouponIssue나 Inventory row에 대한 처리를 처음부터 줄 세운다.&lt;/p&gt;
+&lt;p&gt;대기 시간은 생기지만, 한 번에 한 요청만 검증과 변경을 수행하므로 결과가 단순하다.&lt;/p&gt;
+&lt;p&gt;이번에는 처리량보다 “절대 깨지면 안 되는 상태”를 먼저 막는 쪽을 택했다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="detailed-design"&gt;&lt;a href="#detailed-design" class="header-anchor"&gt;&lt;/a&gt;Detailed Design
+&lt;/h2&gt;&lt;h3 id="1-쿠폰은-couponissue를-잠근다"&gt;&lt;a href="#1-%ec%bf%a0%ed%8f%b0%ec%9d%80-couponissue%eb%a5%bc-%ec%9e%a0%ea%b7%bc%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;1. 쿠폰은 CouponIssue를 잠근다
+&lt;/h3&gt;&lt;p&gt;주문에서 한 번만 사용되어야 하는 대상은 쿠폰 템플릿이 아니라 발급된 쿠폰이다.&lt;/p&gt;
+&lt;p&gt;그래서 주문 요청에 couponId가 있으면 CouponIssue row를 &lt;code&gt;PESSIMISTIC_WRITE&lt;/code&gt;로 조회한다.&lt;/p&gt;
+&lt;p&gt;이후 도메인에서 소유자, 사용 여부, 만료, 최소 주문 금액을 검증하고 &lt;code&gt;USED&lt;/code&gt;로 변경한다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 400px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart LR
+ A["CouponIssueEntity&lt;br/&gt;for update 조회"] --&gt; B["CouponIssue Domain 변환"]
+ B --&gt; C["Domain.use()&lt;br/&gt;검증 + USED 처리"]
+ C --&gt; D["Entity 재조회"]
+ D --&gt; E["entity.update(domain)"]
+ E --&gt; F["commit 시 flush"]
+
+ subgraph TX["같은 DB Transaction"]
+ A
+ B
+ C
+ D
+ E
+ F
+ end
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Domain과 JpaEntity를 분리해도 비관적 락은 동작한다.&lt;/p&gt;
+&lt;p&gt;락은 객체가 아니라 DB row와 트랜잭션에 걸리기 때문이다.&lt;/p&gt;
+&lt;p&gt;다만 Domain을 변경해도 dirty checking은 일어나지 않으므로 저장 시점에는 Entity에 값을 다시 반영해야 한다.&lt;/p&gt;
+&lt;h3 id="2-재고는-productid-를-정렬-후-잠근다"&gt;&lt;a href="#2-%ec%9e%ac%ea%b3%a0%eb%8a%94-productid-%eb%a5%bc-%ec%a0%95%eb%a0%ac-%ed%9b%84-%ec%9e%a0%ea%b7%bc%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;2. 재고는 productId 를 정렬 후 잠근다
+&lt;/h3&gt;&lt;p&gt;한 주문에 여러 상품이 들어올 수 있으므로 Inventory row도 여러 개 잠길 수 있다.&lt;/p&gt;
+&lt;p&gt;이때 요청마다 락 획득 순서가 다르면 데드락 가능성이 커진다.&lt;/p&gt;
+&lt;p&gt;예를 들어 A 요청은 1번 상품 다음 2번 상품을 잠그고, B 요청은 2번 상품 다음 1번 상품을 잠그면 서로가 서로의 락을 기다릴 수 있다.&lt;/p&gt;
+&lt;p&gt;그래서 productId를 중복 제거하고 정렬한 뒤 조회한다.&lt;/p&gt;
+&lt;p&gt;이 방식이 모든 데드락을 없애지는 않지만 최소한의 방어선이라 생각했다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 680px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart TD
+ A["주문 상품 목록&lt;br/&gt;3, 1, 2, 1"] --&gt; B["중복 제거&lt;br/&gt;3, 1, 2"]
+ B --&gt; C["정렬&lt;br/&gt;1, 2, 3"]
+ C --&gt; D["Inventory row&lt;br/&gt;1 -&gt; 2 -&gt; 3 순서로 락"]
+ D --&gt; E["재고 검증"]
+ E --&gt; F["재고 차감"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="3-쿠폰-조건은-발급-시점-스냅샷으로-저장한다"&gt;&lt;a href="#3-%ec%bf%a0%ed%8f%b0-%ec%a1%b0%ea%b1%b4%ec%9d%80-%eb%b0%9c%ea%b8%89-%ec%8b%9c%ec%a0%90-%ec%8a%a4%eb%83%85%ec%83%b7%ec%9c%bc%eb%a1%9c-%ec%a0%80%ec%9e%a5%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;3. 쿠폰 조건은 발급 시점 스냅샷으로 저장한다
+&lt;/h3&gt;&lt;p&gt;CouponIssue가 Coupon을 참조만 하고 할인 조건을 직접 갖고 있지 않으면, 발급 당시 조건과 주문 적용 당시 조건이 달라질 수 있다.&lt;/p&gt;
+&lt;p&gt;사용자는 10% 쿠폰을 받았는데, 이후 템플릿이 5%로 수정되면 주문에서 5%만 적용되는 식이다.&lt;/p&gt;
+&lt;p&gt;그래서 CouponIssue에 type, discountValue, minOrderAmount, expiredAt을 스냅샷으로 저장했다.&lt;/p&gt;
+&lt;p&gt;중복 컬럼은 생기지만, 발급 당시 사용자에게 약속한 조건을 보존하는 비용이라고 봤다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 820px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart LR
+ A["Coupon Template&lt;br/&gt;10% 할인"] --&gt; B["CouponIssue 발급"]
+ B --&gt; C["type / discountValue / minOrderAmount / expiredAt&lt;br/&gt;스냅샷 저장"]
+ A --&gt; D["이후 템플릿 수정 또는 삭제"]
+ C --&gt; E["주문 할인 계산은&lt;br/&gt;CouponIssue 스냅샷 기준"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h2 id="alternatives-considered"&gt;&lt;a href="#alternatives-considered" class="header-anchor"&gt;&lt;/a&gt;Alternatives Considered
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;옵션&lt;/th&gt;
+					&lt;th&gt;Pros&lt;/th&gt;
+					&lt;th&gt;Cons&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;A. 낙관적 락&lt;/td&gt;
+					&lt;td&gt;충돌이 적은 환경에서는 락 대기 없이 처리 가능&lt;/td&gt;
+					&lt;td&gt;충돌 후 재시도/실패 정책이 필요하고 주문 응답 흐름이 복잡해짐&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;B. 비관적 락&lt;/td&gt;
+					&lt;td&gt;검증과 변경을 직렬화해서 중복 사용과 초과 차감을 이해하기 쉬움&lt;/td&gt;
+					&lt;td&gt;요청이 몰리는 row에서 대기 시간이 늘고 데드락을 고려해야 함&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C. 큐 기반 직렬 처리&lt;/td&gt;
+					&lt;td&gt;hot key를 순차 처리하기 쉬움&lt;/td&gt;
+					&lt;td&gt;주문 상태와 응답 모델을 비동기 흐름에 맞게 다시 설계해야 함&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;선택: B&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;현재 요구사항에서 정합성 검증과 실패 처리 기준이 가장 명확함&lt;/td&gt;
+					&lt;td&gt;락 점유 시간과 쿼리 순서를 신경 써야 함&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;B 선택 근거:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;주문 성공은 사용자에게 즉시 확정된 결과로 보인다.&lt;/p&gt;
+&lt;p&gt;그런데 재고가 부족하거나 쿠폰이 이미 사용된 상황이라면, 성공처럼 보였다가 나중에 취소하는 것보다 처음부터 실패시키는 편이 낫다.&lt;/p&gt;
+&lt;p&gt;그래서 충돌을 뒤에서 감지하는 방식보다, 경합 지점을 먼저 잠그고 검증하는 방식을 선택했다.&lt;/p&gt;
+&lt;p&gt;낙관적 락의 장점은 분명하지만 이번 흐름에서는 충돌 처리 정책이 핵심 복잡도가 된다.&lt;/p&gt;
+&lt;p&gt;비관적 락은 성능 비용을 감수하는 대신 성공/실패 기준을 더 단순하게 만든다.&lt;/p&gt;
+&lt;h2 id="고민한-점"&gt;&lt;a href="#%ea%b3%a0%eb%af%bc%ed%95%9c-%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;고민한 점
+&lt;/h2&gt;&lt;p&gt;낙관적 락을 실험하면서 Domain과 JpaEntity 분리 구조의 비용도 체감했다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;@Version&lt;/code&gt;과 dirty checking은 Entity를 직접 다룰 때 가장 자연스럽다.&lt;/p&gt;
+&lt;p&gt;Entity를 application layer까지 올리면 JPA 기능을 편하게 쓸 수 있지만 계층 경계는 흐려진다.&lt;/p&gt;
+&lt;p&gt;반대로 Entity를 infrastructure에 숨기면 mapper와 repository 구현이 복잡해진다.&lt;/p&gt;
+&lt;p&gt;이 글의 결론은 “항상 비관적 락이 맞다”가 아니다.&lt;/p&gt;
+&lt;p&gt;이번 주문 흐름에서는 중복 사용과 초과 차감을 막는 것이 우선이었고, 그 목적에는 비관적 락이 더 직접적이었다.&lt;/p&gt;
+&lt;p&gt;데드락도 계속 신경 쓰이는 부분이다.&lt;/p&gt;
+&lt;p&gt;productId 정렬로 락 획득 순서를 맞추면 데드락 가능성을 줄일 수 있지만 완전한 해결책은 아니다.&lt;/p&gt;
+&lt;p&gt;그래도 여러 row를 잠그는 흐름에서는 일관된 순서가 기본이라고 생각했다.&lt;/p&gt;</description></item></channel></rss>

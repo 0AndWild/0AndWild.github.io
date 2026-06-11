@@ -1,4 +1,208 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0andwild.com/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 29 May 2026 12:43:19 +0900</lastBuildDate><atom:link href="https://0andwild.com/index.xml" rel="self" type="application/rss+xml"/><item><title>20260529_domain_vs_entity</title><link>https://0andwild.com/posts/20260529_domain_vs_entity/</link><pubDate>Fri, 29 May 2026 12:43:19 +0900</pubDate><guid>https://0andwild.com/posts/20260529_domain_vs_entity/</guid><description>&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>0AndWild_log</title><link>https://0andwild.com/</link><description>Recent content on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 12 Jun 2026 05:50:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/index.xml" rel="self" type="application/rss+xml"/><item><title>주문 정합성을 위해 비관적 락을 선택한 이유</title><link>https://0andwild.com/posts/20260612_order_consistency_lock_design/</link><pubDate>Fri, 12 Jun 2026 05:50:00 +0900</pubDate><guid>https://0andwild.com/posts/20260612_order_consistency_lock_design/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 주문 정합성을 위해 비관적 락을 선택한 이유" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+&lt;/h2&gt;&lt;p&gt;주문에서 가장 피하고 싶었던 실패는 명확했다.&lt;/p&gt;
+&lt;p&gt;쿠폰 한 장으로 주문이 두 번 성공하거나, 재고보다 많은 주문이 성공하는 것이다.&lt;/p&gt;
+&lt;p&gt;그래서 주문 흐름에서는 낙관적 락의 충돌 감지보다 비관적 락의 선점과 직렬화를 선택했다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="overview"&gt;&lt;a href="#overview" class="header-anchor"&gt;&lt;/a&gt;Overview
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;목표:
+&lt;ul&gt;
+&lt;li&gt;주문 저장, 재고 차감, 쿠폰 사용을 하나의 트랜잭션으로 묶는다.&lt;/li&gt;
+&lt;li&gt;동일 쿠폰은 동시에 요청되어도 한 번만 사용되게 한다.&lt;/li&gt;
+&lt;li&gt;동일 상품은 동시에 주문되어도 실제 재고 수량만큼만 성공하게 한다.&lt;/li&gt;
+&lt;li&gt;실패하면 주문 재고 쿠폰 중 일부만 반영되는 상태를 만들지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="문제-상황"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c-%ec%83%81%ed%99%a9" class="header-anchor"&gt;&lt;/a&gt;문제 상황
+&lt;/h2&gt;&lt;p&gt;트랜잭션은 한 요청 안의 원자성을 보장한다.&lt;/p&gt;
+&lt;p&gt;하지만 여러 요청이 같은 데이터를 동시에 읽고 수정하는 문제까지 자동으로 해결해주지는 않는다.&lt;/p&gt;
+&lt;p&gt;같은 쿠폰으로 두 주문이 동시에 들어오면 둘 다 &lt;code&gt;AVAILABLE&lt;/code&gt;을 읽을 수 있다.&lt;/p&gt;
+&lt;p&gt;재고 5개인 상품에 10명이 동시에 주문하면 5건보다 많은 주문이 성공할 수도 있다.&lt;/p&gt;
+&lt;p&gt;이 문제는 나중에 감지해서 보정하기보다, 주문이 만들어지는 순간 막는 편이 낫다고 봤다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="주문-처리-흐름"&gt;&lt;a href="#%ec%a3%bc%eb%ac%b8-%ec%b2%98%eb%a6%ac-%ed%9d%90%eb%a6%84" class="header-anchor"&gt;&lt;/a&gt;주문 처리 흐름
+&lt;/h2&gt;&lt;p&gt;주문 생성은 다음 흐름으로 처리한다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 600px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart TD
+ A["주문 요청"] --&gt; B["사용자 인증"]
+ B --&gt; C["요청 상품 ID 정렬"]
+ C --&gt; D["쿠폰 발급 row 비관적 락 조회"]
+ C --&gt; E["재고 row 비관적 락 조회"]
+ D --&gt; F["상품 / 브랜드 조회"]
+ E --&gt; F
+ F --&gt; G["도메인 규칙 검증"]
+ G --&gt; H{"검증 성공?"}
+ H -- "아니오" --&gt; R["트랜잭션 롤백"]
+ H -- "예" --&gt; I["재고 차감"]
+ I --&gt; J["쿠폰 USED 처리"]
+ J --&gt; K["주문 저장"]
+ K --&gt; L["트랜잭션 커밋"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;핵심은 쿠폰과 재고를 먼저 잠근 뒤 검증과 변경을 같은 트랜잭션에서 끝내는 것이다.&lt;/p&gt;
+&lt;p&gt;검증이 실패하면 주문도 저장되지 않고 쿠폰과 재고도 변경되지 않는다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="technical-decisions"&gt;&lt;a href="#technical-decisions" class="header-anchor"&gt;&lt;/a&gt;Technical Decisions
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;기술/설계 항목&lt;/th&gt;
+					&lt;th&gt;선택한 대안&lt;/th&gt;
+					&lt;th&gt;선택 이유 Rationale&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;주문 트랜잭션 경계&lt;/td&gt;
+					&lt;td&gt;OrderFacade.placeOrder&lt;/td&gt;
+					&lt;td&gt;사용자 인증부터 재고 쿠폰 주문 저장까지 하나의 유즈케이스로 원자성을 보장하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;쿠폰 동시성 제어&lt;/td&gt;
+					&lt;td&gt;CouponIssue row 비관적 락&lt;/td&gt;
+					&lt;td&gt;같은 발급 쿠폰은 한 번만 사용되어야 하므로 검증과 USED 처리를 직렬화하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;재고 동시성 제어&lt;/td&gt;
+					&lt;td&gt;Inventory row 비관적 락&lt;/td&gt;
+					&lt;td&gt;재고 수량보다 많은 주문 성공을 막고 차감 결과를 명확히 하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;여러 상품 주문&lt;/td&gt;
+					&lt;td&gt;productId 정렬 후 락 조회&lt;/td&gt;
+					&lt;td&gt;여러 row를 잠글 때 락 획득 순서를 맞춰 데드락 가능성을 줄이기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;좋아요 수&lt;/td&gt;
+					&lt;td&gt;ProductStat row 비관적 락&lt;/td&gt;
+					&lt;td&gt;동시에 좋아요/취소 요청이 들어와도 likeCount Lost Update를 막기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;쿠폰 조건&lt;/td&gt;
+					&lt;td&gt;CouponIssue에 스냅샷 저장&lt;/td&gt;
+					&lt;td&gt;발급 당시 사용자에게 약속한 할인 조건을 주문 시점에도 유지하기 위해&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="왜-비관적-락인가"&gt;&lt;a href="#%ec%99%9c-%eb%b9%84%ea%b4%80%ec%a0%81-%eb%9d%bd%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;왜 비관적 락인가
+&lt;/h2&gt;&lt;p&gt;주문에서 쿠폰과 재고는 경합이 발생했을 때 실패 비용이 크다.&lt;/p&gt;
+&lt;p&gt;쿠폰 중복 사용은 돈과 직접 연결되고, 초과 주문은 품절 이후에도 주문이 성공한 상태를 만든다.&lt;/p&gt;
+&lt;p&gt;낙관적 락은 충돌을 뒤늦게 감지한다.&lt;/p&gt;
+&lt;p&gt;그 방식이 맞는 경우도 있지만, 이 흐름에서는 충돌을 감지한 뒤 재시도할지 실패시킬지, 사용자에게 어떤 응답을 줄지까지 추가로 정해야 했다.&lt;/p&gt;
+&lt;p&gt;반면 비관적 락은 같은 CouponIssue나 Inventory row에 대한 처리를 처음부터 줄 세운다.&lt;/p&gt;
+&lt;p&gt;대기 시간은 생기지만, 한 번에 한 요청만 검증과 변경을 수행하므로 결과가 단순하다.&lt;/p&gt;
+&lt;p&gt;이번에는 처리량보다 “절대 깨지면 안 되는 상태”를 먼저 막는 쪽을 택했다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="detailed-design"&gt;&lt;a href="#detailed-design" class="header-anchor"&gt;&lt;/a&gt;Detailed Design
+&lt;/h2&gt;&lt;h3 id="1-쿠폰은-couponissue를-잠근다"&gt;&lt;a href="#1-%ec%bf%a0%ed%8f%b0%ec%9d%80-couponissue%eb%a5%bc-%ec%9e%a0%ea%b7%bc%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;1. 쿠폰은 CouponIssue를 잠근다
+&lt;/h3&gt;&lt;p&gt;주문에서 한 번만 사용되어야 하는 대상은 쿠폰 템플릿이 아니라 발급된 쿠폰이다.&lt;/p&gt;
+&lt;p&gt;그래서 주문 요청에 couponId가 있으면 CouponIssue row를 &lt;code&gt;PESSIMISTIC_WRITE&lt;/code&gt;로 조회한다.&lt;/p&gt;
+&lt;p&gt;이후 도메인에서 소유자, 사용 여부, 만료, 최소 주문 금액을 검증하고 &lt;code&gt;USED&lt;/code&gt;로 변경한다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 400px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart LR
+ A["CouponIssueEntity&lt;br/&gt;for update 조회"] --&gt; B["CouponIssue Domain 변환"]
+ B --&gt; C["Domain.use()&lt;br/&gt;검증 + USED 처리"]
+ C --&gt; D["Entity 재조회"]
+ D --&gt; E["entity.update(domain)"]
+ E --&gt; F["commit 시 flush"]
+
+ subgraph TX["같은 DB Transaction"]
+ A
+ B
+ C
+ D
+ E
+ F
+ end
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Domain과 JpaEntity를 분리해도 비관적 락은 동작한다.&lt;/p&gt;
+&lt;p&gt;락은 객체가 아니라 DB row와 트랜잭션에 걸리기 때문이다.&lt;/p&gt;
+&lt;p&gt;다만 Domain을 변경해도 dirty checking은 일어나지 않으므로 저장 시점에는 Entity에 값을 다시 반영해야 한다.&lt;/p&gt;
+&lt;h3 id="2-재고는-productid-를-정렬-후-잠근다"&gt;&lt;a href="#2-%ec%9e%ac%ea%b3%a0%eb%8a%94-productid-%eb%a5%bc-%ec%a0%95%eb%a0%ac-%ed%9b%84-%ec%9e%a0%ea%b7%bc%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;2. 재고는 productId 를 정렬 후 잠근다
+&lt;/h3&gt;&lt;p&gt;한 주문에 여러 상품이 들어올 수 있으므로 Inventory row도 여러 개 잠길 수 있다.&lt;/p&gt;
+&lt;p&gt;이때 요청마다 락 획득 순서가 다르면 데드락 가능성이 커진다.&lt;/p&gt;
+&lt;p&gt;예를 들어 A 요청은 1번 상품 다음 2번 상품을 잠그고, B 요청은 2번 상품 다음 1번 상품을 잠그면 서로가 서로의 락을 기다릴 수 있다.&lt;/p&gt;
+&lt;p&gt;그래서 productId를 중복 제거하고 정렬한 뒤 조회한다.&lt;/p&gt;
+&lt;p&gt;이 방식이 모든 데드락을 없애지는 않지만 최소한의 방어선이라 생각했다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 680px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart TD
+ A["주문 상품 목록&lt;br/&gt;3, 1, 2, 1"] --&gt; B["중복 제거&lt;br/&gt;3, 1, 2"]
+ B --&gt; C["정렬&lt;br/&gt;1, 2, 3"]
+ C --&gt; D["Inventory row&lt;br/&gt;1 -&gt; 2 -&gt; 3 순서로 락"]
+ D --&gt; E["재고 검증"]
+ E --&gt; F["재고 차감"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="3-쿠폰-조건은-발급-시점-스냅샷으로-저장한다"&gt;&lt;a href="#3-%ec%bf%a0%ed%8f%b0-%ec%a1%b0%ea%b1%b4%ec%9d%80-%eb%b0%9c%ea%b8%89-%ec%8b%9c%ec%a0%90-%ec%8a%a4%eb%83%85%ec%83%b7%ec%9c%bc%eb%a1%9c-%ec%a0%80%ec%9e%a5%ed%95%9c%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;3. 쿠폰 조건은 발급 시점 스냅샷으로 저장한다
+&lt;/h3&gt;&lt;p&gt;CouponIssue가 Coupon을 참조만 하고 할인 조건을 직접 갖고 있지 않으면, 발급 당시 조건과 주문 적용 당시 조건이 달라질 수 있다.&lt;/p&gt;
+&lt;p&gt;사용자는 10% 쿠폰을 받았는데, 이후 템플릿이 5%로 수정되면 주문에서 5%만 적용되는 식이다.&lt;/p&gt;
+&lt;p&gt;그래서 CouponIssue에 type, discountValue, minOrderAmount, expiredAt을 스냅샷으로 저장했다.&lt;/p&gt;
+&lt;p&gt;중복 컬럼은 생기지만, 발급 당시 사용자에게 약속한 조건을 보존하는 비용이라고 봤다.&lt;/p&gt;
+&lt;div class="mermaid-box" style="max-width: 820px; margin: 1.5rem auto; overflow-x: auto;"&gt;
+ &lt;pre class="mermaid" style="visibility:hidden"&gt;
+flowchart LR
+ A["Coupon Template&lt;br/&gt;10% 할인"] --&gt; B["CouponIssue 발급"]
+ B --&gt; C["type / discountValue / minOrderAmount / expiredAt&lt;br/&gt;스냅샷 저장"]
+ A --&gt; D["이후 템플릿 수정 또는 삭제"]
+ C --&gt; E["주문 할인 계산은&lt;br/&gt;CouponIssue 스냅샷 기준"]
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;h2 id="alternatives-considered"&gt;&lt;a href="#alternatives-considered" class="header-anchor"&gt;&lt;/a&gt;Alternatives Considered
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;옵션&lt;/th&gt;
+					&lt;th&gt;Pros&lt;/th&gt;
+					&lt;th&gt;Cons&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;A. 낙관적 락&lt;/td&gt;
+					&lt;td&gt;충돌이 적은 환경에서는 락 대기 없이 처리 가능&lt;/td&gt;
+					&lt;td&gt;충돌 후 재시도/실패 정책이 필요하고 주문 응답 흐름이 복잡해짐&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;B. 비관적 락&lt;/td&gt;
+					&lt;td&gt;검증과 변경을 직렬화해서 중복 사용과 초과 차감을 이해하기 쉬움&lt;/td&gt;
+					&lt;td&gt;요청이 몰리는 row에서 대기 시간이 늘고 데드락을 고려해야 함&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C. 큐 기반 직렬 처리&lt;/td&gt;
+					&lt;td&gt;hot key를 순차 처리하기 쉬움&lt;/td&gt;
+					&lt;td&gt;주문 상태와 응답 모델을 비동기 흐름에 맞게 다시 설계해야 함&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;선택: B&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;현재 요구사항에서 정합성 검증과 실패 처리 기준이 가장 명확함&lt;/td&gt;
+					&lt;td&gt;락 점유 시간과 쿼리 순서를 신경 써야 함&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;B 선택 근거:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;주문 성공은 사용자에게 즉시 확정된 결과로 보인다.&lt;/p&gt;
+&lt;p&gt;그런데 재고가 부족하거나 쿠폰이 이미 사용된 상황이라면, 성공처럼 보였다가 나중에 취소하는 것보다 처음부터 실패시키는 편이 낫다.&lt;/p&gt;
+&lt;p&gt;그래서 충돌을 뒤에서 감지하는 방식보다, 경합 지점을 먼저 잠그고 검증하는 방식을 선택했다.&lt;/p&gt;
+&lt;p&gt;낙관적 락의 장점은 분명하지만 이번 흐름에서는 충돌 처리 정책이 핵심 복잡도가 된다.&lt;/p&gt;
+&lt;p&gt;비관적 락은 성능 비용을 감수하는 대신 성공/실패 기준을 더 단순하게 만든다.&lt;/p&gt;
+&lt;h2 id="고민한-점"&gt;&lt;a href="#%ea%b3%a0%eb%af%bc%ed%95%9c-%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;고민한 점
+&lt;/h2&gt;&lt;p&gt;낙관적 락을 실험하면서 Domain과 JpaEntity 분리 구조의 비용도 체감했다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;@Version&lt;/code&gt;과 dirty checking은 Entity를 직접 다룰 때 가장 자연스럽다.&lt;/p&gt;
+&lt;p&gt;Entity를 application layer까지 올리면 JPA 기능을 편하게 쓸 수 있지만 계층 경계는 흐려진다.&lt;/p&gt;
+&lt;p&gt;반대로 Entity를 infrastructure에 숨기면 mapper와 repository 구현이 복잡해진다.&lt;/p&gt;
+&lt;p&gt;이 글의 결론은 “항상 비관적 락이 맞다”가 아니다.&lt;/p&gt;
+&lt;p&gt;이번 주문 흐름에서는 중복 사용과 초과 차감을 막는 것이 우선이었고, 그 목적에는 비관적 락이 더 직접적이었다.&lt;/p&gt;
+&lt;p&gt;데드락도 계속 신경 쓰이는 부분이다.&lt;/p&gt;
+&lt;p&gt;productId 정렬로 락 획득 순서를 맞추면 데드락 가능성을 줄일 수 있지만 완전한 해결책은 아니다.&lt;/p&gt;
+&lt;p&gt;그래도 여러 row를 잠그는 흐름에서는 일관된 순서가 기본이라고 생각했다.&lt;/p&gt;</description></item><item><title>domain_vs_entity</title><link>https://0andwild.com/posts/20260529_domain_vs_entity/</link><pubDate>Fri, 29 May 2026 12:43:19 +0900</pubDate><guid>https://0andwild.com/posts/20260529_domain_vs_entity/</guid><description>&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
 &lt;/h2&gt;&lt;p&gt;도메인 모델과 DB Entity를 분리하면서 비즈니스 규칙은 도메인에 두고 JPA 매핑과 영속성 관심사는 infrastructure에 격리했다.&lt;/p&gt;
 &lt;p&gt;그 결과 User Product Order 같은 핵심 모델은 JPA annotation 없이 도메인 규칙을 표현할 수 있었고 Repository 구현체에서 Mapper를 통해 DB Entity와 변환하도록 정리했다.&lt;/p&gt;
 &lt;p&gt;다만 DTO 성 객체의 위치 mapper 책임 update 시 재조회 방식 read query projection 위치 같은 고민도 함께 생겼다.&lt;/p&gt;
@@ -1119,7 +1323,7 @@ Bounded Context로 경계를 나누면 각 영역을 독립적으로 바라볼 �
 &lt;hr&gt;
 &lt;h2 id="spring에서-jpa는-어디에-위치할까"&gt;&lt;a href="#spring%ec%97%90%ec%84%9c-jpa%eb%8a%94-%ec%96%b4%eb%94%94%ec%97%90-%ec%9c%84%ec%b9%98%ed%95%a0%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;Spring에서 JPA는 어디에 위치할까?
 &lt;/h2&gt;&lt;p&gt;Spring 애플리케이션에서 JPA를 사용할 때는 보통 Spring Data JPA, JPA API, Hibernate, JDBC API가 계층적으로 함께 동작함.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Spring Data JPA와 JPA 계층 구조" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_77f4718916ce58c5.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_a76cc511dfb2516a.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spring Data JPA와 JPA 계층 구조" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="941" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png" srcset="https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_441c3375fff21a8f.png 800w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture_hu_86d7ecee82a135a6.png 1600w, https://0andwild.com/posts/260506_jpa_programming/spring-data-jpa-architecture.png 1672w" width="1672"&gt;&lt;/p&gt;
 &lt;p&gt;위 구조를 단순하게 보면 다음과 같음.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;애플리케이션의 서비스 계층은 Repository를 사용함.&lt;/li&gt;
@@ -2300,13 +2504,13 @@ SSE 메커니즘을 사용할 때 권고사항을 다루고 있는데 아래와 
 &lt;h1 id="26년-앞으로의-계획"&gt;&lt;a href="#26%eb%85%84-%ec%95%9e%ec%9c%bc%eb%a1%9c%ec%9d%98-%ea%b3%84%ed%9a%8d" class="header-anchor"&gt;&lt;/a&gt;26년 앞으로의 계획
 &lt;/h1&gt;&lt;p&gt;새해를 맞이하며 몸도 많이 회복되었고, 다시 취업을 준비하고 있다. 관심 있는 분야는 금융권 또는 이커머스 도메인이며, 이쪽 분야에 맞춰 준비 중이다.&lt;/p&gt;
 &lt;p&gt;앞으로의 일은 한 치 앞도 알 수 없지만, 꾸준히 준비하다 보면 좋은 기회가 올 것이라 믿는다.&lt;/p&gt;</description></item><item><title>코딩게임 추천 : 농부는 대체되었다</title><link>https://0andwild.com/posts/251215_game/</link><pubDate>Mon, 15 Dec 2025 16:26:41 +0900</pubDate><guid>https://0andwild.com/posts/251215_game/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 코딩게임 추천 : 농부는 대체되었다" /&gt;&lt;p&gt;스팀 게임에서 재미난 게임을 발견해서 소개를 해보고자 한다. 😂&lt;/p&gt;
-&lt;p&gt;&lt;img alt="게임 화면" class="gallery-image" data-flex-basis="403px" data-flex-grow="168" data-title-escaped="게임 화면" height="1221" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img1.png" srcset="https://0andwild.com/posts/251215_game/img1_hu_4d9c56c15e5ebe42.png 800w, https://0andwild.com/posts/251215_game/img1_hu_66d9d1bd482dd41c.png 1600w, https://0andwild.com/posts/251215_game/img1.png 2055w" title="게임 화면" width="2055"&gt;
+&lt;p&gt;&lt;img alt="게임 화면" class="gallery-image" data-flex-basis="403px" data-flex-grow="168" data-title-escaped="게임 화면" height="1221" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img1.png" srcset="https://0andwild.com/posts/251215_game/img1_hu_ca1ee7e4186b84f1.png 800w, https://0andwild.com/posts/251215_game/img1_hu_79b69bf7b6323edc.png 1600w, https://0andwild.com/posts/251215_game/img1.png 2055w" title="게임 화면" width="2055"&gt;
 &lt;img alt="파이썬 for 문 설명" class="gallery-image" data-flex-basis="298px" data-flex-grow="124" data-title-escaped="파이썬 for 문 설명" height="611" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img3.png" title="파이썬 for 문 설명" width="759"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;농부는 대체되었다&lt;/strong&gt; 라는 게임인데 기본적으로 드론이 있고 이 드론을 파이썬 코드를 작성해서 제어하고 농작물 재배를 자동화 하는 게임이다. ㅋㅋㅋㅋㅋ 😂&lt;/p&gt;
 &lt;p&gt;생각보다 파이썬 문법에 대한 설명도 잘 되어 있고 파이썬을 처음 써보시는 분들도 재미있게 공부하면서 연습하기에 나쁘지 않을 수 도 있을 것 같다 ?&lt;/p&gt;
 &lt;p&gt;아직 한글 모드를 적용안해서 영어로 나오지만 한글 모드도 지원하는 것 같다..!&lt;/p&gt;
-&lt;p&gt;&lt;img alt="스킬트리 화면" class="gallery-image" data-flex-basis="405px" data-flex-grow="169" data-title-escaped="스킬트리 화면" height="1213" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img2.png" srcset="https://0andwild.com/posts/251215_game/img2_hu_ca0950c02d81b0b9.png 800w, https://0andwild.com/posts/251215_game/img2_hu_f1ef2c5677a62644.png 1600w, https://0andwild.com/posts/251215_game/img2.png 2050w" title="스킬트리 화면" width="2050"&gt;
-&lt;img alt="인게임 Docs" class="gallery-image" data-flex-basis="417px" data-flex-grow="174" data-title-escaped="인게임 Docs" height="592" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img4.png" srcset="https://0andwild.com/posts/251215_game/img4_hu_b1b0bce1b53f5e49.png 800w, https://0andwild.com/posts/251215_game/img4.png 1031w" title="인게임 Docs" width="1031"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="스킬트리 화면" class="gallery-image" data-flex-basis="405px" data-flex-grow="169" data-title-escaped="스킬트리 화면" height="1213" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img2.png" srcset="https://0andwild.com/posts/251215_game/img2_hu_f9608b2a1c3fbecc.png 800w, https://0andwild.com/posts/251215_game/img2_hu_31d63aacb6c401e1.png 1600w, https://0andwild.com/posts/251215_game/img2.png 2050w" title="스킬트리 화면" width="2050"&gt;
+&lt;img alt="인게임 Docs" class="gallery-image" data-flex-basis="417px" data-flex-grow="174" data-title-escaped="인게임 Docs" height="592" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/251215_game/img4.png" srcset="https://0andwild.com/posts/251215_game/img4_hu_471b2aeec9f34692.png 800w, https://0andwild.com/posts/251215_game/img4.png 1031w" title="인게임 Docs" width="1031"&gt;&lt;/p&gt;
 &lt;p&gt;게임을 해보면서 처음에 변수도 선언이 안되어서 뭐지 싶었는데 함수, 변수 등 모두 작물을 재배한 재화로 스킬을 찍어야 사용할 수 있는 그런 게임이다&amp;hellip;&lt;/p&gt;
 &lt;p&gt;나름 중독성 있고 최종적으로 재배지를 늘리고 농작물을 심고 자라나는 속도에 맞추어 수확하는 최적화 움직임을 알고리즘으로 구현 하는 컨텐츠 인 것 같다.&lt;/p&gt;
 &lt;hr&gt;
@@ -4706,7 +4910,7 @@ SSE 메커니즘을 사용할 때 권고사항을 다루고 있는데 아래와 
 &lt;/h3&gt;&lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode67s1hbhb"&gt;&lt;a href="#hahahugoshortcode67s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
+&lt;h2 id="hahahugoshortcode68s1hbhb"&gt;&lt;a href="#hahahugoshortcode68s1hbhb" class="header-anchor"&gt;&lt;/a&gt;21:9
 &lt;div class="stack-carousel" style="--stack-carousel-ratio: ZgotmplZ;"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test1.jpeg" alt="img/test1.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test2.jpeg" alt="img/test2.jpeg" loading="lazy"&gt;&lt;img src="https://0andwild.com/posts/251016_blowfish_markdown/img/test3.jpeg" alt="img/test3.jpeg" loading="lazy"&gt;&lt;/div&gt;
 
 &lt;/h2&gt;&lt;h2 id="코드-삽입"&gt;&lt;a href="#%ec%bd%94%eb%93%9c-%ec%82%bd%ec%9e%85" class="header-anchor"&gt;&lt;/a&gt;코드 삽입
@@ -5525,7 +5729,7 @@ B--&gt;C[Profit]
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;window_size&lt;/strong&gt;: 각 shard에서 재점수화할 상위 결과의 수&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;score_mode&lt;/strong&gt;: main query score와 rescore query의 점수를 결합하는 방식&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Token Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer3/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer3/sequence_hu_bb492d416b37a81.png 800w, https://0andwild.com/posts/240202_es_analyzer3/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Token Filter</title><link>https://0andwild.com/posts/240202_es_analyzer3/</link><pubDate>Fri, 02 Feb 2024 21:30:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer3/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Token Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer3/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer3/sequence_hu_8cbeb7e446ee88ad.png 800w, https://0andwild.com/posts/240202_es_analyzer3/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
 &lt;h1 id="token-filter"&gt;&lt;a href="#token-filter" class="header-anchor"&gt;&lt;/a&gt;Token Filter
 &lt;/h1&gt;&lt;p&gt;Token Filter는 Tokenizer에서 생성된 토큰 스트림을 받아 토큰을 추가, 제거 또는 변경하는 역할을 한다.&lt;/p&gt;
 &lt;hr&gt;
@@ -5703,7 +5907,7 @@ $ =&amp;gt; DIGIT
  &gt;Standard tokenizer&lt;/a&gt;와 같이 구두점을 제거하는 토큰화기와 함께 word_delimiter_graph 필터를 사용하지 않는 것이 좋다. 이렇게 하면 word_delimiter_graph 필터가 토큰을 올바르게 분할하지 못할 수 있다.&lt;/p&gt;
 &lt;p&gt;또한 catenate_all 또는 preserve_original과 같은 필터의 구성 가능한 매개변수를 방해할 수도 있다. 대신 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-keyword-tokenizer.html" target="_blank" rel="noopener"
  &gt;keyword&lt;/a&gt; 또는 &lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.13/analysis-whitespace-tokenizer.html" target="_blank" rel="noopener"
- &gt;whitespace tokenizer&lt;/a&gt;를 사용하는 것이 좋다.&lt;/p&gt;</description></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_bb492d416b37a81.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+ &gt;whitespace tokenizer&lt;/a&gt;를 사용하는 것이 좋다.&lt;/p&gt;</description></item><item><title>Elasticsearch Tokenizer</title><link>https://0andwild.com/posts/240202_es_analyzer2/</link><pubDate>Fri, 02 Feb 2024 21:23:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer2/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Tokenizer" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer2/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer2/sequence_hu_8cbeb7e446ee88ad.png 800w, https://0andwild.com/posts/240202_es_analyzer2/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
 &lt;h1 id="tokenizer"&gt;&lt;a href="#tokenizer" class="header-anchor"&gt;&lt;/a&gt;Tokenizer
 &lt;/h1&gt;&lt;p&gt;Tokenizer는 문자열 스트림을 받고 각각의 토큰 단위로 자른다. (주로 각각의 단어별로 토큰화가 이루어짐)&lt;/p&gt;
 &lt;p&gt;가장 standard하게 사용되는 &lt;code&gt;whitespace&lt;/code&gt; tokenizer는 공백을 기준으로 잘라 토큰화를 진행한다.&lt;/p&gt;
@@ -5884,7 +6088,7 @@ Quick brown fox!
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/analysis-tokenizers.html" target="_blank" rel="noopener"
  &gt;Tokenizer reference | Elasticsearch Guide [8.8]&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer1/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Character Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer1/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer1/sequence_hu_bb492d416b37a81.png 800w, https://0andwild.com/posts/240202_es_analyzer1/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Elasticsearch Character Filter</title><link>https://0andwild.com/posts/240202_es_analyzer1/</link><pubDate>Fri, 02 Feb 2024 21:00:06 +0900</pubDate><guid>https://0andwild.com/posts/240202_es_analyzer1/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Elasticsearch Character Filter" /&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="598px" data-flex-grow="249" data-title-escaped="CharFilter → Tokenizer → TokenFilter 순으로 진행" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/240202_es_analyzer1/sequence.png" srcset="https://0andwild.com/posts/240202_es_analyzer1/sequence_hu_8cbeb7e446ee88ad.png 800w, https://0andwild.com/posts/240202_es_analyzer1/sequence.png 1530w" title="CharFilter → Tokenizer → TokenFilter 순으로 진행" width="1530"&gt;&lt;/p&gt;
 &lt;h1 id="character-filters"&gt;&lt;a href="#character-filters" class="header-anchor"&gt;&lt;/a&gt;Character Filters
 &lt;/h1&gt;&lt;p&gt;Character Filter는 토크나이저 단계 이전에 입력된 문자열을 전처리하는 과정이다.&lt;/p&gt;
 &lt;p&gt;문자열들에 더하거나, 제거하거나, 문자열을 바꾸는 작업을 한다.&lt;/p&gt;
@@ -6107,7 +6311,7 @@ Quick brown fox!
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ol&gt;</description></item><item><title>BigQuery Clustering 최적화</title><link>https://0andwild.com/posts/231220_bigquery/</link><pubDate>Wed, 20 Dec 2023 21:50:16 +0900</pubDate><guid>https://0andwild.com/posts/231220_bigquery/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post BigQuery Clustering 최적화" /&gt;&lt;h2 id="clustering"&gt;&lt;a href="#clustering" class="header-anchor"&gt;&lt;/a&gt;Clustering
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_cacbaf612b63631e.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering Concept" class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="483" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img1.png" srcset="https://0andwild.com/posts/231220_bigquery/img1_hu_d5644d9f5dc1eb2c.png 800w, https://0andwild.com/posts/231220_bigquery/img1.png 920w" width="920"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user_signups&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt;
@@ -6132,7 +6336,7 @@ Quick brown fox!
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tier&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;STRING&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;CLUSTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;country&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_ab6767dc827f0c0c.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt="Clustered Table Structure" class="gallery-image" data-flex-basis="610px" data-flex-grow="254" height="371" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img2.png" srcset="https://0andwild.com/posts/231220_bigquery/img2_hu_89c43e7b9e036a56.png 800w, https://0andwild.com/posts/231220_bigquery/img2.png 943w" width="943"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Clustering 특징&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;최대 4개의 column까지 클러스터링 가능&lt;/li&gt;
@@ -6141,7 +6345,7 @@ Quick brown fox!
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id="combine-clustering-with-partitioning"&gt;&lt;a href="#combine-clustering-with-partitioning" class="header-anchor"&gt;&lt;/a&gt;Combine Clustering with Partitioning
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_e28be72eabbd04e8.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Clustering + Partitioning" class="gallery-image" data-flex-basis="411px" data-flex-grow="171" height="538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231220_bigquery/img3.png" srcset="https://0andwild.com/posts/231220_bigquery/img3_hu_15b667cf47becd17.png 800w, https://0andwild.com/posts/231220_bigquery/img3.png 923w" width="923"&gt;&lt;/p&gt;
 &lt;p&gt;파티셔닝과 클러스터링을 함께 사용하면 더욱 효율적인 데이터 접근이 가능함.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;조합 전략&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -6168,7 +6372,7 @@ Quick brown fox!
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id="데이터-처리-구조"&gt;&lt;a href="#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%b2%98%eb%a6%ac-%ea%b5%ac%ec%a1%b0" class="header-anchor"&gt;&lt;/a&gt;데이터 처리 구조
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_64fb45c9fa29b5f6.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="BigQuery Architecture" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="624" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img1.png" srcset="https://0andwild.com/posts/231218_bigquery/img1_hu_b089fff4b4392b96.png 800w, https://0andwild.com/posts/231218_bigquery/img1.png 1280w" width="1280"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Colossus (분산 스토리지)&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Google File System(GFS)를 잇는 Google의 클러스터 수준의 파일시스템&lt;/li&gt;
@@ -6202,7 +6406,7 @@ Quick brown fox!
 &lt;hr&gt;
 &lt;h3 id="eventual-consistency"&gt;&lt;a href="#eventual-consistency" class="header-anchor"&gt;&lt;/a&gt;Eventual Consistency
 &lt;/h3&gt;&lt;p&gt;데이터를 3개의 데이터 센터에 복제를 하기에 데이터 쓰기 후 바로 조회가 안 될 수 있음.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_2cc410cfc5a45bc3.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Eventual Consistency" class="gallery-image" data-flex-basis="555px" data-flex-grow="231" height="553" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231218_bigquery/img2.png" srcset="https://0andwild.com/posts/231218_bigquery/img2_hu_5f9a9d22de1df7ce.png 800w, https://0andwild.com/posts/231218_bigquery/img2.png 1280w" width="1280"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;특징&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;3중 복제를 통한 고가용성&lt;/li&gt;
@@ -6262,9 +6466,9 @@ Quick brown fox!
 &lt;hr&gt;
 &lt;h2 id="springdoc에서의-parameterobject-vs-requestparam-변환-비교"&gt;&lt;a href="#springdoc%ec%97%90%ec%84%9c%ec%9d%98-parameterobject-vs-requestparam-%eb%b3%80%ed%99%98-%eb%b9%84%ea%b5%90" class="header-anchor"&gt;&lt;/a&gt;Springdoc에서의 ParameterObject vs @RequestParam 변환 비교
 &lt;/h2&gt;&lt;h3 id="parameterobject-사용-시"&gt;&lt;a href="#parameterobject-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;ParameterObject 사용 시
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="ParameterObject 변환 결과" class="gallery-image" data-flex-basis="273px" data-flex-grow="114" height="817" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image1.png" srcset="https://0andwild.com/posts/231017_swagger/image1_hu_f885b6e7782bc66a.png 800w, https://0andwild.com/posts/231017_swagger/image1.png 932w" width="932"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="ParameterObject 변환 결과" class="gallery-image" data-flex-basis="273px" data-flex-grow="114" height="817" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image1.png" srcset="https://0andwild.com/posts/231017_swagger/image1_hu_6783f2a8845112e6.png 800w, https://0andwild.com/posts/231017_swagger/image1.png 932w" width="932"&gt;&lt;/p&gt;
 &lt;h3 id="requestparam-사용-시"&gt;&lt;a href="#requestparam-%ec%82%ac%ec%9a%a9-%ec%8b%9c" class="header-anchor"&gt;&lt;/a&gt;@RequestParam 사용 시
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="RequestParam 변환 결과" class="gallery-image" data-flex-basis="286px" data-flex-grow="119" height="776" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image2.png" srcset="https://0andwild.com/posts/231017_swagger/image2_hu_f9e153109139ffab.png 800w, https://0andwild.com/posts/231017_swagger/image2.png 927w" width="927"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="RequestParam 변환 결과" class="gallery-image" data-flex-basis="286px" data-flex-grow="119" height="776" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image2.png" srcset="https://0andwild.com/posts/231017_swagger/image2_hu_5ed61aafa9f91fff.png 800w, https://0andwild.com/posts/231017_swagger/image2.png 927w" width="927"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="parameterobject-어노테이션-활용"&gt;&lt;a href="#parameterobject-%ec%96%b4%eb%85%b8%ed%85%8c%ec%9d%b4%ec%85%98-%ed%99%9c%ec%9a%a9" class="header-anchor"&gt;&lt;/a&gt;@ParameterObject 어노테이션 활용
 &lt;/h2&gt;&lt;p&gt;ParameterObject를 Springdoc이 &lt;code&gt;@RequestParam&lt;/code&gt;을 사용했을 때처럼 변환해주고 Required 여부를 표시하려면 다음과 같이 설정합니다.&lt;/p&gt;
@@ -6306,8 +6510,8 @@ Quick brown fox!
  &lt;/blockquote&gt;
 &lt;h3 id="변환-결과"&gt;&lt;a href="#%eb%b3%80%ed%99%98-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;변환 결과
 &lt;/h3&gt;&lt;p&gt;ParameterObject도 &lt;code&gt;@RequestParam&lt;/code&gt;으로 인식되도록 spec 파일이 작성되었고, &lt;code&gt;@NotNull&lt;/code&gt;을 붙이지 않은 &lt;code&gt;occupation&lt;/code&gt;에는 Required가 optional 형태로 표시됩니다.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Spec 파일 변환 결과" class="gallery-image" data-flex-basis="276px" data-flex-grow="115" height="796" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image4.png" srcset="https://0andwild.com/posts/231017_swagger/image4_hu_cdd618ca02446726.png 800w, https://0andwild.com/posts/231017_swagger/image4.png 918w" width="918"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Swagger UI 표시 결과" class="gallery-image" data-flex-basis="563px" data-flex-grow="234" height="701" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image5.png" srcset="https://0andwild.com/posts/231017_swagger/image5_hu_7431e11af6515756.png 800w, https://0andwild.com/posts/231017_swagger/image5_hu_1a8ba9c724b92688.png 1600w, https://0andwild.com/posts/231017_swagger/image5.png 1647w" width="1647"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Spec 파일 변환 결과" class="gallery-image" data-flex-basis="276px" data-flex-grow="115" height="796" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image4.png" srcset="https://0andwild.com/posts/231017_swagger/image4_hu_df2a2ba9b854aa14.png 800w, https://0andwild.com/posts/231017_swagger/image4.png 918w" width="918"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Swagger UI 표시 결과" class="gallery-image" data-flex-basis="563px" data-flex-grow="234" height="701" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image5.png" srcset="https://0andwild.com/posts/231017_swagger/image5_hu_d8a0ad128acbefd7.png 800w, https://0andwild.com/posts/231017_swagger/image5_hu_ca80a706f1926be8.png 1600w, https://0andwild.com/posts/231017_swagger/image5.png 1647w" width="1647"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;좌측 이미지&lt;/strong&gt;: &lt;code&gt;@ParameterObject&lt;/code&gt;를 명시했을 경우 Springdoc이 인식하고 정상적인 spec으로 변환&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="swagger2--swagger3-annotations"&gt;&lt;a href="#swagger2--swagger3-annotations" class="header-anchor"&gt;&lt;/a&gt;Swagger2 → Swagger3 Annotations
@@ -6383,11 +6587,11 @@ Quick brown fox!
 &lt;h3 id="tag-중복-사용-시-주의사항"&gt;&lt;a href="#tag-%ec%a4%91%eb%b3%b5-%ec%82%ac%ec%9a%a9-%ec%8b%9c-%ec%a3%bc%ec%9d%98%ec%82%ac%ed%95%ad" class="header-anchor"&gt;&lt;/a&gt;@Tag 중복 사용 시 주의사항
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;질문&lt;/strong&gt;: 최상위 레벨에 &lt;code&gt;@Tag&lt;/code&gt;로 그룹핑하고, 하위 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 다른 이름으로 tag를 설정하면 어떻게 될까요?&lt;/p&gt;
 &lt;h4 id="테스트-결과"&gt;&lt;a href="#%ed%85%8c%ec%8a%a4%ed%8a%b8-%ea%b2%b0%ea%b3%bc" class="header-anchor"&gt;&lt;/a&gt;테스트 결과
-&lt;/h4&gt;&lt;p&gt;&lt;img alt="중복 그룹 생성 결과" class="gallery-image" data-flex-basis="442px" data-flex-grow="184" height="573" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image6.png" srcset="https://0andwild.com/posts/231017_swagger/image6_hu_3cbed8043027dda1.png 800w, https://0andwild.com/posts/231017_swagger/image6.png 1056w" width="1056"&gt;&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="중복 그룹 생성 결과" class="gallery-image" data-flex-basis="442px" data-flex-grow="184" height="573" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image6.png" srcset="https://0andwild.com/posts/231017_swagger/image6_hu_f81e8dfe249558b2.png 800w, https://0andwild.com/posts/231017_swagger/image6.png 1056w" width="1056"&gt;&lt;/p&gt;
 &lt;p&gt;최상위에 &lt;code&gt;@Tag(name = &amp;quot;swagger&amp;quot;)&lt;/code&gt;를 설정하고, &lt;code&gt;postHello&lt;/code&gt; 메서드의 &lt;code&gt;@Operation&lt;/code&gt;에서 &lt;code&gt;tags = {&amp;quot;swagger123&amp;quot;}&lt;/code&gt;을 추가한 경우, 같은 엔드포인트가 다른 그룹으로 중복 생성됩니다.&lt;/p&gt;
 &lt;h4 id="문제점"&gt;&lt;a href="#%eb%ac%b8%ec%a0%9c%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;문제점
 &lt;/h4&gt;&lt;p&gt;이 상태에서 OpenAPI Generator를 사용하면 아래와 같이 중복된 client 코드가 생성되는 문제가 발생합니다.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="중복 생성된 API 파일 1" class="gallery-image" data-flex-basis="728px" data-flex-grow="303" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image7.png" srcset="https://0andwild.com/posts/231017_swagger/image7_hu_49839dee49b39d87.png 800w, https://0andwild.com/posts/231017_swagger/image7.png 1548w" width="1548"&gt;
+&lt;p&gt;&lt;img alt="중복 생성된 API 파일 1" class="gallery-image" data-flex-basis="728px" data-flex-grow="303" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image7.png" srcset="https://0andwild.com/posts/231017_swagger/image7_hu_1579a644d2072beb.png 800w, https://0andwild.com/posts/231017_swagger/image7.png 1548w" width="1548"&gt;
 &lt;img alt="중복 생성된 API 파일 2" class="gallery-image" data-flex-basis="269px" data-flex-grow="112" height="673" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image8.png" width="757"&gt;
 &lt;img alt="중복 생성된 API 파일 3" class="gallery-image" data-flex-basis="428px" data-flex-grow="178" height="174" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/231017_swagger/image9.png" width="311"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;권장사항&lt;/strong&gt;: 특별한 경우가 아니라면 &lt;code&gt;@Tag&lt;/code&gt;를 이용한 그룹핑은 Controller의 최상위에서만 사용하는 것을 권장합니다.&lt;/p&gt;
@@ -7451,7 +7655,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 		&lt;/figcaption&gt;
 &lt;/figure&gt;
 
-&lt;h2 id="hahahugoshortcode27s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode27s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
+&lt;h2 id="hahahugoshortcode28s6hbhb-공인-ip란"&gt;&lt;a href="#hahahugoshortcode28s6hbhb-%ea%b3%b5%ec%9d%b8-ip%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🌐&lt;/span&gt; 공인 IP란?
 &lt;/h2&gt;&lt;p&gt;인터넷 상에서 서로 다른 PC끼리 통신하기 위해 필요한 IP로써 다음과 같은 용도로 사용됩니다:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;홈페이지 서버 구축&lt;/li&gt;
@@ -7524,7 +7728,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;/div&gt;
 
 &lt;hr&gt;
-&lt;h2 id="hahahugoshortcode27s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode27s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
+&lt;h2 id="hahahugoshortcode28s14hbhb-vpnvirtual-private-network이란"&gt;&lt;a href="#hahahugoshortcode28s14hbhb-vpnvirtual-private-network%ec%9d%b4%eb%9e%80" class="header-anchor"&gt;&lt;/a&gt;&lt;span class="stack-icon stack-icon--emoji" aria-hidden="true"&gt;🛡️&lt;/span&gt; VPN(Virtual Private Network)이란?
 &lt;/h2&gt;&lt;p&gt;그럼 더 나아가 우리가 사용은 해봤을 수 있지만 정확히 어떤 역할을 하는지 잘 모르는 VPN에 대해 알아봅시다!&lt;/p&gt;
 &lt;div class="stack-lead"&gt;
  VPN은 &lt;strong&gt;가상 사설망&lt;/strong&gt;으로 이름 그대로 사설망이지만 가상인 사설망을 말합니다.
@@ -7613,9 +7817,9 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;li&gt;**서블릿 컨텍스트(Web Context)**에서 필터들을 지나&lt;/li&gt;
 &lt;li&gt;**스프링 컨텍스트(Spring Context)**에서 디스패처 서블릿이 가장 먼저 요청을 받게 된다&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="그림1: Servlet Context와 Spring Context" class="gallery-image" data-flex-basis="601px" data-flex-grow="250" height="505" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/figure1.png" srcset="https://0andwild.com/posts/220927_dispatcher/figure1_hu_2b8ebc4042004c11.png 800w, https://0andwild.com/posts/220927_dispatcher/figure1.png 1265w" width="1265"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="그림1: Servlet Context와 Spring Context" class="gallery-image" data-flex-basis="601px" data-flex-grow="250" height="505" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/figure1.png" srcset="https://0andwild.com/posts/220927_dispatcher/figure1_hu_94a1d28200064564.png 800w, https://0andwild.com/posts/220927_dispatcher/figure1.png 1265w" width="1265"&gt;&lt;/p&gt;
 &lt;p&gt;디스패처 서블릿은 적합한 컨트롤러와 메소드를 찾아 요청을 위임해야 하며 동작 방식은 아래와 같다.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="그림2: Dispatcher Servlet 동작 흐름" class="gallery-image" data-flex-basis="511px" data-flex-grow="213" height="560" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/featured.png" srcset="https://0andwild.com/posts/220927_dispatcher/featured_hu_e8f8df7da441261c.png 800w, https://0andwild.com/posts/220927_dispatcher/featured.png 1193w" width="1193"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="그림2: Dispatcher Servlet 동작 흐름" class="gallery-image" data-flex-basis="511px" data-flex-grow="213" height="560" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220927_dispatcher/featured.png" srcset="https://0andwild.com/posts/220927_dispatcher/featured_hu_7db0ad1bcd482813.png 800w, https://0andwild.com/posts/220927_dispatcher/featured.png 1193w" width="1193"&gt;&lt;/p&gt;
 &lt;h3 id="상세-동작-과정"&gt;&lt;a href="#%ec%83%81%ec%84%b8-%eb%8f%99%ec%9e%91-%ea%b3%bc%ec%a0%95" class="header-anchor"&gt;&lt;/a&gt;상세 동작 과정
 &lt;/h3&gt;&lt;h4 id="1-http-request가-filter를-거쳐-dispatcher-servlet이-받는다"&gt;&lt;a href="#1-http-request%ea%b0%80-filter%eb%a5%bc-%ea%b1%b0%ec%b3%90-dispatcher-servlet%ec%9d%b4-%eb%b0%9b%eb%8a%94%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;1. HTTP Request가 Filter를 거쳐 Dispatcher Servlet이 받는다
 &lt;/h4&gt;&lt;h4 id="2-요청-정보를-확인하고-위임할-controller를-찾는다"&gt;&lt;a href="#2-%ec%9a%94%ec%b2%ad-%ec%a0%95%eb%b3%b4%eb%a5%bc-%ed%99%95%ec%9d%b8%ed%95%98%ea%b3%a0-%ec%9c%84%ec%9e%84%ed%95%a0-controller%eb%a5%bc-%ec%b0%be%eb%8a%94%eb%8b%a4" class="header-anchor"&gt;&lt;/a&gt;2. 요청 정보를 확인하고 위임할 Controller를 찾는다
@@ -7693,7 +7897,7 @@ Host OS 없이 하드웨어에 직접 소프트웨어를 설치하여 실행합�
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_6eeea157fdec0966.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JVM_process" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="475" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png" srcset="https://0andwild.com/posts/220923_jvm_2/runtime_data_area_hu_bfa5b77340b9b736.png 800w, https://0andwild.com/posts/220923_jvm_2/runtime_data_area.png 820w" width="820"&gt;&lt;/p&gt;
 &lt;h3 id="1-method-area"&gt;&lt;a href="#1-method-area" class="header-anchor"&gt;&lt;/a&gt;(1) Method Area
 &lt;/h3&gt;&lt;p&gt;JVM이 시작될 때 생성되고 JVM이 읽은 각각의 클래스와 인터페이스에 대한 런타임 상수 풀, 필드 및 메서드 코드, 정적 변수, 메서드의 바이트 코드 등을 보관한다.&lt;/p&gt;
 &lt;div class="stack-alert stack-alert--tip"&gt;
