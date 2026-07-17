@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ranking on 0AndWild_log</title><link>https://0andwild.com/tags/ranking/</link><description>Recent content in Ranking on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 17 Jul 2026 16:20:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/tags/ranking/index.xml" rel="self" type="application/rss+xml"/><item><title>랭킹시스템 설계 해보기</title><link>https://0andwild.com/posts/260717_ranking_system_design/</link><pubDate>Fri, 17 Jul 2026 16:20:00 +0900</pubDate><guid>https://0andwild.com/posts/260717_ranking_system_design/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 랭킹시스템 설계 해보기" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+&lt;/h2&gt;&lt;p&gt;이번에는 사용자 행동 이벤트를 기반으로 일별 상품 랭킹 시스템을 설계해보았다.&lt;/p&gt;
+&lt;p&gt;처음 생각한 설계 방식은 상품 조회, 좋아요, 결제 성공 이벤트를 Kafka로 발행하고, &lt;code&gt;commerce-streamer&lt;/code&gt;가 이벤트를 소비하면서 Redis Sorted Set에 랭킹 점수를 실시간으로 반영하는 방식이다. Redis는 Top N 조회와 특정 상품 rank 조회를 빠르게 처리할 수 있기 때문에 실시간 랭킹의 serving store로 잘 맞았다.&lt;/p&gt;
+&lt;p&gt;하지만 설계를 해보면서 Redis를 랭킹의 유일한 Source of Truth로 볼 수 있는가에 대한 고민이 생겼다. Redis 데이터가 만료되거나 유실되었을 때 복구하기 어렵고, 가중치가 바뀌었을 때 과거 metric 기준으로 재계산하기도 어렵다. 시간별, 주별, 월별 랭킹까지 확장하려면 더더욱 원천 metric을 어디에 남길지가 중요해진다.&lt;/p&gt;
+&lt;p&gt;그래서 첫 번째 설계 방식을 먼저 정리하고, 그 한계를 보완하기 위한 방향으로 RDB에 metric 원천 데이터를 저장하고 Redis에는 조회에 필요한 Top N만 제공하는 설계까지 이어서 생각해보려 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="처음-요구사항을-봤을-때"&gt;&lt;a href="#%ec%b2%98%ec%9d%8c-%ec%9a%94%ea%b5%ac%ec%82%ac%ed%95%ad%ec%9d%84-%eb%b4%a4%ec%9d%84-%eb%95%8c" class="header-anchor"&gt;&lt;/a&gt;처음 요구사항을 봤을 때
+&lt;/h2&gt;&lt;p&gt;처음에는 랭킹이라고 해서 단순히 상품별 점수를 계산하고 높은 순서대로 보여주면 된다고 생각했다.&lt;/p&gt;
+&lt;p&gt;하지만 조금만 더 생각해보면 랭킹은 단순한 정렬 기능이라기보다 여러 사용자 행동을 어떤 기준으로 해석할 것인지에 가까웠다.&lt;/p&gt;
+&lt;p&gt;예를 들어 상품 상세 조회는 관심의 신호이지만 구매만큼 강한 신호는 아니다. 좋아요는 조회보다 강하지만 실제 매출로 이어졌다고 보기는 어렵다. 결제 성공은 가장 강한 신호지만 판매 금액을 그대로 점수에 반영하면 고가 상품이 랭킹을 과도하게 지배할 수 있다.&lt;/p&gt;
+&lt;p&gt;그래서 이번 랭킹은 다음과 같은 신호를 사용했다.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;이벤트&lt;/th&gt;
+					&lt;th&gt;의미&lt;/th&gt;
+					&lt;th&gt;랭킹 반영 방식&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;상품 상세 조회&lt;/td&gt;
+					&lt;td&gt;약한 관심&lt;/td&gt;
+					&lt;td&gt;view score 증가&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;좋아요&lt;/td&gt;
+					&lt;td&gt;명시적 관심&lt;/td&gt;
+					&lt;td&gt;like score 증가&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;좋아요 취소&lt;/td&gt;
+					&lt;td&gt;관심 철회&lt;/td&gt;
+					&lt;td&gt;like score 감소&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;결제 성공&lt;/td&gt;
+					&lt;td&gt;구매 전환&lt;/td&gt;
+					&lt;td&gt;sales score 증가&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;여기서 중요한 점은 각 이벤트를 그대로 더하지 않는다는 것이다.&lt;/p&gt;
+&lt;p&gt;조회, 좋아요, 판매는 단위가 다르다. 그래서 metric은 분리해서 쌓고, 최종 점수는 가중치를 적용해 계산하도록 했다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;score = carry
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + viewCount * viewWeight
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + likeCount * likeWeight
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + ln(1 + salesAmount) * salesWeight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;판매는 &lt;code&gt;가격 * 수량&lt;/code&gt;을 기반으로 하되 로그를 적용했다. 판매 금액을 그대로 사용하면 특정 고가 상품이나 인기 상품이 한 번 상위권에 올라간 뒤 계속 유리해질 수 있기 때문이다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="첫-번째-설계안-redis-실시간-랭킹"&gt;&lt;a href="#%ec%b2%ab-%eb%b2%88%ec%a7%b8-%ec%84%a4%ea%b3%84%ec%95%88-redis-%ec%8b%a4%ec%8b%9c%ea%b0%84-%eb%9e%ad%ed%82%b9" class="header-anchor"&gt;&lt;/a&gt;첫 번째 설계안: Redis 실시간 랭킹
+&lt;/h2&gt;&lt;p&gt;처음 떠올린 방식은 Redis를 실시간 랭킹 저장소로 사용하는 구조였다.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260717_ranking_system_design/current-ranking-architecture.png"
+			alt="Redis 기반 일별 상품 랭킹 시스템 첫 번째 설계안" width="1100"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;전체 흐름은 대략 이렇게 이어진다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;사용자가 상품 상세 조회, 좋아요, 주문 결제 같은 행동을 한다.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;commerce-api&lt;/code&gt;는 도메인 이벤트를 기록한다.&lt;/li&gt;
+&lt;li&gt;이벤트는 transaction outbox에 저장된다.&lt;/li&gt;
+&lt;li&gt;outbox relay가 Kafka topic으로 이벤트를 발행한다.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;commerce-streamer&lt;/code&gt;가 Kafka 이벤트를 소비한다.&lt;/li&gt;
+&lt;li&gt;이벤트 종류에 따라 Redis의 일별 ranking key에 metric과 최종 score를 반영한다.&lt;/li&gt;
+&lt;li&gt;랭킹 API는 Redis에서 rank와 score를 조회하고, MySQL에서 상품 정보를 보강해 응답한다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;여기서 outbox를 둔 이유는 API 트랜잭션과 Kafka 발행 사이의 간극을 줄이기 위해서다. 주문이나 좋아요 상태 변경은 DB에 반영됐는데 이벤트 발행만 실패하면 랭킹과 실제 상태가 어긋날 수 있다. 그래서 도메인 변경과 같은 트랜잭션 안에서 outbox row를 먼저 남기고, relay가 별도로 Kafka에 발행하도록 했다.&lt;/p&gt;
+&lt;h2 id="redis-key를-날짜별로-나눈-이유"&gt;&lt;a href="#redis-key%eb%a5%bc-%eb%82%a0%ec%a7%9c%eb%b3%84%eb%a1%9c-%eb%82%98%eb%88%88-%ec%9d%b4%ec%9c%a0" class="header-anchor"&gt;&lt;/a&gt;Redis key를 날짜별로 나눈 이유
+&lt;/h2&gt;&lt;p&gt;랭킹은 일별 랭킹이다. 그래서 Redis key도 날짜를 포함하도록 했다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:view:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:like:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:sales:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:raw-sales-amount:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:carry:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:processed:{yyyyMMdd}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;metric key를 분리한 이유는 가중치가 바뀔 수 있기 때문이다.&lt;/p&gt;
+&lt;p&gt;만약 최종 score 하나만 저장해두면 &lt;code&gt;viewWeight&lt;/code&gt;나 &lt;code&gt;likeWeight&lt;/code&gt;를 바꿨을 때 이미 계산된 점수를 다시 해석하기 어렵다. 반면 view, like, sales metric을 분리해두면 현재 가중치를 기준으로 &lt;code&gt;ranking:all:{date}&lt;/code&gt;를 다시 계산할 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ranking:processed:{date}&lt;/code&gt;는 이벤트 중복 처리를 막기 위한 key다. Kafka consumer는 at-least-once로 동작할 수 있기 때문에 같은 이벤트가 다시 들어올 수 있다. 이때 같은 eventId가 이미 처리되었다면 score를 다시 올리지 않도록 막아야 한다.&lt;/p&gt;
+&lt;h2 id="redis를-선택했을-때-좋았던-점"&gt;&lt;a href="#redis%eb%a5%bc-%ec%84%a0%ed%83%9d%ed%96%88%ec%9d%84-%eb%95%8c-%ec%a2%8b%ec%95%98%eb%8d%98-%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;Redis를 선택했을 때 좋았던 점
+&lt;/h2&gt;&lt;p&gt;처음에는 Redis Sorted Set이 랭킹 문제에 꽤 잘 맞는다고 느꼈다.&lt;/p&gt;
+&lt;p&gt;Sorted Set은 member와 score를 함께 저장하고, score 기준으로 정렬된 결과를 빠르게 조회할 수 있다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ZINCRBY ranking:metric:view:20260717 1 productId
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ZREVRANGE ranking:all:20260717 0 19 WITHSCORES
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ZREVRANK ranking:all:20260717 productId
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Top N 조회와 특정 상품 rank 조회가 모두 Redis 명령으로 해결된다.&lt;/p&gt;
+&lt;p&gt;이 구조에서는 랭킹 API가 직접 무거운 집계를 하지 않는다. API는 Redis에서 rank와 score를 가져오고, 상품명이나 브랜드명 같은 표시 정보만 MySQL에서 보강하면 된다.&lt;/p&gt;
+&lt;p&gt;또 하나의 장점은 실시간성이다. 이벤트가 소비되는 즉시 Redis score가 증가하기 때문에 사용자의 행동이 랭킹에 빠르게 반영된다. 랭킹을 배치로만 계산하는 구조라면 적어도 배치 주기만큼 지연이 생기는데, 이 설계에서는 Kafka consumer lag 정도가 지연의 대부분이 된다.&lt;/p&gt;
+&lt;h2 id="일-마감-carry-over"&gt;&lt;a href="#%ec%9d%bc-%eb%a7%88%ea%b0%90-carry-over" class="header-anchor"&gt;&lt;/a&gt;일 마감 Carry-Over
+&lt;/h2&gt;&lt;p&gt;일별 랭킹이라고 해서 매일 0점부터 시작하면 조금 부자연스럽다. 전날 인기가 높았던 상품이 자정이 되자마자 완전히 사라지는 것도 어색하다.&lt;/p&gt;
+&lt;p&gt;그래서 매일 23시 50분에 당일 상위 100개 상품을 기준으로 다음날 carry score를 미리 넣어두도록 했다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:{D} 상위 100개 조회
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;각 최종 score * 0.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:metric:carry:{D+1}에 반영
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:{D+1}에도 반영
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;전체 상품을 다음날로 복사하지 않고 상위 100개로 제한한 이유는 Redis 메모리 때문이다. 상품 수가 많아졌을 때 모든 상품의 전날 점수를 계속 들고 가면 일별 key가 누적되는 동안 메모리 부담이 커진다.&lt;/p&gt;
+&lt;p&gt;이 설계에서는 Redis key에 TTL을 두고, carry-over 대상도 Top 100으로 제한해 Redis를 장기 저장소처럼 쓰지 않도록 제한을 두었다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="첫-번째-설계안에서-보인-한계"&gt;&lt;a href="#%ec%b2%ab-%eb%b2%88%ec%a7%b8-%ec%84%a4%ea%b3%84%ec%95%88%ec%97%90%ec%84%9c-%eb%b3%b4%ec%9d%b8-%ed%95%9c%ea%b3%84" class="header-anchor"&gt;&lt;/a&gt;첫 번째 설계안에서 보인 한계
+&lt;/h2&gt;&lt;p&gt;Redis 중심 설계는 일별 실시간 랭킹을 만들기에는 단순하고 빠르다. 하지만 설계를 조금 더 운영 관점으로 보면 몇 가지 한계가 보인다.&lt;/p&gt;
+&lt;h2 id="1-redis를-sot로-볼-수-있는가"&gt;&lt;a href="#1-redis%eb%a5%bc-sot%eb%a1%9c-%eb%b3%bc-%ec%88%98-%ec%9e%88%eb%8a%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;1. Redis를 SOT로 볼 수 있는가
+&lt;/h2&gt;&lt;p&gt;가장 큰 고민은 Redis를 랭킹의 Source of Truth로 볼 수 있는가였다.&lt;/p&gt;
+&lt;p&gt;Redis는 조회용 자료구조로는 좋지만, 원천 데이터를 안전하게 보관하는 저장소로 보기에는 조심스럽다. TTL이 지나면 데이터가 사라지고, 장애나 운영 실수로 데이터가 유실되었을 때 과거 이벤트를 기준으로 다시 만들 수 있어야 하는데 Redis 중심 설계만으로는 그 근거가 부족하다.&lt;/p&gt;
+&lt;p&gt;물론 Kafka topic을 오래 보관하고 replay할 수도 있다. 하지만 운영에서 특정 기간의 랭킹만 재계산하고 싶을 때 모든 이벤트를 다시 흘리는 방식은 부담이 크다. 또 이벤트 schema가 바뀌었거나 consumer 로직이 바뀌었을 때 replay 결과가 당시 결과와 완전히 같다고 보장하기도 어렵다.&lt;/p&gt;
+&lt;h2 id="2-가중치-변경과-재계산"&gt;&lt;a href="#2-%ea%b0%80%ec%a4%91%ec%b9%98-%eb%b3%80%ea%b2%bd%ea%b3%bc-%ec%9e%ac%ea%b3%84%ec%82%b0" class="header-anchor"&gt;&lt;/a&gt;2. 가중치 변경과 재계산
+&lt;/h2&gt;&lt;p&gt;첫 번째 설계안도 metric ZSET을 분리해두었기 때문에 당일 Redis 안에서는 가중치 재계산이 가능하다.&lt;/p&gt;
+&lt;p&gt;하지만 Redis TTL이 지나간 뒤에는 이야기가 달라진다. 예를 들어 한 달 뒤에 &amp;ldquo;지난주 랭킹을 현재 가중치 기준으로 다시 보고 싶다&amp;quot;는 요구가 생기면 Redis에 남은 데이터만으로는 어렵다.&lt;/p&gt;
+&lt;p&gt;가중치가 런타임에 바뀔 수 있다는 것은 결국 원천 metric과 최종 score를 분리해야 한다는 뜻에 가깝다. 최종 score는 정책의 결과이고, metric은 사실에 가까운 데이터다.&lt;/p&gt;
+&lt;h2 id="3-기간별-랭킹-확장"&gt;&lt;a href="#3-%ea%b8%b0%ea%b0%84%eb%b3%84-%eb%9e%ad%ed%82%b9-%ed%99%95%ec%9e%a5" class="header-anchor"&gt;&lt;/a&gt;3. 기간별 랭킹 확장
+&lt;/h2&gt;&lt;p&gt;일별 랭킹만 있으면 날짜별 Redis key로 충분해 보인다.&lt;/p&gt;
+&lt;p&gt;하지만 시간별, 주별, 월별, 연별 랭킹이 필요해지면 key 전략이 급격히 복잡해진다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:daily:20260717
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:hourly:2026071713
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:weekly:2026W29
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:all:monthly:202607
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이런 key를 모두 이벤트 소비 시점에 실시간으로 갱신할 수도 있다. 하지만 이벤트 하나가 여러 기간 key를 동시에 업데이트해야 하고, 가중치가 바뀌었을 때 재계산해야 하는 key도 늘어난다.&lt;/p&gt;
+&lt;p&gt;이때부터는 Redis를 원천 저장소로 쓰는 것보다, 원천 metric을 따로 저장하고 필요한 기간의 Top N을 계산해 Redis에 제공하는 방식이 더 자연스러워진다.&lt;/p&gt;
+&lt;h2 id="4-전체-상품을-redis에-올릴-것인가"&gt;&lt;a href="#4-%ec%a0%84%ec%b2%b4-%ec%83%81%ed%92%88%ec%9d%84-redis%ec%97%90-%ec%98%ac%eb%a6%b4-%ea%b2%83%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;4. 전체 상품을 Redis에 올릴 것인가
+&lt;/h2&gt;&lt;p&gt;또 하나의 고민은 상품 수가 많아졌을 때 전체 상품을 Redis ZSET에 계속 올리는 게 맞는가였다.&lt;/p&gt;
+&lt;p&gt;상품 수가 10만 개일 때는 테스트해볼 수 있다. 하지만 100만 개, 1000만 개가 되고 날짜별 key까지 늘어나면 Redis 메모리 비용은 무시하기 어렵다.&lt;/p&gt;
+&lt;p&gt;실제로 랭킹 API가 필요한 것은 대부분 상위 N개다. 그렇다면 Redis에는 전체 상품이 아니라 조회에 필요한 Top N만 올리고, 원천 metric은 다른 저장소에 두는 편이 더 명확할 수 있다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="보완-설계안-rdb-metric-sot--redis-top-n"&gt;&lt;a href="#%eb%b3%b4%ec%99%84-%ec%84%a4%ea%b3%84%ec%95%88-rdb-metric-sot--redis-top-n" class="header-anchor"&gt;&lt;/a&gt;보완 설계안: RDB Metric SOT + Redis Top N
+&lt;/h2&gt;&lt;p&gt;이 한계를 보완하기 위해 생각해본 구조가 RDB에 metric 원천 데이터를 저장하고, Redis에는 조회용 Top N만 제공하는 방식이다.&lt;/p&gt;
+&lt;figure class="mx-auto"&gt;&lt;img src="https://0andwild.com/posts/260717_ranking_system_design/rdb-metric-sot-architecture.png"
+			alt="RDB Metric SOT와 Redis Top N 랭킹 아키텍처" width="1100"&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;이 구조에서는 Redis의 역할이 바뀐다.&lt;/p&gt;
+&lt;p&gt;첫 번째 설계안에서 Redis는 실시간 랭킹의 SOT에 가까웠다. 보완 설계안에서 Redis는 조회를 빠르게 하기 위한 read model이다.&lt;/p&gt;
+&lt;p&gt;원천 metric은 MySQL 같은 RDB에 저장한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking_daily_metric
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- metric_date
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- product_id
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- view_count
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- like_count
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- sales_amount
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;여기서 일부러 weight는 저장하지 않는다.&lt;/p&gt;
+&lt;p&gt;view, like, sales amount는 실제 발생한 metric이다. 반면 weight는 정책이다. 정책은 바뀔 수 있다. 그래서 RDB에는 정책이 적용되기 전의 원천 metric을 남기고, score 계산 시점에 현재 weight를 적용하는 편이 더 재계산하기 쉽다.&lt;/p&gt;
+&lt;h2 id="이벤트-소비-단계"&gt;&lt;a href="#%ec%9d%b4%eb%b2%a4%ed%8a%b8-%ec%86%8c%eb%b9%84-%eb%8b%a8%ea%b3%84" class="header-anchor"&gt;&lt;/a&gt;이벤트 소비 단계
+&lt;/h2&gt;&lt;p&gt;이 구조에서도 이벤트 흐름은 크게 바뀌지 않는다.&lt;/p&gt;
+&lt;p&gt;사용자 행동 이벤트는 Kafka로 들어오고, &lt;code&gt;RankingMetricConsumer&lt;/code&gt;가 이벤트를 소비한다. 다만 consumer가 Redis score를 바로 올리는 대신 RDB의 metric row를 upsert한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PRODUCT_VIEWED -&amp;gt; view_count + 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PRODUCT_LIKED -&amp;gt; like_count + 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PRODUCT_UNLIKED -&amp;gt; like_count - 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PAYMENT_SUCCEEDED -&amp;gt; sales_amount + price * quantity
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이렇게 하면 Redis가 비어 있어도 RDB metric을 기준으로 랭킹을 다시 만들 수 있다.&lt;/p&gt;
+&lt;p&gt;또 주간 랭킹이 필요하면 일별 metric을 기간 단위로 합산하면 된다. 월간 랭킹도 마찬가지다. 이벤트를 처음부터 다시 읽지 않아도 된다.&lt;/p&gt;
+&lt;h2 id="점수-계산-단계"&gt;&lt;a href="#%ec%a0%90%ec%88%98-%ea%b3%84%ec%82%b0-%eb%8b%a8%ea%b3%84" class="header-anchor"&gt;&lt;/a&gt;점수 계산 단계
+&lt;/h2&gt;&lt;p&gt;점수 계산은 별도 batch나 scheduler가 담당한다.&lt;/p&gt;
+&lt;p&gt;예를 들어 5분마다 최근 metric을 읽고 현재 가중치를 적용해 최종 score를 계산한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;score = carry
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + view_count * currentViewWeight
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + like_count * currentLikeWeight
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; + ln(1 + sales_amount) * currentSalesWeight
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;그 다음 상위 N개만 Redis ZSET에 적재한다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ranking:top:daily:20260717
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이제 Redis에는 전체 상품이 아니라 API 조회에 필요한 Top N만 남는다. Redis는 원천 저장소가 아니라 빠른 조회를 위한 serving layer가 된다.&lt;/p&gt;
+&lt;h2 id="이-구조가-주는-장점"&gt;&lt;a href="#%ec%9d%b4-%ea%b5%ac%ec%a1%b0%ea%b0%80-%ec%a3%bc%eb%8a%94-%ec%9e%a5%ec%a0%90" class="header-anchor"&gt;&lt;/a&gt;이 구조가 주는 장점
+&lt;/h2&gt;&lt;p&gt;가장 큰 장점은 복구 가능성이다.&lt;/p&gt;
+&lt;p&gt;Redis가 유실되어도 RDB metric을 기준으로 다시 Top N을 계산할 수 있다. 잘못된 가중치가 배포되었을 때도 metric을 다시 읽어 score를 재계산하면 된다.&lt;/p&gt;
+&lt;p&gt;두 번째는 기간별 랭킹 확장이다.&lt;/p&gt;
+&lt;p&gt;일별 metric이 있으면 주별, 월별, 연별 랭킹은 기간 합산 문제로 바뀐다. 물론 데이터가 커지면 RDB만으로 충분하지 않을 수 있고, 그때는 OLAP 저장소나 별도 집계 테이블을 고려해야 한다. 그래도 원천 metric이 남아 있다는 점은 확장 방향을 열어준다.&lt;/p&gt;
+&lt;p&gt;세 번째는 Redis 메모리 제어다.&lt;/p&gt;
+&lt;p&gt;Redis에는 조회에 필요한 Top N만 올리면 된다. 전체 상품의 metric은 RDB에 있고, Redis는 API 응답을 빠르게 만들기 위한 read model 역할만 한다.&lt;/p&gt;
+&lt;h2 id="대신-잃는-것"&gt;&lt;a href="#%eb%8c%80%ec%8b%a0-%ec%9e%83%eb%8a%94-%ea%b2%83" class="header-anchor"&gt;&lt;/a&gt;대신 잃는 것
+&lt;/h2&gt;&lt;p&gt;이 구조도 무조건 더 좋은 것은 아니다.&lt;/p&gt;
+&lt;p&gt;가장 먼저 실시간성이 약해진다. 랭킹은 batch나 scheduler 주기만큼 늦게 반영된다. 5분마다 계산하면 최대 5분 정도 랭킹 반영이 늦어질 수 있다.&lt;/p&gt;
+&lt;p&gt;또 구조가 무거워진다. metric table, upsert 로직, score batch, batch 실패 복구, Redis 적재 로직이 필요하다. 단순히 Redis ZSET에 &lt;code&gt;ZINCRBY&lt;/code&gt; 하던 구조보다 고려할 것이 많다.&lt;/p&gt;
+&lt;p&gt;그리고 RDB write 부하도 생각해야 한다. 모든 사용자 행동 이벤트가 metric upsert로 이어지기 때문에 트래픽이 커지면 DB에 부담이 갈 수 있다. 이때는 버퍼링, batch insert, 시간 버킷 집계, Kafka Streams, OLAP 저장소 같은 선택지를 다시 검토해야 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="두-구조를-비교해보면"&gt;&lt;a href="#%eb%91%90-%ea%b5%ac%ec%a1%b0%eb%a5%bc-%eb%b9%84%ea%b5%90%ed%95%b4%eb%b3%b4%eb%a9%b4" class="header-anchor"&gt;&lt;/a&gt;두 구조를 비교해보면
+&lt;/h2&gt;&lt;p&gt;정리하면 두 구조의 방향은 다르다.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;관점&lt;/th&gt;
+					&lt;th&gt;Redis 실시간 랭킹&lt;/th&gt;
+					&lt;th&gt;RDB Metric SOT + Redis Top N&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;우선순위&lt;/td&gt;
+					&lt;td&gt;실시간 반영&lt;/td&gt;
+					&lt;td&gt;복구와 재계산&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Redis 역할&lt;/td&gt;
+					&lt;td&gt;실시간 랭킹 저장소&lt;/td&gt;
+					&lt;td&gt;조회용 read model&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;원천 metric&lt;/td&gt;
+					&lt;td&gt;Redis key에 존재&lt;/td&gt;
+					&lt;td&gt;RDB에 영속화&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;가중치 변경&lt;/td&gt;
+					&lt;td&gt;Redis에 남은 기간만 재계산 가능&lt;/td&gt;
+					&lt;td&gt;RDB metric 기준 재계산 가능&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;기간별 랭킹&lt;/td&gt;
+					&lt;td&gt;key가 늘어날수록 복잡&lt;/td&gt;
+					&lt;td&gt;metric 합산으로 확장 가능&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;메모리 사용&lt;/td&gt;
+					&lt;td&gt;전체 상품 적재 시 증가&lt;/td&gt;
+					&lt;td&gt;Top N만 적재해 제어 가능&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;구현 복잡도&lt;/td&gt;
+					&lt;td&gt;상대적으로 단순&lt;/td&gt;
+					&lt;td&gt;batch와 복구 정책 필요&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;반영 지연&lt;/td&gt;
+					&lt;td&gt;낮음&lt;/td&gt;
+					&lt;td&gt;batch 주기만큼 존재&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;첫 번째 Redis 실시간 설계안은 일별 랭킹을 빠르게 만들기에는 적합하다. 사용자의 행동이 랭킹에 거의 바로 반영되고, API 조회 경로도 단순하다.&lt;/p&gt;
+&lt;p&gt;하지만 운영에서 복구 가능성, 재계산 가능성, 기간별 확장성이 중요해지는 순간에는 RDB Metric SOT 구조가 더 설득력 있어진다.&lt;/p&gt;
+&lt;h2 id="그래서-어떤-기준으로-선택해야-할까"&gt;&lt;a href="#%ea%b7%b8%eb%9e%98%ec%84%9c-%ec%96%b4%eb%96%a4-%ea%b8%b0%ec%a4%80%ec%9c%bc%eb%a1%9c-%ec%84%a0%ed%83%9d%ed%95%b4%ec%95%bc-%ed%95%a0%ea%b9%8c" class="header-anchor"&gt;&lt;/a&gt;그래서 어떤 기준으로 선택해야 할까
+&lt;/h2&gt;&lt;p&gt;이번 설계를 하면서 느낀 점은 랭킹 시스템에서 중요한 질문은 &amp;ldquo;Redis를 쓸 것인가 RDB를 쓸 것인가&amp;quot;가 아니라는 것이다.&lt;/p&gt;
+&lt;p&gt;더 먼저 물어봐야 하는 질문은 이것에 가깝다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;이 랭킹은 얼마나 실시간이어야 하는가?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;이 랭킹은 유실되어도 되는가?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;과거 랭킹을 다시 계산해야 하는가?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;가중치 정책은 자주 바뀔 수 있는가?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;전체 상품을 랭킹 대상으로 유지해야 하는가?
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;랭킹 기간은 일별에서 끝나는가, 주별 월별로 확장되는가?
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 질문에 대한 답이 실시간성에 가깝다면 Redis 중심 구조가 단순하고 빠르다.&lt;/p&gt;
+&lt;p&gt;반대로 복구, 감사, 재계산, 기간별 확장이 중요하다면 metric 원천 데이터를 남기는 구조가 필요하다.&lt;/p&gt;
+&lt;h2 id="설계를-고도화해보면"&gt;&lt;a href="#%ec%84%a4%ea%b3%84%eb%a5%bc-%ea%b3%a0%eb%8f%84%ed%99%94%ed%95%b4%eb%b3%b4%eb%a9%b4" class="header-anchor"&gt;&lt;/a&gt;설계를 고도화해보면
+&lt;/h2&gt;&lt;p&gt;처음에는 Redis 실시간 랭킹 구조로도 충분해 보였다.&lt;/p&gt;
+&lt;p&gt;사용자 행동 이벤트가 일별 랭킹에 빠르게 반영되는 것이 중요했고, Redis Sorted Set은 Top N 조회와 단일 상품 rank 조회에 잘 맞았기 때문이다.&lt;/p&gt;
+&lt;p&gt;그래서 첫 번째 설계안에서는 Redis를 무한정 신뢰하지 않기 위해 몇 가지 제한을 둔다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;날짜별 key를 사용한다.&lt;/li&gt;
+&lt;li&gt;key에는 TTL을 둔다.&lt;/li&gt;
+&lt;li&gt;Carry-Over는 전체 상품이 아니라 상위 100개만 대상으로 한다.&lt;/li&gt;
+&lt;li&gt;metric ZSET을 분리해 당일 가중치 재계산 여지를 둔다.&lt;/li&gt;
+&lt;li&gt;이벤트 중복 처리를 위해 processed key를 둔다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이 구조는 완전한 정답이라기보다는 실시간성과 단순성을 우선한 출발점에 가깝다.&lt;/p&gt;
+&lt;p&gt;여기서 과거 랭킹 복구나 주간, 월간 랭킹까지 고려하면 RDB Metric SOT + Redis Top N 구조로 발전시키는 것이 더 자연스럽다.&lt;/p&gt;
+&lt;h2 id="마무리"&gt;&lt;a href="#%eb%a7%88%eb%ac%b4%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;마무리
+&lt;/h2&gt;&lt;p&gt;랭킹 시스템을 설계하면서 가장 크게 느낀 점은 랭킹은 단순한 정렬 문제가 아니라는 것이다.&lt;/p&gt;
+&lt;p&gt;어떤 행동을 중요한 신호로 볼 것인지, 그 신호를 얼마나 오래 기억할 것인지, 점수 정책이 바뀌었을 때 다시 계산할 수 있어야 하는지, Redis 장애가 났을 때 비어 있는 랭킹을 허용할 수 있는지 같은 질문이 계속 따라온다.&lt;/p&gt;
+&lt;p&gt;처음에는 Redis Sorted Set으로 빠르게 랭킹을 만들 수 있다는 점에 집중했다. 그런데 설계를 조금 더 넓게 보니 Redis에 무엇을 저장할지보다 무엇을 원천 데이터로 남길지가 더 중요한 문제였다.&lt;/p&gt;
+&lt;p&gt;첫 번째 설계안은 실시간 일별 랭킹을 만들기 위한 출발점이다. 그리고 RDB Metric SOT + Redis Top N 구조는 이 시스템이 운영 요구를 더 많이 만나게 되었을 때 나아갈 수 있는 방향이라고 볼 수 있다.&lt;/p&gt;
+&lt;p&gt;이번 설계를 통해 배운 것은 처음부터 모든 미래 요구사항을 구현하는 것이 좋은 설계는 아니라는 점이다. 다만 지금 선택한 구조가 어떤 한계를 가지는지 알고, 다음 단계로 어떻게 고도화할 수 있는지 설명할 수 있어야 한다고 느꼈다.&lt;/p&gt;</description></item></channel></rss>
