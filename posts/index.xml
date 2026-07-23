@@ -1,4 +1,302 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 0AndWild_log</title><link>https://0andwild.com/posts/</link><description>Recent content in Posts on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 17 Jul 2026 16:20:00 +0900</lastBuildDate><atom:link href="https://0andwild.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>랭킹시스템 설계 해보기</title><link>https://0andwild.com/posts/260717_ranking_system_design/</link><pubDate>Fri, 17 Jul 2026 16:20:00 +0900</pubDate><guid>https://0andwild.com/posts/260717_ranking_system_design/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 랭킹시스템 설계 해보기" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 0AndWild_log</title><link>https://0andwild.com/posts/</link><description>Recent content in Posts on 0AndWild_log</description><generator>Hugo -- gohugo.io</generator><language>ko-KR</language><lastBuildDate>Fri, 24 Jul 2026 04:43:44 +0900</lastBuildDate><atom:link href="https://0andwild.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring Batch Reader는 어떻게 고르면 좋을까</title><link>https://0andwild.com/posts/260724_spring_batch_reader_guide/</link><pubDate>Fri, 24 Jul 2026 04:43:44 +0900</pubDate><guid>https://0andwild.com/posts/260724_spring_batch_reader_guide/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post Spring Batch Reader는 어떻게 고르면 좋을까" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
+&lt;/h2&gt;&lt;p&gt;Spring Batch Reader를 고를 때 처음에는 데이터가 많으면 무조건 Paging Reader를 써야 한다고 생각하기 쉽다.&lt;/p&gt;
+&lt;p&gt;하지만 실제로는 데이터 크기보다 &lt;strong&gt;어떤 쿼리를 반복 실행하게 되는지&lt;/strong&gt;가 더 중요했다. 단순히 테이블을 안정적인 key 순서로 읽는 작업이라면 Paging Reader가 잘 맞는다. 반대로 한 번의 비싼 집계 쿼리 결과를 순차적으로 소비해야 한다면 Cursor Reader가 더 자연스러울 수 있다.&lt;/p&gt;
+&lt;p&gt;최근 랭킹 배치를 만들면서 이 차이를 체감했다. &lt;code&gt;product_metric_daily&lt;/code&gt;에서 30일치 데이터를 읽고 &lt;code&gt;GROUP BY product_id&lt;/code&gt;로 집계한 뒤 주간, 월간 랭킹 MV를 만드는 작업이었다. 이 경우 Paging Reader를 쓰면 page마다 같은 기간 범위를 다시 scan하고 group by할 가능성이 있었다. 그래서 집계 쿼리는 한 번 열고 결과를 cursor로 읽는 &lt;code&gt;JdbcCursorItemReader&lt;/code&gt;를 선택했다.&lt;/p&gt;
+&lt;p&gt;물론 Cursor Reader가 항상 더 좋은 것은 아니다. 커넥션을 오래 잡고 있고, DB driver의 fetch 동작과 timeout 설정도 신경 써야 한다. 결국 Reader 선택은 &amp;ldquo;대용량인가?&amp;ldquo;가 아니라 &amp;ldquo;이 작업의 병목이 어디에 있는가?&amp;ldquo;를 보고 결정해야 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="왜-reader-선택이-어려웠나"&gt;&lt;a href="#%ec%99%9c-reader-%ec%84%a0%ed%83%9d%ec%9d%b4-%ec%96%b4%eb%a0%a4%ec%9b%a0%eb%82%98" class="header-anchor"&gt;&lt;/a&gt;왜 Reader 선택이 어려웠나
+&lt;/h2&gt;&lt;p&gt;Spring Batch를 처음 쓰면 Step 구조는 꽤 단순해 보인다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Reader -&amp;gt; Processor -&amp;gt; Writer
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Reader가 데이터를 읽고, Processor가 가공하고, Writer가 저장한다.&lt;/p&gt;
+&lt;p&gt;문제는 Reader가 생각보다 많은 것을 결정한다는 점이다. Reader를 어떻게 고르느냐에 따라 DB 쿼리 방식, 메모리 사용량, 재시작 가능성, 커넥션 점유 시간, 처리 속도가 달라진다.&lt;/p&gt;
+&lt;p&gt;처음에는 이렇게 생각했다.&lt;/p&gt;
+&lt;p&gt;데이터가 많으면 Paging Reader를 쓰면 되는 것 아닌가?&lt;/p&gt;
+&lt;p&gt;페이지 단위로 끊어서 읽으면 메모리에 한 번에 많이 올리지 않을 수 있고, 뭔가 안정적으로 보인다. 실제로 많은 상황에서 맞는 판단이다. 하지만 모든 배치 쿼리가 단순한 &lt;code&gt;SELECT * FROM table ORDER BY id&lt;/code&gt; 형태는 아니다.&lt;/p&gt;
+&lt;p&gt;최근에 구현한 랭킹 배치는 이런 쿼리를 사용했다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;view_count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;view_count&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;like_count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;like_count&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sales_amount&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sales_amount&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_metric_daily&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;metric_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;metric_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;GROUP&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ORDER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;30일치 daily metric을 읽어 상품별로 합산한 뒤, 그 결과를 score로 계산해서 월간 랭킹 MV에 저장하는 흐름이다.&lt;/p&gt;
+&lt;p&gt;여기서 중요한 점은 Reader가 단순히 row를 읽는 것이 아니라, DB가 먼저 기간 범위를 scan하고 &lt;code&gt;GROUP BY&lt;/code&gt; 결과를 만들어야 한다는 것이다. 이때 Paging Reader로 page를 나누면, 페이지마다 이 집계 쿼리를 다시 수행하게 될 수 있다.&lt;/p&gt;
+&lt;p&gt;그래서 이 작업에서는 &amp;ldquo;몇 건씩 읽을 것인가&amp;quot;보다 &amp;ldquo;비싼 집계 쿼리를 몇 번 실행할 것인가&amp;quot;가 더 중요한 기준이었다.&lt;/p&gt;
+&lt;h2 id="spring-batch-reader를-보는-기준"&gt;&lt;a href="#spring-batch-reader%eb%a5%bc-%eb%b3%b4%eb%8a%94-%ea%b8%b0%ec%a4%80" class="header-anchor"&gt;&lt;/a&gt;Spring Batch Reader를 보는 기준
+&lt;/h2&gt;&lt;p&gt;Spring Batch에는 여러 Reader가 있다. DB를 읽는 경우만 봐도 &lt;code&gt;JdbcCursorItemReader&lt;/code&gt;, &lt;code&gt;JdbcPagingItemReader&lt;/code&gt;, &lt;code&gt;JpaPagingItemReader&lt;/code&gt;, &lt;code&gt;RepositoryItemReader&lt;/code&gt; 같은 선택지가 있다.&lt;/p&gt;
+&lt;p&gt;공식 문서에서도 &lt;code&gt;JdbcCursorItemReader&lt;/code&gt;는 cursor 기반으로 JDBC &lt;code&gt;ResultSet&lt;/code&gt;을 순차적으로 읽고, &lt;code&gt;JdbcPagingItemReader&lt;/code&gt;는 &lt;code&gt;PagingQueryProvider&lt;/code&gt;를 통해 page 단위 query를 만들어 데이터를 읽는 방식으로 설명한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.spring.io/spring-batch/reference/readers-and-writers/database.html" target="_blank" rel="noopener"
+ &gt;Spring Batch Reference - Database Readers&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;여기서 중요한 것은 이름보다 동작 방식이다.&lt;/p&gt;
+&lt;p&gt;나는 Reader를 고를 때 아래 질문을 먼저 보는 편이 좋다고 느꼈다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;source query가 단순 조회인가, 집계 쿼리인가?&lt;/li&gt;
+&lt;li&gt;안정적인 정렬 key가 있는가?&lt;/li&gt;
+&lt;li&gt;같은 쿼리를 여러 번 실행해도 비용이 괜찮은가?&lt;/li&gt;
+&lt;li&gt;배치 실행 중 DB connection을 오래 잡아도 되는가?&lt;/li&gt;
+&lt;li&gt;실패 후 재시작 지점 관리가 얼마나 중요한가?&lt;/li&gt;
+&lt;li&gt;JPA 영속성 컨텍스트가 필요한가, JDBC row mapping이면 충분한가?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;이 질문에 따라 Reader 선택이 달라진다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="cursor-reader"&gt;&lt;a href="#cursor-reader" class="header-anchor"&gt;&lt;/a&gt;Cursor Reader
+&lt;/h2&gt;&lt;p&gt;Cursor Reader는 쿼리를 열고 결과를 cursor로 하나씩 읽는 방식이다.&lt;/p&gt;
+&lt;p&gt;JDBC 기준으로는 &lt;code&gt;JdbcCursorItemReader&lt;/code&gt;를 사용할 수 있다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Bean&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@StepScope&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;rankingAggregateReader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nd"&gt;@Value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;#{jobParameters[&amp;#39;baseDate&amp;#39;]}&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;baseDate&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;JdbcCursorItemReader&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ProductMetricAggregate&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;JdbcCursorItemReaderBuilder&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ProductMetricAggregate&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;rankingAggregateReader&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sql&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; SELECT
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; product_id,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; SUM(view_count) AS view_count,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; SUM(like_count) AS like_count,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; SUM(sales_amount) AS sales_amount
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; FROM product_metric_daily
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; WHERE metric_date &amp;gt;= ?
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; AND metric_date &amp;lt; ?
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; GROUP BY product_id
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; ORDER BY product_id
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s"&gt; &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;trimIndent&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;preparedStatementSetter&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;ps&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;ps&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setDate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;valueOf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sourceStart&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;baseDate&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;ps&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;setDate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;valueOf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sourceEnd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;baseDate&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rowMapper&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;ProductMetricAggregate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;productId&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;product_id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;viewCount&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;view_count&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;likeCount&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;like_count&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;salesAmount&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;sales_amount&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fetchSize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 방식의 장점은 쿼리를 한 번 실행한다는 점이다.&lt;/p&gt;
+&lt;p&gt;특히 위처럼 &lt;code&gt;GROUP BY&lt;/code&gt;가 포함된 집계 쿼리에서는 이 차이가 중요하다. DB가 기간 범위를 읽고 상품별 집계 결과를 만든 뒤, 애플리케이션은 그 결과를 순차적으로 소비한다.&lt;/p&gt;
+&lt;p&gt;여기서 &lt;code&gt;fetchSize&lt;/code&gt;는 한 번에 가져올 row 수에 대한 힌트다. chunk size와 같은 개념은 아니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fetchSize: JDBC driver가 DB에서 가져오는 묶음 크기
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chunkSize: Spring Batch가 transaction 단위로 처리하고 commit하는 item 수
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;둘은 목적이 다르다. &lt;code&gt;fetchSize&lt;/code&gt;는 DB 통신과 ResultSet 소비 방식에 가깝고, &lt;code&gt;chunkSize&lt;/code&gt;는 batch transaction 경계에 가깝다.&lt;/p&gt;
+&lt;p&gt;Cursor Reader는 이런 상황에 잘 맞는다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한 번의 쿼리 결과를 순차적으로 처리하고 싶다.&lt;/li&gt;
+&lt;li&gt;source query가 비싼 집계 쿼리다.&lt;/li&gt;
+&lt;li&gt;page마다 같은 집계를 반복하고 싶지 않다.&lt;/li&gt;
+&lt;li&gt;처리 결과를 JVM에 모두 올리지 않고 stream처럼 소비하고 싶다.&lt;/li&gt;
+&lt;li&gt;row mapper 수준의 단순 mapping이면 충분하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;대신 비용도 있다.&lt;/p&gt;
+&lt;p&gt;Cursor가 열려 있는 동안 DB connection을 유지한다. 배치가 오래 걸리면 connection을 오래 점유한다는 뜻이다. DB나 네트워크 timeout, connection pool 설정, JDBC driver의 fetch 동작도 확인해야 한다.&lt;/p&gt;
+&lt;p&gt;또한 실패 후 재시작을 생각하면 단순하지 않을 수 있다. Spring Batch가 상태를 저장하더라도, cursor 기반으로 읽던 쿼리의 중간 지점부터 정확히 이어가는 구조는 query와 ordering이 안정적이어야 한다. 긴 작업이라면 &amp;ldquo;재시작했을 때 어디서부터 다시 읽을 것인가&amp;quot;를 별도로 검토해야 한다.&lt;/p&gt;
+&lt;h2 id="paging-reader"&gt;&lt;a href="#paging-reader" class="header-anchor"&gt;&lt;/a&gt;Paging Reader
+&lt;/h2&gt;&lt;p&gt;Paging Reader는 데이터를 page 단위로 나누어 읽는다.&lt;/p&gt;
+&lt;p&gt;JDBC 기준으로는 &lt;code&gt;JdbcPagingItemReader&lt;/code&gt;를 사용할 수 있다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-kotlin" data-lang="kotlin"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@Bean&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@StepScope&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="nf"&gt;orderPagingReader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="n"&gt;JdbcPagingItemReader&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;OrderRow&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;val&lt;/span&gt; &lt;span class="py"&gt;sortKeys&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;mapOf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;order_id&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="nc"&gt;Order&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ASCENDING&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;JdbcPagingItemReaderBuilder&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;OrderRow&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;orderPagingReader&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;selectClause&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;SELECT order_id, user_id, total_amount, status&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fromClause&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;FROM orders&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;whereClause&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;WHERE status = :status&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parameterValues&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mapOf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;status&amp;#34;&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;READY&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sortKeys&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sortKeys&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pageSize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rowMapper&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;OrderRow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;orderId&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;order_id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;userId&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;user_id&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;totalAmount&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;total_amount&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;status&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getString&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;status&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Paging Reader는 page query를 반복해서 실행한다. 그래서 stable sort key가 중요하다. &lt;code&gt;order_id&lt;/code&gt;처럼 유일하고 증가하는 key가 있으면 page 단위로 읽기 좋다.&lt;/p&gt;
+&lt;p&gt;이 방식은 이런 상황에 잘 맞는다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;source table을 안정적인 key 순서로 읽을 수 있다.&lt;/li&gt;
+&lt;li&gt;query가 비교적 단순하다.&lt;/li&gt;
+&lt;li&gt;page query를 여러 번 실행해도 비용이 감당 가능하다.&lt;/li&gt;
+&lt;li&gt;DB connection을 한 번에 오래 잡고 싶지 않다.&lt;/li&gt;
+&lt;li&gt;실패 후 재시작과 page 단위 처리가 중요하다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;반대로 조심해야 할 상황도 있다.&lt;/p&gt;
+&lt;p&gt;가장 조심해야 하는 것은 page마다 비싼 쿼리를 반복하는 경우다.&lt;/p&gt;
+&lt;p&gt;예를 들어 아래처럼 집계 쿼리를 page로 나누어 읽는다고 생각해보자.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;view_count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;view_count&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;like_count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;like_count&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;SUM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sales_amount&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AS&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sales_amount&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_metric_daily&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WHERE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;metric_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;startDate&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;AND&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;metric_date&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;endDate&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;GROUP&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ORDER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;LIMIT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;OFFSET&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;다음 page는 offset만 바뀐다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ORDER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;BY&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;product_id&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;LIMIT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;OFFSET&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;겉으로는 1000개씩 끊어 읽는 것처럼 보인다. 하지만 DB 입장에서는 매 page마다 기간 범위를 다시 읽고, group by 결과를 만들고, offset만큼 건너뛰어야 할 수 있다.&lt;/p&gt;
+&lt;p&gt;물론 DB optimizer가 어떤 실행 계획을 고르는지에 따라 실제 비용은 달라진다. 하지만 &amp;ldquo;Paging Reader니까 안전하다&amp;quot;라고 단정할 수는 없다. query shape이 더 중요하다.&lt;/p&gt;
+&lt;h2 id="repository-reader와-jpa-reader"&gt;&lt;a href="#repository-reader%ec%99%80-jpa-reader" class="header-anchor"&gt;&lt;/a&gt;Repository Reader와 JPA Reader
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;RepositoryItemReader&lt;/code&gt;나 &lt;code&gt;JpaPagingItemReader&lt;/code&gt;도 자주 보인다.&lt;/p&gt;
+&lt;p&gt;이 Reader들은 domain repository나 JPA query를 자연스럽게 재사용할 수 있다는 장점이 있다. 이미 Spring Data repository가 있고, 단순한 조건으로 entity를 읽어 처리하는 작업이라면 빠르게 구현할 수 있다.&lt;/p&gt;
+&lt;p&gt;하지만 배치에서는 JPA가 항상 편한 선택은 아니었다.&lt;/p&gt;
+&lt;p&gt;JPA entity를 읽으면 영속성 컨텍스트를 의식해야 한다. 많은 row를 처리할 때 clear 주기나 dirty checking 비용도 신경 써야 한다. 배치가 단순히 데이터를 읽고 다른 테이블에 쓰는 작업이라면, 굳이 entity lifecycle을 끌고 들어오지 않는 편이 더 명확할 때가 많다.&lt;/p&gt;
+&lt;p&gt;특히 집계 결과처럼 애초에 entity가 아닌 데이터를 읽는다면 JDBC row mapping이 더 잘 맞는다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;product_metric_daily row들
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ group by
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ProductMetricAggregate
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ score 계산
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ProductRankingScore
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ batch upsert
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mv_product_rank_weekly / mv_product_rank_monthly
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;이 흐름에서는 JPA entity를 읽는 것보다 DTO 성 row를 읽는 편이 자연스럽다. 그래서 ranking batch에서는 JDBC 기반 Reader와 Writer를 사용했다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="내가-랭킹-배치에서-cursor-reader를-고른-이유"&gt;&lt;a href="#%eb%82%b4%ea%b0%80-%eb%9e%ad%ed%82%b9-%eb%b0%b0%ec%b9%98%ec%97%90%ec%84%9c-cursor-reader%eb%a5%bc-%ea%b3%a0%eb%a5%b8-%ec%9d%b4%ec%9c%a0" class="header-anchor"&gt;&lt;/a&gt;내가 랭킹 배치에서 Cursor Reader를 고른 이유
+&lt;/h2&gt;&lt;p&gt;이번 랭킹 배치의 요구사항은 이랬다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;product_metric_daily&lt;/code&gt;에 일별 metric을 저장한다.&lt;/li&gt;
+&lt;li&gt;주간 랭킹은 직전 주 7일치를 합산한다.&lt;/li&gt;
+&lt;li&gt;월간 랭킹은 직전 달 전체를 합산한다.&lt;/li&gt;
+&lt;li&gt;상품별 집계 결과에 현재 가중치를 적용해 score를 계산한다.&lt;/li&gt;
+&lt;li&gt;결과를 MV 테이블에 upsert한다.&lt;/li&gt;
+&lt;li&gt;Job이 성공하면 publication generation을 발행한다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;처음에는 Paging Reader도 고려할 수 있었다.&lt;/p&gt;
+&lt;p&gt;대용량 데이터를 처리하니까 page로 끊어 읽는 방식이 더 안전해 보였기 때문이다. 하지만 쿼리 모양을 보면 생각이 달라졌다.&lt;/p&gt;
+&lt;p&gt;이 작업의 핵심 비용은 &lt;code&gt;product_metric_daily&lt;/code&gt;에서 기간 범위를 읽고 &lt;code&gt;GROUP BY product_id&lt;/code&gt;를 수행하는 부분이다. 상품이 100만 개이고 30일치 데이터가 있다면 daily metric은 3000만 row가 된다.&lt;/p&gt;
+&lt;p&gt;여기서 page마다 같은 집계 쿼리를 반복하는 구조는 피하고 싶었다.&lt;/p&gt;
+&lt;p&gt;그래서 선택한 구조는 이렇다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JdbcCursorItemReader
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - 기간 range 집계 쿼리 1회 실행
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - ProductMetricAggregate를 fetchSize 단위로 순차 소비
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ItemProcessor
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - view, like, sales metric에 weight 적용
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - sales는 ln(1 + salesAmount)로 완화
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;JdbcBatchItemWriter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - mv_product_rank_weekly 또는 mv_product_rank_monthly에 upsert
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;현재 구조는 완전한 정답이라기보다는 이번 쿼리 형태에 맞춘 선택이다.&lt;/p&gt;
+&lt;p&gt;만약 source가 단순한 &lt;code&gt;orders&lt;/code&gt; 테이블이고 &lt;code&gt;order_id&lt;/code&gt; 기준으로 읽어 처리하는 작업이었다면 Paging Reader를 선택했을 가능성이 높다. 반대로 지금처럼 &amp;ldquo;큰 기간 범위를 한 번 집계한 결과&amp;quot;를 소비하는 작업에서는 Cursor Reader가 더 낫다고 판단했다.&lt;/p&gt;
+&lt;h2 id="선택-기준을-표로-정리해보면"&gt;&lt;a href="#%ec%84%a0%ed%83%9d-%ea%b8%b0%ec%a4%80%ec%9d%84-%ed%91%9c%eb%a1%9c-%ec%a0%95%eb%a6%ac%ed%95%b4%eb%b3%b4%eb%a9%b4" class="header-anchor"&gt;&lt;/a&gt;선택 기준을 표로 정리해보면
+&lt;/h2&gt;&lt;p&gt;Reader 선택은 아래처럼 정리할 수 있다.&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;상황&lt;/th&gt;
+					&lt;th&gt;더 먼저 검토할 Reader&lt;/th&gt;
+					&lt;th&gt;이유&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;단순 table row를 id 순서로 처리&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;JdbcPagingItemReader&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;stable sort key가 있고 page query 비용이 낮다&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;비싼 집계 쿼리 결과를 순차 처리&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;JdbcCursorItemReader&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;집계 쿼리 반복 실행을 피할 수 있다&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Spring Data repository를 그대로 재사용&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;RepositoryItemReader&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;구현은 빠르지만 query와 paging 비용을 확인해야 한다&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;JPA entity lifecycle이 필요한 처리&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;JpaPagingItemReader&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;entity 기반 처리가 필요할 때 적합하다&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;entity가 아닌 projection/aggregate 처리&lt;/td&gt;
+					&lt;td&gt;JDBC Reader&lt;/td&gt;
+					&lt;td&gt;row mapping이 단순하고 영속성 컨텍스트 비용을 피할 수 있다&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;여기서 중요한 점은 &amp;ldquo;대용량이면 A&amp;rdquo; 같은 규칙으로 외우지 않는 것이다.&lt;/p&gt;
+&lt;p&gt;대용량이어도 단순 key scan이면 Paging이 좋을 수 있다. 반대로 row 수가 아주 크지 않아도 query가 비싼 집계라면 Cursor가 더 단순할 수 있다.&lt;/p&gt;
+&lt;h2 id="cursor-reader를-쓸-때-확인할-것"&gt;&lt;a href="#cursor-reader%eb%a5%bc-%ec%93%b8-%eb%95%8c-%ed%99%95%ec%9d%b8%ed%95%a0-%ea%b2%83" class="header-anchor"&gt;&lt;/a&gt;Cursor Reader를 쓸 때 확인할 것
+&lt;/h2&gt;&lt;p&gt;Cursor Reader를 선택했다면 최소한 아래는 확인해야 한다.&lt;/p&gt;
+&lt;h2 id="1-fetchsize가-실제로-동작하는가"&gt;&lt;a href="#1-fetchsize%ea%b0%80-%ec%8b%a4%ec%a0%9c%eb%a1%9c-%eb%8f%99%ec%9e%91%ed%95%98%eb%8a%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;1. fetchSize가 실제로 동작하는가
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;fetchSize&lt;/code&gt;는 JDBC driver에 주는 hint다. 모든 driver가 같은 방식으로 처리하지 않는다.&lt;/p&gt;
+&lt;p&gt;MySQL을 사용한다면 Connector/J 설정에 따라 fetch 동작이 달라질 수 있다. 서버 사이드 cursor를 사용할 것인지, streaming result를 사용할 것인지에 따라 필요한 옵션이 다를 수 있다.&lt;/p&gt;
+&lt;p&gt;그래서 단순히 &lt;code&gt;.fetchSize(1000)&lt;/code&gt;을 넣었다고 끝내기보다, 실제 실행 시 메모리가 한 번에 튀지 않는지 확인해야 한다.&lt;/p&gt;
+&lt;h2 id="2-connection을-오래-잡아도-되는가"&gt;&lt;a href="#2-connection%ec%9d%84-%ec%98%a4%eb%9e%98-%ec%9e%a1%ec%95%84%eb%8f%84-%eb%90%98%eb%8a%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;2. connection을 오래 잡아도 되는가
+&lt;/h2&gt;&lt;p&gt;Cursor Reader는 ResultSet을 열어두고 읽는다. 그동안 connection도 유지된다.&lt;/p&gt;
+&lt;p&gt;배치 전용 datasource나 pool을 분리하지 않으면 API 트래픽과 connection을 두고 경쟁할 수 있다. 긴 배치라면 query timeout, socket timeout, pool size, DB idle timeout도 같이 봐야 한다.&lt;/p&gt;
+&lt;h2 id="3-정렬이-안정적인가"&gt;&lt;a href="#3-%ec%a0%95%eb%a0%ac%ec%9d%b4-%ec%95%88%ec%a0%95%ec%a0%81%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;3. 정렬이 안정적인가
+&lt;/h2&gt;&lt;p&gt;cursor로 읽더라도 결과 순서는 안정적이어야 한다.&lt;/p&gt;
+&lt;p&gt;이번 랭킹 배치에서는 &lt;code&gt;GROUP BY product_id ORDER BY product_id&lt;/code&gt;를 사용했다. 같은 source range라면 product_id 순서로 동일하게 읽힌다.&lt;/p&gt;
+&lt;p&gt;물론 최종 랭킹 순위는 score 기준이다. 하지만 Reader 단계에서는 집계 결과를 순차 처리하면 되고, MV 조회 단계에서 &lt;code&gt;ranking_score DESC, product_id ASC&lt;/code&gt;로 Top 100을 읽는다.&lt;/p&gt;
+&lt;h2 id="4-실패-후-재실행이-안전한가"&gt;&lt;a href="#4-%ec%8b%a4%ed%8c%a8-%ed%9b%84-%ec%9e%ac%ec%8b%a4%ed%96%89%ec%9d%b4-%ec%95%88%ec%a0%84%ed%95%9c%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;4. 실패 후 재실행이 안전한가
+&lt;/h2&gt;&lt;p&gt;Cursor Reader를 쓰더라도 Job이 실패할 수 있다.&lt;/p&gt;
+&lt;p&gt;이번 배치에서는 같은 &lt;code&gt;baseDate&lt;/code&gt;로 재실행하면 기존 MV row를 삭제하고 다시 upsert하도록 했다. 즉 &amp;ldquo;중간 지점부터 이어서 처리&amp;quot;보다 &amp;ldquo;해당 baseDate 결과를 다시 만드는 것&amp;quot;을 선택했다.&lt;/p&gt;
+&lt;p&gt;이 방식은 데이터가 커질수록 비용이 있지만, 결과 정합성을 설명하기 쉽다. 나중에 처리 시간이 너무 길어지면 partitioning이나 keyset 기반 분할 처리를 검토해야 한다.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="paging-reader를-쓸-때-확인할-것"&gt;&lt;a href="#paging-reader%eb%a5%bc-%ec%93%b8-%eb%95%8c-%ed%99%95%ec%9d%b8%ed%95%a0-%ea%b2%83" class="header-anchor"&gt;&lt;/a&gt;Paging Reader를 쓸 때 확인할 것
+&lt;/h2&gt;&lt;p&gt;Paging Reader를 선택한다면 다른 질문이 필요하다.&lt;/p&gt;
+&lt;h2 id="1-sort-key가-유일하고-안정적인가"&gt;&lt;a href="#1-sort-key%ea%b0%80-%ec%9c%a0%ec%9d%bc%ed%95%98%ea%b3%a0-%ec%95%88%ec%a0%95%ec%a0%81%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;1. sort key가 유일하고 안정적인가
+&lt;/h2&gt;&lt;p&gt;Paging Reader는 page를 나눠 읽기 때문에 정렬 기준이 중요하다.&lt;/p&gt;
+&lt;p&gt;정렬 기준이 중복되거나 처리 중 데이터가 계속 바뀌면 page 사이에서 누락이나 중복이 생길 수 있다. 가능하면 &lt;code&gt;id&lt;/code&gt;처럼 유일하고 변하지 않는 key를 sort key로 둔다.&lt;/p&gt;
+&lt;h2 id="2-page-query가-반복되어도-싼가"&gt;&lt;a href="#2-page-query%ea%b0%80-%eb%b0%98%eb%b3%b5%eb%90%98%ec%96%b4%eb%8f%84-%ec%8b%bc%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;2. page query가 반복되어도 싼가
+&lt;/h2&gt;&lt;p&gt;Paging Reader는 page마다 query를 실행한다.&lt;/p&gt;
+&lt;p&gt;단순 조건 조회라면 괜찮다. 하지만 join, group by, order by 비용이 큰 query라면 page 반복 비용을 반드시 봐야 한다.&lt;/p&gt;
+&lt;p&gt;이때는 &lt;code&gt;EXPLAIN&lt;/code&gt;으로 첫 page만 보지 말고, 뒤 page 조건도 확인하는 편이 좋다.&lt;/p&gt;
+&lt;h2 id="3-offset-paging인가-keyset-paging인가"&gt;&lt;a href="#3-offset-paging%ec%9d%b8%ea%b0%80-keyset-paging%ec%9d%b8%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;3. offset paging인가 keyset paging인가
+&lt;/h2&gt;&lt;p&gt;많은 paging 구현은 offset을 사용한다.&lt;/p&gt;
+&lt;p&gt;offset은 뒤로 갈수록 앞의 row를 건너뛰는 비용이 커질 수 있다. 대용량 테이블에서는 &lt;code&gt;id &amp;gt; lastSeenId&lt;/code&gt; 같은 keyset paging이 더 안정적일 때가 많다.&lt;/p&gt;
+&lt;p&gt;Spring Batch 기본 Reader만으로 해결하려 하기보다, 필요한 경우 직접 Reader를 만들거나 partitioner와 범위 조건을 조합하는 편이 더 명확할 수 있다.&lt;/p&gt;
+&lt;h2 id="4-pagesize와-chunksize를-혼동하지-않았는가"&gt;&lt;a href="#4-pagesize%ec%99%80-chunksize%eb%a5%bc-%ed%98%bc%eb%8f%99%ed%95%98%ec%a7%80-%ec%95%8a%ec%95%98%eb%8a%94%ea%b0%80" class="header-anchor"&gt;&lt;/a&gt;4. pageSize와 chunkSize를 혼동하지 않았는가
+&lt;/h2&gt;&lt;p&gt;Paging Reader의 &lt;code&gt;pageSize&lt;/code&gt;와 Step의 &lt;code&gt;chunkSize&lt;/code&gt;도 같은 개념이 아니다.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;pageSize: Reader가 한 번의 page query로 가져오는 item 수
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chunkSize: 몇 개 item마다 transaction commit할 것인지
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;둘을 반드시 같게 둘 필요는 없다. 다만 너무 다르게 잡으면 예상과 다른 메모리 사용이나 query 횟수가 나올 수 있으니 의도를 가지고 정해야 한다.&lt;/p&gt;
+&lt;h2 id="내-기준으로-정리해보기"&gt;&lt;a href="#%eb%82%b4-%ea%b8%b0%ec%a4%80%ec%9c%bc%eb%a1%9c-%ec%a0%95%eb%a6%ac%ed%95%b4%eb%b3%b4%ea%b8%b0" class="header-anchor"&gt;&lt;/a&gt;내 기준으로 정리해보기
+&lt;/h2&gt;&lt;p&gt;지금은 Spring Batch Reader를 고를 때 아래 순서로 생각하려 한다.&lt;/p&gt;
+&lt;p&gt;먼저 source query를 본다.&lt;/p&gt;
+&lt;p&gt;단순 row scan인지, join이 많은지, group by가 있는지, 정렬 비용이 큰지 본다. 이 단계에서 이미 Cursor가 나을지 Paging이 나을지 방향이 많이 갈린다.&lt;/p&gt;
+&lt;p&gt;그 다음 재시작 전략을 본다.&lt;/p&gt;
+&lt;p&gt;중간부터 이어서 처리해야 하는지, 아니면 같은 기준일의 결과를 지우고 다시 만들어도 되는지 판단한다. 재실행 비용보다 정합성이 더 중요하면 clean rebuild가 더 단순할 수 있다.&lt;/p&gt;
+&lt;p&gt;마지막으로 운영 비용을 본다.&lt;/p&gt;
+&lt;p&gt;Cursor는 connection 점유 시간이 비용이고, Paging은 반복 query가 비용이다. 둘 중 어떤 비용이 현재 시스템에서 더 감당 가능한지 봐야 한다.&lt;/p&gt;
+&lt;p&gt;이번 랭킹 배치에서는 반복 query 비용이 더 크다고 판단했다. 그래서 Cursor Reader를 선택했다.&lt;/p&gt;
+&lt;p&gt;하지만 이 기준이 모든 배치에 그대로 적용되지는 않는다. 정산 데이터처럼 id 기준으로 안정적으로 끊어 읽는 작업이라면 Paging Reader가 더 나은 선택일 수 있다. 중요한 것은 Reader 이름이 아니라, Reader가 DB에 어떤 일을 시키는지 이해하는 것이다.&lt;/p&gt;
+&lt;h2 id="마무리"&gt;&lt;a href="#%eb%a7%88%eb%ac%b4%eb%a6%ac" class="header-anchor"&gt;&lt;/a&gt;마무리
+&lt;/h2&gt;&lt;p&gt;Spring Batch Reader 선택은 생각보다 설계 결정에 가깝다.&lt;/p&gt;
+&lt;p&gt;처음에는 &amp;ldquo;대용량이면 Paging&amp;quot;이라는 단순한 기준으로 접근했지만, 실제로는 query shape이 더 중요했다. 특히 &lt;code&gt;GROUP BY&lt;/code&gt;나 &lt;code&gt;ORDER BY&lt;/code&gt;가 포함된 비싼 쿼리에서는 page 단위로 끊는 것이 오히려 같은 일을 반복시키는 구조가 될 수 있다.&lt;/p&gt;
+&lt;p&gt;Cursor Reader는 집계 결과를 한 번 열고 순차적으로 처리하기 좋다. 대신 connection을 오래 잡고 driver 설정을 신경 써야 한다.&lt;/p&gt;
+&lt;p&gt;Paging Reader는 안정적인 key 기반 단순 조회에 좋다. 대신 page query가 반복되고 offset 비용이 생길 수 있다.&lt;/p&gt;
+&lt;p&gt;현재 구조는 완전한 정답이라기보다는, &lt;code&gt;product_metric_daily&lt;/code&gt;를 기간별로 집계해 랭킹 MV를 만드는 요구사항에 맞춘 선택이다. 나중에 데이터가 더 커지고 처리 시간이 길어지면 partitioning, keyset paging, pre-aggregation 같은 다른 선택지를 다시 검토해야 한다.&lt;/p&gt;
+&lt;p&gt;결국 Reader를 고를 때 중요한 질문은 하나인 것 같다.&lt;/p&gt;
+&lt;p&gt;이 Reader를 쓰면 DB는 어떤 일을 몇 번 하게 되는가?&lt;/p&gt;</description></item><item><title>랭킹시스템 설계 해보기</title><link>https://0andwild.com/posts/260717_ranking_system_design/</link><pubDate>Fri, 17 Jul 2026 16:20:00 +0900</pubDate><guid>https://0andwild.com/posts/260717_ranking_system_design/</guid><description>&lt;img src="https://0andwild.com/" alt="Featured image of post 랭킹시스템 설계 해보기" /&gt;&lt;h2 id="tldr"&gt;&lt;a href="#tldr" class="header-anchor"&gt;&lt;/a&gt;tldr
 &lt;/h2&gt;&lt;p&gt;이번에는 사용자 행동 이벤트를 기반으로 일별 상품 랭킹 시스템을 설계해보았다.&lt;/p&gt;
 &lt;p&gt;처음 생각한 설계 방식은 상품 조회, 좋아요, 결제 성공 이벤트를 Kafka로 발행하고, &lt;code&gt;commerce-streamer&lt;/code&gt;가 이벤트를 소비하면서 Redis Sorted Set에 랭킹 점수를 실시간으로 반영하는 방식이다. Redis는 Top N 조회와 특정 상품 rank 조회를 빠르게 처리할 수 있기 때문에 실시간 랭킹의 serving store로 잘 맞았다.&lt;/p&gt;
 &lt;p&gt;하지만 설계를 해보면서 Redis를 랭킹의 유일한 Source of Truth로 볼 수 있는가에 대한 고민이 생겼다. Redis 데이터가 만료되거나 유실되었을 때 복구하기 어렵고, 가중치가 바뀌었을 때 과거 metric 기준으로 재계산하기도 어렵다. 시간별, 주별, 월별 랭킹까지 확장하려면 더더욱 원천 metric을 어디에 남길지가 중요해진다.&lt;/p&gt;
