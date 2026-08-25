@@ -360,6 +360,7 @@ html.legacy-background-enabled #background-style-toggle .icon-tabler-toggle-righ
 
 .site-description {
   min-height: 1.6em;
+  white-space: nowrap;
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
