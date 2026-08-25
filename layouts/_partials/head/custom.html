@@ -54,27 +54,6 @@
     const subtitle = document.querySelector(".site-description");
     if (!subtitle) return;
 
-    const words = ["Backend", "Infra", "CS", "AI"];
-    let index = 0;
-
-    function swap() {
-      subtitle.style.opacity = "0";
-      subtitle.style.transform = "translateY(-10px)";
-
-      setTimeout(function () {
-        subtitle.textContent = "Deep Dive into " + words[index];
-        subtitle.style.transform = "translateY(10px)";
-        index = (index + 1) % words.length;
-      }, 220);
-
-      setTimeout(function () {
-        subtitle.style.opacity = "1";
-        subtitle.style.transform = "translateY(0)";
-      }, 260);
-    }
-
-    subtitle.textContent = "Deep Dive into " + words[0];
-    index = 1;
-    setInterval(swap, 2600);
+    subtitle.textContent = "쓰러지면 어때 일어나면 그만인걸";
   });
 </script>
