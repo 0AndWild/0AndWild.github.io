@@ -8,7 +8,7 @@ tags = ["JPA", "Spring Data JPA", "Hibernate", "ORM", "Java"]
 series = ["JPA"]
 series_order = 1
 
-draft = false
+draft = true
 +++
 
 In the past, database access code was often written directly with the JDBC API or through SQL Mapper tools such as iBatis, modern MyBatis, or Spring's `JdbcTemplate`. These tools reduced some of the burden of handling the JDBC API itself, but CRUD SQL still had to be written repeatedly.

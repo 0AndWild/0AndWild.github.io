@@ -33,12 +33,6 @@ A backend developer with 3 years of experience, passionate about exploring new t
 - I prefer pioneering new paths rather than pursuing only stability.
 - I don't fear failure; I see it as an experience.
 
-## What You'll Find Here
-
-- **Backend Development**: Deep dives into backend architectures, patterns, and best practices
-- **Infrastructure**: DevOps, Docker, Kubernetes, and cloud technologies
-- **Tech Explorations**: Hands-on experiences with new tools and frameworks
-
 ## Get In Touch
 
 {{< colorbutton href="https://github.com/0AndWild" target="_blank" color="github" >}}
@@ -55,4 +49,4 @@ A backend developer with 3 years of experience, passionate about exploring new t
 
 ---
 
-Thanks for visiting! 🚀
+

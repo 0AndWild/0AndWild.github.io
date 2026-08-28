@@ -33,12 +33,6 @@ layoutBackgroundHeaderSpace: false
 - 너무 안정적인 것을 추구하기보다 새로운 길을 개척해나가는 것을 좋아합니다.
 - 실패를 두려워하지 않고 경험이라 생각합니다.
 
-## 이 블로그에서 다루는 내용
-
-- **백엔드 개발**: 백엔드 아키텍처, 패턴, 모범 사례에 대한 심층 탐구
-- **인프라**: DevOps, Docker, Kubernetes, 클라우드 기술
-- **기술 탐험**: 새로운 도구와 프레임워크에 대한 실습 경험
-
 ## 연락하기
 
 {{< colorbutton href="https://github.com/0AndWild" target="_blank" color="github" >}}
@@ -55,4 +49,3 @@ layoutBackgroundHeaderSpace: false
 
 ---
 
-방문해 주셔서 감사합니다! 🚀

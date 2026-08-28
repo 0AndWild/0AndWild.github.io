@@ -9,7 +9,7 @@ series = ["JPA"]
 series_order = 1
 
 
-draft = false
+draft = true
 +++
 
 과거에는 JDBC API를 직접 작성하거나 iBatis, 현재의 MyBatis, 스프링의 JdbcTemplate 같은 SQL Mapper를 사용해서 데이터베이스 접근 코드를 작성했음. 이런 도구들은 JDBC API를 직접 다루는 부담을 많이 줄여줬지만, 여전히 CRUD용 SQL은 반복해서 작성해야 했음.

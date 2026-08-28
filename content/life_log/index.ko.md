@@ -1,7 +1,7 @@
 ---
 title: "My Life log"
 date: 2025-11-22
-draft: false
+draft: true
 comments: false
 readingTime: false
 toc: true

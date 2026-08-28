@@ -46,14 +46,14 @@
   [main.params]
     icon = "user"
 
-[[main]]
-  identifier = "life_log"
-  name = "My story"
-  pageRef = "life_log"
-  weight = 2
+# [[main]]
+#   identifier = "life_log"
+#   name = "My story"
+#   pageRef = "life_log"
+#   weight = 2
 
-  [main.params]
-    icon = "book"
+#   [main.params]
+#     icon = "book"
 
 [[main]]
   identifier = "search"
